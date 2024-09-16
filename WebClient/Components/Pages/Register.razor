@@ -1,0 +1,120 @@
+﻿@page "/register"
+
+<PageTitle>Register</PageTitle>
+
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-box {
+        display: flex;
+        width: 70%;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .illustration {
+        background: url('image/illustration.png') no-repeat center center;
+        background-size: cover;
+        width: 50%;
+        position: relative;
+    }
+
+        .illustration .text {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+            color: #5D3A6E;
+            top: 20px;
+        }
+
+    .form-container {
+        padding: 40px;
+        width: 50%;
+        background-color: #fff;
+    }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #5D3A6E;
+        }
+</style>
+
+<div class="container">
+    <div class="login-box">
+        <div class="illustration">
+            <h3 class="text">License Quizz</h3>
+        </div>
+        <div class="form-container">
+            <h2>Create your Account</h2>
+            <EditForm Model="request" OnValidSubmit="RegisterAccount">
+                <div class="form-group mb-4">
+                    <label>First Name</label>
+                    <MudTextField @bind-Value=request.FirstName class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable />
+                 </div>
+                 <div class="form-group mb-4">
+                     <label>Last Name</label>
+                     <MudTextField @bind-Value=request.LastName class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable />
+                 </div>
+                 <div class="form-group mb-4">
+                     <label>Date of Birth</label>
+                     <MudDatePicker @bind-Date="request.DoB" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" />
+                 </div>
+                 <div class="form-group mb-4">
+                     <label>Email</label>
+                     <MudTextField @bind-Value=request.Email class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable />
+                 </div>
+                 <div class="form-group mb-4">
+                     <label>Password</label>
+                     <MudTextField @bind-Value=request.Password InputType="InputType.Password" class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable />
+                 </div>
+                 <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block mb-4 col-12" Variant="Variant.Filled" Disabled="@_processing">
+                     @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Creating Account</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Register</MudText>
+                    }
+                </MudButton>
+            </EditForm>
+            <p class="text-center">Already have an account? <MudLink href="login">Login</MudLink></p>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public UserRegisterRequest request = new();
+
+    private bool _processing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            NavManager.NavigateTo("/home");
+        }
+    }
+
+    public async Task RegisterAccount()
+    {
+        _processing = true;
+        var resp = await this.AccountService.RegisterUserAsync(request);
+        if (resp.IsSuccessful)
+        {
+            _processing = false;
+            NavManager.NavigateTo("/login");
+        }
+    }
+
+}

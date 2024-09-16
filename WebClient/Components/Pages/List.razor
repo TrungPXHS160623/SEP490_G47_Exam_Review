@@ -1,0 +1,86 @@
+﻿@page "/AccountList"
+
+<style>
+    .mud-table-cell {
+        border: none !important;
+        text-align: center;
+    }
+
+    .mud-table-head .mud-table-row .mud-table-cell {
+        border-bottom: 1px solid grey !important;
+        font-size: 1.2rem;
+    }
+
+    .mud-table {
+        box-shadow: none !important;
+    }
+
+    .mud-table-root {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .mud-table-head .mud-table-row {
+        box-shadow: 0 5px 10px #e1e5ee;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 99;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="custom-box ">
+        <h4>Account List</h4>
+        <div>
+            @if (AccList.Count > 0)
+            {
+                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Id</MudTh>
+                        <MudTh>Email</MudTh>
+                        <MudTh>Dob</MudTh>
+                        <MudTh>First Name</MudTh>
+                        <MudTh>Last Name</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.UserId</MudTd>
+                        <MudTd>@context.Email</MudTd>
+                        <MudTd>@context.Dob</MudTd>
+                        <MudTd>@context.FirstName</MudTd>
+                        <MudTd>@context.LastName</MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        @if (AccList.Count > 10)
+                        {
+                            <MudTablePager />
+                        }
+                    </PagerContent>
+                </MudTable>
+            }
+            else
+            {
+                <p>No Data</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Account> AccList = new List<Account>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!);
+
+        var resp = await this.AccountService.GetUserList();
+
+        if (resp.IsSuccessful)
+        {
+            AccList = resp.Items;
+        }
+    }
+}
