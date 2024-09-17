@@ -1,0 +1,25 @@
+﻿@page "/home"
+
+<div class="container d-flex justify-content-center align-items-center">
+    <span>Home Page</span>
+</div>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        if(auth != null)
+        {
+            var user = auth.User;
+            var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!);
+        }
+
+    }
+
+    public void GoToDetail(int quizId)
+    {
+        NavManager.NavigateTo("/home/detail/" + quizId);
+    }
+}

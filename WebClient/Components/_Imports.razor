@@ -1,0 +1,30 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using WebClient
+@using WebClient.Components
+@using WebClient.IServices
+@using PRN231_Library.Common
+@using PRN231_Library.Request
+@using PRN231_Library.Models
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Authorization
+@using WebClient.Authentication
+@using System.Security.Claims
+@using WebClient.Components.Layout
+
+@inject CustomAuthenticationStateProvider CustomAuthStateProvider
+@inject NavigationManager NavManager
+@inject IJSRuntime js
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@inject IAccountService AccountService
+@inject IMenuService MenuService
+
