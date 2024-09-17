@@ -51,13 +51,13 @@ h1:focus {
 }
 
 body {
-    background-color: #FBEFE4 !important;
+    background-color: white !important;
 }
 
 .custom-box {
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     border-radius: 10px;
-    background-color:white;
-    padding:20px;
-    height:100%
+    background-color: #FBEFE4;
+    padding: 20px;
+    height: 100%
 }

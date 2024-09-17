@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN231_Library.Request
+namespace Library.Request
 {
     public class UserRequest
     {

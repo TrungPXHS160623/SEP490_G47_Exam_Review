@@ -1,12 +1,12 @@
 ﻿using WebClient.Authentication;
-using PRN231_Library.Common;
-using PRN231_Library.Request;
+using Library.Common;
+using Library.Request;
 using System.Text;
 using Newtonsoft.Json;
 using WebClient.IServices;
 using MudBlazor;
 using Library.Response;
-using PRN231_Library.Models;
+using Library.Models;
 
 namespace WebClient.Services
 {

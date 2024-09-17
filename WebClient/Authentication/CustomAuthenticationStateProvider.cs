@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using PRN231_Library.Common;
+using Library.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Xml.Serialization;
@@ -60,8 +60,6 @@ namespace WebClient.Authentication
                 new List<Claim>
                 {
                     new(ClaimTypes.Email, claims.Email),
-                    new(ClaimTypes.Name, claims.FirstName!),
-                    new(ClaimTypes.NameIdentifier, claims.Id.ToString()!),
                     new(ClaimTypes.Role, claims.RoleId.ToString()!),
                 }, "JwtAuth"));
         }
@@ -79,8 +77,6 @@ namespace WebClient.Authentication
             return new AccountClaims
             {
                 Email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty,
-                FirstName = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty,
-                Id = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0,
                 RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role) ? role : 0
             };
         }

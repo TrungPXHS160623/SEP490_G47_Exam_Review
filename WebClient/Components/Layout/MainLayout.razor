@@ -3,18 +3,22 @@
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<PageTitle>License Test</PageTitle>
+<PageTitle>Quiz Review</PageTitle>
 <MudPopoverProvider />
 <AuthorizeView>
     <Authorized>
         <div class="page">
-            <div class="sidebar">
-                <NavMenu />
-            </div>
-
             <main>
                 <div class="top-row px-4">
-                    <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+                    <div class="d-flex justify-content-between align-items-center text-white">
+                        <div>
+                            <label>FPT Education on Coursera - Mentoring Support System</label>
+                        </div>
+                        <div>
+                            <a href="#" class="text-white me-5">Log out</a>
+                            <label>Welcom: @Email</label>
+                        </div>
+                    </div>
                 </div>
 
                 <article class="content px-4">
@@ -43,6 +47,8 @@
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
+    public string Email { get; set; } = "hungle@gmail.com";
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -50,6 +56,14 @@
         if (!isAuthenticated)
         {
             NavManager.NavigateTo("/login");
+        } else
+        {
+            NavManager.NavigateTo("/Home");
         }
+    }
+
+    public void UpdateName(string email)
+    {
+        Email = email;
     }
 }

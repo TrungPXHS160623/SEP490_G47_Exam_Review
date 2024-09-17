@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace PRN231_API.Controllers
+namespace WebApi.Controllers
 {
     [Route("/api/[Controller]")]
     [ApiController]

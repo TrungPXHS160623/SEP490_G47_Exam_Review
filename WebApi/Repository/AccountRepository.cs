@@ -2,22 +2,22 @@
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PRN231_API.IRepository;
-using PRN231_Library.Common;
-using PRN231_Library.Models;
-using PRN231_Library.Request;
+using WebApi.IRepository;
+using Library.Common;
+using Library.Models;
+using Library.Request;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace PRN231_API.Repository
+namespace WebApi.Repository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly Prn231FinalProjectContext DBcontext;
+        private readonly QuizManagementContext DBcontext;
         private readonly IConfiguration config;
 
-        public AccountRepository(Prn231FinalProjectContext DBcontext, IConfiguration Config)
+        public AccountRepository(QuizManagementContext DBcontext, IConfiguration Config)
         {
             this.DBcontext = DBcontext;
             this.config = Config;
@@ -71,14 +71,9 @@ namespace PRN231_API.Repository
                 {
                     var acc = new Account
                     {
-                        CreateDt = DateTime.Now,
-                        Dob = request.DoB,
                         Email = request.Email,
-                        FirstName = request.FirstName,
-                        LastName = request.LastName,
                         Password = request.Password,
                         RoleId = 2,
-                        UpdateDt = DateTime.Now,
                     };
 
                     await this.DBcontext.Accounts.AddAsync(acc);
@@ -109,8 +104,6 @@ namespace PRN231_API.Repository
             var userClaims = new[]
             {
                 new Claim(ClaimTypes.Email, acc.Email!),
-                new Claim(ClaimTypes.Name,acc.FirstName!),
-                new Claim(ClaimTypes.NameIdentifier,acc.UserId.ToString()),
                 new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
             };
 
