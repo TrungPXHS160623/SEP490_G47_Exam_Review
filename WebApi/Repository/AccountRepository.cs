@@ -119,6 +119,47 @@ namespace WebApi.Repository
 
         }
 
+        public async Task<AuthenticationResponse> GoogleLoginCallback(string email)
+        {
+            try
+            {
+                AuthenticationResponse response = new AuthenticationResponse();
+                var user = await FindOrCreateUserAsync(email);
+
+                if (user != null)
+                {
+                    response.IsSuccessful = true;
+                    response.Token = GenerateToken(user); 
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticationResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        private async Task<Account?> FindOrCreateUserAsync(string email)
+        {
+            var user = await DBcontext.Accounts.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            if (user == null)
+            {
+                user = new Account
+                {
+                    Email = email,
+                    RoleId = 1  
+                };
+                await DBcontext.Accounts.AddAsync(user);
+                await DBcontext.SaveChangesAsync();
+            }
+            return user;
+        }
+
         public async Task<ResultResponse<Account>> GetUserList()
         {
             try

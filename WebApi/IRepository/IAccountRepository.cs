@@ -12,5 +12,7 @@ namespace WebApi.IRepository
         Task<RequestResponse> UserRegister(UserRegisterRequest request);
 
         Task<ResultResponse<Account>> GetUserList();
+
+        Task<AuthenticationResponse> GoogleLoginCallback(string email);
     }
 }
