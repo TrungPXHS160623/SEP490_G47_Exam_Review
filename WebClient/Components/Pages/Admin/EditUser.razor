@@ -1,0 +1,44 @@
+﻿@page "/edituser"
+
+<h3>Edit User</h3>
+<div class="form-group">
+    <label for="role">Role:</label>
+    <select class="form-control" id="role">
+        <option value="1">Admin</option>
+        <option value="2">Khảo Thí</option>
+        <option value="3">Bộ Môn</option>
+        <option value="4">Giảng Viên</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="login">Login:</label>
+    <div class="input-group">
+        <input type="text" class="form-control" id="login" value="g" />
+        <div class="input-group-append">
+            <span class="input-group-text">@("@"+domain)</span>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="isActive">isActive:</label>
+    <input type="checkbox" id="isActive" />
+</div>
+
+<div class="form-group">
+    <label for="campus">Campus_ID:</label>
+    <select class="form-control" id="campus">
+        <option>--- Choose campus ---</option>
+        <option value="1">FU-Hoà Lạc</option>
+        <option value="2">FU-Hồ Chí Minh</option>
+        <option value="3">FU-Đà Nẵng</option>
+        <option value="4">FU-Quy Nhơn</option>
+    </select>
+</div>
+
+<button class="btn btn-success">Save</button>
+<a href="/userlist" class="btn btn-secondary">Back to List</a>
+@code {
+    private string domain = "@fpt.edu.vn"; // Set your desired domain here
+}

@@ -1,0 +1,16 @@
+﻿@page "/userdetails"
+
+<h3>Details User</h3>
+<div>
+    <p><strong>Login:</strong>@("@"+domain)</p>
+    <p><strong>isActive:</strong> No</p>
+    <p><strong>Role_Name:</strong> Admin</p>
+    <p><strong>Campus_ID:</strong> --- Choose campus ---</p>
+</div>
+
+<a href="/edituser" class="btn btn-primary">Edit</a>
+<a href="/deleteuser" class="btn btn-danger">Delete</a>
+<a href="/userlist" class="btn btn-secondary">Back to List</a>
+@code {
+    private string domain = "@fpt.edu.vn"; // Set your desired domain here
+}
