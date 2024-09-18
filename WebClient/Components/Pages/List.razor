@@ -39,16 +39,10 @@
                     <HeaderContent>
                         <MudTh>Id</MudTh>
                         <MudTh>Email</MudTh>
-                        <MudTh>Dob</MudTh>
-                        <MudTh>First Name</MudTh>
-                        <MudTh>Last Name</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.UserId</MudTd>
+                        <MudTd>@context.AccountId</MudTd>
                         <MudTd>@context.Email</MudTd>
-                        <MudTd>@context.Dob</MudTd>
-                        <MudTd>@context.FirstName</MudTd>
-                        <MudTd>@context.LastName</MudTd>
                     </RowTemplate>
                     <PagerContent>
                         @if (AccList.Count > 10)

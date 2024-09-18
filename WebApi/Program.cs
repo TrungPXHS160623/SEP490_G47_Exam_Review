@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PRN231_API.IRepository;
-using PRN231_API.Repository;
-using PRN231_Library.Models;
+using WebApi.IRepository;
+using WebApi.Repository;
+using Library.Models;
 using System.Text;
 
-namespace PRN231_API;
+namespace WebApi;
 
 public class Program
 {
@@ -21,7 +21,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddDbContext<Prn231FinalProjectContext>(o =>
+        builder.Services.AddDbContext<QuizManagementContext>(o =>
         {
             o.UseSqlServer(builder.Configuration.GetConnectionString("MyConStr"))
             .EnableSensitiveDataLogging()
@@ -46,7 +46,6 @@ public class Program
         });
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-        builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 
         var app = builder.Build();
 

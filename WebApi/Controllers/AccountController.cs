@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PRN231_API.IRepository;
-using PRN231_Library.Request;
+using WebApi.IRepository;
+using Library.Request;
 
-namespace PRN231_API.Controllers
+namespace WebApi.Controllers
 {
     public class AccountController : ApiBaseController
     {

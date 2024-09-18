@@ -2,7 +2,7 @@
     <Authorized>
         <div class="top-row ps-3 navbar navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/home">License Quizz</a>
+                <a class="navbar-brand" href="/home">Quiz Review</a>
             </div>
         </div>
 
@@ -10,17 +10,11 @@
 
         <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
             <nav class="d-flex flex-column h-100">
-                @if (menuList.Count > 0)
-                {
-                    @foreach (var item in menuList)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link ps-4" href="@item.Link" Match="NavLinkMatch.Prefix">
-                                <span class="bi @item.Icon" aria-hidden="true"></span> @item.Name
-                            </NavLink>
-                        </div>
-                    }
-                }
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link ps-4" href="/Home" Match="NavLinkMatch.Prefix">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
                 <div class="d-flex flex-grow-1 align-items-end">
                     <div class="nav-item px-3 w-100">
                         <NavLink class="nav-link ps-4" @onclick=Logout style="cursor:pointer" Match="NavLinkMatch.Prefix">
@@ -34,8 +28,6 @@
 </AuthorizeView>
 
 @code {
-    List<Menu> menuList = new();
-
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -46,18 +38,12 @@
             var user = auth.User;
             var roleId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!);
 
-            var resp = await this.MenuService.GetMenuByRole(roleId);
-
-            if (resp.IsSuccessful)
-            {
-                menuList = resp.Items;
-            }
         }
     }
 
     public async Task Logout()
     {
         CustomAuthStateProvider.NotifyUserLogout();
-        NavManager.NavigateTo("/login",true);
+        NavManager.NavigateTo("/login", true);
     }
 }

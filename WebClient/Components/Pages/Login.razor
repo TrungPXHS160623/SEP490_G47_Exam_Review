@@ -49,7 +49,7 @@
 <div class="container">
     <div class="login-box">
         <div class="illustration">
-            <h3 class="text">License Quizz</h3>
+            <h3 class="text">Quiz Review</h3>
         </div>
         <div class="form-container">
             <h2>Login to your Account</h2>
@@ -110,9 +110,11 @@
         {
             var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
             await customAuthStateProvider.UpdateAuthenticationState(resp.Token!);
-            _processing = false;
             NavManager.NavigateTo("/home");
         }
+
+        _processing = false;
+
     }
 
 }

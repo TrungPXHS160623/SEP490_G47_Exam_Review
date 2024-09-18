@@ -44,7 +44,6 @@ namespace WebClient
             builder.Services.AddAuthorizationCore();
 
             builder.Services.AddTransient<IAccountService, AccountService>();
-            builder.Services.AddTransient<IMenuService, MenuService>();
 
             var app = builder.Build();
 
