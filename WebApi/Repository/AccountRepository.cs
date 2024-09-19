@@ -9,6 +9,10 @@ using Library.Request;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Newtonsoft.Json;
+using System.Data;
+using Azure;
+using Newtonsoft.Json.Linq;
 
 namespace WebApi.Repository
 {
@@ -116,23 +120,41 @@ namespace WebApi.Repository
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
 
-        public async Task<AuthenticationResponse> GoogleLoginCallback(string email)
+        public async Task<AuthenticationResponse> GoogleLoginCallback(string code)
         {
             try
             {
                 AuthenticationResponse response = new AuthenticationResponse();
-                var user = await FindOrCreateUserAsync(email);
 
-                if (user != null)
+                var tokenResponse = await GetGoogleTokenAsync(code);
+
+                if (!string.IsNullOrEmpty(tokenResponse.AccessToken))
                 {
-                    response.IsSuccessful = true;
-                    response.Token = GenerateToken(user); 
-                }
+                    var userInfo = await GetGoogleUserInfoAsync(tokenResponse.AccessToken);
 
-                return response;
+                    if (userInfo != null)
+                    {
+                        var user = await FindOrCreateUserAsync(userInfo.Email);
+
+                        if (user != null)
+                        {
+                            var token = GenerateToken(user);
+                            Constants.JWTToken = token;
+                            return new AuthenticationResponse
+                            {
+                                IsSuccessful = true,
+                                Token = token
+                            };
+                        }
+                    }
+                }
+                return new AuthenticationResponse
+                {
+                    IsSuccessful = false,
+                    Message = "Login with Google failed."
+                };
             }
             catch (Exception ex)
             {
@@ -152,7 +174,7 @@ namespace WebApi.Repository
                 user = new Account
                 {
                     Email = email,
-                    RoleId = 1  
+                    RoleId = 1
                 };
                 await DBcontext.Accounts.AddAsync(user);
                 await DBcontext.SaveChangesAsync();
@@ -180,6 +202,35 @@ namespace WebApi.Repository
                     Message = ex.Message
                 };
             }
+        }
+
+        private async Task<TokenResponse> GetGoogleTokenAsync(string code)
+        {
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.google.com/o/oauth2/token");
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "code", code },
+                { "client_id", config["GoogleKeys:ClientId"] },
+                { "client_secret", config["GoogleKeys:ClientSecret"] },
+                { "redirect_uri", "https://localhost:7255/api/account/googlelogincallback" },
+                { "grant_type", "authorization_code" }
+            });
+
+            request.Content = content;
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<TokenResponse>(responseContent);
+        }
+
+        private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
+        {
+            using var client = new HttpClient();
+            var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}");
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
         }
     }
 }

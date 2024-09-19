@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject HttpClient Http
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -53,17 +54,37 @@
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
 
-        if (!isAuthenticated)
-        {
-            NavManager.NavigateTo("/login");
-        } else
+        if (isAuthenticated)
         {
             NavManager.NavigateTo("/Home");
+        }
+        else
+        {
+            var data = await GetKeys();
+
+            if (!string.IsNullOrEmpty(data.Token))
+            {
+                var customAuthStateProvider = AuthStateProvider as CustomAuthenticationStateProvider;
+                if (customAuthStateProvider != null)
+                {
+                    await customAuthStateProvider.UpdateAuthenticationState(data.Token);
+                    NavManager.NavigateTo("/Home");
+
+                }
+            }
+            NavManager.NavigateTo("/login");
         }
     }
 
     public void UpdateName(string email)
     {
         Email = email;
+    }
+
+    private async Task<AuthenticationResponse> GetKeys()
+    {
+        var response = await Http.GetFromJsonAsync<AuthenticationResponse>("https://localhost:7255/api/Account/GetJWT");
+
+        return response;
     }
 }

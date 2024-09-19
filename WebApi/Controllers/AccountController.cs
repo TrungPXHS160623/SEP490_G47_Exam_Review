@@ -2,12 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 using Library.Request;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
-using Newtonsoft.Json;
-using Library.Response;
+using Library.Common;
 
 namespace WebApi.Controllers
 {
@@ -53,49 +48,13 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLoginCallback(string code)
         {
-            var tokenResponse = await GetGoogleTokenAsync(code);
-
-            if (!string.IsNullOrEmpty(tokenResponse.AccessToken))
+            var response = await _accountRepository.GoogleLoginCallback(code);
+            if (response.IsSuccessful)
             {
-                var userInfo = await GetGoogleUserInfoAsync(tokenResponse.AccessToken);
-
-                if (userInfo != null)
-                {
-                    var response = await _accountRepository.GoogleLoginCallback(userInfo.Email);
-                    return Ok(response);
-                }
+                return Redirect($"https://localhost:7158/home");
             }
 
-            return BadRequest("Login with Google failed.");
-        }
-
-        private async Task<TokenResponse> GetGoogleTokenAsync(string code)
-        {
-            using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.google.com/o/oauth2/token");
-            var content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "code", code },
-                { "client_id", _configuration["GoogleKeys:ClientId"] },
-                { "client_secret", _configuration["GoogleKeys:ClientSecret"] },
-                { "redirect_uri", "https://localhost:7255/api/account/googlelogincallback" },
-                { "grant_type", "authorization_code" }
-            });
-
-            request.Content = content;
-            var response = await client.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<TokenResponse>(responseContent);
-        }
-
-        private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
-        {
-            using var client = new HttpClient();
-            var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}");
-            var json = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
+            return Redirect("https://localhost:7158/error");
         }
 
         [HttpGet("google-keys")]
@@ -107,6 +66,16 @@ namespace WebApi.Controllers
             return Ok(new
             {
                 ClientId = clientId,
+            });
+        }
+
+        [HttpGet("GetJWT")]
+        [AllowAnonymous]
+        public IActionResult GetJWT()
+        {
+            return Ok(new AuthenticationResponse
+            {
+                Token = Constants.JWTToken,
             });
         }
     }
