@@ -1,5 +1,6 @@
 ﻿@page "/login"
-
+@inject IConfiguration config
+@inject HttpClient Http
 <PageTitle>Login</PageTitle>
 
 
@@ -81,8 +82,12 @@
                 </MudButton>
             </EditForm>
             <p class="text-center">Not Registered Yet? <MudLink href="register">Create an account</MudLink></p>
-
+            <button class="btn btn-google" @onclick="SignInWithGoogle">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20" height="20" />
+            Sign in with Google
+        </button>
         </div>
+        
     </div>
 </div>
 
@@ -117,4 +122,24 @@
 
     }
 
+    private async Task SignInWithGoogle()
+    {
+
+        var clientId = await GetKeys();
+        // Điều hướng người dùng đến trang đăng nhập Google
+        var redirectUrl = $"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId.ClientId}&redirect_uri=https://localhost:7255/api/account/googlelogincallback&response_type=code&scope=openid%20profile%20email";
+        NavManager.NavigateTo(redirectUrl, true);
+    }
+
+    private async Task<GoogleKeys> GetKeys()
+    {
+        var response = await Http.GetFromJsonAsync<GoogleKeys>("https://localhost:7255/api/Account/google-keys");
+
+        return response;
+    }
+
+    private class GoogleKeys
+    {
+        public string ClientId { get; set; }
+    }
 }

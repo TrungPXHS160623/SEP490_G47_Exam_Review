@@ -1,5 +1,6 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.IRepository;
@@ -32,7 +33,9 @@ public class Program
         {
             o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(o =>
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddJwtBearer(o =>
         {
             o.TokenValidationParameters = new TokenValidationParameters
             {
@@ -43,6 +46,10 @@ public class Program
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
             };
+        }).AddGoogle(o =>
+        {
+            o.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
+            o.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"]!;
         });
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();

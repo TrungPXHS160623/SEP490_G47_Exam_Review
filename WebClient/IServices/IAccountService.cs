@@ -12,5 +12,6 @@ namespace WebClient.IServices
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
         Task<ResultResponse<Account>> GetUserList();
+
     }
 }
