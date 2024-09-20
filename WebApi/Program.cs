@@ -59,8 +59,8 @@ public class Program
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-
-        var app = builder.Build();
+		builder.Services.AddScoped<IExamRepository, ExamRepository>();
+		var app = builder.Build();
 
         // Configure the HTTP request pipeline
         if (app.Environment.IsDevelopment())
