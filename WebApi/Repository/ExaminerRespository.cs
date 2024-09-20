@@ -1,5 +1,4 @@
-﻿using Library.Enums;
-using Library.Models;
+﻿using Library.Models;
 using Library.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
@@ -13,6 +12,22 @@ namespace WebApi.Repository
         public ExaminerRepository(QuizManagementContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<InstructorAssignment> AssignInstructor(InstructorAssignment instructorAssignment)
+        {
+            dbContext.InstructorAssignments.Add(instructorAssignment);
+            await dbContext.SaveChangesAsync();
+            return instructorAssignment;
+        }
+
+        public async Task<IEnumerable<InstructorAssignment>> GetAllInstructorAssignmentsAsync()
+        {
+            return await dbContext.InstructorAssignments
+                              .Include(i => i.Exam)
+                              .Include(i => i.AssignedToUser)
+                              .Include(i => i.AssignedTo)
+                              .ToListAsync();
         }
 
         public async Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null)
@@ -46,20 +61,40 @@ namespace WebApi.Repository
                     ExamId = e.ExamId,
                     ExamCode = e.ExamCode,
                     ExamType = e.ExamType,
-                    DepartmentName = e.Subject.Department.DepartmentName,
+                    Status = e.ExamStatus.StatusContent,
+                    HeadDepartmentMail = e.Subject.Department.HeadOfDepartment.Mail,
                     EstimatedTimeTest = e.EstimatedTimeTest
                 })
                 .ToListAsync();
 
             return exams;
         }
-        public async Task<Exam> UpdateExamStatusAsync(int examId, ExamStatusEnum status)
+
+        public async Task<InstructorAssignment?> GetInstructorAssignmentByIdAsync(int id)
+        {
+            return await dbContext.InstructorAssignments
+                              .Include(i => i.Exam)
+                              .Include(i => i.AssignedToUser)
+                              .Include(i => i.AssignedTo)
+                              .Include(i => i.Status)
+                              .FirstOrDefaultAsync(i => i.AssignmentId == id);
+        }
+
+        public async Task<IEnumerable<InstructorAssignment>> GetInstructorAssignments(int instructorId)
+        {
+            return await dbContext.InstructorAssignments
+            .Where(ia => ia.AssignedTo == instructorId)
+            .Include(ia => ia.Exam)
+            .ToListAsync();
+        }
+
+        public async Task<Exam> UpdateExamStatusAsync(int examId)
         {
             var examStatus = await dbContext.Exams.FindAsync(examId);
             if (examStatus != null)
             {
-                examStatus.ExamStatus = status;
-                await dbContext.SaveChangesAsync();
+                var pendingReviewStatus = await dbContext.ExamStatuses
+             .FirstOrDefaultAsync(es => es.StatusContent == "Pending Review");
             }
             return examStatus;
         }

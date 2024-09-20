@@ -11,5 +11,4 @@ namespace Library.Models
         [StringLength(255)]
         public string StatusContent { get; set; }
     }
-
 }

@@ -1,5 +1,5 @@
-﻿using Library.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace Library.Models
 {
     public class Exam
@@ -28,7 +28,7 @@ namespace Library.Models
         public bool IsChecked { get; set; } = false;
 
         [Required]
-        public ExamStatusEnum ExamStatusID { get; set; }
+        public int ExamStatusID { get; set; }
 
         [Required]
         public DateTime EstimatedTimeTest { get; set; }
