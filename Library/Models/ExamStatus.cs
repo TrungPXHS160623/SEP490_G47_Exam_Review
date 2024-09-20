@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Library.Models
 {
@@ -16,4 +11,5 @@ namespace Library.Models
         [StringLength(255)]
         public string StatusContent { get; set; }
     }
+
 }

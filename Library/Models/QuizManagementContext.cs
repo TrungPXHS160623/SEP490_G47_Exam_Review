@@ -272,7 +272,7 @@ public partial class QuizManagementContext : DbContext
             new Campus { CampusId = 5, CampusName = "Quy Nhon" }
         );
 
-        
+
 
 
         OnModelCreatingPartial(modelBuilder);

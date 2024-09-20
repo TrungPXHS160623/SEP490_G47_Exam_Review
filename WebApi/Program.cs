@@ -1,14 +1,13 @@
 
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Library.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WebApi.IRepository;
-using WebApi.Repository;
-using Library.Models;
 using System.Text;
+using WebApi.IRepository;
 using WebApi.Mapper;
+using WebApi.Repository;
 
 namespace WebApi;
 
@@ -58,6 +57,7 @@ public class Program
         // Add DI for repositories and AutoMapper
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IExaminerRepository, ExaminerRepository>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
         var app = builder.Build();
