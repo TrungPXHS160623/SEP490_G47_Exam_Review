@@ -1,37 +1,70 @@
 ﻿@page "/usermanagement"
+@inject IAccountService accountService
 
 <h3>User Management</h3>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">User Management</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <label for="userSearch">User:</label>
-            <input id="userSearch" type="text" class="form-control" placeholder="Enter username..." />
-        </div>
-        <div class="col-md-6">
-            <button class="btn btn-success mt-3">Search</button>
-            <button class="btn btn-primary mt-3">Add new user</button>
-        </div>
-    </div>
+<div>
+    <input type="text" @bind="searchText" placeholder="Search users" />
+    <button class="btn btn-primary" @onclick="FetchUsers">Search</button>
+    <button class="btn btn-success" @onclick="AddNewUser">Add New User</button>
 </div>
 
-<footer class="mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <hr />
-            <p class="text-center">&copy; 2023 - FPT Education | <a href="#">About us</a></p>
-        </div>
-    </div>
-</footer>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Is Active</th>
+            <th>Role</th>
+            <th>Campus</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (users != null)
+        {
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Mail</td>
+                    <td>@user.IsActive</td>
+                    <td>@user.UserRole?.RoleName</td>
+                    <td>@user.Campus?.CampusName</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => UpdateUser(user.UserId)">Update</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
+@code {
+    private List<User> users;
+    private string searchText;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchUsers();
+    }
+
+    private async Task FetchUsers()
+    {
+        var response = await accountService.GetAllUserList();
+        if (response.IsSuccessful)
+        {
+            users = response.Items;
+        }
+    }
+
+    private void AddNewUser()
+    {
+        // Redirect to a page or modal for adding a new user
+    }
+
+    private async Task UpdateUser(int id)
+    {
+        // Redirect to a page or modal for updating user
+    }
+
+   
+}

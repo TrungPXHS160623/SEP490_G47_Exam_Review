@@ -7,10 +7,10 @@ namespace WebApi.IRepository
     {
         Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null);
         Task<Exam> UpdateExamStatusAsync(int examId);
-        Task<InstructorAssignment> AssignInstructor(InstructorAssignment instructorAssignment);
-        Task<IEnumerable<InstructorAssignment>> GetInstructorAssignments(int instructorId);
-        Task<IEnumerable<InstructorAssignment>> GetAllInstructorAssignmentsAsync();
-        Task<InstructorAssignment?> GetInstructorAssignmentByIdAsync(int id);
+        Task<ExamAssignment> AssignInstructor(ExamAssignment instructorAssignment);
+        Task<IEnumerable<ExamAssignment>> GetExamAssignments(int instructorId);
+        Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync();
+        Task<ExamAssignment?> GetExamAssignmentByIdAsync(int id);
     }
 
 }

@@ -1,0 +1,89 @@
+﻿@using Microsoft.AspNetCore.Hosting
+<style>
+    .img-preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .centerSwitch .mud-switch {
+        margin-right: 0px !important;
+        margin-inline-end: 0px !important;
+        justify-content: center !important;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <div class="form-group mb-4">
+            <label>Exam Code</label>
+            <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView/>
+        </div>
+        <div class="form-group mb-4">
+            <label>Exam Duration</label>
+             <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label>Exam Type</label>
+             <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label>Start Date</label>
+             <MudDatePicker @bind-Date=date class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label>End Date</label>
+             <MudDatePicker @bind-Date=date class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label>Assign To</label>
+            <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Creating Account</MudText>
+            }
+            else
+            {
+                <MudText>Edit</MudText>
+            }
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? MainId { get; set; }
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+
+    [Parameter]
+    public bool IsView { get; set; }
+
+    private bool _processing = false;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    public string text { get; set; } = "Text Dummy";
+
+    public DateTime? date { get; set; } = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+
+    }
+
+
+}

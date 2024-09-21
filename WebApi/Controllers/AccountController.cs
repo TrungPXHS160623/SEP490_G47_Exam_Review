@@ -78,5 +78,17 @@ namespace WebApi.Controllers
                 Token = Constants.JWTToken,
             });
         }
+
+        [HttpGet("ClearJWT")]
+        [AllowAnonymous]
+        public IActionResult ClearJWT()
+        {
+            Constants.JWTToken = string.Empty;
+
+            return Ok(new RequestResponse
+            {
+                IsSuccessful = true,
+            });
+        }
     }
 }
