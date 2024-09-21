@@ -17,7 +17,7 @@ namespace Library.Models
         public int? CampusId { get; set; }
 
         [ForeignKey("UserRole")]
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
 
         public bool IsActive { get; set; }
 

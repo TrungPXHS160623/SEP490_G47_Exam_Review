@@ -56,6 +56,7 @@
 
         if (isAuthenticated)
         {
+            await UpdateName();
             // NavManager.NavigateTo("/Home");
         }
         else
@@ -69,6 +70,7 @@
                 {
                     await customAuthStateProvider.UpdateAuthenticationState(data.Token);
                     // NavManager.NavigateTo("/Home");
+                    await UpdateName();
                 }
             }
             else
@@ -78,9 +80,11 @@
         }
     }
 
-    public void UpdateName(string email)
+    public async Task UpdateName()
     {
-        Email = email;
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        Email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
     }
 
     private async Task<AuthenticationResponse> GetKeys()
