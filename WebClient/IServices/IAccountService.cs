@@ -1,5 +1,4 @@
-﻿using Library.Response;
-using Library.Common;
+﻿using Library.Common;
 using Library.Models;
 using Library.Request;
 
@@ -12,6 +11,7 @@ namespace WebClient.IServices
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
         Task<ResultResponse<Account>> GetUserList();
+        Task<ResultResponse<User>> GetAllUserList();
 
     }
 }
