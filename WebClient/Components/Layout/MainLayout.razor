@@ -16,7 +16,7 @@
                             <label>FPT Education on Coursera - Mentoring Support System</label>
                         </div>
                         <div>
-                            <a href="#" class="text-white me-5">Log out</a>
+                            <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
                             <label>Welcom: @Email</label>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
 
         if (isAuthenticated)
         {
-            NavManager.NavigateTo("/Home");
+            // NavManager.NavigateTo("/Home");
         }
         else
         {
@@ -68,11 +68,14 @@
                 if (customAuthStateProvider != null)
                 {
                     await customAuthStateProvider.UpdateAuthenticationState(data.Token);
-                    NavManager.NavigateTo("/Home");
+                    // NavManager.NavigateTo("/Home");
 
                 }
             }
-            NavManager.NavigateTo("/login");
+            else
+            {
+                NavManager.NavigateTo("/login");
+            }
         }
     }
 
@@ -83,8 +86,15 @@
 
     private async Task<AuthenticationResponse> GetKeys()
     {
-        var response = await Http.GetFromJsonAsync<AuthenticationResponse>("https://localhost:7255/api/Account/GetJWT");
+        var response = await AccountService.GetJWT();
 
         return response;
+    }
+
+    public async Task Logout()
+    {
+        await AccountService.ClearJWT();
+        CustomAuthStateProvider.NotifyUserLogout();
+        NavManager.NavigateTo("/login", true);
     }
 }

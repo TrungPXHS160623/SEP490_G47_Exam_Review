@@ -14,20 +14,38 @@ namespace WebApi.Repository
             this.dbContext = dbContext;
         }
 
-        public async Task<InstructorAssignment> AssignInstructor(InstructorAssignment instructorAssignment)
+        public async Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync()
         {
-            dbContext.InstructorAssignments.Add(instructorAssignment);
-            await dbContext.SaveChangesAsync();
-            return instructorAssignment;
+            return await dbContext.ExamAssignments
+                              .Include(i => i.Exam)
+                              .Include(i => i.AssignedByUser)
+                              .Include(i => i.AssignedTo)
+                              .Include(i => i.AssignmentDate)
+                              .Include(i => i.Status)
+                              .ToListAsync();
+        }
+        public async Task<ExamAssignment?> GetExamAssignmentByIdAsync(int id)
+        {
+            return await dbContext.ExamAssignments
+                             .Include(i => i.Exam)
+                             .Include(i => i.AssignedByUser)
+                             .Include(i => i.AssignedTo)
+                             .Include(i => i.Status)
+                             .FirstOrDefaultAsync(i => i.AssignmentId == id);
         }
 
-        public async Task<IEnumerable<InstructorAssignment>> GetAllInstructorAssignmentsAsync()
+        public async Task<IEnumerable<ExamAssignment>> GetExamAssignments(int instructorId)
         {
-            return await dbContext.InstructorAssignments
-                              .Include(i => i.Exam)
-                              .Include(i => i.AssignedToUser)
-                              .Include(i => i.AssignedTo)
-                              .ToListAsync();
+            return await dbContext.ExamAssignments
+              .Where(ia => ia.AssignedTo == instructorId)
+              .Include(ia => ia.Exam)
+              .ToListAsync();
+        }
+        async Task<ExamAssignment> IExaminerRepository.AssignInstructor(ExamAssignment instructorAssignment)
+        {
+            dbContext.ExamAssignments.Add(instructorAssignment);
+            await dbContext.SaveChangesAsync();
+            return instructorAssignment;
         }
 
         public async Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null)
@@ -70,24 +88,6 @@ namespace WebApi.Repository
             return exams;
         }
 
-        public async Task<InstructorAssignment?> GetInstructorAssignmentByIdAsync(int id)
-        {
-            return await dbContext.InstructorAssignments
-                              .Include(i => i.Exam)
-                              .Include(i => i.AssignedToUser)
-                              .Include(i => i.AssignedTo)
-                              .Include(i => i.Status)
-                              .FirstOrDefaultAsync(i => i.AssignmentId == id);
-        }
-
-        public async Task<IEnumerable<InstructorAssignment>> GetInstructorAssignments(int instructorId)
-        {
-            return await dbContext.InstructorAssignments
-            .Where(ia => ia.AssignedTo == instructorId)
-            .Include(ia => ia.Exam)
-            .ToListAsync();
-        }
-
         public async Task<Exam> UpdateExamStatusAsync(int examId)
         {
             var examStatus = await dbContext.Exams.FindAsync(examId);
@@ -98,5 +98,7 @@ namespace WebApi.Repository
             }
             return examStatus;
         }
+
+
     }
 }

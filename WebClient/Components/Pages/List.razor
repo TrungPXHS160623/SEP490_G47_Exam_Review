@@ -1,4 +1,4 @@
-﻿@page "/AccountList"
+﻿@page "/ExamList"
 
 <style>
     .mud-table-cell {
@@ -30,26 +30,69 @@
 </style>
 
 <div class="container mt-4">
+    <div class="custom-box mb-4">
+        <div class="d-flex align-items-center flex-wrap justify-content-between">
+            <MudSelect @bind-Value="Subject"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+
+                <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
+                <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
+                <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
+            </MudSelect>
+
+             <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+
+            <MudSelect @bind-Value="Status"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+
+                <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
+                <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
+                <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
+            </MudSelect>
+
+            <MudButton Variant="Variant.Filled">Search</MudButton>
+        </div>
+    </div>
+
     <div class="custom-box ">
-        <h4>Account List</h4>
+        <h4>Exam List</h4>
         <div>
             @if (AccList.Count > 0)
             {
                 <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
-                        <MudTh>Id</MudTh>
-                        <MudTh>Email</MudTh>
+                        <MudTh>Exam Code</MudTh>
+                        <MudTh>Status</MudTh>
+                        <MudTh>Duration</MudTh>
+                        <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.AccountId</MudTd>
-                        <MudTd>@context.Email</MudTd>
+                        <MudTd>@context.ExamCode</MudTd>
+                        <MudTd>@context.ExamStatusID</MudTd>
+                        <MudTd>@context.ExamDuration</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync())">Detail</MudButton>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled">Transfer</MudButton>
+                            </div>
+                        </MudTd>
                     </RowTemplate>
-                    <PagerContent>
+@*                     <PagerContent>
                         @if (AccList.Count > 10)
                         {
                             <MudTablePager />
                         }
-                    </PagerContent>
+                    </PagerContent> *@
                 </MudTable>
             }
             else
@@ -61,20 +104,51 @@
 </div>
 
 @code {
-    public List<Account> AccList = new List<Account>();
+
+    public List<Exam> AccList = new List<Exam>();
+
+    public string Subject { get; set; }
+
+    public string Status { get; set; }
+
+    public string ExamCode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-
-        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-        var user = auth.User;
-        var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!);
-
-        var resp = await this.AccountService.GetUserList();
-
-        if (resp.IsSuccessful)
+        for(int i = 0; i < 10; i++)
         {
-            AccList = resp.Items;
+            AccList.Add(new Exam
+                {
+                    ExamCode = "PRN231_Fall24_Q1_201" + i,
+                    ExamStatusID = i % 2 == 0 ? 1 : 2,
+                    ExamDuration = "60:00"
+                });
+        }
+
+    }
+
+    private async Task OpenAddEditDialogAsync(bool isView = true)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ExamDetail>
+        {
+            { x => x.IsView, isView },
+        };
+
+        var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
         }
     }
 }

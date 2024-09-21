@@ -33,18 +33,18 @@ namespace WebApi.Repository
             {
                 AuthenticationResponse response = new AuthenticationResponse();
 
-                var data = await this.DBcontext.Accounts.FirstOrDefaultAsync(x => x.Email!.Equals(request.Email) && x.Password!.Equals(request.Password));
+                //var data = await this.DBcontext.Accounts.FirstOrDefaultAsync(x => x.Email!.Equals(request.Email) && x.Password!.Equals(request.Password));
 
-                if (data != null)
-                {
-                    response.IsSuccessful = true;
-                    response.Token = GenerateToken(data);
-                }
-                else
-                {
-                    response.IsSuccessful = false;
-                    response.Message = "Your Email or Password is Incorrect! Please try again.";
-                }
+                //if (data != null)
+                //{
+                //    response.IsSuccessful = true;
+                //    response.Token = GenerateToken(data);
+                //}
+                //else
+                //{
+                //    response.IsSuccessful = false;
+                //    response.Message = "Your Email or Password is Incorrect! Please try again.";
+                //}
 
                 return response;
             }
@@ -101,13 +101,13 @@ namespace WebApi.Repository
             }
         }
 
-        public string GenerateToken(Account acc)
+        public string GenerateToken(User acc)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var userClaims = new[]
             {
-                new Claim(ClaimTypes.Email, acc.Email!),
+                new Claim(ClaimTypes.Email, acc.Mail!),
                 new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
             };
 
@@ -166,17 +166,16 @@ namespace WebApi.Repository
             }
         }
 
-        private async Task<Account?> FindOrCreateUserAsync(string email)
+        private async Task<User?> FindOrCreateUserAsync(string email)
         {
-            var user = await DBcontext.Accounts.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            var user = await DBcontext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
             if (user == null)
             {
-                user = new Account
+                user = new User
                 {
-                    Email = email,
-                    RoleId = 1
+                    Mail = email,
                 };
-                await DBcontext.Accounts.AddAsync(user);
+                await DBcontext.Users.AddAsync(user);
                 await DBcontext.SaveChangesAsync();
             }
             return user;

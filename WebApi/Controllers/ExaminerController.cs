@@ -59,12 +59,12 @@ namespace WebApi.Controllers
 
         // API to assign an instructor to an exam
         [HttpPost("assign-instructor")]
-        public async Task<IActionResult> AssignInstructor(InstructorAssignmentDto assignmentDto)
+        public async Task<IActionResult> AssignInstructor(ExamAssignmentDto assignmentDto)
         {
             try
             {
                 // Map DTO to InstructorAssignment entity
-                var instructorAssignment = mapper.Map<InstructorAssignment>(assignmentDto);
+                var instructorAssignment = mapper.Map<ExamAssignment>(assignmentDto);
 
                 // Call repository to save it
                 await examinerRepository.AssignInstructor(instructorAssignment);
@@ -79,11 +79,11 @@ namespace WebApi.Controllers
 
         // API to get assignments for a specific instructor
         [HttpGet("get-instructor-assignments/{instructorId}")]
-        public async Task<IActionResult> GetInstructorAssignments(int instructorId)
+        public async Task<IActionResult> GetExamAssignments(int instructorId)
         {
             try
             {
-                var assignments = await examinerRepository.GetInstructorAssignments(instructorId);
+                var assignments = await examinerRepository.GetExamAssignments(instructorId);
 
                 if (assignments == null || !assignments.Any())
                 {
@@ -99,11 +99,11 @@ namespace WebApi.Controllers
         }
         // API to list all InstructorAssignments
         [HttpGet("list")]
-        public async Task<IActionResult> GetAllInstructorAssignments()
+        public async Task<IActionResult> GetAllExamAssignments()
         {
             try
             {
-                var assignments = await examinerRepository.GetAllInstructorAssignmentsAsync();
+                var assignments = await examinerRepository.GetAllExamAssignmentsAsync();
 
                 if (assignments == null || !assignments.Any())
                 {
@@ -111,7 +111,7 @@ namespace WebApi.Controllers
                 }
 
                 // Optionally map to a DTO
-                var assignmentDtos = mapper.Map<IEnumerable<InstructorAssignmentDto>>(assignments);
+                var assignmentDtos = mapper.Map<IEnumerable<ExamAssignmentDto>>(assignments);
 
                 return Ok(assignmentDtos);
             }
@@ -123,11 +123,11 @@ namespace WebApi.Controllers
 
         // API to get InstructorAssignment details by ID
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetInstructorAssignmentById(int id)
+        public async Task<IActionResult> GetExamAssignmentById(int id)
         {
             try
             {
-                var assignment = await examinerRepository.GetInstructorAssignmentByIdAsync(id);
+                var assignment = await examinerRepository.GetExamAssignmentByIdAsync(id);
 
                 if (assignment == null)
                 {
@@ -135,7 +135,7 @@ namespace WebApi.Controllers
                 }
 
                 // Optionally map to a DTO
-                var assignmentDto = mapper.Map<InstructorAssignmentDto>(assignment);
+                var assignmentDto = mapper.Map<ExamAssignmentDto>(assignment);
 
                 return Ok(assignmentDto);
             }
