@@ -168,17 +168,24 @@ namespace WebApi.Repository
 
         private async Task<User?> FindOrCreateUserAsync(string email)
         {
-            var user = await DBcontext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
-            if (user == null)
+            try
             {
-                user = new User
+                var user = await DBcontext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
+                if (user == null)
                 {
-                    Mail = email,
-                };
-                await DBcontext.Users.AddAsync(user);
-                await DBcontext.SaveChangesAsync();
+                    user = new User
+                    {
+                        Mail = email,
+                    };
+                    await DBcontext.Users.AddAsync(user);
+                    await DBcontext.SaveChangesAsync();
+                }
+                return user;
+            } catch(Exception ex)
+            {
+                return null;
             }
-            return user;
+
         }
 
         public async Task<ResultResponse<Account>> GetUserList()
