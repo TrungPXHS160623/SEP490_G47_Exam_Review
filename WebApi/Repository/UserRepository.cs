@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library.Common;
+using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -32,18 +33,24 @@ namespace WebApi.Repository
 
         }
 
-        public async Task<List<User>> GetAllAsync()
+        public async Task<ResultResponse<User>> GetAllAsync()
         {
-            return await dbContext.Users
+            var data = await dbContext.Users
             .Include("Campus").Include("UserRole")
             .ToListAsync();
+
+            return new ResultResponse<User>
+            {
+                IsSuccessful = true,
+                Items = data,
+            };
         }
 
         public async Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
         {
             var users = dbContext.Users.Include(u => u.Campus).Include(u => u.UserRole).AsQueryable();
 
-            if(string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
             {
                 //if (filterOn.Equals("CampusName", StringComparison.OrdinalIgnoreCase))
                 //{

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Library.Models;
 using Library.Models.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.CustomActionFilter;
 using WebApi.IRepository;
@@ -24,17 +23,9 @@ namespace WebApi.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllUser()
         {
-            try
-            {
-                var userDomainModels = await userRepository.GetAllAsync();
-                var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-                return Ok(userDtos);
-            }
-            catch (Exception ex)
-            {
-                // Log exception details for debugging purposes
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving users.");
-            }
+            var data = await this.userRepository.GetAllAsync();
+
+            return Ok(data);
         }
 
 
@@ -43,7 +34,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                
+
                 var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
                 var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
                 return Ok(userDtos);
@@ -55,7 +46,7 @@ namespace WebApi.Controllers
             }
         }
         [HttpGet("get-all-with-filter-and-sort")]
-        public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy , [FromQuery] bool? IsAscending)
+        public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)
         {
             try
             {
@@ -98,7 +89,7 @@ namespace WebApi.Controllers
         {
             try
             {
-               
+
                 var userDomainModel = mapper.Map<User>(addUserRequestDto);
                 await userRepository.CreateAsync(userDomainModel);
 

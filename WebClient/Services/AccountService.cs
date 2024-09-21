@@ -43,7 +43,14 @@ namespace WebClient.Services
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7255/api/User/get-all");
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
 
@@ -57,7 +64,10 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<User> { IsSuccessful = false };
+                return new ResultResponse<User>
+                {
+                    IsSuccessful = false,
+                };
             }
         }
 
