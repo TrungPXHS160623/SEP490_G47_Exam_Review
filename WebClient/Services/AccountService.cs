@@ -18,6 +18,27 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
+        public async Task<RequestResponse> ClearJWT()
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Account/ClearJWT");
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+
+            return requestResponse;
+        }
+
         public async Task<ResultResponse<User>> GetAllUserList()
         {
             try
@@ -38,6 +59,20 @@ namespace WebClient.Services
                 snackbar.Add(ex.Message, Severity.Error);
                 return new ResultResponse<User> { IsSuccessful = false };
             }
+        }
+
+        public async Task<AuthenticationResponse> GetJWT()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Account/GetJWT");
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+
+            return requestResponse;
         }
 
         public async Task<ResultResponse<Account>> GetUserList()

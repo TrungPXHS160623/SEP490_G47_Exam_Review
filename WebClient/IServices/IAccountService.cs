@@ -13,5 +13,8 @@ namespace WebClient.IServices
         Task<ResultResponse<Account>> GetUserList();
         Task<ResultResponse<User>> GetAllUserList();
 
+        Task<AuthenticationResponse> GetJWT();
+        Task<RequestResponse> ClearJWT();
+
     }
 }
