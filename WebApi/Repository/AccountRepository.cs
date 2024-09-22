@@ -1,18 +1,14 @@
-﻿using Azure.Core;
+﻿using Library.Common;
+using Library.Models;
+using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WebApi.IRepository;
-using Library.Common;
-using Library.Models;
-using Library.Request;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Newtonsoft.Json;
-using System.Data;
-using Azure;
-using Newtonsoft.Json.Linq;
+using WebApi.IRepository;
 
 namespace WebApi.Repository
 {
@@ -181,7 +177,8 @@ namespace WebApi.Repository
                     await DBcontext.SaveChangesAsync();
                 }
                 return user;
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }

@@ -43,7 +43,14 @@ namespace WebClient.Services
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7255/api/User/get-all");
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
 
@@ -57,7 +64,74 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<User> { IsSuccessful = false };
+                return new ResultResponse<User>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter?filterOn={filterOn}&filterQuery={filterQuery}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<User>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<User>> GetByIdAsync(int id)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-by-id/{id}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<User>
+                {
+                    IsSuccessful = false,
+                };
             }
         }
 
@@ -155,5 +229,35 @@ namespace WebClient.Services
                 return new RequestResponse { IsSuccessful = false };
             }
         }
+
+        public async Task<RequestResponse> UpdateAsync(int id, User user)
+        {
+            try
+            {
+                var userJson = JsonContent.Create(user);
+
+                HttpResponseMessage response = await _httpClient.PutAsync($"api/User/update/{id}", userJson);
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "An error occurred." };
+            }
+        }
+
     }
 }

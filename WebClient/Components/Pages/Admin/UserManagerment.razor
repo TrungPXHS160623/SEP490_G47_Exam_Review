@@ -1,6 +1,6 @@
 ﻿@page "/usermanagement"
 @inject IAccountService accountService
-
+@inject NavigationManager NavigationManager
 <h3>User Management</h3>
 
 <div>
@@ -24,13 +24,14 @@
         {
             @foreach (var user in users)
             {
-                <tr>
+                <tr @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">
+
                     <td>@user.Mail</td>
                     <td>@user.IsActive</td>
                     <td>@user.UserRole?.RoleName</td>
                     <td>@user.Campus?.CampusName</td>
                     <td>
-                        <button class="btn btn-warning" @onclick="() => UpdateUser(user.UserId)">Update</button>
+                        <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
                     </td>
                 </tr>
             }
@@ -49,22 +50,38 @@
 
     private async Task FetchUsers()
     {
-        var response = await accountService.GetAllUserList();
-        if (response.IsSuccessful)
+        // Check if there is search text to filter
+        if (!string.IsNullOrWhiteSpace(searchText))
         {
-            users = response.Items;
+            var response = await accountService.GetAllWithFilterAsync("Mail", searchText);
+            if (response.IsSuccessful)
+            {
+                users = response.Items;
+            }
+        }
+        else
+        {
+            var response = await accountService.GetAllUserList();
+            if (response.IsSuccessful)
+            {
+                users = response.Items;
+            }
         }
     }
 
+    private void EditUser(int UserId)
+    {
+        NavigationManager.NavigateTo($"/edituser/{UserId}");
+    }
     private void AddNewUser()
     {
         // Redirect to a page or modal for adding a new user
     }
 
-    private async Task UpdateUser(int id)
+   
+    private void ViewUserDetail(int userId)
     {
-        // Redirect to a page or modal for updating user
+        NavigationManager.NavigateTo($"/userdetails/{userId}");
     }
-
    
 }

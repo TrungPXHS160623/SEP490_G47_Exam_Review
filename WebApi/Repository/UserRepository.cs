@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library.Common;
+using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -32,31 +33,36 @@ namespace WebApi.Repository
 
         }
 
-        public async Task<List<User>> GetAllAsync()
+        public async Task<ResultResponse<User>> GetAllAsync()
         {
-            return await dbContext.Users
+            var data = await dbContext.Users
             .Include("Campus").Include("UserRole")
             .ToListAsync();
+
+            return new ResultResponse<User>
+            {
+                IsSuccessful = true,
+                Items = data,
+            };
         }
 
-        public async Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
         {
             var users = dbContext.Users.Include(u => u.Campus).Include(u => u.UserRole).AsQueryable();
 
-            if(string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
             {
-                //if (filterOn.Equals("CampusName", StringComparison.OrdinalIgnoreCase))
-                //{
-                //    users = users.Where(x => x.Campus.CampusName.Contains(filterQuery));
-                //}
                 if (filterOn.Equals("Mail", StringComparison.OrdinalIgnoreCase))
                 {
                     users = users.Where(x => x.Mail.Contains(filterQuery));
                 }
             }
-
-
-            return await users.ToListAsync();
+            var userList = await users.ToListAsync();
+            return new ResultResponse<User>
+            {
+                IsSuccessful = true,
+                Items = userList,
+            };
         }
 
         public async Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
@@ -84,15 +90,6 @@ namespace WebApi.Repository
             return await users.ToListAsync();
         }
 
-
-        public async Task<User?> GetByIdAsync(int id)
-        {
-            return await dbContext.Users
-           .Include("Campus")
-           .Include("UserRole")
-           .FirstOrDefaultAsync(x => x.UserId == id);
-        }
-
         public async Task<User?> UpdateAsync(int id, User user)
         {
             var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
@@ -108,6 +105,49 @@ namespace WebApi.Repository
 
             await dbContext.SaveChangesAsync();
             return existingUser;
+        }
+
+        Task<RequestResponse> IUserRepository.CreateAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        async Task<ResultResponse<User>> IUserRepository.GetByIdAsync(int id)
+        {
+            var data = await dbContext.Users
+           .Include("Campus")
+           .Include("UserRole")
+           .FirstOrDefaultAsync(x => x.UserId == id);
+            return new ResultResponse<User>
+            {
+                IsSuccessful = true,
+                Item = data,
+            };
+        }
+
+        async Task<RequestResponse> IUserRepository.UpdateAsync(int id, User user)
+        {
+            RequestResponse response = new RequestResponse();
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (existingUser == null)
+            {
+                return null;
+
+            }
+            existingUser.Mail = user.Mail;
+            existingUser.RoleId = user.RoleId;
+            existingUser.CampusId = user.CampusId;
+            existingUser.IsActive = user.IsActive;
+
+            await dbContext.SaveChangesAsync();
+            response.IsSuccessful = true;
+
+            response.Message = "Register successfuly";
+            return new RequestResponse
+            {
+                IsSuccessful = true,
+                Message = response.Message
+            };
         }
     }
 }
