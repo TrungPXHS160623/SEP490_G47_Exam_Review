@@ -65,22 +65,9 @@ namespace WebApi.Controllers
         [HttpGet("get-by-id/{id:int}")]
         public async Task<IActionResult> GetUserById([FromRoute] int id)
         {
-            try
-            {
-                var userDomainModel = await userRepository.GetByIdAsync(id);
-                if (userDomainModel == null)
-                {
-                    return NotFound("User not found.");
-                }
+            var data = await this.userRepository.GetByIdAsync(id);
 
-                var userDto = mapper.Map<UserDto>(userDomainModel);
-                return Ok(userDto);
-            }
-            catch (Exception ex)
-            {
-                // Log exception details for debugging purposes
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the user.");
-            }
+            return Ok(data);
         }
 
         [HttpPost("create")]
@@ -89,14 +76,13 @@ namespace WebApi.Controllers
         {
             try
             {
-
                 var userDomainModel = mapper.Map<User>(addUserRequestDto);
                 await userRepository.CreateAsync(userDomainModel);
 
                 var userDto = mapper.Map<UserDto>(userDomainModel);
                 return CreatedAtAction(nameof(GetUserById), new { id = userDto.UserId }, new { message = "User created successfully.", user = userDto });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the user.");
             }
@@ -106,44 +92,23 @@ namespace WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequestDto updateUserRequestDto)
         {
-            try
+            var userDomainModel = mapper.Map<User>(updateUserRequestDto);
+            var updatedUser = await userRepository.UpdateAsync(id, userDomainModel);
+            if (updatedUser == null)
             {
-                var userDomainModel = mapper.Map<User>(updateUserRequestDto);
-                var updatedUser = await userRepository.UpdateAsync(id, userDomainModel);
-
-                if (updatedUser == null)
-                {
-                    return NotFound("User not found.");
-                }
-
-                var userDto = mapper.Map<UserDto>(updatedUser);
-                return Ok(new { message = "User updated successfully.", user = userDto });
+                return NotFound("User not found.");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the user.");
-            }
+            var userDto = mapper.Map<UserDto>(updatedUser);
+            return Ok(new { message = "User updated successfully.", user = userDto });
         }
 
         [HttpDelete("Delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            try
-            {
-                var deletedUserDomainModel = await userRepository.DeleteAsync(id);
 
-                if (deletedUserDomainModel == null)
-                {
-                    return NotFound("User not found.");
-                }
-
-                var userDto = mapper.Map<UserDto>(deletedUserDomainModel);
-                return Ok(new { message = "User deleted successfully.", user = userDto });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the user.");
-            }
+            var deletedUserDomainModel = await userRepository.DeleteAsync(id);
+            var userDto = mapper.Map<UserDto>(deletedUserDomainModel);
+            return Ok(new { message = "User deleted successfully.", user = userDto });
         }
     }
 }
