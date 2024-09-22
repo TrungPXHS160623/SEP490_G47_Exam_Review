@@ -16,6 +16,7 @@
             <th>Is Active</th>
             <th>Role</th>
             <th>Campus</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,9 @@
                     <td>@user.IsActive</td>
                     <td>@user.UserRole?.RoleName</td>
                     <td>@user.Campus?.CampusName</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
+                    </td>
                 </tr>
             }
         }
@@ -65,7 +69,10 @@
         }
     }
 
-
+    private void EditUser(int UserId)
+    {
+        NavigationManager.NavigateTo($"/edituser/{UserId}");
+    }
     private void AddNewUser()
     {
         // Redirect to a page or modal for adding a new user

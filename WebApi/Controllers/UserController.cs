@@ -32,18 +32,9 @@ namespace WebApi.Controllers
         [HttpGet("get-all-with-filter")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
-            try
-            {
+            var data = await this.userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
 
-                var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
-                var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-                return Ok(userDtos);
-            }
-            catch (Exception ex)
-            {
-                // Log exception details for debugging purposes
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving users.");
-            }
+            return Ok(data);
         }
         [HttpGet("get-all-with-filter-and-sort")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)

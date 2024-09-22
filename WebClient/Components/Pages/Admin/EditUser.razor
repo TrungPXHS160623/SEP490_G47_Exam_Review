@@ -4,7 +4,11 @@
 
 <h3>Edit User</h3>
 
-@if (user != null)
+@if (user == null)
+{
+    <p>Loading user details...</p>
+}
+else
 {
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit">
         <div>
@@ -15,7 +19,6 @@
             <label>Role:</label>
             <InputText @bind-Value="user.UserRole.RoleName" />
         </div>
-
         <div>
             <label>Campus:</label>
             <InputText @bind-Value="user.Campus.CampusName" />
@@ -26,15 +29,17 @@
         </div>
         <button type="submit" class="btn btn-primary">Update User</button>
     </EditForm>
-}
-else
-{
-    <p>Loading user details...</p>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
 }
 
 @code {
     [Parameter] public int UserId { get; set; }
-    private User user = new User();
+    private User? user;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,22 +48,41 @@ else
 
     private async Task FetchUserDetails()
     {
-        var result = await accountService.GetByIdAsync(UserId);
-        if (result != null)
+        try
         {
-            user = result.Item;
+            var result = await accountService.GetByIdAsync(UserId);
+            if (result != null)
+            {
+                user = result.Item;
+            }
+            else
+            {
+                errorMessage = "User not found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error fetching user details: {ex.Message}";
         }
     }
 
     private async Task HandleValidSubmit()
     {
-        var result = await accountService.UpdateAsync(UserId, user);
-        if (result.IsSuccessful)
+        try
         {
-            NavigationManager.NavigateTo("/usermanagement");
+            var result = await accountService.UpdateAsync(UserId, user);
+            if (result.IsSuccessful)
+            {
+                NavigationManager.NavigateTo("/usermanagement");
+            }
+            else
+            {
+                errorMessage = "Update failed. Please try again.";
+            }
         }
-        else
+        catch (Exception ex)
         {
+            errorMessage = $"Error updating user: {ex.Message}";
         }
     }
 }

@@ -82,7 +82,7 @@ namespace WebClient.Services
                 }
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter?filterOn={filterOn}&filterQuery={filterQuery}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
 
