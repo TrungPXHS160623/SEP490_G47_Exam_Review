@@ -1,51 +1,77 @@
 ﻿@page "/usermanagement"
 @inject IAccountService accountService
 @inject NavigationManager NavigationManager
-<h3>User Management</h3>
+
+<style>
+    td{
+        vertical-align:middle
+    }
+</style>
 
 <div>
-    <input type="text" @bind="searchText" placeholder="Search users" />
-    <button class="btn btn-primary" @onclick="FetchUsers">Search</button>
-    <button class="btn btn-success" @onclick="AddNewUser">Add New User</button>
+    <span class="text-info" style="cursor:pointer;">Home</span>
+    <span>></span>
+    <span>User Management</span>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Is Active</th>
-            <th>Role</th>
-            <th>Campus</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (users != null)
-        {
-            @foreach (var user in users)
-            {
-                <tr @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">
+<div class="w-50" style="border-top:1px solid #d9d8d8;border-bottom:1px solid #d9d8d8">
+    <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
+        <label class="me-5">User: </label>
+        <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
+        <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
+        <span class="text-info col-auto" style="cursor:pointer;" @onclick="AddNewUser">Add New User</span>
+    </div>
 
-                    <td>@user.Mail</td>
-                    <td>@user.IsActive</td>
-                    <td>@user.UserRole?.RoleName</td>
-                    <td>@user.Campus?.CampusName</td>
-                    <td>
-                        <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
-                    </td>
+    @if (users.Count > 0)
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Is Active</th>
+                    <th>Role</th>
+                    <th>Campus</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                @if (users != null)
+                {
+                    @foreach (var user in users)
+                    {
+                        <tr>
+
+                            <td>
+                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Mail</div>
+                            </td>
+                            <td>
+                                <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
+                            </td>
+                            <td>@user.UserRole?.RoleName</td>
+                            <td>@user.Campus?.CampusName</td>
+                            <td>
+                                <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 @code {
-    private List<User> users;
+    private List<User> users = new List<User>();
     private string searchText;
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchUsers();
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            await FetchUsers();
+        }
     }
 
     private async Task FetchUsers()
@@ -78,10 +104,10 @@
         // Redirect to a page or modal for adding a new user
     }
 
-   
+
     private void ViewUserDetail(int userId)
     {
         NavigationManager.NavigateTo($"/userdetails/{userId}");
     }
-   
+
 }
