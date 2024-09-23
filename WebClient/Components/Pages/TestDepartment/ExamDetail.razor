@@ -71,6 +71,8 @@
 
     private bool _processing = false;
 
+    private string ExcuteText { get; set; } = string.Empty;
+
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
     private void Cancel() => MudDialog.Cancel();
@@ -81,7 +83,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        ExcuteText = "Edit";
     }
 
+    public async Task Excute()
+    {
+        if (IsView)
+        {
+            IsView = false;
+            ExcuteText = "Save Change";
+        } else
+        {
+
+        }
+    }
+
+    public async Task Back()
+    {
+        if (IsView)
+        {
+            MudDialog.Cancel();
+        }
+        else
+        {
+            IsView = true;
+            ExcuteText = "Edit";
+        }
+    }
 }
