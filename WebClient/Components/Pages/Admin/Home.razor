@@ -16,8 +16,17 @@
     <div class="action-item">
         <NavLink href="/usermanagement">User management</NavLink>
     </div>
-    <div class="action-item flex-grow-1">
+    <div class="action-item">
         <NavLink @onclick="GoToHistory">History</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToExamList">Exam List</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToHeadDepartmentList">Exam List</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToLectureList">Exam List</NavLink>
     </div>
 </div>
 
@@ -47,17 +56,23 @@
         }
     }
 
-    public void Add()
-    {
-        b = b + 1;
-    }
-    public void Minus()
-    {
-        b = b - 1;
-    }
-
-    public void GoToDetail(int quizId)
+    public void GoToHistory()
     {
         NavManager.NavigateTo("/Admin/History");
+    }
+
+    public void GoToExamList()
+    {
+        NavManager.NavigateTo("/TestDepartment/ExamList");
+    }
+
+    public void GoToHeadDepartmentList()
+    {
+        NavManager.NavigateTo("/HeadDepartment/ExamList");
+    }
+
+    public void GoToLectureList()
+    {
+        NavManager.NavigateTo("/Lecture/ExamList");
     }
 }
