@@ -1,4 +1,4 @@
-﻿@page "/ExamList"
+﻿@page "/TestDepartment/ExamList"
 
 <style>
     .mud-table-cell {
@@ -30,7 +30,7 @@
 </style>
 
 <div class="container mt-4">
-    <div>
+    <div class="mb-4">
         <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".xlsx">
             <ActivatorContent>
                 <MudButton Variant="Variant.Filled"
@@ -75,12 +75,20 @@
         </div>
     </div>
 
-    <div class="custom-box ">
-        <h4>Exam List</h4>
+    <div class="custom-box">
+        <div class="d-flex align-items-center justify-content-between">
+             <div>
+                 <h4>Exam List</h4>
+                 <h6>Selected Exam: @selectedItems.Count</h6>
+             </div>
+             <div>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedItems.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
+             </div>
+        </div>
         <div>
             @if (AccList.Count > 0)
             {
-                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                <MudTable T=Exam @ref="_table" Items="@AccList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedItems">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Status</MudTh>
@@ -115,10 +123,18 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
 
     public List<Exam> AccList = new List<Exam>();
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    private MudTable<Exam> _table;
+
+    private HashSet<Exam> selectedItems = new HashSet<Exam>();
+
+    private string _selectedItemText = "No exam is selected";
 
     public string Subject { get; set; }
 
@@ -138,6 +154,13 @@
                 });
         }
 
+        if (Layout != null)
+        {
+            Layout.Header = "Home";
+            Layout.HeaderLink = "/Home";
+            Layout.SubHeader = "Exam Assign List";
+            Layout.RefreshLayout();
+        }
     }
 
     private async Task OpenAddEditDialogAsync(bool isView = true)
@@ -169,4 +192,5 @@
     {
         _files.Add(file);
     }
+
 }
