@@ -1,0 +1,76 @@
+﻿@page "/home"
+
+<style>
+    .action-item{
+        border-bottom: 1px solid #d9d8d8;
+        padding:25px 40px 25px 0px;
+        font-size:large
+    } 
+
+    .action-item a {
+        color: dodgerblue !important;
+    }
+</style>
+
+<div>
+    <div class="action-item">
+        <a href="#">Campus</a>
+    </div>
+    <div class="action-item">
+        <a href="#">Setup for the new semester</a>
+    </div>
+    <div class="action-item">
+        <a href="#">Report</a>
+    </div>
+    <div class="action-item">
+        <NavLink href="/usermanagement">User management</NavLink>
+    </div>
+    <div class="action-item">
+        <a href="#">Remove data</a>
+    </div>
+    <div class="action-item">
+        <a href="#">Login as student</a>
+    </div>
+    <div class="action-item">
+        <a href="#">Login as Mentor</a>
+    </div>
+    <div class="action-item">
+        <a href="#">Mentors List</a>
+    </div>
+    <div class="action-item" style="border:none">
+        <button @onclick="GoToHistory">View feedback</button>
+    </div>
+</div>
+
+
+@code {
+    public string a;
+
+    public int b = 0;
+
+    [CascadingParameter] public MainLayout Layout { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        if (auth != null)
+        {
+            var user = auth.User;
+            var emailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+        }
+    }
+
+    public void Add()
+    {
+        b = b + 1;
+    }
+    public void Minus()
+    {
+        b = b - 1;
+    }
+
+    public void GoToHistory()
+    {
+        NavManager.NavigateTo("/Admin/History/");
+    }
+}

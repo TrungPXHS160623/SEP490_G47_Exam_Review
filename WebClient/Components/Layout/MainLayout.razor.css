@@ -61,3 +61,8 @@ main {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.sub-header-margin {
+    margin-left: 10px;
+    padding-right: 10px;
+}
