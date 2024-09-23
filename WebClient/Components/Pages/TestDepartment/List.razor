@@ -1,0 +1,172 @@
+﻿@page "/ExamList"
+
+<style>
+    .mud-table-cell {
+        border: none !important;
+        text-align: center;
+    }
+
+    .mud-table-head .mud-table-row .mud-table-cell {
+        border-bottom: 1px solid grey !important;
+        font-size: 1.2rem;
+    }
+
+    .mud-table {
+        box-shadow: none !important;
+    }
+
+    .mud-table-root {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .mud-table-head .mud-table-row {
+        box-shadow: 0 5px 10px #e1e5ee;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 99;
+    }
+</style>
+
+<div class="container mt-4">
+    <div>
+        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".xlsx">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                    Import Data
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+    </div>
+    <div class="custom-box mb-4">
+        <div class="d-flex align-items-center flex-wrap justify-content-between">
+            <MudSelect @bind-Value="Subject"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+
+                <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
+                <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
+                <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
+            </MudSelect>
+
+             <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+
+            <MudSelect @bind-Value="Status"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+
+                <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
+                <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
+                <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
+            </MudSelect>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
+        </div>
+    </div>
+
+    <div class="custom-box ">
+        <h4>Exam List</h4>
+        <div>
+            @if (AccList.Count > 0)
+            {
+                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Exam Code</MudTh>
+                        <MudTh>Status</MudTh>
+                        <MudTh>Duration</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.ExamCode</MudTd>
+                        <MudTd>@context.ExamStatusID</MudTd>
+                        <MudTd>@context.ExamDuration</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync())">Detail</MudButton>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled">Transfer</MudButton>
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+@*                     <PagerContent>
+                        @if (AccList.Count > 10)
+                        {
+                            <MudTablePager />
+                        }
+                    </PagerContent> *@
+                </MudTable>
+            }
+            else
+            {
+                <p>No Data</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public List<Exam> AccList = new List<Exam>();
+
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    public string Subject { get; set; }
+
+    public string Status { get; set; }
+
+    public string ExamCode { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        for(int i = 0; i < 10; i++)
+        {
+            AccList.Add(new Exam
+                {
+                    ExamCode = "PRN231_Fall24_Q1_201" + i,
+                    ExamStatusID = i % 2 == 0 ? 1 : 2,
+                    ExamDuration = "60:00"
+                });
+        }
+
+    }
+
+    private async Task OpenAddEditDialogAsync(bool isView = true)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ExamDetail>
+        {
+            { x => x.IsView, isView },
+        };
+
+        var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+        }
+    }
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        _files.Add(file);
+    }
+}

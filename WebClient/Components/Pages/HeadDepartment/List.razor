@@ -129,26 +129,26 @@
 
     private async Task OpenAddEditDialogAsync(bool isView = true)
     {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                BackdropClick = false,
+        // var options = new DialogOptions
+        //     {
+        //         CloseOnEscapeKey = true,
+        //         MaxWidth = MaxWidth.Small,
+        //         FullWidth = true,
+        //         BackdropClick = false,
 
-            };
+        //     };
 
-        var parameters = new DialogParameters<ExamDetail>
-        {
-            { x => x.IsView, isView },
-        };
+        // var parameters = new DialogParameters<ExamDetail>
+        // {
+        //     { x => x., isView },
+        // };
 
-        var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);
+        // var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);
 
-        var result = await dialog.Result;
+        // var result = await dialog.Result;
 
-        if (!result.Canceled)
-        {
-        }
+        // if (!result.Canceled)
+        // {
+        // }
     }
 }
