@@ -1,0 +1,121 @@
+﻿@page "/Admin/History"
+
+<style>
+    .mud-table-cell {
+        border: none !important;
+        text-align: center;
+    }
+
+    .mud-table-head .mud-table-row .mud-table-cell {
+        border-bottom: 1px solid grey !important;
+        font-size: 1.2rem;
+    }
+
+    .mud-table {
+        box-shadow: none !important;
+    }
+
+    .mud-table-root {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .mud-table-head .mud-table-row {
+        box-shadow: 0 5px 10px #e1e5ee;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 99;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="custom-box mb-4">
+        <div class="d-flex align-items-center flex-wrap justify-content-between">
+            <MudTextField @bind-Value="UserName" Label="User: " Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+
+            <MudDatePicker Label="From" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > date2?.Date) ||(dt > DateTime.Now))" @bind-Date="date1"
+                           DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft"
+                           Margin="Margin.Dense" Clearable Mask="@(new DateMask("yyyy-MM-dd"))" />
+            <h3 class="pl-3">~</h3>
+            <MudDatePicker Label="To" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < date1?.Date )||( dt.Date > DateTime.Now.Date))"
+                           @bind-Date="date2" DateFormat="yyyy-MM-dd" AnchorOrigin="Origin.BottomLeft"
+                           Variant="Variant.Outlined" Margin="Margin.Dense" Clearable Mask="@(new DateMask("yyyy-MM-dd"))" Class="ms-4 me-4"/>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
+        </div>
+    </div>
+
+    <div class="custom-box ">
+        <h4>History List</h4>
+        <div>
+            @if (AccList.Count > 0)
+            {
+                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Exam Code</MudTh>
+                        <MudTh>Status</MudTh>
+                        <MudTh>Duration</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.ExamCode</MudTd>
+                        <MudTd>@context.ExamStatusID</MudTd>
+                        <MudTd>@context.ExamDuration</MudTd>
+                    </RowTemplate>
+                    @*                     <PagerContent>
+                @if (AccList.Count > 10)
+                {
+                <MudTablePager />
+                }
+                </PagerContent> *@
+                </MudTable>
+            }
+            else
+            {
+                <p>No Data</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public MainLayout Layout { get; set; }
+
+    public List<Exam> AccList = new List<Exam>();
+
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    public string UserName { get; set; }
+
+    public DateTime? date1 { get; set; }
+
+    public DateTime? date2 { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            AccList.Add(new Exam
+                {
+                    ExamCode = "PRN231_Fall24_Q1_201" + i,
+                    ExamStatusID = i % 2 == 0 ? 1 : 2,
+                    ExamDuration = "60:00"
+                });
+        }
+
+        Layout.Header = "Home";
+        Layout.SubHeader = "User History";
+        Layout.RefreshLayout();
+    }
+
+    MudBlazor.Converter<DateTime?, string> ConvertDate(string format, DateTime max)
+    {
+        return new()
+            {
+                GetFunc = (e) => DateTime.TryParse(e, out DateTime data) ? data > max ? max : data : null,
+                SetFunc = (e) => e?.ToString(format) ?? string.Empty
+            };
+    }
+}

@@ -1,0 +1,50 @@
+﻿@page "/home"
+
+<style>
+    .action-item{
+        padding:25px 40px 25px 0px;
+        font-size:large
+    } 
+
+    .action-item a {
+        color: dodgerblue !important;
+    }
+</style>
+
+<div class="d-flex">
+    <div class="action-item flex-grow-1">
+        <NavLink href="/usermanagement">User management</NavLink>
+    </div>
+</div>
+
+
+@code {
+    public string a;
+
+    public int b = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        if (auth != null)
+        {
+            var user = auth.User;
+            var emailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+        }
+    }
+
+    public void Add()
+    {
+        b = b + 1;
+    }
+    public void Minus()
+    {
+        b = b - 1;
+    }
+
+    public void GoToDetail(int quizId)
+    {
+        NavManager.NavigateTo("/home/detail/" + quizId);
+    }
+}

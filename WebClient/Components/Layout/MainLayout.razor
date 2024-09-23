@@ -6,41 +6,56 @@
 <MudSnackbarProvider />
 <PageTitle>Quiz Review</PageTitle>
 <MudPopoverProvider />
-<AuthorizeView>
-    <Authorized>
-        <div class="page">
-            <main>
-                <div class="top-row px-4">
-                    <div class="d-flex justify-content-between align-items-center text-white">
-                        <div>
-                            <label>Exam Review System</label>
-                        </div>
-                        <div>
-                            <label class="me-5">Welcom: @Email</label>
-                            <a @onclick=@Logout class="text-white " style="cursor:pointer">Log out</a>
+
+<MudLayout>
+    <AuthorizeView>
+        <Authorized>
+            <div class="page">
+                <main>
+                    <div class="top-row px-4">
+                        <div class="d-flex justify-content-between align-items-center text-white">
+                            <div>
+                                <label>Exam Review System</label>
+                            </div>
+                            <div>
+                                <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
+                                <label>Welcom: @Email</label>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="content px-5">
+                        <div style="border-bottom:1px solid #d9d8d8;" class="d-flex align-items-center pb-5">
+                            <span>@Header</span>
+                            @if (!string.IsNullOrEmpty(SubHeader))
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
+                            }
+                            <span>@SubHeader</span>
+                        </div>
+                    </div>
+                    <article class="content px-5">
+                        <CascadingValue Value="this">
+                            @Body
+                        </CascadingValue>
+                    </article>
 
-                <article class="content px-5">
+                    <div class="content px-5">
+                        <div style="border-top:1px solid #d9d8d8;" class="fs-5">
+                            <label class=" pt-4">© 2023 - FPT Education | </label><a href="#">About us</a>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <main>
+                <article class="content px-4">
                     @Body
                 </article>
-                <div class="content px-5" >
-                    <div style="border-top:1px solid #d9d8d8;" class="fs-5">
-                        <label class=" pt-4">© 2024 - FPT Education | </label><a href="#">About us</a>
-                    </div>
-                </div>
             </main>
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <main>
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
-    </NotAuthorized>
-</AuthorizeView>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudLayout>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
@@ -54,6 +69,10 @@
     public HttpContext? HttpContext { get; set; }
 
     public string Email { get; set; } 
+
+    public string Header { get; set; } 
+
+    public string SubHeader { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,5 +123,10 @@
         await AccountService.ClearJWT();
         CustomAuthStateProvider.NotifyUserLogout();
         NavManager.NavigateTo("/login", true);
+    }
+
+    public void RefreshLayout()
+    {
+        this.StateHasChanged();
     }
 }
