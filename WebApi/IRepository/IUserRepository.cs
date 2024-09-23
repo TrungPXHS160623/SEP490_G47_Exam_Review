@@ -15,9 +15,9 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<User>> GetByIdAsync(int id);
 
-        Task<RequestResponse> UpdateAsync(int id, User user);
+        Task<RequestResponse> UpdateAsync(User user);
 
-        Task<User?> DeleteAsync(int id);
+        Task<RequestResponse> DeleteAsync(int id);
 
 
 
