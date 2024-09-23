@@ -16,7 +16,8 @@ namespace WebClient.IServices
         Task<AuthenticationResponse> GetJWT();
         Task<RequestResponse> ClearJWT();
         Task<ResultResponse<User>> GetByIdAsync(int id);
-        Task<RequestResponse> UpdateAsync(int id, User user);
+        Task<RequestResponse> UpdateAsync(User user);
+        Task<RequestResponse> DeleteAsync(int id);
 
     }
 }

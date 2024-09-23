@@ -32,9 +32,18 @@ namespace WebApi.Controllers
         [HttpGet("get-all-with-filter")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
-            var data = await this.userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
+            try
+            {
 
-            return Ok(data);
+                var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
+                var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
+                return Ok(userDtos);
+            }
+            catch (Exception ex)
+            {
+                // Log exception details for debugging purposes
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving users.");
+            }
         }
         [HttpGet("get-all-with-filter-and-sort")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)
@@ -79,27 +88,18 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPost("update/{id:int}")]
-        [ValidateModel]
-        public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequestDto updateUserRequestDto)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateUser(User updateUserRequestDto)
         {
-            var userDomainModel = mapper.Map<User>(updateUserRequestDto);
-            var updatedUser = await userRepository.UpdateAsync(id, userDomainModel);
-            if (updatedUser == null)
-            {
-                return NotFound("User not found.");
-            }
-            var userDto = mapper.Map<UserDto>(updatedUser);
-            return Ok(new { message = "User updated successfully.", user = userDto });
+            var updatedUser = await userRepository.UpdateAsync(updateUserRequestDto);
+            return Ok(updatedUser);
         }
 
         [HttpDelete("Delete/{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete(int id)
         {
-
-            var deletedUserDomainModel = await userRepository.DeleteAsync(id);
-            var userDto = mapper.Map<UserDto>(deletedUserDomainModel);
-            return Ok(new { message = "User deleted successfully.", user = userDto });
+            var deleteUser = await userRepository.DeleteAsync(id);
+            return Ok(deleteUser);
         }
     }
 }

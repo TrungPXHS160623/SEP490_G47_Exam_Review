@@ -20,19 +20,6 @@ namespace WebApi.Repository
             return user;
         }
 
-        public async Task<User?> DeleteAsync(int id)
-        {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if (existingUser == null)
-            {
-                return null;
-            }
-            dbContext.Users.Remove(existingUser);
-            dbContext.SaveChangesAsync();
-            return existingUser;
-
-        }
-
         public async Task<ResultResponse<User>> GetAllAsync()
         {
             var data = await dbContext.Users
@@ -90,13 +77,12 @@ namespace WebApi.Repository
             return await users.ToListAsync();
         }
 
-        public async Task<User?> UpdateAsync(int id, User user)
+        public async Task<RequestResponse> UpdateAsync(User user)
         {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
             if (existingUser == null)
             {
                 return null;
-
             }
             existingUser.Mail = user.Mail;
             existingUser.RoleId = user.RoleId;
@@ -104,12 +90,36 @@ namespace WebApi.Repository
             existingUser.IsActive = user.IsActive;
 
             await dbContext.SaveChangesAsync();
-            return existingUser;
+            return new RequestResponse
+            {
+                IsSuccessful = true,
+                Message = " update success "
+            };
         }
 
         Task<RequestResponse> IUserRepository.CreateAsync(User user)
         {
             throw new NotImplementedException();
+        }
+
+        async Task<RequestResponse> IUserRepository.DeleteAsync(int id)
+        {
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (existingUser == null)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = "Fail"
+                };
+            }
+            dbContext.Users.RemoveRange(existingUser);
+            await dbContext.SaveChangesAsync();
+            return new RequestResponse
+            {
+                IsSuccessful = true,
+                Message = " update success "
+            };
         }
 
         async Task<ResultResponse<User>> IUserRepository.GetByIdAsync(int id)
@@ -125,10 +135,10 @@ namespace WebApi.Repository
             };
         }
 
-        async Task<RequestResponse> IUserRepository.UpdateAsync(int id, User user)
+        async Task<RequestResponse> IUserRepository.UpdateAsync(User user)
         {
             RequestResponse response = new RequestResponse();
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
             if (existingUser == null)
             {
                 return null;

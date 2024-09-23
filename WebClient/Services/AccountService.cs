@@ -39,6 +39,39 @@ namespace WebClient.Services
             return requestResponse;
         }
 
+        public async Task<RequestResponse> DeleteAsync(int id)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+                HttpResponseMessage response = await _httpClient.DeleteAsync($"api/User/Delete/{id}");
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "An error occurred." };
+            }
+        }
+
         public async Task<ResultResponse<User>> GetAllUserList()
         {
             try
@@ -230,13 +263,17 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateAsync(int id, User user)
+        public async Task<RequestResponse> UpdateAsync(User user)
         {
             try
             {
-                var userJson = JsonContent.Create(user);
-
-                HttpResponseMessage response = await _httpClient.PutAsync($"api/User/update/{id}", userJson);
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/User/update", user);
 
                 // Reading the response content
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
