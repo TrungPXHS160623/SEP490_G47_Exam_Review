@@ -60,6 +60,7 @@ public class Program
         builder.Services.AddScoped<IExaminerRepository, ExaminerRepository>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 		builder.Services.AddScoped<IExamRepository, ExamRepository>();
+		builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 		var app = builder.Build();
 
         // Configure the HTTP request pipeline

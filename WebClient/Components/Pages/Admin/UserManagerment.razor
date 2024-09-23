@@ -3,18 +3,12 @@
 @inject NavigationManager NavigationManager
 
 <style>
-    td{
-        vertical-align:middle
+    td {
+        vertical-align: middle
     }
 </style>
 
-<div>
-    <span class="text-info" style="cursor:pointer;">Home</span>
-    <span>></span>
-    <span>User Management</span>
-</div>
-
-<div class="w-50" style="border-top:1px solid #d9d8d8;">
+<div class="w-50">
     <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
         <label class="me-5">User: </label>
         <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
@@ -46,8 +40,8 @@
                             </td>
                             <td>
                                 <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
-                            </td>
-                            <td>@user.UserRole?.RoleName</td>
+                             </td>
+                             <td>@user.UserRole?.RoleName</td>
                             <td>@user.Campus?.CampusName</td>
                             <td>
                                 <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
@@ -61,7 +55,11 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
     private List<User> users = new List<User>();
+
     private string searchText;
 
     protected override async Task OnInitializedAsync()
@@ -71,6 +69,14 @@
         if (isAuthenticated)
         {
             await FetchUsers();
+        }
+
+        if (Layout != null)
+        {
+            Layout.Header = "Home";
+            Layout.HeaderLink = "/Home";
+            Layout.SubHeader = "User Management";
+            Layout.RefreshLayout();
         }
     }
 

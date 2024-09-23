@@ -1,0 +1,78 @@
+﻿@page "/home"
+
+<style>
+    .action-item {
+        padding: 25px 40px 25px 0px;
+        font-size: large;
+        border-bottom: 1px solid #d9d8d8;
+    }
+
+        .action-item a {
+            color: dodgerblue !important;
+        }
+</style>
+
+<div>
+    <div class="action-item">
+        <NavLink href="/usermanagement">User management</NavLink>
+    </div>
+    <div class="action-item">
+        <NavLink @onclick="GoToHistory">History</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToExamList">Exam List</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToHeadDepartmentList">Exam List</NavLink>
+    </div>
+    <div class="action-item flex-grow-1">
+        <NavLink @onclick="GoToLectureList">Exam List</NavLink>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    public string a;
+
+    public int b = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        if (auth != null)
+        {
+            var user = auth.User;
+            var emailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+        }
+        if (Layout != null)
+        {
+            Layout.Header = string.Empty;
+            Layout.HeaderLink = string.Empty;
+            Layout.SubHeader = string.Empty;
+            Layout.RefreshLayout();
+        }
+    }
+
+    public void GoToHistory()
+    {
+        NavManager.NavigateTo("/Admin/History");
+    }
+
+    public void GoToExamList()
+    {
+        NavManager.NavigateTo("/TestDepartment/ExamList");
+    }
+
+    public void GoToHeadDepartmentList()
+    {
+        NavManager.NavigateTo("/HeadDepartment/ExamList");
+    }
+
+    public void GoToLectureList()
+    {
+        NavManager.NavigateTo("/Lecture/ExamList");
+    }
+}
