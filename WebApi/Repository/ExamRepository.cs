@@ -21,14 +21,14 @@ public class ExamRepository : IExamRepository
 			.Include(ia => ia.Exam) // Kết nối với Exam
 			.Include(ia => ia.Exam.Subject) // Kết nối với Subject từ Exam
 			.Include(ia => ia.Exam.ExamStatus) // Kết nối với ExamStatuses
-			.Include(ia => ia.AssignedToUser) // Kết nối với giảng viên
+			.Include(ia => ia.AssignedUser) // Kết nối với giảng viên
 			.Select(ia => new ExamInfoDto
 			{
 				DepartmentName = ia.Exam.Subject.Department.DepartmentName, // Tên Chuyên Ngành
 				SubjectName = ia.Exam.Subject.SubjectName, // Tên Môn Học
 				ExamCode = ia.Exam.ExamCode, // Mã Bài Thi
 				Status = ia.Exam.ExamStatus.StatusContent, // Trạng Thái
-				InstructorName = ia.AssignedToUser.Mail // Tên Giảng Viên
+				InstructorName = ia.AssignedUser.Mail // Tên Giảng Viên
 			})
 			.ToListAsync();
 

@@ -12,7 +12,13 @@ namespace Library.Models
         [Key]
         public int CampusId { get; set; }
 
-        [MaxLength(100)]
-        public string? CampusName { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string CampusName { get; set; }
+
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
     }
 }

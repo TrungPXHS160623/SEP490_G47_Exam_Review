@@ -18,7 +18,7 @@ namespace WebApi.Repository
         {
             return await dbContext.ExamAssignments
                               .Include(i => i.Exam)
-                              .Include(i => i.AssignedByUser)
+                              .Include(i => i.AssignedBy)
                               .Include(i => i.AssignedTo)
                               .Include(i => i.AssignmentDate)
                               .Include(i => i.Status)
@@ -28,7 +28,7 @@ namespace WebApi.Repository
         {
             return await dbContext.ExamAssignments
                              .Include(i => i.Exam)
-                             .Include(i => i.AssignedByUser)
+                             .Include(i => i.AssignedBy)
                              .Include(i => i.AssignedTo)
                              .Include(i => i.Status)
                              .FirstOrDefaultAsync(i => i.AssignmentId == id);
@@ -64,7 +64,7 @@ namespace WebApi.Repository
             var examsQuery = dbContext.Exams
                 .Include(e => e.Subject)
                 .ThenInclude(s => s.Department)
-                .Where(e => e.User.CampusId == examiner.CampusId); // Ensure this is CampusId
+                .Where(e => e.Creator.CampusId == examiner.CampusId); // Ensure this is CampusId
 
             // Filter exams by subject name if provided
             if (!string.IsNullOrEmpty(subjectName))

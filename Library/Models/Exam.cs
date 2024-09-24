@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.Models
 {
@@ -16,35 +17,36 @@ namespace Library.Models
         public string ExamDuration { get; set; }
 
         [Required]
-        [StringLength(10)]
+        [StringLength(50)]
         public string ExamType { get; set; }
 
         [Required]
         public int SubjectId { get; set; }
-
         [Required]
-        public int UserId { get; set; }
-
-        public bool IsChecked { get; set; } = false;
-
+        public int CreaterId { get; set; }
         [Required]
         public int ExamStatusID { get; set; }
-
         [Required]
         public DateTime EstimatedTimeTest { get; set; }
-
         [Required]
         public DateTime StartDate { get; set; }
-
         [Required]
         public DateTime EndDate { get; set; }
 
-        [StringLength(50)]
-        public string ExamFormat { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
-        // Navigation properties
-        public Subject Subject { get; set; }
-        public User User { get; set; }
-        public ExamStatus ExamStatus { get; set; }
+        [ForeignKey("SubjectId")]
+        public virtual Subject Subject { get; set; }
+            
+        [ForeignKey("CreaterId")]
+        public virtual User Creator { get; set; }
+
+        [ForeignKey("ExamStatusID")]
+        public virtual ExamStatus ExamStatus { get; set; }
+
+        public virtual ICollection<ExamAssignment> ExamAssignments { get; set; }
+        public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
     }
 }

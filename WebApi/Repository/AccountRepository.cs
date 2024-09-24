@@ -53,7 +53,7 @@ namespace WebApi.Repository
                 };
             }
         }
-
+        /*
         public async Task<RequestResponse> UserRegister(UserRegisterRequest request)
         {
             try
@@ -96,7 +96,7 @@ namespace WebApi.Repository
                 };
             }
         }
-
+        */
         public string GenerateToken(User acc)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
@@ -184,7 +184,7 @@ namespace WebApi.Repository
             }
 
         }
-
+        /*
         public async Task<ResultResponse<Account>> GetUserList()
         {
             try
@@ -206,6 +206,7 @@ namespace WebApi.Repository
                 };
             }
         }
+        */
 
         private async Task<TokenResponse> GetGoogleTokenAsync(string code)
         {

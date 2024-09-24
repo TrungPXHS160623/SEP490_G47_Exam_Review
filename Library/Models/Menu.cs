@@ -7,21 +7,16 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    public class UserRole
+    public class Menu
     {
         [Key]
-        public int RoleId { get; set; }
+        public int MenuId { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string RoleName { get; set; }
+        public string MenuName { get; set; }
 
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
-
         public virtual ICollection<MenuRole> MenuRoles { get; set; }
-
     }
 }
