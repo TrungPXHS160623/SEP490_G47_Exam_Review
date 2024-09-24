@@ -49,6 +49,9 @@
                 }
             </tbody>
         </table>
+    } else
+    {
+        <span class="text-danger">No data found.</span>
     }
 </div>
 
@@ -83,7 +86,7 @@
         // Check if there is search text to filter
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            var response = await AccountService.GetAllWithFilterAsync("Mail", searchText);
+            var response = await AccountService.GetAllWithFilterAsync(searchText);
             if (response.IsSuccessful)
             {
                 users = response.Items;

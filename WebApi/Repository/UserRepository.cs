@@ -60,17 +60,10 @@ namespace WebApi.Repository
             };
         }
 
-        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string filterQuery)
         {
-            var users = dbContext.Users.Include(u => u.Campus).Include(u => u.UserRole).AsQueryable();
+            var users = dbContext.Users.Include(u => u.Campus).Include(u => u.UserRole).Where(x => x.Mail.Contains(filterQuery));
 
-            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
-            {
-                if (filterOn.Equals("Mail", StringComparison.OrdinalIgnoreCase))
-                {
-                    users = users.Where(x => x.Mail.Contains(filterQuery));
-                }
-            }
             var userList = await users.ToListAsync();
             return new ResultResponse<User>
             {

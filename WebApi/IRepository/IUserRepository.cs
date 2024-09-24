@@ -9,7 +9,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<User>> GetAllAsync();
 
-        Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null);
+        Task<ResultResponse<User>> GetAllWithFilterAsync(string filterQuery);
 
         Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true);
 

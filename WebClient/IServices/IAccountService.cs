@@ -12,7 +12,7 @@ namespace WebClient.IServices
 
         Task<ResultResponse<Account>> GetUserList();
         Task<ResultResponse<User>> GetAllUserList();
-        Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null);
+        Task<ResultResponse<User>> GetAllWithFilterAsync(string filterQuery);
         Task<AuthenticationResponse> GetJWT();
         Task<RequestResponse> ClearJWT();
         Task<ResultResponse<User>> GetByIdAsync(int id);

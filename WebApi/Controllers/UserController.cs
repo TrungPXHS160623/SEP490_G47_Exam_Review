@@ -7,9 +7,7 @@ using WebApi.IRepository;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : ApiBaseController
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
@@ -29,13 +27,13 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpGet("get-all-with-filter")]
-        public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
+        [HttpGet("get-all-with-filter/{filterQuery}")]
+        public async Task<IActionResult> GetAllUserWithFilter(string filterQuery)
         {
-            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
-            var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-            return Ok(userDtos);
+            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterQuery);
+            return Ok(userDomainModels);
         }
+
         [HttpGet("get-all-with-filter-and-sort")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)
         {

@@ -137,7 +137,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string filterQuery)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace WebClient.Services
                 }
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter?filterOn={filterOn}&filterQuery={filterQuery}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter/{filterQuery}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
 
