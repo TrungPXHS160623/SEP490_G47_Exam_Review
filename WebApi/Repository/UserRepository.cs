@@ -68,14 +68,16 @@ namespace WebApi.Repository
             try
             {
                 var data = (from u in this.dbContext.Users
-                            join c in this.dbContext.Campuses on u.CampusId equals c.CampusId
-                            join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId
+                            join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                            from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                            join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                            from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                             select new UserResponse
                             {
                                 Email = u.Mail,
-                                CampusName = c.CampusName,
+                                CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                                 IsActive = u.IsActive,
-                                RoleName = r.RoleName,
+                                RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                                 UserId = u.UserId,
                             }).ToList();
 
@@ -98,15 +100,17 @@ namespace WebApi.Repository
         public async Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery)
         {
             var data = (from u in this.dbContext.Users
-                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId
-                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where u.Mail.Contains(filterQuery)
                         select new UserResponse
                         {
                             Email = u.Mail,
-                            CampusName = c.CampusName,
+                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
-                            RoleName = r.RoleName,
+                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                             UserId = u.UserId,
                         }).ToList();
 
@@ -164,17 +168,19 @@ namespace WebApi.Repository
         public async Task<ResultResponse<UserRequest>> GetByIdAsync(int id)
         {
             var data = (from u in this.dbContext.Users
-                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId
-                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where u.UserId == id
                         select new UserRequest
                         {
                             Email = u.Mail,
-                            CampusId = c.CampusId,
-                            CampusName = c.CampusName,
+                            CampusId = u.CampusId,                        // Keep the CampusId from the Users table
+                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
-                            RoleId = r.RoleId,
-                            RoleName = r.RoleName,
+                            RoleId = u.RoleId,                            // Keep the RoleId from the Users table
+                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                             UserId = u.UserId,
                         }).FirstOrDefault();
             return new ResultResponse<UserRequest>

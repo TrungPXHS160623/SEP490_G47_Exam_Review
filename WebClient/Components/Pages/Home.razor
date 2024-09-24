@@ -14,27 +14,23 @@
 </style>
 
 <div>
-    <div class="action-item">
-        <NavLink href="/usermanagement">User management</NavLink>
-    </div>
-    <div class="action-item">
-        <NavLink @onclick="GoToHistory">History</NavLink>
-    </div>
-    <div class="action-item flex-grow-1">
-        <NavLink @onclick="GoToExamList">Exam List</NavLink>
-    </div>
-    <div class="action-item flex-grow-1">
-        <NavLink @onclick="GoToHeadDepartmentList">Head Department List</NavLink>
-    </div>
-    <div class="action-item flex-grow-1">
-        <NavLink @onclick="GoToLectureList">Lecture List</NavLink>
-    </div>
+    @if(menuList.Count > 0)
+    {
+        @foreach(var item in menuList)
+        {
+            <div class="action-item">
+                <NavLink @onclick="@(() => GoToPage(item.MenuLink))">@item.MenuName</NavLink>
+            </div>
+        }
+    }
 </div>
 
 
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
+
+    public List<Menu> menuList = new();
 
     public string a;
 
@@ -43,10 +39,17 @@
     protected override async Task OnInitializedAsync()
     {
         var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-        if (auth != null)
+        if (auth != null && auth.User.Identity.IsAuthenticated != false)
         {
             var user = auth.User;
-            var emailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var resp = await MenuServive.GetMenuByUser(id);
+
+            if (resp.IsSuccessful)
+            {
+                menuList = resp.Items;
+            }
         }
         if (Layout != null)
         {
@@ -58,23 +61,9 @@
         }
     }
 
-    public void GoToHistory()
+    public void GoToPage(string url)
     {
-        NavManager.NavigateTo("/Admin/History");
+        NavManager.NavigateTo(url);
     }
 
-    public void GoToExamList()
-    {
-        NavManager.NavigateTo("/TestDepartment/ExamList");
-    }
-
-    public void GoToHeadDepartmentList()
-    {
-        NavManager.NavigateTo("/HeadDepartment/ExamList");
-    }
-
-    public void GoToLectureList()
-    {
-        NavManager.NavigateTo("/Lecture/ExamList");
-    }
 }

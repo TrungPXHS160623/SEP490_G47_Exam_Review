@@ -17,7 +17,7 @@
         <label class="col-3">Role:</label>
         @if (!isAddOrEdit)
         {
-            <MudText>@roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName</MudText>
+            <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
         }
         else
         {
@@ -42,7 +42,7 @@
         <label class="col-3">Campus:</label>
         @if (!isAddOrEdit)
         {
-            <MudText>@camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName</MudText>
+            <MudText>@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName ?? "N/A")</MudText>
         }
         else
         {
