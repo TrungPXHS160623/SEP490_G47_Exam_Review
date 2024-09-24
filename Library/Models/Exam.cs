@@ -1,52 +1,43 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class Exam
 {
-    public class Exam
-    {
-        [Key]
-        public int ExamId { get; set; }
+    public int ExamId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string ExamCode { get; set; }
+    public string? ExamCode { get; set; }
 
-        [Required]
-        [StringLength(10)]
-        public string ExamDuration { get; set; }
+    public string? ExamDuration { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string ExamType { get; set; }
+    public string? ExamType { get; set; }
 
-        [Required]
-        public int SubjectId { get; set; }
-        [Required]
-        public int CreaterId { get; set; }
-        [Required]
-        public int ExamStatusID { get; set; }
-        [Required]
-        public DateTime EstimatedTimeTest { get; set; }
-        [Required]
-        public DateTime StartDate { get; set; }
-        [Required]
-        public DateTime EndDate { get; set; }
+    public int SubjectId { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public int CreaterId { get; set; }
 
-        [ForeignKey("SubjectId")]
-        public virtual Subject Subject { get; set; }
-            
-        [ForeignKey("CreaterId")]
-        public virtual User Creator { get; set; }
+    public int? ExamStatusId { get; set; }
 
-        [ForeignKey("ExamStatusID")]
-        public virtual ExamStatus ExamStatus { get; set; }
+    public DateTime? EstimatedTimeTest { get; set; }
 
-        public virtual ICollection<ExamAssignment> ExamAssignments { get; set; }
-        public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
-        public virtual ICollection<Report> Reports { get; set; }
-    }
+    public DateTime? StartDate { get; set; }
+
+    public DateTime? EndDate { get; set; }
+
+    public DateTime? CreateDate { get; set; }
+
+    public DateTime? UpdateDate { get; set; }
+
+    public virtual User Creater { get; set; } = null!;
+
+    public virtual ICollection<ExamAssignment> ExamAssignments { get; set; } = new List<ExamAssignment>();
+
+    public virtual ExamStatus? ExamStatus { get; set; }
+
+    public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; } = new List<InstructorAssignment>();
+
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual Subject Subject { get; set; } = null!;
 }

@@ -1,30 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class User
 {
-    public class User
-    {
-        [Key]
-        public int UserId { get; set; }
+    public int UserId { get; set; }
 
-        [Required]
-        [StringLength(250)]
-        public string Mail { get; set; }
+    public string Mail { get; set; } = null!;
 
-        public int? CampusId { get; set; }
-        public int? RoleId { get; set; }
-        public bool IsActive { get; set; }
+    public int? CampusId { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public int? RoleId { get; set; }
 
-        [ForeignKey("CampusId")]
-        public virtual Campus Campus { get; set; }
+    public bool IsActive { get; set; }
 
-        [ForeignKey("RoleId")]
-        public virtual UserRole UserRole { get; set; } 
+    public DateTime? CreateDate { get; set; }
 
-        public virtual ICollection<Report> Reports { get; set; }
-    }
+    public DateTime? UpdateDate { get; set; }
+
+    public virtual Campus? Campus { get; set; }
+
+    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
+
+    public virtual ICollection<ExamAssignment> ExamAssignments { get; set; } = new List<ExamAssignment>();
+
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
+    public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; } = new List<InstructorAssignment>();
+
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual UserRole? Role { get; set; }
 }

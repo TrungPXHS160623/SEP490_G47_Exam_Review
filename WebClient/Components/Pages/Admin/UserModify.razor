@@ -6,11 +6,11 @@
         <label class="col-3">Email:</label>
         @if (!isAddOrEdit)
         {
-            <MudText>@user.Mail</MudText>
+            <MudText>@user.Email</MudText>
         }
         else
         {
-            <MudTextField @bind-Value="user.Mail" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" />
         }
     </div>
     <div class="d-flex align-items-center">
@@ -85,7 +85,7 @@
     [Parameter]
     public int? UserId { get; set; }
 
-    private User user = new();
+    private UserRequest user = new();
 
     private List<Campus> camList = new();
 

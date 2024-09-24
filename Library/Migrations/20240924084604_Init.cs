@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -316,8 +316,8 @@ namespace Library.Migrations
                 columns: new[] { "CampusId", "CampusName", "CreateDate", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, "Hanoi", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8763), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8774) },
-                    { 2, "Ho Chi Minh", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8776), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8776) }
+                    { 1, "Hanoi", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8251), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8280) },
+                    { 2, "Ho Chi Minh", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8282), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8283) }
                 });
 
             migrationBuilder.InsertData(
@@ -325,10 +325,10 @@ namespace Library.Migrations
                 columns: new[] { "ExamStatusId", "CreateDate", "StatusContent", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8943), "Not started", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8944) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8946), "In progress", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8947) },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8948), "Completed", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8949) },
-                    { 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8950), "Cancelled", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8954) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8619), "Not started", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8620) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8622), "In progress", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8622) },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8624), "Completed", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8624) },
+                    { 4, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8625), "Cancelled", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8626) }
                 });
 
             migrationBuilder.InsertData(
@@ -336,9 +336,9 @@ namespace Library.Migrations
                 columns: new[] { "MenuId", "CreateDate", "MenuName", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9240), "Dashboard", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9240) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9242), "Exam Management", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9243) },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9244), "User Management", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9244) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(476), "Dashboard", new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(481) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(486), "Exam Management", new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(486) },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(487), "User Management", new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(488) }
                 });
 
             migrationBuilder.InsertData(
@@ -346,11 +346,11 @@ namespace Library.Migrations
                 columns: new[] { "RoleId", "CreateDate", "RoleName", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8981), "Admin", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8981) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8983), "Examiner", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8984) },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8985), "Lecturer", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8985) },
-                    { 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8986), "Head of Department", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8987) },
-                    { 5, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8988), "Program Developer", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8988) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8654), "Admin", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8655) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8661), "Examiner", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8661) },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8663), "Lecturer", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8663) },
+                    { 4, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8664), "Head of Department", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8665) },
+                    { 5, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8666), "Program Developer", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8667) }
                 });
 
             migrationBuilder.InsertData(
@@ -358,12 +358,12 @@ namespace Library.Migrations
                 columns: new[] { "MenuId", "RoleId", "CreateDate", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9268), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9269) },
-                    { 3, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9276), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9277) },
-                    { 2, 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9270), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9271) },
-                    { 2, 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9272), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9273) },
-                    { 2, 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9273), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9274) },
-                    { 2, 5, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9275), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9275) }
+                    { 1, 1, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(530), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(531) },
+                    { 3, 1, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(545), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(546) },
+                    { 2, 2, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(539), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(539) },
+                    { 2, 3, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(541), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(541) },
+                    { 2, 4, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(542), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(543) },
+                    { 2, 5, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(544), new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(544) }
                 });
 
             migrationBuilder.InsertData(
@@ -371,12 +371,12 @@ namespace Library.Migrations
                 columns: new[] { "UserId", "CampusId", "CreateDate", "IsActive", "Mail", "RoleId", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9015), true, "admin@fpt.edu.vn", 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9016) },
-                    { 2, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9018), true, "examiner@fpt.edu.vn", 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9019) },
-                    { 3, 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9020), true, "lecturer@fpt.edu.vn", 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9021) },
-                    { 4, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9022), true, "head@fpt.edu.vn", 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9022) },
-                    { 5, 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9024), true, "developer@fpt.edu.vn", 5, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9024) },
-                    { 6, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9026), true, "trunghp@fpt.edu.vn", 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9027) }
+                    { 1, 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8711), true, "admin@fpt.edu.vn", 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8711) },
+                    { 2, 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8714), true, "examiner@fpt.edu.vn", 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8714) },
+                    { 3, 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8716), true, "lecturer@fpt.edu.vn", 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8717) },
+                    { 4, 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8718), true, "head@fpt.edu.vn", 4, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8719) },
+                    { 5, 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8721), true, "developer@fpt.edu.vn", 5, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8721) },
+                    { 6, 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8725), true, "trunghp@fpt.edu.vn", 4, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8726) }
                 });
 
             migrationBuilder.InsertData(
@@ -384,8 +384,8 @@ namespace Library.Migrations
                 columns: new[] { "DepartmentId", "CreateDate", "DepartmentName", "HeadOfDepartmentId", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9053), "Information Technology", 4, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9054) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9055), "Data Science", 6, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9056) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8768), "Information Technology", 4, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8770) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8772), "Data Science", 6, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8772) }
                 });
 
             migrationBuilder.InsertData(
@@ -393,9 +393,9 @@ namespace Library.Migrations
                 columns: new[] { "SubjectId", "CreateDate", "DepartmentId", "SubjectName", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9076), 1, "C# Programming", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9078) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9079), 1, "Computer Science", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9080) },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9081), 2, "Machine Learning", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9081) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8810), 1, "C# Programming", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8810) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8812), 1, "Computer Science", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8813) },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8814), 2, "Machine Learning", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8815) }
                 });
 
             migrationBuilder.InsertData(
@@ -403,9 +403,9 @@ namespace Library.Migrations
                 columns: new[] { "ExamId", "CreateDate", "CreaterId", "EndDate", "EstimatedTimeTest", "ExamCode", "ExamDuration", "ExamStatusId", "ExamType", "StartDate", "SubjectId", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9116), 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9116), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9114), "EXAM001", "10w", 1, "Essay", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9115), 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9117) },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9120), 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9120), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9118), "EXAM002", "10w", 1, "Multiple Choice", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9119), 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9121) },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9123), 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9123), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9122), "EXAM003", "10w", 1, "Multiple Choice", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9123), 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9124) }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8858), 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8858), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8855), "EXAM001", "10w", 1, "Essay", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8856), 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8861) },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8864), 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8864), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8863), "EXAM002", "10w", 1, "Multiple Choice", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8863), 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8865) },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8869), 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8868), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8867), "EXAM003", "10w", 1, "Multiple Choice", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8868), 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8871) }
                 });
 
             migrationBuilder.InsertData(
@@ -413,9 +413,9 @@ namespace Library.Migrations
                 columns: new[] { "AssignmentId", "AssignedBy", "AssignedTo", "AssignmentDate", "CreateDate", "ExamId", "Status", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, 2, 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9144), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9145), 1, "Pending", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9146) },
-                    { 2, 2, 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9148), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9148), 2, "Assigned", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9149) },
-                    { 3, 2, 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9150), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9150), 3, "Assigned", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9151) }
+                    { 1, 2, 1, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8899), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8900), 1, "Pending", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8902) },
+                    { 2, 2, 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8904), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8907), 2, "Assigned", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8910) },
+                    { 3, 2, 2, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8912), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8912), 3, "Assigned", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(8913) }
                 });
 
             migrationBuilder.InsertData(
@@ -423,8 +423,8 @@ namespace Library.Migrations
                 columns: new[] { "AssignmentId", "AssignedTo", "AssignmentDate", "CreateDate", "ExamId", "Status", "UpdateDate" },
                 values: new object[,]
                 {
-                    { 1, 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9190), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9192), 1, "Pending", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9193) },
-                    { 2, 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9195), new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9195), 2, "Assigned", new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9196) }
+                    { 1, 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9088), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9091), 1, "Pending", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9093) },
+                    { 2, 3, new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9095), new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9095), 2, "Assigned", new DateTime(2024, 9, 24, 15, 46, 3, 615, DateTimeKind.Local).AddTicks(9096) }
                 });
 
             migrationBuilder.InsertData(
@@ -432,9 +432,9 @@ namespace Library.Migrations
                 columns: new[] { "ReviewId", "CreateDate", "ExamId", "QuestionNumber", "QuestionSolutionDetail", "ReportContent", "Score", "UpdateDate", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9301), 1, 1, "Solution explanation 1", "Report 1", 90f, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9302), 3 },
-                    { 2, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9304), 2, 2, "Solution explanation 2", "Report 2", 85f, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9305), 3 },
-                    { 3, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9306), 3, 3, "Solution explanation 3", "Report 3", 75f, new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9307), 3 }
+                    { 1, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(586), 1, 1, "Solution explanation 1", "Report 1", 90f, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(587), 3 },
+                    { 2, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(590), 2, 2, "Solution explanation 2", "Report 2", 85f, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(590), 3 },
+                    { 3, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(592), 3, 3, "Solution explanation 3", "Report 3", 75f, new DateTime(2024, 9, 24, 15, 46, 3, 616, DateTimeKind.Local).AddTicks(592), 3 }
                 });
 
             migrationBuilder.CreateIndex(

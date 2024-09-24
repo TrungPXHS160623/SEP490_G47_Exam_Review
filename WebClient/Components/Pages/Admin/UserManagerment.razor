@@ -34,13 +34,13 @@
                         <tr>
 
                             <td>
-                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Mail</div>
+                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
                             </td>
                             <td>
                                 <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
                              </td>
-                             <td>@user.UserRole?.RoleName</td>
-                            <td>@user.Campus?.CampusName</td>
+                             <td>@user.RoleName</td>
+                            <td>@user.CampusName</td>
                             <td>
                                 <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                             </td>
@@ -59,7 +59,7 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    private List<User> users = new List<User>();
+    private List<UserResponse> users = new List<UserResponse>();
 
     private string searchText;
 

@@ -139,7 +139,7 @@ namespace Library.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("ExamStatusID")
+                    b.Property<int>("ExamStatusId")
                         .HasColumnType("int");
 
                     b.Property<string>("ExamType")
@@ -160,7 +160,7 @@ namespace Library.Migrations
 
                     b.HasIndex("CreaterId");
 
-                    b.HasIndex("ExamStatusID");
+                    b.HasIndex("ExamStatusId");
 
                     b.HasIndex("SubjectId");
 
@@ -176,7 +176,7 @@ namespace Library.Migrations
                             EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9114),
                             ExamCode = "EXAM001",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Essay",
                             StartDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9115),
                             SubjectId = 1,
@@ -191,7 +191,7 @@ namespace Library.Migrations
                             EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9118),
                             ExamCode = "EXAM002",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Multiple Choice",
                             StartDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9119),
                             SubjectId = 2,
@@ -206,7 +206,7 @@ namespace Library.Migrations
                             EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9122),
                             ExamCode = "EXAM003",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Multiple Choice",
                             StartDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(9123),
                             SubjectId = 3,
@@ -292,11 +292,11 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.ExamStatus", b =>
                 {
-                    b.Property<int>("ExamStatusID")
+                    b.Property<int>("ExamStatusId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamStatusID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamStatusId"));
 
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
@@ -309,35 +309,35 @@ namespace Library.Migrations
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ExamStatusID");
+                    b.HasKey("ExamStatusId");
 
                     b.ToTable("ExamStatuses");
 
                     b.HasData(
                         new
                         {
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             CreateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8943),
                             StatusContent = "Not started",
                             UpdateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8944)
                         },
                         new
                         {
-                            ExamStatusID = 2,
+                            ExamStatusId = 2,
                             CreateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8946),
                             StatusContent = "In progress",
                             UpdateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8947)
                         },
                         new
                         {
-                            ExamStatusID = 3,
+                            ExamStatusId = 3,
                             CreateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8948),
                             StatusContent = "Completed",
                             UpdateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8949)
                         },
                         new
                         {
-                            ExamStatusID = 4,
+                            ExamStatusId = 4,
                             CreateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8950),
                             StatusContent = "Cancelled",
                             UpdateDate = new DateTime(2024, 9, 24, 15, 12, 0, 166, DateTimeKind.Local).AddTicks(8954)
@@ -830,7 +830,7 @@ namespace Library.Migrations
 
                     b.HasOne("Library.Models.ExamStatus", "ExamStatus")
                         .WithMany("Exams")
-                        .HasForeignKey("ExamStatusID")
+                        .HasForeignKey("ExamStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

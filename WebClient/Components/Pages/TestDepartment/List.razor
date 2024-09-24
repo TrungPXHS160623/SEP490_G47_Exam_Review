@@ -97,7 +97,7 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>@context.ExamStatusID</MudTd>
+                        <MudTd>@context.ExamStatusId</MudTd>
                         <MudTd>@context.ExamDuration</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
@@ -149,7 +149,7 @@
             AccList.Add(new Exam
                 {
                     ExamCode = "PRN231_Fall24_Q1_201" + i,
-                    ExamStatusID = i % 2 == 0 ? 1 : 2,
+                    ExamStatusId = i % 2 == 0 ? 1 : 2,
                     ExamDuration = "60:00"
                 });
         }

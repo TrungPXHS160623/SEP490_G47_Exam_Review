@@ -1,40 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class Report
 {
-    public class Report
-    {
-        [Key]
-        public int ReviewId { get; set; }
+    public int ReviewId { get; set; }
 
-        [Required]
-        public int ExamId { get; set; }
+    public int ExamId { get; set; }
 
-        [Required]
-        public int UserId { get; set; }
+    public int UserId { get; set; }
 
-        public string ReportContent { get; set; }
-        public string QuestionSolutionDetail { get; set; }
+    public string? ReportContent { get; set; }
 
-        [Required]
-        public int QuestionNumber { get; set; }
+    public string? QuestionSolutionDetail { get; set; }
 
-        [Range(0, 100)]
-        public float Score { get; set; }
+    public int? QuestionNumber { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public float? Score { get; set; }
 
-        [ForeignKey("ExamId")]
-        public virtual Exam Exam { get; set; }
+    public DateTime? CreateDate { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; }
-    }
+    public DateTime? UpdateDate { get; set; }
+
+    public virtual Exam Exam { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }
