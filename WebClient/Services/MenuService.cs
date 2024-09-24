@@ -17,7 +17,7 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<ResultResponse<Menu>> GetMenuByUser(int userId)
+        public async Task<ResultResponse<Menu>> GetMenuByUser(int role)
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -26,7 +26,7 @@ namespace WebClient.Services
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Menu/GetMenu/{userId}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Menu/GetMenu/{role}");
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Menu>>();
 

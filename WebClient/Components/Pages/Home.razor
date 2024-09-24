@@ -42,7 +42,7 @@
         if (auth != null && auth.User.Identity.IsAuthenticated != false)
         {
             var user = auth.User;
-            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
 
             var resp = await MenuServive.GetMenuByUser(id);
 

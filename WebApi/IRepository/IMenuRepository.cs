@@ -5,6 +5,6 @@ namespace WebApi.IRepository
 {
     public interface IMenuRepository
     {
-        Task<ResultResponse<Menu>> GetMenu(int userId);
+        Task<ResultResponse<Menu>> GetMenu(int roleId);
     }
 }
