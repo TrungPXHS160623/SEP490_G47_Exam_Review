@@ -10,7 +10,6 @@ namespace WebClient.IServices
 
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
-        Task<ResultResponse<Account>> GetUserList();
         Task<ResultResponse<User>> GetAllUserList();
         Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null);
         Task<AuthenticationResponse> GetJWT();
