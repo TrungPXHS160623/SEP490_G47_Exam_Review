@@ -104,12 +104,36 @@
 
     private async Task DeleteUser(int UserId)
     {
-        var response = await AccountService.DeleteAsync(UserId);
-        if (response.IsSuccessful)
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<Dialog>
         {
-            await FetchUsers();
+            { x => x.Content, "Are you sure want to delete this account?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Account", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var response = await AccountService.DeleteAsync(UserId);
+            if (response.IsSuccessful)
+            {
+                await FetchUsers();
+            }
         }
     }
+
     private void AddNewUser()
     {
         NavManager.NavigateTo($"/Admin/AddUser");
