@@ -26,8 +26,9 @@
                        Variant="Variant.Outlined"
                        Margin="Margin.Dense"
                        Clearable
-                       AnchorOrigin="Origin.BottomCenter">
-
+                       AnchorOrigin="Origin.BottomCenter"
+                       Disabled="IsCurrentId">
+                       
                 @if (roleList.Count > 0)
                 {
                     @foreach (var item in roleList)
@@ -93,6 +94,7 @@
 
     private bool isAddOrEdit { get; set; } = false;
 
+    private bool IsCurrentId { get; set; } = false;
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -102,6 +104,12 @@
             if (UserId != null)
             {
                 await FetchUserDetails();
+
+                var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+                var user = auth.User;
+                var currentId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+                IsCurrentId = currentId == UserId;
             }
             else
             {
