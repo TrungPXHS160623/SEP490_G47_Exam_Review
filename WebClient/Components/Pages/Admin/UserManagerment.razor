@@ -83,18 +83,22 @@
             {
                 NavManager.NavigateTo("/404");
             }
+            else
+            {
+                await FetchUsers();
 
-            await FetchUsers();
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader1 = string.Empty;
+                    Layout.RefreshLayout();
+                }
+            }
         }
 
-        if (Layout != null)
-        {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "User Management";
-            Layout.SubHeader1 = string.Empty;
-            Layout.RefreshLayout();
-        }
+
     }
 
     private async Task FetchUsers()
@@ -146,10 +150,11 @@
             var user = auth.User;
             var currentUserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            if(currentUserId == UserId)
+            if (currentUserId == UserId)
             {
                 this.Snackbar.Add("You cannot delete your current account", Severity.Warning);
-            } else
+            }
+            else
             {
                 var response = await AccountService.DeleteAsync(UserId);
                 if (response.IsSuccessful)
