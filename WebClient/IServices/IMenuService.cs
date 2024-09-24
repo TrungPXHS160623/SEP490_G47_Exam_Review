@@ -5,6 +5,6 @@ namespace WebClient.IServices
 {
     public interface IMenuService
     {
-        Task<ResultResponse<Menu>> GetMenuByUser(int userId);
+        Task<ResultResponse<Menu>> GetMenuByUser(int role);
     }
 }
