@@ -6,23 +6,25 @@ namespace Library.Models
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
         [Required]
-        [MaxLength(250)]
+        [StringLength(250)]
         public string Mail { get; set; }
 
-        [ForeignKey("Campus")]
         public int? CampusId { get; set; }
-
-        [ForeignKey("UserRole")]
         public int? RoleId { get; set; }
-
         public bool IsActive { get; set; }
 
-        public Campus? Campus { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
-        public UserRole? UserRole { get; set; }
+        [ForeignKey("CampusId")]
+        public virtual Campus Campus { get; set; }
+
+        [ForeignKey("RoleId")]
+        public virtual UserRole UserRole { get; set; } 
+
+        public virtual ICollection<Report> Reports { get; set; }
     }
 }

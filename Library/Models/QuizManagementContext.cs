@@ -14,12 +14,6 @@ public partial class QuizManagementContext : DbContext
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
-    public virtual DbSet<MainQuestion> MainQuestions { get; set; }
-    public virtual DbSet<QuestionHistory> QuestionHistories { get; set; }
-    public virtual DbSet<QuestionSubject> QuestionSubjects { get; set; }
-    public virtual DbSet<Role> Roles { get; set; }
-    public virtual DbSet<SubQuestion> SubQuestions { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Campus> Campuses { get; set; }
     public virtual DbSet<UserRole> UserRoles { get; set; }
@@ -31,6 +25,10 @@ public partial class QuizManagementContext : DbContext
     public virtual DbSet<ExamAssignment> ExamAssignments { get; set; }
     public virtual DbSet<InstructorAssignment> InstructorAssignments { get; set; }
 
+    public virtual DbSet<Menu> Menus { get; set; }
+
+    public virtual DbSet<MenuRole> MenuRoles { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("MyConStr");
@@ -41,217 +39,215 @@ public partial class QuizManagementContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        /// Đặt khóa chính cho User
-        modelBuilder.Entity<User>()
-            .HasKey(u => u.UserId);
 
-        modelBuilder.Entity<User>()
-            .Property(u => u.UserId)
-            .ValueGeneratedOnAdd(); // Tự động tạo giá trị cho UserId
 
-        // Thiết lập quan hệ giữa User và Campus
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.Campus) // Mỗi User có một Campus
-            .WithMany() // Một Campus có nhiều User
-            .HasForeignKey(u => u.CampusId) // Khóa ngoại là CampusId
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa User khi Campus bị xóa
+        modelBuilder.Entity<MenuRole>().HasKey(e => new { e.RoleId, e.MenuId });
 
-        // Thiết lập quan hệ giữa User và UserRole
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.UserRole) // Mỗi User có một UserRole
-            .WithMany() // Một UserRole có nhiều User
-            .HasForeignKey(u => u.RoleId) // Khóa ngoại là RoleId
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa User khi UserRole bị xóa
+        // Thiết lập quan hệ giữa Campus và User
+        modelBuilder.Entity<Campus>()
+            .HasMany(c => c.Users)
+            .WithOne(u => u.Campus)
+            .HasForeignKey(u => u.CampusId);
 
+        // Thiết lập quan hệ giữa ExamStatus và Exam
+        modelBuilder.Entity<ExamStatus>()
+            .HasMany(es => es.Exams)
+            .WithOne(e => e.ExamStatus)
+            .HasForeignKey(e => e.ExamStatusID);
+
+        // Thiết lập quan hệ giữa UserRole và User
         modelBuilder.Entity<UserRole>()
-            .HasKey(r => r.RoleId); // Đặt khóa chính cho UserRole
+            .HasMany(ur => ur.Users)
+            .WithOne(u => u.UserRole)
+            .HasForeignKey(u => u.RoleId);
 
-        // Thiết lập quan hệ giữa Department và HeadOfDepartment
+        // Thiết lập quan hệ giữa Department và User (HeadOfDepartment)
         modelBuilder.Entity<Department>()
-            .HasOne(d => d.HeadOfDepartment) // Mỗi Department có một HeadOfDepartment
-            .WithMany() // Một HeadOfDepartment có thể là trưởng của nhiều Department
-            .HasForeignKey(d => d.HeadOfDepartmentId) // Khóa ngoại là HeadOfDepartmentId
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa Department khi HeadOfDepartment bị xóa
+            .HasOne(d => d.HeadOfDepartment)
+            .WithMany()
+            .HasForeignKey(d => d.HeadOfDepartmentId);
 
-        // Thiết lập quan hệ giữa Subject và Department
+        // Thiết lập quan hệ giữa Department và Subject
+        modelBuilder.Entity<Department>()
+            .HasMany(d => d.Subjects)
+            .WithOne(s => s.Department)
+            .HasForeignKey(s => s.DepartmentId);
+
+        // Thiết lập quan hệ giữa Subject và Exam
         modelBuilder.Entity<Subject>()
-            .HasOne(s => s.Department) // Mỗi Subject thuộc một Department
-            .WithMany() // Một Department có nhiều Subject
-            .HasForeignKey(s => s.DepartmentId); // Khóa ngoại là DepartmentId
+            .HasMany(s => s.Exams)
+            .WithOne(e => e.Subject)
+            .HasForeignKey(e => e.SubjectId);
 
-        // Thiết lập quan hệ giữa Exam và Subject
+        // Thiết lập quan hệ giữa User và Exam (Creator)
         modelBuilder.Entity<Exam>()
-            .HasOne(e => e.Subject) // Mỗi Exam thuộc một Subject
-            .WithMany() // Một Subject có nhiều Exam
-            .HasForeignKey(e => e.SubjectId); // Khóa ngoại là SubjectId
+            .HasOne(e => e.Creator)
+            .WithMany()
+            .HasForeignKey(e => e.CreaterId)
+            .OnDelete(DeleteBehavior.Restrict);
+           
 
-        // Thiết lập quan hệ giữa Exam và User
+        // Thiết lập quan hệ giữa Exam và ExamAssignment
         modelBuilder.Entity<Exam>()
-            .HasOne(e => e.User) // Mỗi Exam được tạo bởi một User
-            .WithMany() // Một User có thể tạo nhiều Exam
-            .HasForeignKey(e => e.UserId); // Khóa ngoại là UserId
+            .HasMany(e => e.ExamAssignments)
+            .WithOne(ea => ea.Exam)
+            .HasForeignKey(ea => ea.ExamId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // Thiết lập quan hệ giữa ExamAssignment và Exam
-        modelBuilder.Entity<ExamAssignment>()
-            .HasOne(ea => ea.Exam) // Mỗi ExamAssignment liên kết với một Exam
-            .WithMany() // Một Exam có thể có nhiều ExamAssignment
-            .HasForeignKey(ea => ea.ExamId); // Khóa ngoại là ExamId
-
-        // Thiết lập quan hệ giữa ExamAssignment và AssignedByUser
-        modelBuilder.Entity<ExamAssignment>()
-            .HasOne(ea => ea.AssignedByUser) // Mỗi ExamAssignment được giao bởi một User
-            .WithMany() // Một User có thể giao nhiều ExamAssignment
-            .HasForeignKey(ea => ea.AssignedBy); // Khóa ngoại là AssignedBy
+        // Thiết lập quan hệ giữa Exam và InstructorAssignment
+        modelBuilder.Entity<Exam>()
+            .HasMany(e => e.InstructorAssignments)
+            .WithOne(ia => ia.Exam)
+            .HasForeignKey(ia => ia.ExamId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Thiết lập quan hệ giữa ExamAssignment và AssignedToDepartment
         modelBuilder.Entity<ExamAssignment>()
-            .HasOne(ea => ea.AssignedToDepartment) // Mỗi ExamAssignment được giao cho một Department
+            .HasOne(ea => ea.AssignedDepartment) // Mỗi ExamAssignment được giao cho một Department
             .WithMany() // Một Department có thể nhận nhiều ExamAssignment
-            .HasForeignKey(ea => ea.AssignedTo); // Khóa ngoại là AssignedTo
+            .HasForeignKey(ea => ea.AssignedTo)
+            .OnDelete(DeleteBehavior.Restrict);
 
+        // Thiết lập quan hệ giữa InstructorAssignment và User (AssignedTo)
         modelBuilder.Entity<InstructorAssignment>()
-           .HasOne(ia => ia.Exam) // Mỗi InstructorAssignment liên kết với một Exam
-           .WithMany() // Một Exam có thể có nhiều InstructorAssignment
-           .HasForeignKey(ia => ia.ExamId)
-           .OnDelete(DeleteBehavior.Restrict); // Thay đổi từ Cascade sang Restrict
-
-        modelBuilder.Entity<InstructorAssignment>()
-            .HasOne(ia => ia.AssignedToUser) // Mỗi InstructorAssignment được giao cho một User
-            .WithMany() // Một User có thể nhận nhiều InstructorAssignment
+            .HasOne(ia => ia.AssignedUser)
+            .WithMany()
             .HasForeignKey(ia => ia.AssignedTo)
-            .OnDelete(DeleteBehavior.Restrict); // Thay đổi từ Cascade sang Restrict
+            .OnDelete(DeleteBehavior.Restrict);
 
+        // Thiết lập quan hệ giữa Exam và Report
+        modelBuilder.Entity<Exam>()
+            .HasMany(e => e.Reports)
+            .WithOne(r => r.Exam)
+            .HasForeignKey(r => r.ExamId);
 
-        modelBuilder.Entity<Report>()
-            .HasOne(r => r.Exam) // Mỗi Report liên kết với một Exam
-            .WithMany() // Một Exam có thể có nhiều Report
-            .HasForeignKey(r => r.ExamId)
-            .OnDelete(DeleteBehavior.Restrict); // Thay đổi từ Cascade sang Restrict
-
-        modelBuilder.Entity<Report>()
-            .HasOne(r => r.User) // Mỗi Report liên kết với một User
-            .WithMany() // Một User có thể có nhiều Report
+        // Thiết lập quan hệ giữa User và Report
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Reports)
+            .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.Restrict); // Thay đổi từ Cascade sang Restrict
+            .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Account>(entity =>
-        {
-            entity.ToTable("Account");
+        // Thiết lập quan hệ giữa Menu và MenuRole
+        modelBuilder.Entity<Menu>()
+            .HasMany(m => m.MenuRoles)
+            .WithOne(mr => mr.Menu)
+            .HasForeignKey(mr => mr.MenuId);
 
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
-            entity.Property(e => e.Email)
-                .HasMaxLength(250)
-                .HasColumnName("email");
-            entity.Property(e => e.Password)
-                .HasMaxLength(250)
-                .HasColumnName("password");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+        // Thiết lập quan hệ giữa UserRole và MenuRole
+        modelBuilder.Entity<UserRole>()
+            .HasMany(ur => ur.MenuRoles)
+            .WithOne(mr => mr.Role)
+            .HasForeignKey(mr => mr.RoleId);
 
-            entity.HasOne(d => d.Role).WithMany(p => p.Accounts)
-                .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK_Account_Role");
-        });
+      
 
-        modelBuilder.Entity<MainQuestion>(entity =>
-        {
-            entity.HasKey(e => e.MainId);
+        // 1. Seed data for Campus table
+        modelBuilder.Entity<Campus>().HasData(
+            new Campus { CampusId = 1, CampusName = "Hanoi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Campus { CampusId = 2, CampusName = "Ho Chi Minh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.ToTable("MainQuestion");
+        // 2. Seed data for ExamStatus table
+        modelBuilder.Entity<ExamStatus>().HasData(
+            new ExamStatus { ExamStatusID = 1, StatusContent = "Not started", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusID = 2, StatusContent = "In progress", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusID = 3, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusID = 4, StatusContent = "Cancelled", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.Property(e => e.MainId).HasColumnName("main_id");
-            entity.Property(e => e.Images)
-                .HasMaxLength(250)
-                .HasColumnName("images");
-            entity.Property(e => e.MainContent)
-                .HasMaxLength(250)
-                .HasColumnName("main_content");
-            entity.Property(e => e.QuestionType).HasColumnName("question_type");
-            entity.Property(e => e.SubjectId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("subject_id");
+        // 3. Seed data for UserRole table
+        modelBuilder.Entity<UserRole>().HasData(
+            new UserRole { RoleId = 1, RoleName = "Admin", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserRole { RoleId = 2, RoleName = "Examiner", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserRole { RoleId = 3, RoleName = "Lecturer", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserRole { RoleId = 4, RoleName = "Head of Department", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserRole { RoleId = 5, RoleName = "Program Developer", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.HasOne(d => d.Subject).WithMany(p => p.MainQuestions)
-                .HasForeignKey(d => d.SubjectId)
-                .HasConstraintName("FK_MainQuestion_QuestionSubject");
-        });
+        // 4. Seed data for User table
+        modelBuilder.Entity<User>().HasData(
+            new User { UserId = 1, Mail = "admin@fpt.edu.vn", CampusId = 1, RoleId = 1, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 2, Mail = "examiner@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 3, Mail = "lecturer@fpt.edu.vn", CampusId = 2, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 4, Mail = "head@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 5, Mail = "developer@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 6, Mail = "trunghp@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-        modelBuilder.Entity<QuestionHistory>(entity =>
-        {
-            entity.ToTable("QuestionHistory");
+        // 5. Seed data for Department table
+        modelBuilder.Entity<Department>().HasData(
+            new Department { DepartmentId = 1, DepartmentName = "Information Technology", HeadOfDepartmentId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Department { DepartmentId = 2, DepartmentName = "Data Science", HeadOfDepartmentId = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
-            entity.Property(e => e.MainId).HasColumnName("main_id");
-            entity.Property(e => e.UpdateDt)
-                .HasColumnType("datetime")
-                .HasColumnName("update_dt");
+        // 6. Seed data for Subject table
+        modelBuilder.Entity<Subject>().HasData(
+            new Subject { SubjectId = 1, SubjectName = "C# Programming", DepartmentId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 2, SubjectName = "Computer Science", DepartmentId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 3, SubjectName = "Machine Learning", DepartmentId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.HasOne(d => d.Account).WithMany(p => p.QuestionHistories)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("FK_QuestionHistory_Account");
+        // 7. Seed data for Exam table
+        modelBuilder.Entity<Exam>().HasData(
+            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "10w", ExamType = "Essay", SubjectId = 1, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.HasOne(d => d.Main).WithMany(p => p.QuestionHistories)
-                .HasForeignKey(d => d.MainId)
-                .HasConstraintName("FK_QuestionHistory_MainQuestion");
-        });
+        // 8. Seed data for ExamAssignment table
+        modelBuilder.Entity<ExamAssignment>().HasData(
+            new ExamAssignment { AssignmentId = 1, ExamId = 1, AssignedBy = 2, AssignedTo = 1, AssignmentDate = DateTime.Now, Status = "Pending", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamAssignment { AssignmentId = 2, ExamId = 2, AssignedBy = 2, AssignedTo = 2, AssignmentDate = DateTime.Now, Status = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamAssignment { AssignmentId = 3, ExamId = 3, AssignedBy = 2, AssignedTo = 2, AssignmentDate = DateTime.Now, Status = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-        modelBuilder.Entity<QuestionSubject>(entity =>
-        {
-            entity.HasKey(e => e.SubjectId);
+        // 9. Seed data for InstructorAssignment table
+        modelBuilder.Entity<InstructorAssignment>().HasData(
+            new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedTo = 3, AssignmentDate = DateTime.Now, Status = "Pending", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedTo = 3, AssignmentDate = DateTime.Now, Status = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.ToTable("QuestionSubject");
+        // 10. Seed data for Menu table
+        modelBuilder.Entity<Menu>().HasData(
+            new Menu { MenuId = 1, MenuName = "Dashboard", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 2, MenuName = "Exam Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 3, MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-            entity.Property(e => e.SubjectId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("subject_id");
-            entity.Property(e => e.SubjectName)
-                .HasMaxLength(50)
-                .HasColumnName("subject_name");
-            entity.Property(e => e.Time)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("time");
-        });
+        // 11. Seed data for MenuRole table
+        modelBuilder.Entity<MenuRole>().HasData(
+            new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 3, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 4, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 5, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.ToTable("Role");
+      
 
-            entity.Property(e => e.RoleId)
-                .HasColumnName("role_id");
-            entity.Property(e => e.RoleName)
-                .HasMaxLength(250)
-                .HasColumnName("role_name");
-        });
+        // 12. Seed data for Report table
+        // Seeding data for Report
+        modelBuilder.Entity<Report>().HasData(
+            new Report { ReviewId = 1, ExamId = 1, UserId = 3, ReportContent = "Report 1", QuestionSolutionDetail = "Solution explanation 1", QuestionNumber = 1, Score = 90, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReviewId = 2, ExamId = 2, UserId = 3, ReportContent = "Report 2", QuestionSolutionDetail = "Solution explanation 2", QuestionNumber = 2, Score = 85, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReviewId = 3, ExamId = 3, UserId = 3, ReportContent = "Report 3", QuestionSolutionDetail = "Solution explanation 3", QuestionNumber = 3, Score = 75, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
-        modelBuilder.Entity<SubQuestion>(entity =>
-        {
-            entity.HasKey(e => e.SubId);
-
-            entity.ToTable("SubQuestion");
-
-            entity.Property(e => e.SubId)
-                .HasColumnName("sub_id");
-            entity.Property(e => e.IsAnswer)
-                .HasMaxLength(10)
-                .IsFixedLength()
-                .HasColumnName("is_answer");
-            entity.Property(e => e.MainId).HasColumnName("main_id");
-            entity.Property(e => e.SubContent)
-                .HasMaxLength(250)
-                .HasColumnName("sub_content");
-
-            entity.HasOne(d => d.Main).WithMany(p => p.SubQuestions)
-                .HasForeignKey(d => d.MainId)
-                .HasConstraintName("FK_SubQuestion_MainQuestion");
-        });
 
 
 
         OnModelCreatingPartial(modelBuilder);
-    }
+    
+}
+    
+
+    
+
+
+
+    
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

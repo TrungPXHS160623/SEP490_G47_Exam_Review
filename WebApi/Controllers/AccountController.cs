@@ -25,7 +25,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        /*
         [HttpPost("Register")]
         [AllowAnonymous]
         public async Task<IActionResult> UserRegister([FromBody] UserRegisterRequest req)
@@ -34,7 +34,9 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+        */
 
+        /*
         [HttpGet("GetUser")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserList()
@@ -43,7 +45,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        */
         [HttpGet("GoogleLoginCallback")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLoginCallback(string code)
