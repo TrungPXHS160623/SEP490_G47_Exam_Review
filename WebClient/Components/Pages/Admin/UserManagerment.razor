@@ -34,13 +34,13 @@
                         <tr>
 
                             <td>
-                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Mail</div>
+                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
                             </td>
                             <td>
                                 <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
                              </td>
-                             <td>@user.UserRole?.RoleName</td>
-                            <td>@user.Campus?.CampusName</td>
+                             <td>@user.RoleName</td>
+                            <td>@user.CampusName</td>
                             <td>
                                 <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                             </td>
@@ -49,6 +49,9 @@
                 }
             </tbody>
         </table>
+    } else
+    {
+        <span class="text-danger">No data found.</span>
     }
 </div>
 
@@ -56,7 +59,7 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    private List<User> users = new List<User>();
+    private List<UserResponse> users = new List<UserResponse>();
 
     private string searchText;
 
@@ -74,6 +77,7 @@
             Layout.Header = "Home";
             Layout.HeaderLink = "/Home";
             Layout.SubHeader = "User Management";
+            Layout.SubHeader1 = string.Empty;
             Layout.RefreshLayout();
         }
     }
@@ -83,7 +87,7 @@
         // Check if there is search text to filter
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            var response = await AccountService.GetAllWithFilterAsync("Mail", searchText);
+            var response = await AccountService.GetAllWithFilterAsync(searchText);
             if (response.IsSuccessful)
             {
                 users = response.Items;
@@ -101,12 +105,36 @@
 
     private async Task DeleteUser(int UserId)
     {
-        var response = await AccountService.DeleteAsync(UserId);
-        if (response.IsSuccessful)
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<Dialog>
         {
-            await FetchUsers();
+            { x => x.Content, "Are you sure want to delete this account?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Account", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var response = await AccountService.DeleteAsync(UserId);
+            if (response.IsSuccessful)
+            {
+                await FetchUsers();
+            }
         }
     }
+
     private void AddNewUser()
     {
         NavManager.NavigateTo($"/Admin/AddUser");

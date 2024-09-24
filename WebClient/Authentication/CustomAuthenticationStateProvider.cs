@@ -3,6 +3,7 @@ using Library.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Xml.Serialization;
+using WebClient.Components.Pages.Lecturer;
 
 namespace WebClient.Authentication
 {
@@ -18,7 +19,7 @@ namespace WebClient.Authentication
                 {
                     return await Task.FromResult(new AuthenticationState(anonymous));
                 }
-
+                
                 var getUserClaims = DecryptToken(Constants.JWTToken);
                 if (getUserClaims == null)
                 {
@@ -60,6 +61,7 @@ namespace WebClient.Authentication
                 new List<Claim>
                 {
                     new(ClaimTypes.Email, claims.Email),
+                    new(ClaimTypes.NameIdentifier, claims.Id.ToString()),
                     new(ClaimTypes.Role, claims.RoleId.ToString()!),
                 }, "JwtAuth"));
         }
@@ -74,9 +76,14 @@ namespace WebClient.Authentication
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(jwtToken);
 
+            var Email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
+            var Id = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id1) ? id1 : 0;
+            var RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role1) ? role1 : 0;
+
             return new AccountClaims
             {
                 Email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty,
+                Id = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0,
                 RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role) ? role : 0
             };
         }

@@ -1,36 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class InstructorAssignment
 {
-    public  class InstructorAssignment
-    {
-        [Key]
-        public int AssignmentId { get; set; }
+    public int AssignmentId { get; set; }
 
-        [Required]
-        public int ExamId { get; set; }
+    public int ExamId { get; set; }
 
-        [Required]
-        public int AssignedTo { get; set; }
+    public int AssignedTo { get; set; }
 
-        [Required]
-        public DateTime AssignmentDate { get; set; }
+    public DateTime? AssignmentDate { get; set; }
 
-        public string Status { get; set; }
+    public string? Status { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
 
-        [ForeignKey("ExamId")]
-        public virtual Exam Exam { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
-        [ForeignKey("AssignedTo")]
-        public virtual User AssignedUser { get; set; }
-    }
+    public virtual User AssignedToNavigation { get; set; } = null!;
+
+    public virtual Exam Exam { get; set; } = null!;
 }

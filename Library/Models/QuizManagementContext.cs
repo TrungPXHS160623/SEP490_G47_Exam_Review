@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Library.Models;
@@ -14,20 +16,29 @@ public partial class QuizManagementContext : DbContext
     {
     }
 
-    public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Campus> Campuses { get; set; }
-    public virtual DbSet<UserRole> UserRoles { get; set; }
+
     public virtual DbSet<Department> Departments { get; set; }
-    public virtual DbSet<Subject> Subjects { get; set; }
-    public virtual DbSet<ExamStatus> ExamStatuses { get; set; }
+
     public virtual DbSet<Exam> Exams { get; set; }
-    public virtual DbSet<Report> Reports { get; set; }
+
     public virtual DbSet<ExamAssignment> ExamAssignments { get; set; }
+
+    public virtual DbSet<ExamStatus> ExamStatuses { get; set; }
+
     public virtual DbSet<InstructorAssignment> InstructorAssignments { get; set; }
 
     public virtual DbSet<Menu> Menus { get; set; }
 
     public virtual DbSet<MenuRole> MenuRoles { get; set; }
+
+    public virtual DbSet<Report> Reports { get; set; }
+
+    public virtual DbSet<Subject> Subjects { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -37,123 +48,156 @@ public partial class QuizManagementContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Campus>(entity =>
+        {
+            entity.Property(e => e.CampusName).HasMaxLength(100);
+        });
 
+        modelBuilder.Entity<Department>(entity =>
+        {
+            entity.HasIndex(e => e.HeadOfDepartmentId, "IX_Departments_HeadOfDepartmentId");
 
+            entity.Property(e => e.DepartmentName).HasMaxLength(255);
 
-        modelBuilder.Entity<MenuRole>().HasKey(e => new { e.RoleId, e.MenuId });
+            entity.HasOne(d => d.HeadOfDepartment).WithMany(p => p.Departments)
+                .HasForeignKey(d => d.HeadOfDepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
-        // Thiết lập quan hệ giữa Campus và User
-        modelBuilder.Entity<Campus>()
-            .HasMany(c => c.Users)
-            .WithOne(u => u.Campus)
-            .HasForeignKey(u => u.CampusId);
+        modelBuilder.Entity<Exam>(entity =>
+        {
+            entity.HasIndex(e => e.CreaterId, "IX_Exams_CreaterId");
 
-        // Thiết lập quan hệ giữa ExamStatus và Exam
-        modelBuilder.Entity<ExamStatus>()
-            .HasMany(es => es.Exams)
-            .WithOne(e => e.ExamStatus)
-            .HasForeignKey(e => e.ExamStatusID);
+            entity.HasIndex(e => e.ExamStatusId, "IX_Exams_ExamStatusId");
 
-        // Thiết lập quan hệ giữa UserRole và User
-        modelBuilder.Entity<UserRole>()
-            .HasMany(ur => ur.Users)
-            .WithOne(u => u.UserRole)
-            .HasForeignKey(u => u.RoleId);
+            entity.HasIndex(e => e.SubjectId, "IX_Exams_SubjectId");
 
-        // Thiết lập quan hệ giữa Department và User (HeadOfDepartment)
-        modelBuilder.Entity<Department>()
-            .HasOne(d => d.HeadOfDepartment)
-            .WithMany()
-            .HasForeignKey(d => d.HeadOfDepartmentId);
+            entity.Property(e => e.ExamCode).HasMaxLength(50);
+            entity.Property(e => e.ExamDuration).HasMaxLength(10);
+            entity.Property(e => e.ExamStatusId).HasColumnName("ExamStatusId");
+            entity.Property(e => e.ExamType).HasMaxLength(50);
 
-        // Thiết lập quan hệ giữa Department và Subject
-        modelBuilder.Entity<Department>()
-            .HasMany(d => d.Subjects)
-            .WithOne(s => s.Department)
-            .HasForeignKey(s => s.DepartmentId);
+            entity.HasOne(d => d.Creater).WithMany(p => p.Exams)
+                .HasForeignKey(d => d.CreaterId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-        // Thiết lập quan hệ giữa Subject và Exam
-        modelBuilder.Entity<Subject>()
-            .HasMany(s => s.Exams)
-            .WithOne(e => e.Subject)
-            .HasForeignKey(e => e.SubjectId);
+            entity.HasOne(d => d.ExamStatus).WithMany(p => p.Exams)
+                .HasForeignKey(d => d.ExamStatusId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-        // Thiết lập quan hệ giữa User và Exam (Creator)
-        modelBuilder.Entity<Exam>()
-            .HasOne(e => e.Creator)
-            .WithMany()
-            .HasForeignKey(e => e.CreaterId)
-            .OnDelete(DeleteBehavior.Restrict);
-           
+            entity.HasOne(d => d.Subject).WithMany(p => p.Exams).HasForeignKey(d => d.SubjectId);
+        });
 
-        // Thiết lập quan hệ giữa Exam và ExamAssignment
-        modelBuilder.Entity<Exam>()
-            .HasMany(e => e.ExamAssignments)
-            .WithOne(ea => ea.Exam)
-            .HasForeignKey(ea => ea.ExamId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ExamAssignment>(entity =>
+        {
+            entity.HasKey(e => e.AssignmentId);
 
-        // Thiết lập quan hệ giữa Exam và InstructorAssignment
-        modelBuilder.Entity<Exam>()
-            .HasMany(e => e.InstructorAssignments)
-            .WithOne(ia => ia.Exam)
-            .HasForeignKey(ia => ia.ExamId)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.AssignedBy, "IX_ExamAssignments_AssignedBy");
 
-        // Thiết lập quan hệ giữa ExamAssignment và AssignedToDepartment
-        modelBuilder.Entity<ExamAssignment>()
-            .HasOne(ea => ea.AssignedDepartment) // Mỗi ExamAssignment được giao cho một Department
-            .WithMany() // Một Department có thể nhận nhiều ExamAssignment
-            .HasForeignKey(ea => ea.AssignedTo)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.AssignedTo, "IX_ExamAssignments_AssignedTo");
 
-        // Thiết lập quan hệ giữa InstructorAssignment và User (AssignedTo)
-        modelBuilder.Entity<InstructorAssignment>()
-            .HasOne(ia => ia.AssignedUser)
-            .WithMany()
-            .HasForeignKey(ia => ia.AssignedTo)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.ExamId, "IX_ExamAssignments_ExamId");
 
-        // Thiết lập quan hệ giữa Exam và Report
-        modelBuilder.Entity<Exam>()
-            .HasMany(e => e.Reports)
-            .WithOne(r => r.Exam)
-            .HasForeignKey(r => r.ExamId);
+            entity.HasOne(d => d.AssignedByNavigation).WithMany(p => p.ExamAssignments).HasForeignKey(d => d.AssignedBy);
 
-        // Thiết lập quan hệ giữa User và Report
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Reports)
-            .WithOne(r => r.User)
-            .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(d => d.AssignedToNavigation).WithMany(p => p.ExamAssignments)
+                .HasForeignKey(d => d.AssignedTo)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-        // Thiết lập quan hệ giữa Menu và MenuRole
-        modelBuilder.Entity<Menu>()
-            .HasMany(m => m.MenuRoles)
-            .WithOne(mr => mr.Menu)
-            .HasForeignKey(mr => mr.MenuId);
+            entity.HasOne(d => d.Exam).WithMany(p => p.ExamAssignments)
+                .HasForeignKey(d => d.ExamId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        });
 
-        // Thiết lập quan hệ giữa UserRole và MenuRole
-        modelBuilder.Entity<UserRole>()
-            .HasMany(ur => ur.MenuRoles)
-            .WithOne(mr => mr.Role)
-            .HasForeignKey(mr => mr.RoleId);
+        modelBuilder.Entity<ExamStatus>(entity =>
+        {
+            entity.Property(e => e.ExamStatusId).HasColumnName("ExamStatusId");
+            entity.Property(e => e.StatusContent).HasMaxLength(255);
+        });
 
-      
+        modelBuilder.Entity<InstructorAssignment>(entity =>
+        {
+            entity.HasKey(e => e.AssignmentId);
 
-        // 1. Seed data for Campus table
+            entity.HasIndex(e => e.AssignedTo, "IX_InstructorAssignments_AssignedTo");
+
+            entity.HasIndex(e => e.ExamId, "IX_InstructorAssignments_ExamId");
+
+            entity.HasOne(d => d.AssignedToNavigation).WithMany(p => p.InstructorAssignments)
+                .HasForeignKey(d => d.AssignedTo)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.Exam).WithMany(p => p.InstructorAssignments)
+                .HasForeignKey(d => d.ExamId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<MenuRole>(entity =>
+        {
+            entity.HasKey(e => new { e.RoleId, e.MenuId });
+
+            entity.HasIndex(e => e.MenuId, "IX_MenuRoles_MenuId");
+
+            entity.HasOne(d => d.Menu).WithMany(p => p.MenuRoles).HasForeignKey(d => d.MenuId);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.MenuRoles).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<Report>(entity =>
+        {
+            entity.HasKey(e => e.ReviewId);
+
+            entity.HasIndex(e => e.ExamId, "IX_Reports_ExamId");
+
+            entity.HasIndex(e => e.UserId, "IX_Reports_UserId");
+
+            entity.HasOne(d => d.Exam).WithMany(p => p.Reports).HasForeignKey(d => d.ExamId);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Reports)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<Subject>(entity =>
+        {
+            entity.HasIndex(e => e.DepartmentId, "IX_Subjects_DepartmentId");
+
+            entity.Property(e => e.SubjectName).HasMaxLength(255);
+
+            entity.HasOne(d => d.Department).WithMany(p => p.Subjects).HasForeignKey(d => d.DepartmentId);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(e => e.CampusId, "IX_Users_CampusId");
+
+            entity.HasIndex(e => e.RoleId, "IX_Users_RoleId");
+
+            entity.Property(e => e.Mail).HasMaxLength(250);
+
+            entity.HasOne(d => d.Campus).WithMany(p => p.Users).HasForeignKey(d => d.CampusId);
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => e.RoleId);
+
+            entity.Property(e => e.RoleName).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Campus>().HasData(
-            new Campus { CampusId = 1, CampusName = "Hanoi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Campus { CampusId = 2, CampusName = "Ho Chi Minh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-        );
+    new Campus { CampusId = 1, CampusName = "Hanoi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+    new Campus { CampusId = 2, CampusName = "Ho Chi Minh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+);
 
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
-            new ExamStatus { ExamStatusID = 1, StatusContent = "Not started", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusID = 2, StatusContent = "In progress", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusID = 3, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusID = 4, StatusContent = "Cancelled", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new ExamStatus { ExamStatusId = 1, StatusContent = "Not started", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 2, StatusContent = "In progress", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 3, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "Cancelled", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 3. Seed data for UserRole table
@@ -190,9 +234,9 @@ public partial class QuizManagementContext : DbContext
 
         // 7. Seed data for Exam table
         modelBuilder.Entity<Exam>().HasData(
-            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "10w", ExamType = "Essay", SubjectId = 1, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, ExamStatusID = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "10w", ExamType = "Essay", SubjectId = 1, CreaterId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 8. Seed data for ExamAssignment table
@@ -210,22 +254,28 @@ public partial class QuizManagementContext : DbContext
 
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
-            new Menu { MenuId = 1, MenuName = "Dashboard", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 2, MenuName = "Exam Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 3, MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "History", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 3, MenuLink = "/TestDepartment/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Head Department List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+
         );
 
         // 11. Seed data for MenuRole table
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 3, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 4, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 5, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-      
+
 
         // 12. Seed data for Report table
         // Seeding data for Report
@@ -235,19 +285,8 @@ public partial class QuizManagementContext : DbContext
             new Report { ReviewId = 3, ExamId = 3, UserId = 3, ReportContent = "Report 3", QuestionSolutionDetail = "Solution explanation 3", QuestionNumber = 3, Score = 75, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-
-
-
         OnModelCreatingPartial(modelBuilder);
-    
-}
-    
-
-    
-
-
-
-    
+    }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

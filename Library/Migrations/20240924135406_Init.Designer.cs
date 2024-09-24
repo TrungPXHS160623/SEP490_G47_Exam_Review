@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(QuizManagementContext))]
-    [Migration("20240924083203_Init")]
+    [Migration("20240924135406_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -34,7 +34,6 @@ namespace Library.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CampusId"));
 
                     b.Property<string>("CampusName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -53,15 +52,15 @@ namespace Library.Migrations
                         {
                             CampusId = 1,
                             CampusName = "Hanoi",
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(3468),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(3489)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5580),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5593)
                         },
                         new
                         {
                             CampusId = 2,
                             CampusName = "Ho Chi Minh",
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(3493),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(3495)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5594),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5595)
                         });
                 });
 
@@ -77,11 +76,10 @@ namespace Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DepartmentName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("HeadOfDepartmentId")
+                    b.Property<int?>("HeadOfDepartmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -89,7 +87,7 @@ namespace Library.Migrations
 
                     b.HasKey("DepartmentId");
 
-                    b.HasIndex("HeadOfDepartmentId");
+                    b.HasIndex(new[] { "HeadOfDepartmentId" }, "IX_Departments_HeadOfDepartmentId");
 
                     b.ToTable("Departments");
 
@@ -97,18 +95,18 @@ namespace Library.Migrations
                         new
                         {
                             DepartmentId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4968),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5870),
                             DepartmentName = "Information Technology",
                             HeadOfDepartmentId = 4,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4969)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5871)
                         },
                         new
                         {
                             DepartmentId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4972),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5873),
                             DepartmentName = "Data Science",
                             HeadOfDepartmentId = 6,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4973)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5873)
                         });
                 });
 
@@ -126,31 +124,29 @@ namespace Library.Migrations
                     b.Property<int>("CreaterId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EstimatedTimeTest")
+                    b.Property<DateTime?>("EstimatedTimeTest")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ExamCode")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ExamDuration")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("ExamStatusID")
-                        .HasColumnType("int");
+                    b.Property<int?>("ExamStatusId")
+                        .HasColumnType("int")
+                        .HasColumnName("ExamStatusId");
 
                     b.Property<string>("ExamType")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("SubjectId")
@@ -161,11 +157,11 @@ namespace Library.Migrations
 
                     b.HasKey("ExamId");
 
-                    b.HasIndex("CreaterId");
+                    b.HasIndex(new[] { "CreaterId" }, "IX_Exams_CreaterId");
 
-                    b.HasIndex("ExamStatusID");
+                    b.HasIndex(new[] { "ExamStatusId" }, "IX_Exams_ExamStatusId");
 
-                    b.HasIndex("SubjectId");
+                    b.HasIndex(new[] { "SubjectId" }, "IX_Exams_SubjectId");
 
                     b.ToTable("Exams");
 
@@ -173,47 +169,47 @@ namespace Library.Migrations
                         new
                         {
                             ExamId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5071),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5923),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5070),
-                            EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5067),
+                            EndDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5923),
+                            EstimatedTimeTest = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5921),
                             ExamCode = "EXAM001",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Essay",
-                            StartDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5069),
+                            StartDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5922),
                             SubjectId = 1,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5073)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5924)
                         },
                         new
                         {
                             ExamId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5079),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5959),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5078),
-                            EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5076),
+                            EndDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5959),
+                            EstimatedTimeTest = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5957),
                             ExamCode = "EXAM002",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5077),
+                            StartDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5958),
                             SubjectId = 2,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5080)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5960)
                         },
                         new
                         {
                             ExamId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5085),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5964),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5084),
-                            EstimatedTimeTest = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5083),
+                            EndDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5963),
+                            EstimatedTimeTest = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5962),
                             ExamCode = "EXAM003",
                             ExamDuration = "10w",
-                            ExamStatusID = 1,
+                            ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5083),
+                            StartDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5963),
                             SubjectId = 3,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5086)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5964)
                         });
                 });
 
@@ -231,7 +227,7 @@ namespace Library.Migrations
                     b.Property<int>("AssignedTo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AssignmentDate")
+                    b.Property<DateTime?>("AssignmentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CreateDate")
@@ -241,7 +237,6 @@ namespace Library.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -249,11 +244,11 @@ namespace Library.Migrations
 
                     b.HasKey("AssignmentId");
 
-                    b.HasIndex("AssignedBy");
+                    b.HasIndex(new[] { "AssignedBy" }, "IX_ExamAssignments_AssignedBy");
 
-                    b.HasIndex("AssignedTo");
+                    b.HasIndex(new[] { "AssignedTo" }, "IX_ExamAssignments_AssignedTo");
 
-                    b.HasIndex("ExamId");
+                    b.HasIndex(new[] { "ExamId" }, "IX_ExamAssignments_ExamId");
 
                     b.ToTable("ExamAssignments");
 
@@ -263,87 +258,87 @@ namespace Library.Migrations
                             AssignmentId = 1,
                             AssignedBy = 2,
                             AssignedTo = 1,
-                            AssignmentDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5127),
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5129),
+                            AssignmentDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5986),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5987),
                             ExamId = 1,
                             Status = "Pending",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5130)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5988)
                         },
                         new
                         {
                             AssignmentId = 2,
                             AssignedBy = 2,
                             AssignedTo = 2,
-                            AssignmentDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5133),
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5134),
+                            AssignmentDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5990),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5990),
                             ExamId = 2,
                             Status = "Assigned",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5135)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5991)
                         },
                         new
                         {
                             AssignmentId = 3,
                             AssignedBy = 2,
                             AssignedTo = 2,
-                            AssignmentDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5137),
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5138),
+                            AssignmentDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5992),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5993),
                             ExamId = 3,
                             Status = "Assigned",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5139)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5993)
                         });
                 });
 
             modelBuilder.Entity("Library.Models.ExamStatus", b =>
                 {
-                    b.Property<int>("ExamStatusID")
+                    b.Property<int>("ExamStatusId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ExamStatusId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamStatusID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamStatusId"));
 
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("StatusContent")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ExamStatusID");
+                    b.HasKey("ExamStatusId");
 
                     b.ToTable("ExamStatuses");
 
                     b.HasData(
                         new
                         {
-                            ExamStatusID = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4195),
+                            ExamStatusId = 1,
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5762),
                             StatusContent = "Not started",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4204)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5764)
                         },
                         new
                         {
-                            ExamStatusID = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4208),
+                            ExamStatusId = 2,
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5765),
                             StatusContent = "In progress",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4209)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5766)
                         },
                         new
                         {
-                            ExamStatusID = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4211),
+                            ExamStatusId = 3,
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5767),
                             StatusContent = "Completed",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4213)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5768)
                         },
                         new
                         {
-                            ExamStatusID = 4,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4215),
+                            ExamStatusId = 4,
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5769),
                             StatusContent = "Cancelled",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4217)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5770)
                         });
                 });
 
@@ -358,7 +353,7 @@ namespace Library.Migrations
                     b.Property<int>("AssignedTo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AssignmentDate")
+                    b.Property<DateTime?>("AssignmentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CreateDate")
@@ -368,7 +363,6 @@ namespace Library.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -376,9 +370,9 @@ namespace Library.Migrations
 
                     b.HasKey("AssignmentId");
 
-                    b.HasIndex("AssignedTo");
+                    b.HasIndex(new[] { "AssignedTo" }, "IX_InstructorAssignments_AssignedTo");
 
-                    b.HasIndex("ExamId");
+                    b.HasIndex(new[] { "ExamId" }, "IX_InstructorAssignments_ExamId");
 
                     b.ToTable("InstructorAssignments");
 
@@ -387,21 +381,21 @@ namespace Library.Migrations
                         {
                             AssignmentId = 1,
                             AssignedTo = 3,
-                            AssignmentDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5184),
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5186),
+                            AssignmentDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6013),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6014),
                             ExamId = 1,
                             Status = "Pending",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5187)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6015)
                         },
                         new
                         {
                             AssignmentId = 2,
                             AssignedTo = 3,
-                            AssignmentDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5190),
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5191),
+                            AssignmentDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6016),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6017),
                             ExamId = 2,
                             Status = "Assigned",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5192)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6018)
                         });
                 });
 
@@ -417,7 +411,6 @@ namespace Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MenuName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -431,23 +424,23 @@ namespace Library.Migrations
                         new
                         {
                             MenuId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5316),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6040),
                             MenuName = "Dashboard",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5317)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6041)
                         },
                         new
                         {
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5320),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6042),
                             MenuName = "Exam Management",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5321)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6042)
                         },
                         new
                         {
                             MenuId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5322),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6044),
                             MenuName = "User Management",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5323)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6044)
                         });
                 });
 
@@ -467,7 +460,7 @@ namespace Library.Migrations
 
                     b.HasKey("RoleId", "MenuId");
 
-                    b.HasIndex("MenuId");
+                    b.HasIndex(new[] { "MenuId" }, "IX_MenuRoles_MenuId");
 
                     b.ToTable("MenuRoles");
 
@@ -476,43 +469,43 @@ namespace Library.Migrations
                         {
                             RoleId = 1,
                             MenuId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5367),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5369)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6063),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6064)
                         },
                         new
                         {
                             RoleId = 2,
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5371),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5372)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6066),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6066)
                         },
                         new
                         {
                             RoleId = 3,
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5374),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5375)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6068),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6068)
                         },
                         new
                         {
                             RoleId = 4,
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5377),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5378)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6069),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6070)
                         },
                         new
                         {
                             RoleId = 5,
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5380),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5381)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6071),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6072)
                         },
                         new
                         {
                             RoleId = 1,
                             MenuId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5382),
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5383)
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6073),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6074)
                         });
                 });
 
@@ -530,18 +523,16 @@ namespace Library.Migrations
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuestionNumber")
+                    b.Property<int?>("QuestionNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("QuestionSolutionDetail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReportContent")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Score")
+                    b.Property<float?>("Score")
                         .HasColumnType("real");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -552,9 +543,9 @@ namespace Library.Migrations
 
                     b.HasKey("ReviewId");
 
-                    b.HasIndex("ExamId");
+                    b.HasIndex(new[] { "ExamId" }, "IX_Reports_ExamId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_Reports_UserId");
 
                     b.ToTable("Reports");
 
@@ -562,37 +553,37 @@ namespace Library.Migrations
                         new
                         {
                             ReviewId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5433),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6094),
                             ExamId = 1,
                             QuestionNumber = 1,
                             QuestionSolutionDetail = "Solution explanation 1",
                             ReportContent = "Report 1",
                             Score = 90f,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5435),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6095),
                             UserId = 3
                         },
                         new
                         {
                             ReviewId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5439),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6097),
                             ExamId = 2,
                             QuestionNumber = 2,
                             QuestionSolutionDetail = "Solution explanation 2",
                             ReportContent = "Report 2",
                             Score = 85f,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5440),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6098),
                             UserId = 3
                         },
                         new
                         {
                             ReviewId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5442),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6099),
                             ExamId = 3,
                             QuestionNumber = 3,
                             QuestionSolutionDetail = "Solution explanation 3",
                             ReportContent = "Report 3",
                             Score = 75f,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5443),
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(6100),
                             UserId = 3
                         });
                 });
@@ -612,7 +603,6 @@ namespace Library.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SubjectName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -621,7 +611,7 @@ namespace Library.Migrations
 
                     b.HasKey("SubjectId");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex(new[] { "DepartmentId" }, "IX_Subjects_DepartmentId");
 
                     b.ToTable("Subjects");
 
@@ -629,26 +619,26 @@ namespace Library.Migrations
                         new
                         {
                             SubjectId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5018),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5895),
                             DepartmentId = 1,
                             SubjectName = "C# Programming",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5020)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5895)
                         },
                         new
                         {
                             SubjectId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5022),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5897),
                             DepartmentId = 1,
                             SubjectName = "Computer Science",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5023)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5897)
                         },
                         new
                         {
                             SubjectId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5025),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5899),
                             DepartmentId = 2,
                             SubjectName = "Machine Learning",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(5026)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5900)
                         });
                 });
 
@@ -682,9 +672,9 @@ namespace Library.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("CampusId");
+                    b.HasIndex(new[] { "CampusId" }, "IX_Users_CampusId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex(new[] { "RoleId" }, "IX_Users_RoleId");
 
                     b.ToTable("Users");
 
@@ -693,61 +683,61 @@ namespace Library.Migrations
                         {
                             UserId = 1,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4484),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5831),
                             IsActive = true,
                             Mail = "admin@fpt.edu.vn",
                             RoleId = 1,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4485)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5832)
                         },
                         new
                         {
                             UserId = 2,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4490),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5835),
                             IsActive = true,
                             Mail = "examiner@fpt.edu.vn",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4491)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5835)
                         },
                         new
                         {
                             UserId = 3,
                             CampusId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4494),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5837),
                             IsActive = true,
                             Mail = "lecturer@fpt.edu.vn",
                             RoleId = 3,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4495)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5838)
                         },
                         new
                         {
                             UserId = 4,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4499),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5840),
                             IsActive = true,
                             Mail = "head@fpt.edu.vn",
                             RoleId = 4,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4524)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5841)
                         },
                         new
                         {
                             UserId = 5,
                             CampusId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4889),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5843),
                             IsActive = true,
                             Mail = "developer@fpt.edu.vn",
                             RoleId = 5,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4891)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5844)
                         },
                         new
                         {
                             UserId = 6,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4894),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5847),
                             IsActive = true,
                             Mail = "trunghp@fpt.edu.vn",
                             RoleId = 4,
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4895)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5847)
                         });
                 });
 
@@ -763,7 +753,6 @@ namespace Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RoleName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -778,64 +767,61 @@ namespace Library.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4384),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5793),
                             RoleName = "Admin",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4390)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5794)
                         },
                         new
                         {
                             RoleId = 2,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4395),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5795),
                             RoleName = "Examiner",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4396)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5796)
                         },
                         new
                         {
                             RoleId = 3,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4401),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5797),
                             RoleName = "Lecturer",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4402)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5799)
                         },
                         new
                         {
                             RoleId = 4,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4404),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5800),
                             RoleName = "Head of Department",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4405)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5800)
                         },
                         new
                         {
                             RoleId = 5,
-                            CreateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4407),
+                            CreateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5802),
                             RoleName = "Program Developer",
-                            UpdateDate = new DateTime(2024, 9, 24, 15, 32, 1, 720, DateTimeKind.Local).AddTicks(4408)
+                            UpdateDate = new DateTime(2024, 9, 24, 20, 54, 5, 914, DateTimeKind.Local).AddTicks(5802)
                         });
                 });
 
             modelBuilder.Entity("Library.Models.Department", b =>
                 {
                     b.HasOne("Library.Models.User", "HeadOfDepartment")
-                        .WithMany()
+                        .WithMany("Departments")
                         .HasForeignKey("HeadOfDepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("HeadOfDepartment");
                 });
 
             modelBuilder.Entity("Library.Models.Exam", b =>
                 {
-                    b.HasOne("Library.Models.User", "Creator")
-                        .WithMany()
+                    b.HasOne("Library.Models.User", "Creater")
+                        .WithMany("Exams")
                         .HasForeignKey("CreaterId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Library.Models.ExamStatus", "ExamStatus")
                         .WithMany("Exams")
-                        .HasForeignKey("ExamStatusID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ExamStatusId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Library.Models.Subject", "Subject")
                         .WithMany("Exams")
@@ -843,7 +829,7 @@ namespace Library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Creator");
+                    b.Navigation("Creater");
 
                     b.Navigation("ExamStatus");
 
@@ -852,46 +838,42 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.ExamAssignment", b =>
                 {
-                    b.HasOne("Library.Models.User", "Assigner")
-                        .WithMany()
+                    b.HasOne("Library.Models.User", "AssignedByNavigation")
+                        .WithMany("ExamAssignments")
                         .HasForeignKey("AssignedBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.Department", "AssignedDepartment")
-                        .WithMany()
+                    b.HasOne("Library.Models.Department", "AssignedToNavigation")
+                        .WithMany("ExamAssignments")
                         .HasForeignKey("AssignedTo")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Library.Models.Exam", "Exam")
                         .WithMany("ExamAssignments")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("AssignedDepartment");
+                    b.Navigation("AssignedByNavigation");
 
-                    b.Navigation("Assigner");
+                    b.Navigation("AssignedToNavigation");
 
                     b.Navigation("Exam");
                 });
 
             modelBuilder.Entity("Library.Models.InstructorAssignment", b =>
                 {
-                    b.HasOne("Library.Models.User", "AssignedUser")
-                        .WithMany()
+                    b.HasOne("Library.Models.User", "AssignedToNavigation")
+                        .WithMany("InstructorAssignments")
                         .HasForeignKey("AssignedTo")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Library.Models.Exam", "Exam")
                         .WithMany("InstructorAssignments")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("AssignedUser");
+                    b.Navigation("AssignedToNavigation");
 
                     b.Navigation("Exam");
                 });
@@ -926,7 +908,6 @@ namespace Library.Migrations
                     b.HasOne("Library.Models.User", "User")
                         .WithMany("Reports")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Exam");
@@ -951,13 +932,13 @@ namespace Library.Migrations
                         .WithMany("Users")
                         .HasForeignKey("CampusId");
 
-                    b.HasOne("Library.Models.UserRole", "UserRole")
+                    b.HasOne("Library.Models.UserRole", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Campus");
 
-                    b.Navigation("UserRole");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Library.Models.Campus", b =>
@@ -967,6 +948,8 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.Department", b =>
                 {
+                    b.Navigation("ExamAssignments");
+
                     b.Navigation("Subjects");
                 });
 
@@ -996,6 +979,14 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.User", b =>
                 {
+                    b.Navigation("Departments");
+
+                    b.Navigation("ExamAssignments");
+
+                    b.Navigation("Exams");
+
+                    b.Navigation("InstructorAssignments");
+
                     b.Navigation("Reports");
                 });
 

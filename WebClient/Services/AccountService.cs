@@ -1,6 +1,7 @@
 ﻿using Library.Common;
 using Library.Models;
 using Library.Request;
+using Library.Response;
 using MudBlazor;
 using WebClient.IServices;
 
@@ -39,7 +40,7 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<RequestResponse> CreateAsync(User user)
+        public async Task<RequestResponse> CreateAsync(UserRequest user)
         {
             try
             {
@@ -105,7 +106,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<User>> GetAllUserList()
+        public async Task<ResultResponse<UserResponse>> GetAllUserList()
         {
             try
             {
@@ -118,7 +119,7 @@ namespace WebClient.Services
 
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -130,14 +131,14 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<User>
+                return new ResultResponse<UserResponse>
                 {
                     IsSuccessful = false,
                 };
             }
         }
 
-        public async Task<ResultResponse<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery)
         {
             try
             {
@@ -148,9 +149,9 @@ namespace WebClient.Services
                 }
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter?filterOn={filterOn}&filterQuery={filterQuery}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter/{filterQuery}");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -162,14 +163,14 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<User>
+                return new ResultResponse<UserResponse>
                 {
                     IsSuccessful = false,
                 };
             }
         }
 
-        public async Task<ResultResponse<User>> GetByIdAsync(int id)
+        public async Task<ResultResponse<UserRequest>> GetByIdAsync(int id)
         {
             try
             {
@@ -182,7 +183,7 @@ namespace WebClient.Services
 
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-by-id/{id}");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<User>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserRequest>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -194,7 +195,7 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<User>
+                return new ResultResponse<UserRequest>
                 {
                     IsSuccessful = false,
                 };
@@ -214,38 +215,6 @@ namespace WebClient.Services
 
             return requestResponse;
         }
-
-        //public async Task<ResultResponse<Account>> GetUserList()
-        //{
-        //    try
-        //    {
-        //        //Check JWT key
-        //        if (Constants.JWTToken == "")
-        //        {
-        //            return null;
-        //        }
-        //        _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
-        //        HttpResponseMessage response = await _httpClient.GetAsync($"api/Account/GetUser");
-
-        //        var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Account>>();
-
-        //        if (!requestResponse.IsSuccessful)
-        //        {
-        //            snackbar.Add(requestResponse.Message, Severity.Error);
-        //        }
-
-        //        return requestResponse;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        snackbar.Add(ex.Message, Severity.Error);
-        //        return new ResultResponse<Account>
-        //        {
-        //            IsSuccessful = false,
-        //        };
-        //    }
-        //}
 
         public async Task<AuthenticationResponse> LoginUserAsync(UserRequest request)
         {
@@ -296,7 +265,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateAsync(User user)
+        public async Task<RequestResponse> UpdateAsync(UserRequest user)
         {
             try
             {

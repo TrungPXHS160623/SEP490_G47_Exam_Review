@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class Menu
 {
-    public class Menu
-    {
-        [Key]
-        public int MenuId { get; set; }
+    public int MenuId { get; set; }
 
-        public string MenuName { get; set; }
+    public string? MenuName { get; set; }
+    public string? MenuLink { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
 
-        public virtual ICollection<MenuRole> MenuRoles { get; set; }
-    }
+    public DateTime? UpdateDate { get; set; }
+
+    public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 }

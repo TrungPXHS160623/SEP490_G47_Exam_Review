@@ -104,6 +104,7 @@ namespace WebApi.Repository
             var userClaims = new[]
             {
                 new Claim(ClaimTypes.Email, acc.Mail!),
+                new Claim(ClaimTypes.NameIdentifier, acc.UserId.ToString()),
                 new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
             };
 

@@ -33,6 +33,11 @@
                                     <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
                                 }
                                 <span>@SubHeader</span>
+                                @if (!string.IsNullOrEmpty(SubHeader1))
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
+                                }
+                                <span>@SubHeader1</span>
                             </div>
                         }
                     </div>
@@ -78,6 +83,8 @@
     public string HeaderLink { get; set; }
 
     public string SubHeader { get; set; }
+
+    public string SubHeader1 { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

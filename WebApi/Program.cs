@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 using WebApi.IRepository;
 using WebApi.Mapper;
 using WebApi.Repository;
@@ -59,11 +60,11 @@ public class Program
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IExaminerRepository, ExaminerRepository>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-		builder.Services.AddScoped<IExamRepository, ExamRepository>();
-		builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-		builder.Services.AddScoped<ICampusRepository, CampusRepository>();
-		builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-		var app = builder.Build();
+        builder.Services.AddScoped<IExamRepository, ExamRepository>();
+        builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+        builder.Services.AddScoped<ICampusRepository, CampusRepository>();
+        builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+        var app = builder.Build();
 
         // Configure the HTTP request pipeline
         if (app.Environment.IsDevelopment())
