@@ -1,9 +1,9 @@
-﻿@page "/edituser/{UserId:int?}"
+﻿@page "/Admin/EditUser/{UserId:int}"
+@page "/Admin/AddUser"
 
-
-<EditForm Model="user" OnValidSubmit="HandleValidSubmit">
-    <div>
-        <label>Email:</label>
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="w-50">
+    <div class="d-flex align-items-center">
+        <label class="col-3">Email:</label>
         @if (!isAddOrEdit)
         {
             <MudText>@user.Mail</MudText>
@@ -13,62 +13,67 @@
             <MudTextField @bind-Value="user.Mail" Variant="Variant.Outlined" Margin="Margin.Dense" />
         }
     </div>
-    <div>
-        <label>Role:</label>
+    <div class="d-flex align-items-center">
+        <label class="col-3">Role:</label>
         @if (!isAddOrEdit)
         {
-            <MudText>@user.UserRole.RoleName</MudText>
+            <MudText>@roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName</MudText>
         }
         else
         {
-            <MudSelect @bind-Value="user.UserRole.RoleId"
-                       Text="@user.UserRole.RoleName"
+            <MudSelect @bind-Value="user.RoleId"
+                       Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
                        Variant="Variant.Outlined"
-                       Label="Subject"
                        Margin="Margin.Dense"
                        Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
+                       AnchorOrigin="Origin.BottomCenter">
 
-                @foreach (var item in roleList)
+                @if (roleList.Count > 0)
                 {
-                    <MudSelectItem Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                    @foreach (var item in roleList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                    }
                 }
             </MudSelect>
         }
     </div>
-    <div>
-        <label>Campus:</label>
+    <div class="d-flex align-items-center">
+        <label class="col-3">Campus:</label>
         @if (!isAddOrEdit)
         {
-            <MudText>@user.Campus.CampusName</MudText>
+            <MudText>@camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName</MudText>
         }
         else
         {
-            <MudSelect @bind-Value="user.Campus.CampusId"
-                       Text="user.Campus.CampusName"
+            <MudSelect @bind-Value="user.CampusId"
+                       Text="@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName)"
                        Variant="Variant.Outlined"
-                       Label="Subject"
                        Margin="Margin.Dense"
                        Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
+                       AnchorOrigin="Origin.BottomCenter">
 
-                @foreach (var item in camList)
+                @if (camList.Count > 0)
                 {
-                    <MudSelectItem Value="@item.CampusId">@item.CampusName</MudSelectItem>
-
+                    @foreach (var item in camList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
+                    }
                 }
             </MudSelect>
         }
     </div>
-    <div>
-        <label>Active:</label>
+    <div class="d-flex align-items-center">
+        <label class="col-3">Active:</label>
         <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit)" />
     </div>
     <div>
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update User</MudButton>
-        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">@(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(UserId != null ? (isAddOrEdit ? "Save" : "Update") : (isAddOrEdit ? "Create" : null))</MudButton>
+        <MudButton Variant="@(UserId != null && isAddOrEdit == true ? Variant.Outlined : Variant.Filled)"
+                   Color="@(UserId != null && isAddOrEdit == true ? Color.Error : Color.Default)"
+                   OnClick="Cancel" Class="ms-4">
+            @(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")
+        </MudButton>
     </div>
 </EditForm>
 
@@ -104,6 +109,9 @@
             }
         }
 
+        await GetCampus();
+        await GetRoles();
+
         if (Layout != null)
         {
             Layout.Header = "Home";
@@ -136,7 +144,7 @@
         }
         else
         {
-            // resp = await accountService.UpdateAsync(UserId.Value, user);
+            resp = await AccountService.CreateAsync(user);
         }
 
         if (resp.IsSuccessful)
@@ -144,6 +152,8 @@
             NavManager.NavigateTo("/usermanagement");
         }
     }
+
+
 
     private async Task GetCampus()
     {
@@ -175,3 +185,4 @@
         }
     }
 }
+

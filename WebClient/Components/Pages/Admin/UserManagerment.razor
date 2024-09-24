@@ -42,7 +42,7 @@
                              <td>@user.UserRole?.RoleName</td>
                             <td>@user.Campus?.CampusName</td>
                             <td>
-                                <button class="btn btn-error" @onclick="() => DeleteUser(user.UserId)">Delete</button>
+                                <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                             </td>
                         </tr>
                     }
