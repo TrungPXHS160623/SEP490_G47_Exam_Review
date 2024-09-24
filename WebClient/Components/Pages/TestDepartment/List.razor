@@ -56,7 +56,7 @@
                 <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
             </MudSelect>
 
-             <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+            <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
 
             <MudSelect @bind-Value="Status"
                        Variant="Variant.Outlined"
@@ -77,13 +77,13 @@
 
     <div class="custom-box">
         <div class="d-flex align-items-center justify-content-between">
-             <div>
-                 <h4>Exam List</h4>
-                 <h6>Selected Exam: @selectedItems.Count</h6>
-             </div>
-             <div>
+            <div>
+                <h4>Exam List</h4>
+                <h6>Selected Exam: @selectedItems.Count</h6>
+            </div>
+            <div>
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedItems.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
-             </div>
+            </div>
         </div>
         <div>
             @if (AccList.Count > 0)
@@ -106,18 +106,22 @@
                             </div>
                         </MudTd>
                     </RowTemplate>
-@*                     <PagerContent>
-                        @if (AccList.Count > 10)
-                        {
-                            <MudTablePager />
-                        }
-                    </PagerContent> *@
+                    @*                     <PagerContent>
+                @if (AccList.Count > 10)
+                {
+                <MudTablePager />
+                }
+                </PagerContent> *@
                 </MudTable>
             }
             else
             {
                 <p>No Data</p>
             }
+        </div>
+        <div class="mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedItems.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
         </div>
     </div>
 </div>
@@ -144,7 +148,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             AccList.Add(new Exam
                 {
