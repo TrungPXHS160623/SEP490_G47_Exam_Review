@@ -47,39 +47,39 @@
                        Variant="Variant.Outlined"
                        Label="Subject"
                        Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
+                                  Clearable
+                        AnchorOrigin="Origin.BottomCenter"
+                        Class="me-4">
 
-                <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
-                <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
-                <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
-            </MudSelect>
+                 <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
+                 <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
+                 <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
+             </MudSelect>
 
-            <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+             <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
 
-            <MudSelect @bind-Value="Status"
-                       Variant="Variant.Outlined"
-                       Label="Subject"
-                       Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
+             <MudSelect @bind-Value="Status"
+                        Variant="Variant.Outlined"
+                        Label="Subject"
+                        Margin="Margin.Dense"
+                                  Clearable
+                        AnchorOrigin="Origin.BottomCenter"
+                        Class="me-4">
 
-                <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
-                <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
-                <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
-            </MudSelect>
+                 <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
+                 <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
+                 <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
+             </MudSelect>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
-        </div>
-    </div>
+             <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
+         </div>
+     </div>
 
-    <div class="custom-box">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h4>Exam List</h4>
-                <h6>Selected Exam: @selectedItems.Count</h6>
+     <div class="custom-box">
+         <div class="d-flex align-items-center justify-content-between">
+             <div>
+                 <h4>Exam List</h4>
+                 <h6>Selected Exam: @selectedItems.Count</h6>
             </div>
             <div>
                 <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedItems.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
@@ -97,22 +97,22 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>@context.ExamStatusId</MudTd>
-                        <MudTd>@context.ExamDuration</MudTd>
-                        <MudTd>
-                            <div class="d-flex align-items-center justify-content-around">
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync())">Detail</MudButton>
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled">Transfer</MudButton>
-                            </div>
-                        </MudTd>
-                    </RowTemplate>
-                    @*                     <PagerContent>
+                            <MudTd>@context.ExamStatusId</MudTd>
+                            <MudTd>@context.ExamDuration</MudTd>
+                            <MudTd>
+                                <div class="d-flex align-items-center justify-content-around">
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync())">Detail</MudButton>
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Transfer</MudButton>
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+                        @*                     <PagerContent>
                 @if (AccList.Count > 10)
                 {
                 <MudTablePager />
                 }
                 </PagerContent> *@
-                </MudTable>
+                    </MudTable>
             }
             else
             {
@@ -148,22 +148,35 @@
 
     protected override async Task OnInitializedAsync()
     {
-        for (int i = 0; i < 10; i++)
-        {
-            AccList.Add(new Exam
-                {
-                    ExamCode = "PRN231_Fall24_Q1_201" + i,
-                    ExamStatusId = i % 2 == 0 ? 1 : 2,
-                    ExamDuration = "60:00"
-                });
-        }
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-        if (Layout != null)
+        var response = await MenuServive.CheckAccess(userId, 3);
+
+        if (!response.IsSuccessful)
         {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "Exam Assign List";
-            Layout.RefreshLayout();
+            NavManager.NavigateTo("/404");
+        }
+        else
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                AccList.Add(new Exam
+                    {
+                        ExamCode = "PRN231_Fall24_Q1_201" + i,
+                        ExamStatusId = i % 2 == 0 ? 1 : 2,
+                        ExamDuration = "60:00"
+                    });
+            }
+
+            if (Layout != null)
+            {
+                Layout.Header = "Home";
+                Layout.HeaderLink = "/Home";
+                Layout.SubHeader = "Exam Assign List";
+                Layout.RefreshLayout();
+            }
         }
     }
 

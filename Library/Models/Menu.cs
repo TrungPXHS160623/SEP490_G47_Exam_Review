@@ -10,6 +10,8 @@ public partial class Menu
     public string? MenuName { get; set; }
     public string? MenuLink { get; set; }
 
+    public bool? IsProgram { get; set; }
+
     public DateTime? CreateDate { get; set; }
 
     public DateTime? UpdateDate { get; set; }

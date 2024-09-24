@@ -265,14 +265,14 @@ public partial class QuizManagementContext : DbContext
         // 11. Seed data for MenuRole table
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 5, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new MenuRole { RoleId = 1, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 3, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 4, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
 

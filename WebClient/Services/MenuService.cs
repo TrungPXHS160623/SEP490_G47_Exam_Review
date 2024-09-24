@@ -17,6 +17,27 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
+        public async Task<RequestResponse> CheckAccess(int userId,int menuId)
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Menu/check-access?userId={userId}&menuId={menuId}");
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+
+            return requestResponse;
+        }
+
         public async Task<ResultResponse<Menu>> GetMenuByUser(int role)
         {
             //Check JWT key

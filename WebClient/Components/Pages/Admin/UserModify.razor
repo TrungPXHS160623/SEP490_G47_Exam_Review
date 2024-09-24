@@ -25,11 +25,11 @@
                        Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
                        Variant="Variant.Outlined"
                        Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Disabled="IsCurrentId">
-                       
-                @if (roleList.Count > 0)
+                          Clearable
+                        AnchorOrigin="Origin.BottomCenter"
+                        Disabled="IsCurrentId">
+
+                 @if (roleList.Count > 0)
                 {
                     @foreach (var item in roleList)
                     {
@@ -51,10 +51,10 @@
                        Text="@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName)"
                        Variant="Variant.Outlined"
                        Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter">
+                          Clearable
+                        AnchorOrigin="Origin.BottomCenter">
 
-                @if (camList.Count > 0)
+                 @if (camList.Count > 0)
                 {
                     @foreach (var item in camList)
                     {
@@ -101,33 +101,44 @@
 
         if (isAuthenticated)
         {
-            if (UserId != null)
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 6);
+
+            if (!response.IsSuccessful)
             {
-                await FetchUserDetails();
-
-                var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-                var user = auth.User;
-                var currentId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
-                IsCurrentId = currentId == UserId;
+                NavManager.NavigateTo("/404");
             }
             else
             {
-                isAddOrEdit = true;
+                if (UserId != null)
+                {
+                    await FetchUserDetails();
+
+                    IsCurrentId = userId == UserId;
+                }
+                else
+                {
+                    isAddOrEdit = true;
+                }
+
+                await GetCampus();
+                await GetRoles();
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
+                    Layout.RefreshLayout();
+                }
             }
         }
 
-        await GetCampus();
-        await GetRoles();
 
-        if (Layout != null)
-        {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "User Management";
-            Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
-            Layout.RefreshLayout();
-        }
     }
 
     private async Task FetchUserDetails()

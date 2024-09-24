@@ -146,22 +146,35 @@
 
     protected override async Task OnInitializedAsync()
     {
-        for (int i = 0; i < 10; i++)
-        {
-            AccList.Add(new Exam
-                {
-                    ExamCode = "PRN231_Fall24_Q1_201" + i,
-                    ExamStatusId = i % 2 == 0 ? 1 : 2,
-                    ExamDuration = "60:00"
-                });
-        }
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-        if (Layout != null)
+        var response = await MenuServive.CheckAccess(userId, 4);
+
+        if (!response.IsSuccessful)
         {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "Exam Assign List";
-            Layout.RefreshLayout();
+            NavManager.NavigateTo("/404");
+        }
+        else
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                AccList.Add(new Exam
+                    {
+                        ExamCode = "PRN231_Fall24_Q1_201" + i,
+                        ExamStatusId = i % 2 == 0 ? 1 : 2,
+                        ExamDuration = "60:00"
+                    });
+            }
+
+            if (Layout != null)
+            {
+                Layout.Header = "Home";
+                Layout.HeaderLink = "/Home";
+                Layout.SubHeader = "Exam Assign List";
+                Layout.RefreshLayout();
+            }
         }
     }
 

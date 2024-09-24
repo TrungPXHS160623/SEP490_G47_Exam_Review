@@ -75,11 +75,9 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            string menuName = "User management";
+            var response = await MenuServive.CheckAccess(userId, 1);
 
-            var response = await Http.GetAsync($"api/Menu/check-access?userId={userId}&menuName={menuName}");
-
-            if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }
@@ -130,7 +128,6 @@
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true,
                 BackdropClick = false,
-
             };
 
         var parameters = new DialogParameters<Dialog>

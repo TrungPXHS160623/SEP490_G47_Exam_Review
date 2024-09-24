@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library.Common;
+using Library.Models;
 using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,13 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("check-access")]
-        public async Task<IActionResult> CheckMenuAccess(int userId, string menuName)
+        public async Task<IActionResult> CheckMenuAccess(int userId, int menuId)
         {
+            RequestResponse resp = new RequestResponse
+            {
+                IsSuccessful = false,
+            };
+
             // Get the user and their role
             var user = await dbContext.Users
                 .Include(u => u.Role) // Assuming navigation property
@@ -36,16 +42,16 @@ namespace WebApi.Controllers
 
             if (user == null)
             {
-                return NotFound("User not found.");
+                return Ok(resp);
             }
 
             // Get the menu by link
             var menu = await dbContext.Menus
-                .FirstOrDefaultAsync(m => m.MenuName == menuName);
+                .FirstOrDefaultAsync(m => m.MenuId == menuId);
 
             if (menu == null)
             {
-                return NotFound("Menu not found.");
+                return Ok(resp);
             }
 
             // Check if the user's role has access to the menu
@@ -54,10 +60,13 @@ namespace WebApi.Controllers
 
             if (!hasAccess)
             {
-                return Forbid("You do not have access to this menu.");
+                return Ok(resp);
             }
 
-            return Ok("Access granted.");
+            return Ok(new RequestResponse
+            {
+                IsSuccessful = true,
+            });
         }
     }
 }
