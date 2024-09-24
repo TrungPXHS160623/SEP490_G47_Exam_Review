@@ -22,9 +22,13 @@
                 <NavLink @onclick="@(() => GoToPage(item.MenuLink))">@item.MenuName</NavLink>
             </div>
         }
+    } else
+    {
+        <div>
+            <h1 class="text-center">You dont have any permission on this site</h1>
+        </div>
     }
 </div>
-
 
 @code {
     [CascadingParameter]
