@@ -148,7 +148,7 @@ namespace WebApi.Repository
                 await dbContext.SaveChangesAsync();
                 response.IsSuccessful = true;
 
-                response.Message = "Register successfuly";
+                response.Message = "Update account successfuly";
                 return response;
             }
             catch (Exception ex)
