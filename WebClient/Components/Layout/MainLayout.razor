@@ -19,7 +19,7 @@
                             </div>
                             <div>
                                 <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
-                                <label>Welcom: @Email</label>
+                                <label @onclick=@OpenProfileModel style="cursor:pointer">Welcom: @Email</label>
                             </div>
                         </div>
                     </div>
@@ -133,5 +133,27 @@
     public void RefreshLayout()
     {
         this.StateHasChanged();
+    }
+
+    private async Task OpenProfileModel()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<Profile>();
+
+        var dialog = await DialogService.ShowAsync<Profile>("Profile Information", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+        }
     }
 }

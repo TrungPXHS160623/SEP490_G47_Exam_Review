@@ -5,19 +5,19 @@ using WebClient.IServices;
 
 namespace WebClient.Services
 {
-    public class CampusService : ICampusService
+    public class RoleService : IRoleService
     {
         private readonly HttpClient _httpClient;
 
         private readonly ISnackbar snackbar;
 
-        public CampusService(HttpClient httpClient, ISnackbar SnackBar)
+        public RoleService(HttpClient httpClient, ISnackbar SnackBar)
         {
             _httpClient = httpClient;
             snackbar = SnackBar;
         }
 
-        public async Task<ResultResponse<Campus>> GetCampus()
+        public async Task<ResultResponse<UserRole>> GetRoles()
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -26,9 +26,9 @@ namespace WebClient.Services
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Campus/GetCampus");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Role/GetRoles");
 
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Campus>>();
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserRole>>();
 
             if (!requestResponse.IsSuccessful)
             {

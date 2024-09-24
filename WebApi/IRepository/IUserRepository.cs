@@ -19,7 +19,5 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> DeleteAsync(int id);
 
-
-
     }
 }

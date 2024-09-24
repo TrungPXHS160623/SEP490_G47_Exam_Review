@@ -32,34 +32,17 @@ namespace WebApi.Controllers
         [HttpGet("get-all-with-filter")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
-            try
-            {
-
-                var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
-                var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-                return Ok(userDtos);
-            }
-            catch (Exception ex)
-            {
-                // Log exception details for debugging purposes
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving users.");
-            }
+            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
+            var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
+            return Ok(userDtos);
         }
         [HttpGet("get-all-with-filter-and-sort")]
         public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)
         {
-            try
-            {
-                // Truyền filterOn và filterQuery vào GetAllWithFilterAsync
-                var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
-                var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-                return Ok(userDtos);
-            }
-            catch (Exception ex)
-            {
-                // Log exception details for debugging purposes
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving users.");
-            }
+            // Truyền filterOn và filterQuery vào GetAllWithFilterAsync
+            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
+            var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
+            return Ok(userDtos);
         }
 
         [HttpGet("get-by-id/{id:int}")]
@@ -70,22 +53,12 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-        [HttpPost("create")]
-        [ValidateModel]
-        public async Task<IActionResult> CreateUser([FromBody] AddUserRequestDto addUserRequestDto)
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreateUser([FromBody] User user)
         {
-            try
-            {
-                var userDomainModel = mapper.Map<User>(addUserRequestDto);
-                await userRepository.CreateAsync(userDomainModel);
+            var data = await userRepository.CreateAsync(user);
 
-                var userDto = mapper.Map<UserDto>(userDomainModel);
-                return CreatedAtAction(nameof(GetUserById), new { id = userDto.UserId }, new { message = "User created successfully.", user = userDto });
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the user.");
-            }
+            return Ok(data);
         }
 
         [HttpPut("update")]

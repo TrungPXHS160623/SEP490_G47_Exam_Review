@@ -1,0 +1,113 @@
+﻿
+<MudDialog>
+    <DialogContent>
+        <div class="row justify-content-center">
+            <div >
+                <div class="card">
+                    <div class="card-body text-center">
+                        <!-- Profile Picture Update Button -->
+                        <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+                            <img src="https://via.placeholder.com/100" alt="Profile" class="rounded-circle mb-3">
+                            <button class="btn btn-primary">Cập nhật ảnh đại diện</button>
+                        </div>
+                        <!-- Profile Information Form -->
+                        <form>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Họ *" required>
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="Tên *" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="email" class="form-control" placeholder="Email *" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="date" class="form-control" placeholder="Ngày sinh *" required>
+                                </div>
+                                <div class="col">
+                                    <input type="tel" class="form-control" placeholder="Số điện thoại *" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </DialogContent>
+     <DialogActions>
+         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
+             @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Edit</MudText>
+            }
+            else
+            {
+                <MudText>Edit</MudText>
+            }
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? MainId { get; set; }
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+
+    [Parameter]
+    public bool IsView { get; set; }
+
+    private bool _processing = false;
+
+    private string ExcuteText { get; set; } = string.Empty;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    public string text { get; set; } = "Text Dummy";
+
+    public DateTime? date { get; set; } = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ExcuteText = "Edit";
+    }
+
+    public async Task Excute()
+    {
+        if (IsView)
+        {
+            IsView = false;
+            ExcuteText = "Save Change";
+        }
+        else
+        {
+
+        }
+    }
+
+    public async Task Back()
+    {
+        if (IsView)
+        {
+            MudDialog.Cancel();
+        }
+        else
+        {
+            IsView = true;
+            ExcuteText = "Edit";
+        }
+    }
+}

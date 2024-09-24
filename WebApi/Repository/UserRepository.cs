@@ -1,4 +1,5 @@
-﻿using Library.Common;
+﻿using Azure;
+using Library.Common;
 using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
@@ -13,11 +14,37 @@ namespace WebApi.Repository
         {
             this.dbContext = dbContext;
         }
-        public async Task<User> CreateAsync(User user)
+        public async Task<RequestResponse> CreateAsync(User user)
         {
-            await dbContext.Users.AddAsync(user);
-            await dbContext.SaveChangesAsync();
-            return user;
+            try
+            {
+                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(user.Mail));
+
+                if (data != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Mail already exist!"
+                    };
+                }
+
+                await dbContext.Users.AddAsync(user);
+                await dbContext.SaveChangesAsync();
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Create account successfully!"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
         }
 
         public async Task<ResultResponse<User>> GetAllAsync()
@@ -73,36 +100,10 @@ namespace WebApi.Repository
                     users = isAscending ? users.OrderBy(x => x.Mail) : users.OrderByDescending(x => x.Mail);
                 }
             }
-
             return await users.ToListAsync();
         }
 
-        public async Task<RequestResponse> UpdateAsync(User user)
-        {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
-            if (existingUser == null)
-            {
-                return null;
-            }
-            existingUser.Mail = user.Mail;
-            existingUser.RoleId = user.RoleId;
-            existingUser.CampusId = user.CampusId;
-            existingUser.IsActive = user.IsActive;
-
-            await dbContext.SaveChangesAsync();
-            return new RequestResponse
-            {
-                IsSuccessful = true,
-                Message = " update success "
-            };
-        }
-
-        Task<RequestResponse> IUserRepository.CreateAsync(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        async Task<RequestResponse> IUserRepository.DeleteAsync(int id)
+        public async Task<RequestResponse> DeleteAsync(int id)
         {
             var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
             if (existingUser == null)
@@ -110,7 +111,7 @@ namespace WebApi.Repository
                 return new RequestResponse
                 {
                     IsSuccessful = false,
-                    Message = "Fail"
+                    Message = "Account no exist"
                 };
             }
             dbContext.Users.RemoveRange(existingUser);
@@ -118,11 +119,11 @@ namespace WebApi.Repository
             return new RequestResponse
             {
                 IsSuccessful = true,
-                Message = " update success "
+                Message = " Delete success "
             };
         }
 
-        async Task<ResultResponse<User>> IUserRepository.GetByIdAsync(int id)
+        public async Task<ResultResponse<User>> GetByIdAsync(int id)
         {
             var data = await dbContext.Users
            .Include("Campus")
@@ -135,29 +136,36 @@ namespace WebApi.Repository
             };
         }
 
-        async Task<RequestResponse> IUserRepository.UpdateAsync(User user)
+        public async Task<RequestResponse> UpdateAsync(User user)
         {
-            RequestResponse response = new RequestResponse();
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
-            if (existingUser == null)
+            try
             {
-                return null;
+                RequestResponse response = new RequestResponse();
+                var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+                if (existingUser == null)
+                {
+                    return null;
 
+                }
+                existingUser.Mail = user.Mail;
+                existingUser.RoleId = user.RoleId;
+                existingUser.CampusId = user.CampusId;
+                existingUser.IsActive = user.IsActive;
+
+                await dbContext.SaveChangesAsync();
+                response.IsSuccessful = true;
+
+                response.Message = "Register successfuly";
+                return response;
             }
-            existingUser.Mail = user.Mail;
-            existingUser.RoleId = user.RoleId;
-            existingUser.CampusId = user.CampusId;
-            existingUser.IsActive = user.IsActive;
-
-            await dbContext.SaveChangesAsync();
-            response.IsSuccessful = true;
-
-            response.Message = "Register successfuly";
-            return new RequestResponse
+            catch (Exception ex)
             {
-                IsSuccessful = true,
-                Message = response.Message
-            };
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

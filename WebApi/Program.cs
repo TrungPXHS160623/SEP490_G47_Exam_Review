@@ -61,6 +61,8 @@ public class Program
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 		builder.Services.AddScoped<IExamRepository, ExamRepository>();
 		builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+		builder.Services.AddScoped<ICampusRepository, CampusRepository>();
+		builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 		var app = builder.Build();
 
         // Configure the HTTP request pipeline
