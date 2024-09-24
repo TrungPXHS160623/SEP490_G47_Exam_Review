@@ -254,19 +254,25 @@ public partial class QuizManagementContext : DbContext
 
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
-            new Menu { MenuId = 1, MenuName = "Dashboard", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 2, MenuName = "Exam Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 3, MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "History", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 3, MenuLink = "/TestDepartment/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Head Department List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+
         );
 
         // 11. Seed data for MenuRole table
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 3, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 4, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 5, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
 
