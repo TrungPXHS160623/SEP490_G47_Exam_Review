@@ -95,22 +95,19 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<ExamAssignment>()
             .HasOne(ea => ea.Exam) // Mỗi ExamAssignment liên kết với một Exam
             .WithMany() // Một Exam có thể có nhiều ExamAssignment
-            .HasForeignKey(ea => ea.ExamId) // Khóa ngoại là ExamId
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa ExamAssignment khi Exam bị xóa
+            .HasForeignKey(ea => ea.ExamId); // Khóa ngoại là ExamId
 
         // Thiết lập quan hệ giữa ExamAssignment và AssignedByUser
         modelBuilder.Entity<ExamAssignment>()
             .HasOne(ea => ea.AssignedByUser) // Mỗi ExamAssignment được giao bởi một User
             .WithMany() // Một User có thể giao nhiều ExamAssignment
-            .HasForeignKey(ea => ea.AssignedBy) // Khóa ngoại là AssignedBy
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa ExamAssignment khi User giao bị xóa
+            .HasForeignKey(ea => ea.AssignedBy); // Khóa ngoại là AssignedBy
 
         // Thiết lập quan hệ giữa ExamAssignment và AssignedToDepartment
         modelBuilder.Entity<ExamAssignment>()
             .HasOne(ea => ea.AssignedToDepartment) // Mỗi ExamAssignment được giao cho một Department
             .WithMany() // Một Department có thể nhận nhiều ExamAssignment
-            .HasForeignKey(ea => ea.AssignedTo) // Khóa ngoại là AssignedTo
-            .OnDelete(DeleteBehavior.Restrict); // Không xóa ExamAssignment khi Department nhận bị xóa
+            .HasForeignKey(ea => ea.AssignedTo); // Khóa ngoại là AssignedTo
 
         modelBuilder.Entity<InstructorAssignment>()
            .HasOne(ia => ia.Exam) // Mỗi InstructorAssignment liên kết với một Exam
@@ -250,28 +247,6 @@ public partial class QuizManagementContext : DbContext
                 .HasForeignKey(d => d.MainId)
                 .HasConstraintName("FK_SubQuestion_MainQuestion");
         });
-
-
-
-        modelBuilder.Entity<UserRole>().HasData(
-           new UserRole { RoleId = 1, RoleName = "Head of Department" },
-           new UserRole { RoleId = 2, RoleName = "Lecturer" },
-           new UserRole { RoleId = 3, RoleName = "Examiner" },
-           new UserRole { RoleId = 4, RoleName = "Curriculum Developer" },
-           new UserRole { RoleId = 5, RoleName = "Customer" }
-        );
-
-        modelBuilder.Entity<Campus>()
-            .HasKey(c => c.CampusId);
-
-        modelBuilder.Entity<Campus>().HasData(
-            new Campus { CampusId = 1, CampusName = "Hoa Lac" },
-            new Campus { CampusId = 2, CampusName = "Da Nang" },
-            new Campus { CampusId = 3, CampusName = "Ho Chi Minh" },
-            new Campus { CampusId = 4, CampusName = "Can Tho" },
-            new Campus { CampusId = 5, CampusName = "Quy Nhon" }
-        );
-
 
 
 

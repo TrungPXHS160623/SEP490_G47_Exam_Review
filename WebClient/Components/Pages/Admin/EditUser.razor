@@ -15,11 +15,37 @@ else
         </div>
         <div>
             <label>Role:</label>
-            <InputText @bind-Value="user.UserRole.RoleName" />
+            <MudSelect @bind-Value="user.UserRole.RoleId"
+                       Text="user.UserRole.RoleName"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+                <MudSelectItem Value="1">Head of Department</MudSelectItem>
+                <MudSelectItem Value="2">Lecturer</MudSelectItem>
+                <MudSelectItem Value="3">Examiner</MudSelectItem>
+                <MudSelectItem Value="4">Curriculum Developer</MudSelectItem>
+                <MudSelectItem Value="5">Customer</MudSelectItem>
+            </MudSelect>
         </div>
         <div>
             <label>Campus:</label>
-            <InputText @bind-Value="user.Campus.CampusName" />
+            <MudSelect @bind-Value="user.Campus.CampusId"
+                       Text="user.Campus.CampusName"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
+                <MudSelectItem Value="1">Hoa Lac</MudSelectItem>
+                <MudSelectItem Value="2">Ho Chi Minh</MudSelectItem>
+                <MudSelectItem Value="3">Da Nang </MudSelectItem>
+                <MudSelectItem Value="4">Can Tho</MudSelectItem>
+                <MudSelectItem Value="5">Quy Nhon</MudSelectItem>
+            </MudSelect>
         </div>
         <div>
             <label>Active:</label>
