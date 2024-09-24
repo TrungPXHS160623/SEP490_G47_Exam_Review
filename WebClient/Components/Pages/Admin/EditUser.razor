@@ -1,8 +1,6 @@
-﻿@page "/edituser/{UserId:int}"
+﻿@page "/edituser/{UserId:int?}"
 @inject IAccountService accountService
 @inject NavigationManager NavigationManager
-
-<h3>Edit User</h3>
 
 @if (user == null)
 {
@@ -30,59 +28,60 @@ else
         <button type="submit" class="btn btn-primary">Update User</button>
     </EditForm>
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
 }
 
 @code {
-    [Parameter] public int UserId { get; set; }
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    [Parameter] 
+    public int? UserId { get; set; }
     private User? user;
     private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchUserDetails();
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            if(UserId != null)
+            {
+                await FetchUserDetails();
+            }
+        }
+
+        if (Layout != null)
+        {
+            Layout.Header = "Home";
+            Layout.HeaderLink = "/Home";
+            Layout.SubHeader = UserId != null ? "Edit User" : "Add User";
+            Layout.RefreshLayout();
+        }
     }
 
     private async Task FetchUserDetails()
     {
-        try
+        var result = await accountService.GetByIdAsync(UserId.Value);
+        if (result != null)
         {
-            var result = await accountService.GetByIdAsync(UserId);
-            if (result != null)
-            {
-                user = result.Item;
-            }
-            else
-            {
-                errorMessage = "User not found.";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Error fetching user details: {ex.Message}";
+            user = result.Item;
         }
     }
 
     private async Task HandleValidSubmit()
     {
-        try
+        RequestResponse resp = new();
+        if(UserId != null)
         {
-            var result = await accountService.UpdateAsync(UserId, user);
-            if (result.IsSuccessful)
-            {
-                NavigationManager.NavigateTo("/usermanagement");
-            }
-            else
-            {
-                errorMessage = "Update failed. Please try again.";
-            }
+            resp = await accountService.UpdateAsync(UserId.Value, user);
+        }else
+        {
+            // resp = await accountService.UpdateAsync(UserId.Value, user);
         }
-        catch (Exception ex)
+        if (resp.IsSuccessful)
         {
-            errorMessage = $"Error updating user: {ex.Message}";
+            NavigationManager.NavigateTo("/usermanagement");
         }
     }
 }
