@@ -39,6 +39,39 @@ namespace WebClient.Services
             return requestResponse;
         }
 
+        public async Task<RequestResponse> CreateAsync(User user)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/User/create", user);
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "An error occurred." };
+            }
+        }
+
         public async Task<RequestResponse> DeleteAsync(int id)
         {
             try

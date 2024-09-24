@@ -12,8 +12,7 @@ namespace Library.Models
         [Key]
         public int RoleId { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string RoleName { get; set; }
+        public string? RoleName { get; set; }
     }
 }

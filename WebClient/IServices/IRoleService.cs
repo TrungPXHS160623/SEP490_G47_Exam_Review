@@ -3,8 +3,8 @@ using Library.Models;
 
 namespace WebClient.IServices
 {
-    public interface ICampusService
+    public interface IRoleService
     {
-        Task<ResultResponse<Campus>> GetCampus();
+        Task<ResultResponse<UserRole>> GetRoles();
     }
 }

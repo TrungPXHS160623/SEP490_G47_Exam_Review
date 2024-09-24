@@ -12,8 +12,7 @@ namespace Library.Models
         [Key]
         public int CampusId { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string CampusName { get; set; }
+        public string? CampusName { get; set; }
     }
 }

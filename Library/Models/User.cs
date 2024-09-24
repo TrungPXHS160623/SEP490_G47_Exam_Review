@@ -21,7 +21,8 @@ namespace Library.Models
 
         public bool IsActive { get; set; }
 
-        public Campus Campus { get; set; }
-        public UserRole UserRole { get; set; }
+        public Campus? Campus { get; set; }
+
+        public UserRole? UserRole { get; set; }
     }
 }

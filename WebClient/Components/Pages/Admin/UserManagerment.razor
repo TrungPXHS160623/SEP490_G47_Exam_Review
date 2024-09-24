@@ -1,6 +1,4 @@
 ﻿@page "/usermanagement"
-@inject IAccountService accountService
-@inject NavigationManager NavigationManager
 
 <style>
     td {
@@ -44,7 +42,7 @@
                              <td>@user.UserRole?.RoleName</td>
                             <td>@user.Campus?.CampusName</td>
                             <td>
-                                <button class="btn btn-warning" @onclick="() => EditUser(user.UserId)">Update</button>
+                                <button class="btn btn-error" @onclick="() => DeleteUser(user.UserId)">Delete</button>
                             </td>
                         </tr>
                     }
@@ -85,7 +83,7 @@
         // Check if there is search text to filter
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            var response = await accountService.GetAllWithFilterAsync("Mail", searchText);
+            var response = await AccountService.GetAllWithFilterAsync("Mail", searchText);
             if (response.IsSuccessful)
             {
                 users = response.Items;
@@ -93,7 +91,7 @@
         }
         else
         {
-            var response = await accountService.GetAllUserList();
+            var response = await AccountService.GetAllUserList();
             if (response.IsSuccessful)
             {
                 users = response.Items;
@@ -101,19 +99,23 @@
         }
     }
 
-    private void EditUser(int UserId)
+    private async Task DeleteUser(int UserId)
     {
-        NavigationManager.NavigateTo($"/edituser/{UserId}");
+        var response = await AccountService.DeleteAsync(UserId);
+        if (response.IsSuccessful)
+        {
+            await FetchUsers();
+        }
     }
     private void AddNewUser()
     {
-        // Redirect to a page or modal for adding a new user
+        NavManager.NavigateTo($"/Admin/AddUser");
     }
 
 
     private void ViewUserDetail(int userId)
     {
-        NavigationManager.NavigateTo($"/userdetails/{userId}");
+        NavManager.NavigateTo($"/Admin/EditUser/{userId}");
     }
 
 }

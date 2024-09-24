@@ -1,9 +1,9 @@
 ﻿using Library.Common;
 using Library.Models;
 
-namespace WebClient.IServices
+namespace WebApi.IRepository
 {
-    public interface ICampusService
+    public interface ICampusRepository
     {
         Task<ResultResponse<Campus>> GetCampus();
     }

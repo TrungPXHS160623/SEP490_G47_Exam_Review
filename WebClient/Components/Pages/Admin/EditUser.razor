@@ -1,37 +1,50 @@
 ﻿@page "/edituser/{UserId:int?}"
-@inject IAccountService accountService
-@inject NavigationManager NavigationManager
 
-@if (user == null)
-{
-    <p>Loading user details...</p>
-}
-else
-{
-    <EditForm Model="user" OnValidSubmit="HandleValidSubmit">
-        <div>
-            <label>Email:</label>
-            <InputText @bind-Value="user.Mail" />
-        </div>
-        <div>
-            <label>Role:</label>
+
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit">
+    <div>
+        <label>Email:</label>
+        @if (!isAddOrEdit)
+        {
+            <MudText>@user.Mail</MudText>
+        }
+        else
+        {
+            <MudTextField @bind-Value="user.Mail" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        }
+    </div>
+    <div>
+        <label>Role:</label>
+        @if (!isAddOrEdit)
+        {
+            <MudText>@user.UserRole.RoleName</MudText>
+        }
+        else
+        {
             <MudSelect @bind-Value="user.UserRole.RoleId"
-                       Text="user.UserRole.RoleName"
+                       Text="@user.UserRole.RoleName"
                        Variant="Variant.Outlined"
                        Label="Subject"
                        Margin="Margin.Dense"
                        Clearable
                        AnchorOrigin="Origin.BottomCenter"
                        Class="me-4">
-                <MudSelectItem Value="1">Head of Department</MudSelectItem>
-                <MudSelectItem Value="2">Lecturer</MudSelectItem>
-                <MudSelectItem Value="3">Examiner</MudSelectItem>
-                <MudSelectItem Value="4">Curriculum Developer</MudSelectItem>
-                <MudSelectItem Value="5">Customer</MudSelectItem>
+
+                @foreach (var item in roleList)
+                {
+                    <MudSelectItem Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                }
             </MudSelect>
-        </div>
-        <div>
-            <label>Campus:</label>
+        }
+    </div>
+    <div>
+        <label>Campus:</label>
+        @if (!isAddOrEdit)
+        {
+            <MudText>@user.Campus.CampusName</MudText>
+        }
+        else
+        {
             <MudSelect @bind-Value="user.Campus.CampusId"
                        Text="user.Campus.CampusName"
                        Variant="Variant.Outlined"
@@ -40,30 +53,40 @@ else
                        Clearable
                        AnchorOrigin="Origin.BottomCenter"
                        Class="me-4">
-                <MudSelectItem Value="1">Hoa Lac</MudSelectItem>
-                <MudSelectItem Value="2">Ho Chi Minh</MudSelectItem>
-                <MudSelectItem Value="3">Da Nang </MudSelectItem>
-                <MudSelectItem Value="4">Can Tho</MudSelectItem>
-                <MudSelectItem Value="5">Quy Nhon</MudSelectItem>
-            </MudSelect>
-        </div>
-        <div>
-            <label>Active:</label>
-            <InputCheckbox @bind-Value="user.IsActive" />
-        </div>
-        <button type="submit" class="btn btn-primary">Update User</button>
-    </EditForm>
 
-}
+                @foreach (var item in camList)
+                {
+                    <MudSelectItem Value="@item.CampusId">@item.CampusName</MudSelectItem>
+
+                }
+            </MudSelect>
+        }
+    </div>
+    <div>
+        <label>Active:</label>
+        <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit)" />
+    </div>
+    <div>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update User</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">@(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")</MudButton>
+    </div>
+</EditForm>
+
 
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    [Parameter] 
+    [Parameter]
     public int? UserId { get; set; }
-    private User? user;
-    private string? errorMessage;
+
+    private User user = new();
+
+    private List<Campus> camList = new();
+
+    private List<UserRole> roleList = new();
+
+    private bool isAddOrEdit { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,9 +94,13 @@ else
 
         if (isAuthenticated)
         {
-            if(UserId != null)
+            if (UserId != null)
             {
                 await FetchUserDetails();
+            }
+            else
+            {
+                isAddOrEdit = true;
             }
         }
 
@@ -88,7 +115,7 @@ else
 
     private async Task FetchUserDetails()
     {
-        var result = await accountService.GetByIdAsync(UserId.Value);
+        var result = await AccountService.GetByIdAsync(UserId.Value);
         if (result != null)
         {
             user = result.Item;
@@ -98,16 +125,53 @@ else
     private async Task HandleValidSubmit()
     {
         RequestResponse resp = new();
-        if(UserId != null)
+
+        if (UserId != null && isAddOrEdit == false)
         {
-            resp = await accountService.UpdateAsync(UserId.Value, user);
-        }else
+            isAddOrEdit = true;
+        }
+        else if (UserId != null && isAddOrEdit == true)
+        {
+            resp = await AccountService.UpdateAsync(user);
+        }
+        else
         {
             // resp = await accountService.UpdateAsync(UserId.Value, user);
         }
+
         if (resp.IsSuccessful)
         {
-            NavigationManager.NavigateTo("/usermanagement");
+            NavManager.NavigateTo("/usermanagement");
+        }
+    }
+
+    private async Task GetCampus()
+    {
+        var result = await CampusServive.GetCampus();
+        if (result != null)
+        {
+            camList = result.Items;
+        }
+    }
+
+    private async Task GetRoles()
+    {
+        var result = await RoleServive.GetRoles();
+        if (result != null)
+        {
+            roleList = result.Items;
+        }
+    }
+
+    private void Cancel()
+    {
+        if (UserId != null && isAddOrEdit == true)
+        {
+            isAddOrEdit = false;
+        }
+        else
+        {
+            NavManager.NavigateTo("/UserManagement");
         }
     }
 }

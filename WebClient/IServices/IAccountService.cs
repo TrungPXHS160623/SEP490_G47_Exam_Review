@@ -18,6 +18,6 @@ namespace WebClient.IServices
         Task<ResultResponse<User>> GetByIdAsync(int id);
         Task<RequestResponse> UpdateAsync(User user);
         Task<RequestResponse> DeleteAsync(int id);
-
+        Task<RequestResponse> CreateAsync(User user);
     }
 }
