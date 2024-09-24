@@ -17,7 +17,7 @@ namespace WebApi.Mapper
             // Mapping cho User và UserDto
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.CampusName, opt => opt.MapFrom(src => src.Campus.CampusName))  // Mapping CampusName từ Campus
-                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.UserRole.RoleName));  // Mapping RoleName từ Role
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName));  // Mapping RoleName từ Role
 
             // Mapping cho Campus và CampusDto
             CreateMap<Campus, CampusDto>().ReverseMap();

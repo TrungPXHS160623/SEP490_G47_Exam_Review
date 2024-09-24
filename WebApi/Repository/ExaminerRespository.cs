@@ -53,7 +53,7 @@ namespace WebApi.Repository
             // Find the examiner and their campus
             var examiner = await dbContext.Users
                 .Include(u => u.Campus)
-                .FirstOrDefaultAsync(u => u.UserId == examinerId && u.UserRole.RoleName == "Examiner");
+                .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
 
             if (examiner == null)
             {
@@ -64,7 +64,7 @@ namespace WebApi.Repository
             var examsQuery = dbContext.Exams
                 .Include(e => e.Subject)
                 .ThenInclude(s => s.Department)
-                .Where(e => e.Creator.CampusId == examiner.CampusId); // Ensure this is CampusId
+                .Where(e => e.Creater.CampusId == examiner.CampusId); // Ensure this is CampusId
 
             // Filter exams by subject name if provided
             if (!string.IsNullOrEmpty(subjectName))
@@ -81,7 +81,7 @@ namespace WebApi.Repository
                     ExamType = e.ExamType,
                     Status = e.ExamStatus.StatusContent,
                     HeadDepartmentMail = e.Subject.Department.HeadOfDepartment.Mail,
-                    EstimatedTimeTest = e.EstimatedTimeTest
+                    EstimatedTimeTest = e.EstimatedTimeTest.Value
                 })
                 .ToListAsync();
 

@@ -1,19 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class ExamStatus
 {
-    public class ExamStatus
-    {
-        [Key]
-        public int ExamStatusID { get; set; }
+    public int ExamStatusId { get; set; }
 
-        [Required]
-        [StringLength(255)]
-        public string StatusContent { get; set; }
+    public string? StatusContent { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
 
-        public virtual ICollection<Exam> Exams { get; set; }
-    }
+    public DateTime? UpdateDate { get; set; }
+
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 }

@@ -1,27 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Library.Models
+namespace Library.Models;
+
+public partial class UserRole
 {
-    public class UserRole
-    {
-        [Key]
-        public int RoleId { get; set; }
+    public int RoleId { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string RoleName { get; set; }
+    public string? RoleName { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? CreateDate { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
-        public virtual ICollection<MenuRole> MenuRoles { get; set; }
+    public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 
-    }
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
