@@ -29,17 +29,24 @@
     }
 </style>
 
-<div class="container mt-4">
-    <div class="mb-4">
+<div class="mt-4">
+    <div class="d-flex mb-4">
         <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".xlsx">
             <ActivatorContent>
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.CloudUpload">
-                    Import Data
+                    Import Exam
                 </MudButton>
             </ActivatorContent>
         </MudFileUpload>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Class="ms-4">
+            Add Exam
+        </MudButton>
     </div>
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap justify-content-between">
@@ -47,72 +54,79 @@
                        Variant="Variant.Outlined"
                        Label="Subject"
                        Margin="Margin.Dense"
-                                  Clearable
-                        AnchorOrigin="Origin.BottomCenter"
-                        Class="me-4">
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
 
-                 <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
-                 <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
-                 <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
-             </MudSelect>
+                <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
+                <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
+                <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
+            </MudSelect>
 
-             <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+            <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
 
-             <MudSelect @bind-Value="Status"
-                        Variant="Variant.Outlined"
-                        Label="Subject"
-                        Margin="Margin.Dense"
-                                  Clearable
-                        AnchorOrigin="Origin.BottomCenter"
-                        Class="me-4">
+            <MudSelect @bind-Value="Status"
+                       Variant="Variant.Outlined"
+                       Label="Subject"
+                       Margin="Margin.Dense"
+                       Clearable
+                       AnchorOrigin="Origin.BottomCenter"
+                       Class="me-4">
 
-                 <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
-                 <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
-                 <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
-             </MudSelect>
+                <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
+                <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
+                <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
+            </MudSelect>
 
-             <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
-         </div>
-     </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search">Search</MudButton>
+        </div>
+    </div>
 
-     <div class="custom-box">
-         <div class="d-flex align-items-center justify-content-between">
-             <div>
-                 <h4>Exam List</h4>
-                 <h6>Selected Exam: @selectedItems.Count</h6>
+    <div class="custom-box">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h4>Exam List</h4>
+                <h6>Selected Exam: @selectedExams.Count</h6>
             </div>
             <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedItems.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
             </div>
         </div>
         <div>
-            @if (AccList.Count > 0)
+            @if (ExamList.Count > 0)
             {
-                <MudTable T=Exam @ref="_table" Items="@AccList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedItems">
+                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
+                        <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
-                        <MudTh>Duration</MudTh>
+                        <MudTh>Head of Department</MudTh>
+                        <MudTh>Estimate Time</MudTh>
+                        <MudTh>Start Date</MudTh>
+                        <MudTh>End Date</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.ExamCode</MudTd>
-                            <MudTd>@context.ExamStatusId</MudTd>
-                            <MudTd>@context.ExamDuration</MudTd>
-                            <MudTd>
-                                <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync())">Detail</MudButton>
-                                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Transfer</MudButton>
-                                </div>
-                            </MudTd>
-                        </RowTemplate>
-                        @*                     <PagerContent>
+                        <MudTd>@context.CampusName</MudTd>
+                        <MudTd>@context.ExamStatusContent</MudTd>
+                        <MudTd>@context.HeadDepartmentName</MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                    @*<PagerContent>
                 @if (AccList.Count > 10)
                 {
                 <MudTablePager />
                 }
                 </PagerContent> *@
-                    </MudTable>
+                </MudTable>
             }
             else
             {
@@ -120,7 +134,7 @@
             }
         </div>
         <div class="mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedItems.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
         </div>
     </div>
@@ -130,13 +144,11 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    public List<Exam> AccList = new List<Exam>();
+    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
 
-    private MudTable<Exam> _table;
-
-    private HashSet<Exam> selectedItems = new HashSet<Exam>();
+    private HashSet<TestDepartmentExamResponse> selectedExams = new HashSet<TestDepartmentExamResponse>();
 
     private string _selectedItemText = "No exam is selected";
 
@@ -148,44 +160,46 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-        var user = auth.User;
-        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
 
-        var response = await MenuServive.CheckAccess(userId, 3);
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-        if (!response.IsSuccessful)
-        {
-            NavManager.NavigateTo("/404");
-        }
-        else
-        {
-            for (int i = 0; i < 10; i++)
+            var response = await MenuServive.CheckAccess(userId, 3);
+
+            if (!response.IsSuccessful)
             {
-                AccList.Add(new Exam
-                    {
-                        ExamCode = "PRN231_Fall24_Q1_201" + i,
-                        ExamStatusId = i % 2 == 0 ? 1 : 2,
-                        ExamDuration = "60:00"
-                    });
+                NavManager.NavigateTo("/404");
             }
-
-            if (Layout != null)
+            else
             {
-                Layout.Header = "Home";
-                Layout.HeaderLink = "/Home";
-                Layout.SubHeader = "Exam Assign List";
-                Layout.RefreshLayout();
+                var resp = await this.ExamServive.GetExamList();
+
+                if (resp.IsSuccessful)
+                {
+                    ExamList = resp.Items;
+                }
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Exam Assign List";
+                    Layout.RefreshLayout();
+                }
             }
         }
     }
 
-    private async Task OpenAddEditDialogAsync(bool isView = true)
+    private async Task OpenAddEditDialogAsync(int examId, bool isView = true)
     {
         var options = new DialogOptions
             {
                 CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
+                MaxWidth = MaxWidth.Medium,
                 FullWidth = true,
                 BackdropClick = false,
 
@@ -194,6 +208,7 @@
         var parameters = new DialogParameters<ExamDetail>
         {
             { x => x.IsView, isView },
+            {x => x.ExamId,examId}
         };
 
         var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);

@@ -25,7 +25,7 @@
     } else
     {
         <div>
-            <h1 class="text-center">You dont have any permission on this site</h1>
+            <h1 class="text-center"></h1>
         </div>
     }
 </div>
@@ -36,7 +36,7 @@
 
     public List<Menu> menuList = new();
 
-    public string a;
+    public string TextInfo { get; set; } = string.Empty;
 
     public int b = 0;
 
@@ -53,7 +53,10 @@
             if (resp.IsSuccessful)
             {
                 menuList = resp.Items;
+
+                TextInfo = menuList.Count > 0 ? "You dont have any permission on this site" : string.Empty;
             }
+
         }
         if (Layout != null)
         {
@@ -63,6 +66,8 @@
             Layout.SubHeader1 = string.Empty;
             Layout.RefreshLayout();
         }
+
+
     }
 
     public void GoToPage(string url)

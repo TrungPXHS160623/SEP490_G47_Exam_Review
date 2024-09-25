@@ -14,4 +14,6 @@ public partial class Campus
     public DateTime? UpdateDate { get; set; }
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 }

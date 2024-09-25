@@ -64,6 +64,7 @@ public class Program
         builder.Services.AddScoped<IMenuRepository, MenuRepository>();
         builder.Services.AddScoped<ICampusRepository, CampusRepository>();
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+        builder.Services.AddScoped<IExamRepository, ExamRepository>();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline

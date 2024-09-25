@@ -18,6 +18,8 @@ namespace Library.Response
 
         public int? SubjectId { get; set; }
 
+        public string? SubjectCode { get; set; }
+
         public string? SubjectName { get; set; }
 
         public int? CreaterId { get; set; }
@@ -27,6 +29,10 @@ namespace Library.Response
         public int? HeadDepartmentId { get; set; }
 
         public string? HeadDepartmentName { get; set; }
+
+        public int? CampusId { get; set; }
+
+        public string? CampusName { get; set; }
 
         public int? ExamStatusId { get; set; }
 

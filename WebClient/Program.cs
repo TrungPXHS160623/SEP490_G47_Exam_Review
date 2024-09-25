@@ -47,6 +47,7 @@ namespace WebClient
             builder.Services.AddTransient<IMenuService, MenuService>();
             builder.Services.AddTransient<ICampusService, CampusService>();
             builder.Services.AddTransient<IRoleService, RoleService>();
+            builder.Services.AddTransient<IExamService, ExamService>();
 
             var app = builder.Build();
 
