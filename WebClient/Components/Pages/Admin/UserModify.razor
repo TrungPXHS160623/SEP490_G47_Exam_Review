@@ -105,7 +105,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 6);
+            var response = await MenuServive.CheckAccess(userId, 1);
 
             if (!response.IsSuccessful)
             {
@@ -137,8 +137,6 @@
                 }
             }
         }
-
-
     }
 
     private async Task FetchUserDetails()
