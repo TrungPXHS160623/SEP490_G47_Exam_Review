@@ -14,79 +14,79 @@ namespace WebApi.Repository
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync()
-        {
-            return await dbContext.ExamAssignments
-                              .Include(i => i.Exam)
-                              .Include(i => i.AssignedBy)
-                              .Include(i => i.AssignedTo)
-                              .Include(i => i.AssignmentDate)
-                              .Include(i => i.Status)
-                              .ToListAsync();
-        }
-        public async Task<ExamAssignment?> GetExamAssignmentByIdAsync(int id)
-        {
-            return await dbContext.ExamAssignments
-                             .Include(i => i.Exam)
-                             .Include(i => i.AssignedBy)
-                             .Include(i => i.AssignedTo)
-                             .Include(i => i.Status)
-                             .FirstOrDefaultAsync(i => i.AssignmentId == id);
-        }
+        //public async Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync()
+        //{
+        //    return await dbContext.ExamAssignments
+        //                      .Include(i => i.Exam)
+        //                      .Include(i => i.AssignedBy)
+        //                      .Include(i => i.AssignedTo)
+        //                      .Include(i => i.AssignmentDate)
+        //                      .Include(i => i.Status)
+        //                      .ToListAsync();
+        //}
+        //public async Task<ExamAssignment?> GetExamAssignmentByIdAsync(int id)
+        //{
+        //    return await dbContext.ExamAssignments
+        //                     .Include(i => i.Exam)
+        //                     .Include(i => i.AssignedBy)
+        //                     .Include(i => i.AssignedTo)
+        //                     .Include(i => i.Status)
+        //                     .FirstOrDefaultAsync(i => i.AssignmentId == id);
+        //}
 
-        public async Task<IEnumerable<ExamAssignment>> GetExamAssignments(int instructorId)
-        {
-            return await dbContext.ExamAssignments
-              .Where(ia => ia.AssignedTo == instructorId)
-              .Include(ia => ia.Exam)
-              .ToListAsync();
-        }
-        async Task<ExamAssignment> IExaminerRepository.AssignInstructor(ExamAssignment instructorAssignment)
-        {
-            dbContext.ExamAssignments.Add(instructorAssignment);
-            await dbContext.SaveChangesAsync();
-            return instructorAssignment;
-        }
+        //public async Task<IEnumerable<ExamAssignment>> GetExamAssignments(int instructorId)
+        //{
+        //    return await dbContext.ExamAssignments
+        //      .Where(ia => ia.AssignedTo == instructorId)
+        //      .Include(ia => ia.Exam)
+        //      .ToListAsync();
+        //}
+        //async Task<ExamAssignment> IExaminerRepository.AssignInstructor(ExamAssignment instructorAssignment)
+        //{
+        //    dbContext.ExamAssignments.Add(instructorAssignment);
+        //    await dbContext.SaveChangesAsync();
+        //    return instructorAssignment;
+        //}
 
-        public async Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null)
-        {
-            // Find the examiner and their campus
-            var examiner = await dbContext.Users
-                .Include(u => u.Campus)
-                .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
+        //public async Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null)
+        //{
+        //    // Find the examiner and their campus
+        //    var examiner = await dbContext.Users
+        //        .Include(u => u.Campus)
+        //        .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
 
-            if (examiner == null)
-            {
-                return new List<ExamDto>(); // Return an empty list if examiner is not found
-            }
+        //    if (examiner == null)
+        //    {
+        //        return new List<ExamDto>(); // Return an empty list if examiner is not found
+        //    }
 
-            // Query to get exams based on the examiner's campus
-            var examsQuery = dbContext.Exams
-                .Include(e => e.Subject)
-                .ThenInclude(s => s.Department)
-                .Where(e => e.Creater.CampusId == examiner.CampusId); // Ensure this is CampusId
+        //    // Query to get exams based on the examiner's campus
+        //    var examsQuery = dbContext.Exams
+        //        .Include(e => e.Subject)
+        //        .ThenInclude(s => s.Department)
+        //        .Where(e => e.Creater.CampusId == examiner.CampusId); // Ensure this is CampusId
 
-            // Filter exams by subject name if provided
-            if (!string.IsNullOrEmpty(subjectName))
-            {
-                examsQuery = examsQuery.Where(e => e.Subject.SubjectName.Contains(subjectName));
-            }
+        //    // Filter exams by subject name if provided
+        //    if (!string.IsNullOrEmpty(subjectName))
+        //    {
+        //        examsQuery = examsQuery.Where(e => e.Subject.SubjectName.Contains(subjectName));
+        //    }
 
-            // Map the result to a list of ExamDto
-            var exams = await examsQuery
-                .Select(e => new ExamDto
-                {
-                    ExamId = e.ExamId,
-                    ExamCode = e.ExamCode,
-                    ExamType = e.ExamType,
-                    Status = e.ExamStatus.StatusContent,
-                    HeadDepartmentMail = e.Subject.Department.HeadOfDepartment.Mail,
-                    EstimatedTimeTest = e.EstimatedTimeTest.Value
-                })
-                .ToListAsync();
+        //    // Map the result to a list of ExamDto
+        //    var exams = await examsQuery
+        //        .Select(e => new ExamDto
+        //        {
+        //            ExamId = e.ExamId,
+        //            ExamCode = e.ExamCode,
+        //            ExamType = e.ExamType,
+        //            Status = e.ExamStatus.StatusContent,
+        //            HeadDepartmentMail = e.Subject.Department.HeadOfDepartment.Mail,
+        //            EstimatedTimeTest = e.EstimatedTimeTest.Value
+        //        })
+        //        .ToListAsync();
 
-            return exams;
-        }
+        //    return exams;
+        //}
 
         public async Task<Exam> UpdateExamStatusAsync(int examId)
         {

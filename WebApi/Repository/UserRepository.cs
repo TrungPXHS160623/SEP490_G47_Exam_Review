@@ -79,12 +79,13 @@ namespace WebApi.Repository
                                 IsActive = u.IsActive,
                                 RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                                 UserId = u.UserId,
+                                UpdateDt = u.UpdateDate,
                             }).ToList();
 
                 return new ResultResponse<UserResponse>
                 {
                     IsSuccessful = true,
-                    Items = data,
+                    Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
                 };
             }
             catch (Exception ex)
@@ -112,12 +113,13 @@ namespace WebApi.Repository
                             IsActive = u.IsActive,
                             RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                             UserId = u.UserId,
+                            UpdateDt = u.UpdateDate,
                         }).ToList();
 
             return new ResultResponse<UserResponse>
             {
                 IsSuccessful = true,
-                Items = data,
+                Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
             };
         }
 

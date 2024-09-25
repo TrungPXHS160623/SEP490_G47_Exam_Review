@@ -95,23 +95,43 @@
 
     protected override async Task OnInitializedAsync()
     {
-        for (int i = 0; i < 10; i++)
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
         {
-            AccList.Add(new Exam
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 2);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                for (int i = 0; i < 10; i++)
                 {
-                    ExamCode = "PRN231_Fall24_Q1_201" + i,
-                    ExamStatusId = i % 2 == 0 ? 1 : 2,
-                    ExamDuration = "60:00"
-                });
+                    AccList.Add(new Exam
+                        {
+                            ExamCode = "PRN231_Fall24_Q1_201" + i,
+                            ExamStatusId = i % 2 == 0 ? 1 : 2,
+                            ExamDuration = "60:00"
+                        });
+                }
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User History";
+                    Layout.RefreshLayout();
+                }
+            }
         }
 
-        if (Layout != null)
-        {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "User History";
-            Layout.RefreshLayout();
-        }
+
     }
 
     MudBlazor.Converter<DateTime?, string> ConvertDate(string format, DateTime max)

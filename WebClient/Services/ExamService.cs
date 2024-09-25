@@ -1,23 +1,23 @@
 ﻿using Library.Common;
-using Library.Models;
+using Library.Response;
 using MudBlazor;
 using WebClient.IServices;
 
 namespace WebClient.Services
 {
-    public class MenuService : IMenuService
+    public class ExamService : IExamService
     {
         private readonly HttpClient _httpClient;
 
         private readonly ISnackbar snackbar;
 
-        public MenuService(HttpClient httpClient, ISnackbar SnackBar)
+        public ExamService(HttpClient httpClient, ISnackbar SnackBar)
         {
             _httpClient = httpClient;
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> CheckAccess(int userId,int menuId)
+        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList()
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -26,9 +26,9 @@ namespace WebClient.Services
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Menu/check-access?userId={userId}&menuId={menuId}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamList");
 
-            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
 
             if (!requestResponse.IsSuccessful)
             {
@@ -38,7 +38,7 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<ResultResponse<Menu>> GetMenuByUser(int role)
+        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId)
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -47,9 +47,9 @@ namespace WebClient.Services
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Menu/GetMenu/{role}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamById/{examId}");
 
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Menu>>();
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
 
             if (!requestResponse.IsSuccessful)
             {

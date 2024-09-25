@@ -21,10 +21,6 @@ public partial class User
 
     public virtual Campus? Campus { get; set; }
 
-    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
-
-    public virtual ICollection<ExamAssignment> ExamAssignments { get; set; } = new List<ExamAssignment>();
-
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
     public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; } = new List<InstructorAssignment>();
@@ -32,4 +28,8 @@ public partial class User
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     public virtual UserRole? Role { get; set; }
+
+    public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
+
+    public virtual ICollection<UserHistory> UserHistories { get; set; } = new List<UserHistory>();
 }
