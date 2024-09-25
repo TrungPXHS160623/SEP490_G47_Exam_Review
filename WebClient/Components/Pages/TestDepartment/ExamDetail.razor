@@ -11,36 +11,53 @@
         margin-inline-end: 0px !important;
         justify-content: center !important;
     }
+
+    .form-group {
+        display:flex;
+        align-items:center
+    }
 </style>
 <MudDialog>
     <DialogContent>
         <div class="form-group mb-4">
-            <label>Exam Code</label>
-            <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView/>
+            <label class="col-3">Exam Code</label>
+            <MudTextField @bind-Value=exam.ExamCode class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
         </div>
         <div class="form-group mb-4">
-            <label>Exam Duration</label>
-             <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Subject Name</label>
+            <MudText class="form-control">@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label>Exam Type</label>
-             <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Exam Creater</label>
+            <MudText class="form-control">@exam.CreaterName</MudText>
         </div>
         <div class="form-group mb-4">
-            <label>Start Date</label>
-             <MudDatePicker @bind-Date=date class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+            <label class ="col-3">Head of Department</label>
+            <MudTextField @bind-Value=exam.ExamCode class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
         </div>
         <div class="form-group mb-4">
-            <label>End Date</label>
-             <MudDatePicker @bind-Date=date class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+            <label class="col-3">Status</label>
+            <MudTextField @bind-Value=exam.ExamStatusContent class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
         </div>
         <div class="form-group mb-4">
-            <label>Assign To</label>
-            <MudTextField @bind-Value=text class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class ="col-3">Exam Duration</label>
+            <MudTextField @bind-Value=exam.ExamDuration class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">Exam Type</label>
+            <MudTextField @bind-Value=exam.ExamType class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">Start Date</label>
+            <MudDatePicker @bind-Date=exam.StartDate class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">End Date</label>
+            <MudDatePicker @bind-Date=exam.EndDate class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
             @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -62,7 +79,7 @@
     private MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public int? MainId { get; set; }
+    public int? ExamId { get; set; }
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
 
@@ -72,6 +89,8 @@
     private bool _processing = false;
 
     private string ExcuteText { get; set; } = string.Empty;
+
+    private TestDepartmentExamResponse exam = new TestDepartmentExamResponse();
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
@@ -83,7 +102,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var resp = await this.ExamServive.GetExamById(ExamId.Value);
+
+        if (resp.IsSuccessful)
+        {
+            exam = resp.Item;
+        }
+
         ExcuteText = "Edit";
+
     }
 
     public async Task Excute()
@@ -92,7 +119,8 @@
         {
             IsView = false;
             ExcuteText = "Save Change";
-        } else
+        }
+        else
         {
 
         }
