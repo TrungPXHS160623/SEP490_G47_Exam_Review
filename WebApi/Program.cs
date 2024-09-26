@@ -66,6 +66,8 @@ public class Program
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
 		builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
+		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
+
 		var app = builder.Build();
 
         // Configure the HTTP request pipeline
