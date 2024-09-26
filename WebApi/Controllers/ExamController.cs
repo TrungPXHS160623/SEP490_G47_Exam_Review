@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Library.Request;
+using Library.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class ExamController : ControllerBase
+	public class ExamController : ApiBaseController
 	{
 		private readonly IExamRepository _examRepository;
 
@@ -22,10 +22,10 @@ namespace WebApi.Controllers
 			return Ok(examInfo);
 		}
 
-        [HttpGet("GetExamList")]
-        public async Task<IActionResult> GetExamList()
+        [HttpPost("GetExamList")]
+        public async Task<IActionResult> GetExamList([FromBody] ExamSearchRequest req)
         {
-            var examInfo = await _examRepository.GetExamList();
+            var examInfo = await _examRepository.GetExamList(req);
             return Ok(examInfo);
         }
 
@@ -33,6 +33,20 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetExamById(int examId)
         {
             var examInfo = await _examRepository.GetExamById(examId);
+            return Ok(examInfo);
+        }
+
+        [HttpPut("UpdateExam")]
+        public async Task<IActionResult> UpdateExam([FromBody] TestDepartmentExamResponse req)
+        {
+            var examInfo = await _examRepository.UpdateExam(req);
+            return Ok(examInfo);
+        }
+
+        [HttpPut("ChangeStatus")]
+        public async Task<IActionResult> ChangeStatusExam([FromBody] List<TestDepartmentExamResponse> req)
+        {
+            var examInfo = await _examRepository.ChangeStatusExam(req);
             return Ok(examInfo);
         }
     }
