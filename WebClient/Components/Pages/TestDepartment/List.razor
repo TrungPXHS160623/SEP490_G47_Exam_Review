@@ -31,15 +31,12 @@
 
 <div class="mt-4">
     <div class="d-flex mb-4">
-        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".xlsx">
-            <ActivatorContent>
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.CloudUpload">
-                    Import Exam
-                </MudButton>
-            </ActivatorContent>
-        </MudFileUpload>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenImportDialogAsync">
+            Import Exam
+        </MudButton>
 
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
@@ -144,8 +141,6 @@
 
     public ExamSearchRequest request = new();
 
-    private string _selectedItemText = "No exam is selected";
-
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -210,8 +205,32 @@
         }
     }
 
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportDialog>();
+
+        var dialog = await DialogService.ShowAsync<ImportDialog>("Import Exam", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
     private void UploadFiles(IBrowserFile file)
     {
+        _files.Clear();
         _files.Add(file);
     }
 
@@ -222,7 +241,7 @@
         {
             ExamList = eList.Items;
         }
-        selectedExams = new();
+        selectedExams.Clear();
     }
 
     private async Task AssignExam()
@@ -253,9 +272,10 @@
                     var result = await this.MailServive.SendMail(list);
                     await GetData();
                 }
-            } else
+            }
+            else
             {
-                foreach(var item in msg)
+                foreach (var item in msg)
                 {
                     Snackbar.Add(item, Severity.Warning);
                 }
