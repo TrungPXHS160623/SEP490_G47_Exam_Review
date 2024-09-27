@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models.Dtos;
+using Library.Request;
 using Library.Response;
 
 namespace WebApi.IRepository
@@ -8,8 +9,13 @@ namespace WebApi.IRepository
 	{
 		Task<IEnumerable<ExamInfoDto>> GetExamInfoAsync();
 
-		Task<ResultResponse<TestDepartmentExamResponse>> GetExamList();
+		Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req);
 
 		Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId);
+
+		Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam);
+
+		Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam);
+
 	}
 }

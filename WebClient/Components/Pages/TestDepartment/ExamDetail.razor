@@ -1,71 +1,101 @@
 ﻿@using Microsoft.AspNetCore.Hosting
 <style>
-    .img-preview img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    .centerSwitch .mud-switch {
-        margin-right: 0px !important;
-        margin-inline-end: 0px !important;
-        justify-content: center !important;
-    }
-
     .form-group {
-        display:flex;
-        align-items:center
+        display: flex;
+        align-items: center
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
     }
 </style>
 <MudDialog>
     <DialogContent>
         <div class="form-group mb-4">
-            <label class="col-3">Exam Code</label>
-            <MudTextField @bind-Value=exam.ExamCode class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Exam Code:</label>
+            <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView />
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Subject Name</label>
-            <MudText class="form-control">@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+            <label class="col-3">Subject Name:</label>
+            <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Exam Creater</label>
-            <MudText class="form-control">@exam.CreaterName</MudText>
+            <label class="col-3">Exam Creater:</label>
+            <MudText>@exam.CreaterName</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class ="col-3">Head of Department</label>
-            <MudTextField @bind-Value=exam.ExamCode class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Head of Department:</label>
+            <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView />
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Status</label>
-            <MudTextField @bind-Value=exam.ExamStatusContent class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Status:</label>
+            <MudText>@exam.ExamStatusContent</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class ="col-3">Exam Duration</label>
-            <MudTextField @bind-Value=exam.ExamDuration class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Campus:</label>
+            <MudSelect @bind-Value="exam.CampusId"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Disabled=@IsView>
+                @if (camList.Count > 0)
+                {
+                    @foreach (var item in camList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
+                    }
+                }
+            </MudSelect>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Exam Type</label>
-            <MudTextField @bind-Value=exam.ExamType class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable ReadOnly=@IsView />
+            <label class="col-3">Exam Duration:</label>
+            <MudSelect @bind-Value="exam.ExamDuration"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Disabled=@IsView>
+                <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
+            </MudSelect>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Start Date</label>
-            <MudDatePicker @bind-Date=exam.StartDate class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+            <label class="col-3">Exam Type:</label>
+            <MudSelect @bind-Value="exam.ExamType"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Disabled=@IsView>
+                <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
+            </MudSelect>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">End Date</label>
-            <MudDatePicker @bind-Date=exam.EndDate class="form-control" Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable ReadOnly=@IsView />
+            <label class="col-3">Exam Estimate Date:</label>
+            <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">Start Date:</label>
+            <MudDatePicker @bind-Date=exam.StartDate Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable Disabled=@IsView />
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">End Date:</label>
+            <MudDatePicker @bind-Date=exam.EndDate Margin="Margin.Dense" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" Clearable Disabled=@IsView />
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
             @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Edit</MudText>
+                <MudText Class="ms-2">Saving</MudText>
             }
             else
             {
-                <MudText>Edit</MudText>
+                <MudText>@(IsView ? "Edit" : "Save")</MudText>
             }
         </MudButton>
         <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
@@ -88,17 +118,13 @@
 
     private bool _processing = false;
 
-    private string ExcuteText { get; set; } = string.Empty;
-
     private TestDepartmentExamResponse exam = new TestDepartmentExamResponse();
+
+    private List<Campus> camList = new();
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
     private void Cancel() => MudDialog.Cancel();
-
-    public string text { get; set; } = "Text Dummy";
-
-    public DateTime? date { get; set; } = DateTime.Now;
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,8 +135,11 @@
             exam = resp.Item;
         }
 
-        ExcuteText = "Edit";
-
+        var result = await CampusServive.GetCampus();
+        if (result != null)
+        {
+            camList = result.Items;
+        }
     }
 
     public async Task Excute()
@@ -118,24 +147,16 @@
         if (IsView)
         {
             IsView = false;
-            ExcuteText = "Save Change";
         }
         else
         {
+            var resp = await this.ExamServive.UpdateExam(exam);
 
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
         }
     }
 
-    public async Task Back()
-    {
-        if (IsView)
-        {
-            MudDialog.Cancel();
-        }
-        else
-        {
-            IsView = true;
-            ExcuteText = "Edit";
-        }
-    }
 }
