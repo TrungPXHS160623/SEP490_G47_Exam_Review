@@ -1,10 +1,11 @@
-﻿using Library.Models;
-using Library.Models.Dtos;
-
+﻿using Library.Common;
+using Library.Response;
 namespace WebApi.IRepository
 {
     public interface IExaminerRepository
     {
+        Task<ResultResponse<ExamByCampusResponse>> GetExamsByCampusAsync(int examinerId);
+        Task<ResultResponse<ExamDetailResponse>> GetExamsDetail(int examID);
         //Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null);
         //Task<Exam> UpdateExamStatusAsync(int examId);
         //Task<ExamAssignment> AssignInstructor(ExamAssignment instructorAssignment);

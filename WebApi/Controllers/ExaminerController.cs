@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using Library.Models;
-using Library.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
@@ -21,7 +20,22 @@ namespace WebApi.Controllers
             this.mapper = mapper;
         }
 
-        // API to get exams by examiner's campus
+        [HttpGet("getByCampus/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllExamByCampus(int id)
+        {
+            var data = await this.examinerRepository.GetExamsByCampusAsync(id);
+
+            return Ok(data);
+        }
+        [HttpGet("getExamDetail/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetExamDetail(int id)
+        {
+            var data = await this.examinerRepository.GetExamsDetail(id);
+
+            return Ok(data);
+        }
         //[HttpGet("get-exams-by-campus/{examinerId:int}")]
         //public async Task<IActionResult> GetExamsByCampus([FromRoute] int examinerId, [FromQuery] string? subjectName)
         //{
