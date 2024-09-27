@@ -31,15 +31,12 @@
 
 <div class="mt-4">
     <div class="d-flex mb-4">
-        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".xlsx">
-            <ActivatorContent>
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.CloudUpload">
-                    Import Exam
-                </MudButton>
-            </ActivatorContent>
-        </MudFileUpload>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenImportDialogAsync">
+            Import Exam
+        </MudButton>
 
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
@@ -49,36 +46,26 @@
         </MudButton>
     </div>
     <div class="custom-box mb-4">
-        <div class="d-flex align-items-center flex-wrap justify-content-between">
-            <MudSelect @bind-Value="Subject"
-                       Variant="Variant.Outlined"
-                       Label="Subject"
-                       Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
+        <div class="d-flex align-items-center flex-wrap w-50">
+            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
 
-                <MudSelectItem Value="@("PRN211")">PRN211</MudSelectItem>
-                <MudSelectItem Value="@("PRN221")">PRN221</MudSelectItem>
-                <MudSelectItem Value="@("PRN231")">PRN231</MudSelectItem>
+            <MudSelect @bind-Value="request.StatusId"
+                       Variant="Variant.Outlined"
+                       Label="Status"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in statusList)
+                    {
+                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                    }
+                }
             </MudSelect>
 
-            <MudTextField @bind-Value="ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
-
-            <MudSelect @bind-Value="Status"
-                       Variant="Variant.Outlined"
-                       Label="Subject"
-                       Margin="Margin.Dense"
-                       Clearable
-                       AnchorOrigin="Origin.BottomCenter"
-                       Class="me-4">
-
-                <MudSelectItem Value="@("Not Assign")">Not Assign</MudSelectItem>
-                <MudSelectItem Value="@("Testing")">Testing</MudSelectItem>
-                <MudSelectItem Value="@("Finish Test")">Finish Test</MudSelectItem>
-            </MudSelect>
-
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search">Search</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
     </div>
 
@@ -89,7 +76,7 @@
                 <h6>Selected Exam: @selectedExams.Count</h6>
             </div>
             <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)">Tranfer Exam to Head Deparment</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)" OnClick="AssignExam">Tranfer Exam to Head Deparment</MudButton>
             </div>
         </div>
         <div>
@@ -144,19 +131,15 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
-
     IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
 
     private HashSet<TestDepartmentExamResponse> selectedExams = new HashSet<TestDepartmentExamResponse>();
 
-    private string _selectedItemText = "No exam is selected";
+    public List<ExamStatus> statusList = new List<ExamStatus>();
 
-    public string Subject { get; set; }
-
-    public string Status { get; set; }
-
-    public string ExamCode { get; set; }
+    public ExamSearchRequest request = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -176,11 +159,12 @@
             }
             else
             {
-                var resp = await this.ExamServive.GetExamList();
+                await GetData();
 
-                if (resp.IsSuccessful)
+                var sList = await this.StatusServive.GetStatus();
+                if (sList.IsSuccessful)
                 {
-                    ExamList = resp.Items;
+                    statusList = sList.Items;
                 }
 
                 if (Layout != null)
@@ -217,12 +201,104 @@
 
         if (!result.Canceled)
         {
+            await GetData();
+        }
+    }
+
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportDialog>();
+
+        var dialog = await DialogService.ShowAsync<ImportDialog>("Import Exam", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
         }
     }
 
     private void UploadFiles(IBrowserFile file)
     {
+        _files.Clear();
         _files.Add(file);
     }
 
+    private async Task GetData()
+    {
+        var eList = await this.ExamServive.GetExamList(request);
+        if (eList.IsSuccessful)
+        {
+            ExamList = eList.Items;
+        }
+        selectedExams.Clear();
+    }
+
+    private async Task AssignExam()
+    {
+        if (selectedExams.Count > 0)
+        {
+            var msg = CheckSelectedExam();
+
+            if (msg.Length == 0)
+            {
+                var mailList = selectedExams.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
+
+                List<MailUtil> list = new();
+
+                foreach (var item in mailList)
+                {
+                    var mail = new MailUtil
+                        {
+                            MailTo = item
+                        };
+                    list.Add(mail);
+                }
+
+                var resp = await this.ExamServive.ChangeStatusExam(selectedExams.ToList());
+
+                if (resp.IsSuccessful)
+                {
+                    var result = await this.MailServive.SendMail(list);
+                    await GetData();
+                }
+            }
+            else
+            {
+                foreach (var item in msg)
+                {
+                    Snackbar.Add(item, Severity.Warning);
+                }
+            }
+        }
+    }
+
+    public string[] CheckSelectedExam()
+    {
+        List<string> errors = new List<string>();
+
+        var examsWithWrongStatus = selectedExams.Where(x => x.ExamStatusId != 1).ToList();
+        foreach (var exam in examsWithWrongStatus)
+        {
+            errors.Add($"Exam {exam.ExamCode} is already assigned. Cannot Re-Assign!");
+        }
+
+        var examsWithMissingDates = selectedExams.Where(x => x.EndDate == null || x.StartDate == null).ToList();
+        foreach (var exam in examsWithMissingDates)
+        {
+            errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
+        }
+
+        return errors.ToArray();
+    }
 }

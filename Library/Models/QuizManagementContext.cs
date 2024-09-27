@@ -62,7 +62,7 @@ public partial class QuizManagementContext : DbContext
             entity.HasIndex(e => e.CampusId, "IX_Exams_CampusId");
 
             entity.Property(e => e.ExamCode).HasMaxLength(50);
-            entity.Property(e => e.ExamDuration).HasMaxLength(10);
+            entity.Property(e => e.ExamDuration).HasMaxLength(100);
             entity.Property(e => e.ExamType).HasMaxLength(50);
 
             entity.HasOne(d => d.Creater).WithMany(p => p.Exams)
@@ -179,10 +179,12 @@ public partial class QuizManagementContext : DbContext
 
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
-            new ExamStatus { ExamStatusId = 1, StatusContent = "Not started", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 2, StatusContent = "In progress", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 3, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "Cancelled", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new ExamStatus { ExamStatusId = 1, StatusContent = "Not Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 2, StatusContent = "Waiting to Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 3, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 5, StatusContent = "Finish Review", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 6, StatusContent = "Complete", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 3. Seed data for UserRole table
@@ -213,9 +215,9 @@ public partial class QuizManagementContext : DbContext
 
         // 7. Seed data for Exam table
         modelBuilder.Entity<Exam>().HasData(
-            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "10w", ExamType = "Essay", SubjectId = 1, CreaterId = 2 ,CampusId = 1 , ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "10w", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 1, CreaterId = 2 ,CampusId = 1 , ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 9. Seed data for InstructorAssignment table
