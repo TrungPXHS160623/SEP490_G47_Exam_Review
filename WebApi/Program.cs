@@ -49,6 +49,9 @@ public class Program
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
             };
+
+
+        
         }).AddGoogle(o =>
         {
             o.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
@@ -65,6 +68,9 @@ public class Program
         builder.Services.AddScoped<ICampusRepository, CampusRepository>();
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
+
+        builder.Services.AddScoped<IAssignRepository, AssignRepository>();
+
 		builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
 		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
