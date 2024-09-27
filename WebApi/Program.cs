@@ -49,6 +49,9 @@ public class Program
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
             };
+
+
+        
         }).AddGoogle(o =>
         {
             o.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
@@ -65,8 +68,16 @@ public class Program
         builder.Services.AddScoped<ICampusRepository, CampusRepository>();
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
+
+        builder.Services.AddScoped<IAssignRepository, AssignRepository>();
+
 		builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
-		var app = builder.Build();
+		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
+        builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+        builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();
+
+        var app = builder.Build();
+
 
         // Configure the HTTP request pipeline
         if (app.Environment.IsDevelopment())

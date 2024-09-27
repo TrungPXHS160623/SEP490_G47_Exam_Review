@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebApi.IRepository;
+using Library.Request;
+using Library.Response;
 
 namespace WebApi.Controllers
 {
@@ -10,30 +11,24 @@ namespace WebApi.Controllers
 	[ApiController]
 	public class ExamAssignController : ControllerBase
 	{
-		private readonly IExamAssignRepository examAssignmentRepository;
-		public ExamAssignController(
-   IExamAssignRepository examAssignmentRepository, IMapper mapper)
+		private readonly IExamAssignRepository examAssignRepository;
+		private readonly IMapper mapper;
+
+		public ExamAssignController(IExamAssignRepository examAssignRepository, IMapper mapper)
 		{
-			this.examAssignmentRepository = examAssignmentRepository;
+			this.examAssignRepository = examAssignRepository;
+			this.mapper = mapper;
 		}
 
-
-		[HttpGet("getExamAssign/{id:int}")]
-		[AllowAnonymous]
-		public async Task<IActionResult> GetExamAssign(int id)
+		[HttpGet("in-progress/{userId}")]
+		public async Task<IActionResult> GetExamsInProgress(int userId)
 		{
-			var data = await this.examAssignmentRepository.GetExamAssign(id);
-
-			return Ok(data);
+			var result = await examAssignRepository.GetExamsInProgressByHeadDepartmentIdAsync(userId);
+			if (!result.IsSuccessful)
+			{
+				return NotFound(result.Message);
+			}
+			return Ok(result.Items);
 		}
-
-		[HttpPut("editExamStatus/{id:int}")]
-		[AllowAnonymous]
-		public async Task<IActionResult> EditExamStatus(int id, [FromBody] string newStatus)
-		{
-			var result = await this.examAssignmentRepository.GetAndEditExamAssign(id, newStatus);
-			return Ok(result);
-		}
-
 	}
 }

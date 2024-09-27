@@ -1,110 +1,62 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebApi.Repository
 {
-    public class ExamAssignRepository : IExamAssignRepository
-    {
-        private readonly QuizManagementContext dbContext;
 
-        public ExamAssignRepository(QuizManagementContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
+	public class ExamAssignRepository : IExamAssignRepository
+	{
+		private readonly QuizManagementContext dbContext;
 
-        // Implementation of GetExamAssignment
-        public async Task<ResultResponse<ExamAssignResponse>> GetExamAssign(int examID)
-        {
-            var exam = await dbContext.Exams
-                .Include(e => e.Subject)
-                .Include(e => e.ExamStatus)
-                .FirstOrDefaultAsync(e => e.ExamId == examID);
+		public ExamAssignRepository(QuizManagementContext dbContext)
+		{
+			this.dbContext = dbContext;
+		}
 
-            if (exam == null)
-            {
-                return new ResultResponse<ExamAssignResponse>
-                {
-                    IsSuccessful = false,
-                    Message = "Exam not found."
-                };
-            }
+		public async Task<ResultResponse<ExamAssignResponse>> GetExamsInProgressByHeadDepartmentIdAsync(int userId)
+		{
+			var statusInProgress = 2;
 
-            var response = new ExamAssignResponse
-            {
-                ExamId = exam.ExamId,
-                ExamCode = exam.ExamCode,
-                ExamDuration = exam.ExamDuration,
-                ExamType = exam.ExamType,
-                SubjectName = exam.Subject.SubjectName,
-                ExamStatus = exam.ExamStatus.StatusContent,
-                StartDate = exam.StartDate,
-                EndDate = exam.EndDate
-            };
+			// Truy vấn LINQ để lấy kỳ thi dựa trên điều kiện đã cho
+			var exams = await (from e in dbContext.Exams
+							   join s in dbContext.Subjects on e.SubjectId equals s.SubjectId
+							   join u in dbContext.Users on s.HeadOfDepartmentId  equals u.UserId
+							   where e.ExamStatusId == statusInProgress && u.UserId == userId
+							   select new ExamAssignResponse
+							   {
+								   ExamId = e.ExamId,
+								   ExamCode = e.ExamCode,
+								   ExamDuration = e.ExamDuration,
+								   ExamType = e.ExamType,
+								   SubjectName = s.SubjectName,
+								   ExamStatusId = statusInProgress,
+								   ExamStatus = e.ExamStatus.StatusContent,
+								   HeadOfDepartment = u.Mail, 
+								   StartDate = e.StartDate,
+								   EndDate = e.EndDate
+							   }).ToListAsync();
 
-            return new ResultResponse<ExamAssignResponse>
-            {
-                IsSuccessful = true,
-                Items = new List<ExamAssignResponse> { response }
-            };
-        }
+			if (exams == null || !exams.Any())
+			{
+				return new ResultResponse<ExamAssignResponse>
+				{
+					IsSuccessful = false,
+					Message = "No exams found with the specified status."
+				};
+			}
 
-        public async Task<ResultResponse<ExamAssignResponse>> GetAndEditExamAssign(int examID, string newStatus)
-        {
-
-            var exam = await dbContext.Exams
-                .Include(e => e.Subject)
-                .Include(e => e.ExamStatus)
-                .FirstOrDefaultAsync(e => e.ExamId == examID);
-
-            if (exam == null)
-            {
-                return new ResultResponse<ExamAssignResponse>
-                {
-                    IsSuccessful = false,
-                    Message = "Exam not found."
-                };
-            }
-
-
-            var status = await dbContext.ExamStatuses.FirstOrDefaultAsync(s => s.StatusContent == newStatus);
-            if (status == null)
-            {
-                return new ResultResponse<ExamAssignResponse>
-                {
-                    IsSuccessful = false,
-                    Message = "Provided status does not exist."
-                };
-            }
-
-
-            exam.ExamStatusId = status.ExamStatusId;
-
-
-            await dbContext.SaveChangesAsync();
-
-
-            var response = new ExamAssignResponse
-            {
-                ExamId = exam.ExamId,
-                ExamCode = exam.ExamCode,
-                ExamDuration = exam.ExamDuration,
-                ExamType = exam.ExamType,
-                SubjectName = exam.Subject.SubjectName,
-                ExamStatus = status.StatusContent,
-                StartDate = exam.StartDate,
-                EndDate = exam.EndDate
-            };
-
-            return new ResultResponse<ExamAssignResponse>
-            {
-                IsSuccessful = true,
-                Items = new List<ExamAssignResponse> { response }
-            };
-        }
-
-
-    }
+			return new ResultResponse<ExamAssignResponse>
+			{
+				IsSuccessful = true,
+				Items = exams 
+			};
+		}
+	}
 }
+

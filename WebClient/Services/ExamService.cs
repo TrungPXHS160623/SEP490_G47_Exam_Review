@@ -1,7 +1,9 @@
 ﻿using Library.Common;
+using Library.Request;
 using Library.Response;
 using MudBlazor;
 using WebClient.IServices;
+using static MudBlazor.Colors;
 
 namespace WebClient.Services
 {
@@ -17,7 +19,7 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList()
+        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req)
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -26,7 +28,7 @@ namespace WebClient.Services
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamList");
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamList",req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
 
@@ -59,5 +61,53 @@ namespace WebClient.Services
             return requestResponse;
         }
 
+        public async Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam)
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/UpdateExam", exam);
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            } else
+            {
+                snackbar.Add(requestResponse.Message, Severity.Success);
+            }
+
+            return requestResponse;
+        }
+
+        public async Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam)
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/ChangeStatus", exam);
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+            else
+            {
+                snackbar.Add(requestResponse.Message, Severity.Success);
+            }
+
+            return requestResponse;
+        }
     }
 }
