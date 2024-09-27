@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Repository
 {
+
 	public class ExamAssignRepository : IExamAssignRepository
 	{
 		private readonly QuizManagementContext dbContext;
@@ -58,3 +59,4 @@ namespace WebApi.Repository
 		}
 	}
 }
+
