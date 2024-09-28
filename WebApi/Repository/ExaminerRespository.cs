@@ -1,5 +1,6 @@
-﻿using Library.Models;
-using Library.Models.Dtos;
+﻿using Library.Common;
+using Library.Models;
+using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -12,6 +13,70 @@ namespace WebApi.Repository
         public ExaminerRepository(QuizManagementContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<ResultResponse<ExamByCampusResponse>> GetExamsByCampusAsync(int examinerId)
+        {
+            var examiner = await dbContext.Users
+           .Include(u => u.Campus)
+           .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
+
+            if (examiner == null)
+            {
+                return new ResultResponse<ExamByCampusResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "No data to fetch",
+                };
+            }
+            // Query to get exams based on the examiner's campus
+            var examsQuery = dbContext.Exams
+                .Where(e => e.CampusId == examiner.CampusId); // Ensure this is CampusId
+            // Map the result to a list of ExamDto
+            var exams = await examsQuery
+                .Select(e => new ExamByCampusResponse
+                {
+                    ExamId = e.ExamId,
+                    ExamCode = e.ExamCode,
+                    StatusContent =e.ExamStatus.StatusContent,
+                    HeadOfDepartment = e.Subject.HeadOfDepartment.Mail,
+                    EstimatedTimeTest = e.EstimatedTimeTest,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate
+                })
+                .ToListAsync();
+            return new ResultResponse<ExamByCampusResponse>
+            {
+                IsSuccessful = true,
+                Items =exams
+            };
+        }
+
+        public async Task<ResultResponse<ExamDetailResponse>> GetExamsDetail(int examID)
+        {
+            var examsQuery = dbContext.Exams
+                .Where(e => e.ExamId == examID);
+            var exams = await examsQuery
+               .Select(e => new ExamDetailResponse
+               {
+                   ExamId = e.ExamId,
+                   ExamCode = e.ExamCode,
+                   ExamDuration= e.ExamDuration,
+                   ExamType =e.ExamType,
+                   SubjectName=e.Subject.SubjectName,
+                   ExamCreater=e.Creater.Mail,
+                   HeadOfDepartment = e.Subject.HeadOfDepartment.Mail,
+                   ExamStatus =e.ExamStatus.StatusContent,
+                   EstimatedTimeTest = e.EstimatedTimeTest,
+                   StartDate = e.StartDate,
+                   EndDate = e.EndDate
+               })
+               .ToListAsync();
+            return new ResultResponse<ExamDetailResponse>
+            {
+                IsSuccessful = true,
+                Items =exams
+            };
         }
 
         //public async Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync()
@@ -50,42 +115,8 @@ namespace WebApi.Repository
 
         //public async Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null)
         //{
-        //    // Find the examiner and their campus
-        //    var examiner = await dbContext.Users
-        //        .Include(u => u.Campus)
-        //        .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
+        // Find the examiner and their campus
 
-        //    if (examiner == null)
-        //    {
-        //        return new List<ExamDto>(); // Return an empty list if examiner is not found
-        //    }
-
-        //    // Query to get exams based on the examiner's campus
-        //    var examsQuery = dbContext.Exams
-        //        .Include(e => e.Subject)
-        //        .ThenInclude(s => s.Department)
-        //        .Where(e => e.Creater.CampusId == examiner.CampusId); // Ensure this is CampusId
-
-        //    // Filter exams by subject name if provided
-        //    if (!string.IsNullOrEmpty(subjectName))
-        //    {
-        //        examsQuery = examsQuery.Where(e => e.Subject.SubjectName.Contains(subjectName));
-        //    }
-
-        //    // Map the result to a list of ExamDto
-        //    var exams = await examsQuery
-        //        .Select(e => new ExamDto
-        //        {
-        //            ExamId = e.ExamId,
-        //            ExamCode = e.ExamCode,
-        //            ExamType = e.ExamType,
-        //            Status = e.ExamStatus.StatusContent,
-        //            HeadDepartmentMail = e.Subject.Department.HeadOfDepartment.Mail,
-        //            EstimatedTimeTest = e.EstimatedTimeTest.Value
-        //        })
-        //        .ToListAsync();
-
-        //    return exams;
         //}
 
         public async Task<Exam> UpdateExamStatusAsync(int examId)
