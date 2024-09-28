@@ -20,7 +20,78 @@ namespace WebApi.Repository
         {
             try
             {
-                /*chưa xong*/
+                // Kiểm tra xem Exam có tồn tại không
+                var exam = await dbContext.Exams.FirstOrDefaultAsync(e => e.ExamId == assignRequest.ExamId);
+                if (exam == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Exam does not exist!"
+                    };
+                }
+
+                // Kiểm tra trạng thái của kỳ thi (chỉ cho phép phân công nếu trạng thái hợp lệ)
+                if (exam.ExamStatusId == null || exam.ExamStatusId == 3 || exam.ExamStatusId == 4 || exam.ExamStatusId == 5 || exam.ExamStatusId == 6) 
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Exam is not in a valid state for assignment!"
+                    };
+                }
+                // Kiểm tra xem AssignedUserId có tồn tại và là giảng viên không
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == assignRequest.AssignedUserId);
+                if (user == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Assigned user does not exist!"
+                    };
+                }
+
+                if (user.RoleId != 3) // 3 là RoleId cho giảng viên
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Assigned user is not a lecturer!"
+                    };
+                }
+
+                // Kiểm tra xem người dùng có hoạt động hay không
+                if (!user.IsActive)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Assigned user is not active!"
+                    };
+                }
+                // Kiểm tra xem đã có phân công cho giảng viên này cho kỳ thi này chưa
+                var existingAssignment = await dbContext.InstructorAssignments
+                    .FirstOrDefaultAsync(x => x.ExamId == assignRequest.ExamId && x.AssignedUserId == assignRequest.AssignedUserId);
+
+                if (existingAssignment != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "This lecturer has already been assigned to this exam!"
+                    };
+                }
+
+                // Kiểm tra ngày kỳ thi, không cho phép phân công sau khi kỳ thi đã kết thúc
+                if (exam.EndDate != null && DateTime.Now > exam.EndDate)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot assign lecturer after the exam has ended!"
+                    };
+                }
+
                 var NewAssign = new InstructorAssignment
                 {
                     ExamId = assignRequest.ExamId,
