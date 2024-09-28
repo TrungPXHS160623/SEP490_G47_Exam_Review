@@ -2,8 +2,6 @@
 using Library.Models;
 using Library.Request;
 using Library.Response;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -116,7 +114,7 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
-            
+
 
         }
         public async Task<ResultResponse<AssignResponce>> GetAllAssign()
@@ -127,7 +125,7 @@ namespace WebApi.Repository
                             join e in this.dbContext.Exams on a.ExamId equals e.ExamId
                             join es in this.dbContext.ExamStatuses on e.ExamStatusId equals es.ExamStatusId into examStatusJoin
                             from es in examStatusJoin.DefaultIfEmpty()
-                            join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId 
+                            join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
                             join uCreater in this.dbContext.Users on e.CreaterId equals uCreater.UserId into createrJoin
                             from uCreater in createrJoin.DefaultIfEmpty()
                             join uHead in this.dbContext.Users on s.HeadOfDepartmentId equals uHead.UserId into headJoin
