@@ -17,7 +17,7 @@ public partial class Exam
 
     public int CreaterId { get; set; }
 
-    public int? CampusId { get; set; }
+    public int CampusId { get; set; }
 
     public int? ExamStatusId { get; set; }
 
@@ -31,8 +31,6 @@ public partial class Exam
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual Campus? Campus { get; set; }
-
     public virtual User Creater { get; set; } = null!;
 
     public virtual ExamStatus? ExamStatus { get; set; }
@@ -42,4 +40,6 @@ public partial class Exam
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     public virtual Subject Subject { get; set; } = null!;
+
+    public virtual Campus Campus { get; set; } = null!;
 }
