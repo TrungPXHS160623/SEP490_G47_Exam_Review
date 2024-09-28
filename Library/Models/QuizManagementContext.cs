@@ -18,6 +18,8 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<Campus> Campuses { get; set; }
 
+    public virtual DbSet<CampusUserSubject> CampusUserSubjects { get; set; }
+
     public virtual DbSet<Exam> Exams { get; set; }
 
     public virtual DbSet<ExamStatus> ExamStatuses { get; set; }
@@ -51,6 +53,25 @@ public partial class QuizManagementContext : DbContext
             entity.Property(e => e.CampusName).HasMaxLength(100);
         });
 
+        modelBuilder.Entity<CampusUserSubject>(entity =>
+        {
+            entity.ToTable("CampusUserSubject");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.HasOne(d => d.Campus).WithMany(p => p.CampusUserSubjects)
+                .HasForeignKey(d => d.CampusId)
+                .HasConstraintName("FK_CampusUserSubject_Campuses");
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.CampusUserSubjects)
+                .HasForeignKey(d => d.SubjectId)
+                .HasConstraintName("FK_CampusUserSubject_Subjects");
+
+            entity.HasOne(d => d.User).WithMany(p => p.CampusUserSubjects)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_CampusUserSubject_Users");
+        });
+
         modelBuilder.Entity<Exam>(entity =>
         {
             entity.HasIndex(e => e.CreaterId, "IX_Exams_CreaterId");
@@ -59,11 +80,13 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasIndex(e => e.SubjectId, "IX_Exams_SubjectId");
 
-            entity.HasIndex(e => e.CampusId, "IX_Exams_CampusId");
-
             entity.Property(e => e.ExamCode).HasMaxLength(50);
             entity.Property(e => e.ExamDuration).HasMaxLength(100);
             entity.Property(e => e.ExamType).HasMaxLength(50);
+
+            entity.HasOne(d => d.Campus).WithMany(p => p.Exams)
+                .HasForeignKey(d => d.CampusId)
+                .HasConstraintName("FK_Exams_Campuses");
 
             entity.HasOne(d => d.Creater).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.CreaterId)
@@ -74,8 +97,6 @@ public partial class QuizManagementContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.Subject).WithMany(p => p.Exams).HasForeignKey(d => d.SubjectId);
-
-            entity.HasOne(d => d.Campus).WithMany(p => p.Exams).HasForeignKey(d => d.CampusId);
         });
 
         modelBuilder.Entity<ExamStatus>(entity =>
@@ -129,27 +150,19 @@ public partial class QuizManagementContext : DbContext
 
         modelBuilder.Entity<Subject>(entity =>
         {
-            entity.HasIndex(e => e.HeadOfDepartmentId, "IX_Subjects_DepartmentId");
-
-            entity.Property(e => e.SubjectName).HasMaxLength(255);
-
             entity.Property(e => e.SubjectCode).HasMaxLength(255);
-
-            entity.HasOne(d => d.HeadOfDepartment).WithMany(p => p.Subjects)
-                .HasForeignKey(d => d.HeadOfDepartmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Subjects_Users");
+            entity.Property(e => e.SubjectName).HasMaxLength(255);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasIndex(e => e.CampusId, "IX_Users_CampusId");
-
             entity.HasIndex(e => e.RoleId, "IX_Users_RoleId");
 
             entity.Property(e => e.Mail).HasMaxLength(250);
 
-            entity.HasOne(d => d.Campus).WithMany(p => p.Users).HasForeignKey(d => d.CampusId);
+            entity.HasOne(d => d.Campus).WithMany(p => p.Users)
+                .HasForeignKey(d => d.CampusId)
+                .HasConstraintName("FK_Users_Campuses");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users).HasForeignKey(d => d.RoleId);
         });
@@ -173,9 +186,11 @@ public partial class QuizManagementContext : DbContext
         });
 
         modelBuilder.Entity<Campus>().HasData(
-    new Campus { CampusId = 1, CampusName = "Hanoi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-    new Campus { CampusId = 2, CampusName = "Ho Chi Minh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-);
+            new Campus { CampusId = 1, CampusName = "Hòa Lạc", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Campus { CampusId = 2, CampusName = "Đà Nẵng", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Campus { CampusId = 3, CampusName = "Cần Thơ", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Campus { CampusId = 4, CampusName = "Hồ Chí Minh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
@@ -199,23 +214,44 @@ public partial class QuizManagementContext : DbContext
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
             new User { UserId = 1, Mail = "admin@fpt.edu.vn", CampusId = 1, RoleId = 1, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 2, Mail = "examiner@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 3, Mail = "lecturer@fpt.edu.vn", CampusId = 2, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 4, Mail = "head@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 5, Mail = "developer@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 6, Mail = "trunghp@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new User { UserId = 2, Mail = "examiner@fpt.edu.vn", CampusId = 2, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 3, Mail = "lecturer1@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 4, Mail = "lecturer2@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 5, Mail = "lecturer3@fpt.edu.vn", CampusId = 2, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 6, Mail = "lecturer4@fpt.edu.vn", CampusId = 2, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 7, Mail = "lecturer5@fpt.edu.vn", CampusId = 3, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 8, Mail = "lecturer6@fpt.edu.vn", CampusId = 3, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 9, Mail = "lecturer7@fpt.edu.vn", CampusId = 4, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 10, Mail = "head@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 11, Mail = "developer@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 12, Mail = "trunghp@fpt.edu.vn", CampusId = 3, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 6. Seed data for Subject table
         modelBuilder.Entity<Subject>().HasData(
-            new Subject { SubjectId = 1, SubjectCode = "PRN231", SubjectName = "C# Programming", HeadOfDepartmentId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 2, SubjectCode = "CSI123", SubjectName = "Computer Science", HeadOfDepartmentId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 3, SubjectCode = "MLN123", SubjectName = "Machine Learning", HeadOfDepartmentId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Subject { SubjectId = 1, SubjectCode = "PRN231", SubjectName = "C# Programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 2, SubjectCode = "CSI123", SubjectName = "Computer Science", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 3, SubjectCode = "MLN123", SubjectName = "Machine Learning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
+
+        modelBuilder.Entity<CampusUserSubject>().HasData(
+            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 3 },
+            new CampusUserSubject { Id = 2, SubjectId = 1, CampusId = 2, UserId = 5 },
+            new CampusUserSubject { Id = 3, SubjectId = 1, CampusId = 3, UserId = 7 },
+            new CampusUserSubject { Id = 4, SubjectId = 1, CampusId = 4, UserId = 9 },
+            new CampusUserSubject { Id = 5, SubjectId = 2, CampusId = 1, UserId = 3 },
+            new CampusUserSubject { Id = 6, SubjectId = 2, CampusId = 2, UserId = 5 },
+            new CampusUserSubject { Id = 7, SubjectId = 2, CampusId = 3, UserId = 7 },
+            new CampusUserSubject { Id = 8, SubjectId = 2, CampusId = 4, UserId = 9 },
+            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 1, UserId = 4 },
+            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 2, UserId = 6 },
+            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 3, UserId = 8 },
+            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 4, UserId = 9 }
         );
 
         // 7. Seed data for Exam table
         modelBuilder.Entity<Exam>().HasData(
-            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 1, CreaterId = 2 ,CampusId = 1 , ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 1, ExamCode = "EXAM001", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 1, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Exam { ExamId = 2, ExamCode = "EXAM002", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 2, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Exam { ExamId = 3, ExamCode = "EXAM003", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
