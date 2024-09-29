@@ -32,5 +32,14 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-    }
+		[HttpPut("Edit-Report/{id}")]
+		[AllowAnonymous]
+		public async Task<IActionResult> EditReport(int id, [FromBody] ReportRequest reportRequest)
+		{
+			var data = await reportRepository.EditReportById(id, reportRequest);
+			return Ok(data);
+		}
+
+
+	}
 }

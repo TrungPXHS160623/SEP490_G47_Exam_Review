@@ -150,5 +150,101 @@ namespace WebApi.Repository
                 };
             }
         }
-    }
+
+		public async Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest)
+		{
+			try
+			{
+				// Check if the report exists
+				var existingReport = await dbContext.Reports.FindAsync(reportId);
+				if (existingReport == null)
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "Report not found."
+					};
+				}
+
+				// Check if the ExamId exists
+				var examExists = await dbContext.Exams.AnyAsync(e => e.ExamId == reportRequest.ExamId);
+				if (!examExists)
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "Exam does not exist."
+					};
+				}
+
+				// Check if the UserId exists
+				var userExists = await dbContext.Users.AnyAsync(u => u.UserId == reportRequest.UserId);
+				if (!userExists)
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "User does not exist."
+					};
+				}
+
+				// Validate QuestionNumber
+				if (reportRequest.QuestionNumber <= 0)
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "Question number must be greater than zero."
+					};
+				}
+
+				// Validate ReportContent
+				if (string.IsNullOrWhiteSpace(reportRequest.ReportContent))
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "Report content cannot be empty."
+					};
+				}
+
+				// Validate Score
+				if (reportRequest.Score < 0 || reportRequest.Score > 10)
+				{
+					return new RequestResponse
+					{
+						IsSuccessful = false,
+						Message = "Score must be between 0 and 10."
+					};
+				}
+
+				// Update the existing report with new values
+				existingReport.ExamId = reportRequest.ExamId;
+				existingReport.UserId = reportRequest.UserId;
+				existingReport.QuestionNumber = reportRequest.QuestionNumber;
+				existingReport.ReportContent = reportRequest.ReportContent;
+				existingReport.QuestionSolutionDetail = reportRequest.QuestionSolutionDetail;
+				existingReport.Score = reportRequest.Score;
+				existingReport.UpdateDate = DateTime.Now;
+
+				dbContext.Reports.Update(existingReport);
+				await dbContext.SaveChangesAsync();
+
+				return new RequestResponse
+				{
+					IsSuccessful = true,
+					Message = "Report updated successfully!"
+				};
+			}
+			catch (Exception ex)
+			{
+				return new RequestResponse
+				{
+					IsSuccessful = false,
+					Message = ex.Message,
+				};
+			}
+		}
+
+	}
 }
