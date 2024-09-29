@@ -21,21 +21,22 @@ namespace WebApi.Controllers
 			var examInfo = await _examRepository.GetExamInfoAsync();
 			return Ok(examInfo);
 		}
-
+        /*
         [HttpPost("GetExamList")]
         public async Task<IActionResult> GetExamList([FromBody] ExamSearchRequest req)
         {
             var examInfo = await _examRepository.GetExamList(req);
             return Ok(examInfo);
         }
-
+        */
+        /*
         [HttpGet("GetExamById/{examId}")]
         public async Task<IActionResult> GetExamById(int examId)
         {
             var examInfo = await _examRepository.GetExamById(examId);
             return Ok(examInfo);
         }
-
+        */
         [HttpPut("UpdateExam")]
         public async Task<IActionResult> UpdateExam([FromBody] TestDepartmentExamResponse req)
         {

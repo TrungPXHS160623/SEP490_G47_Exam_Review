@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Response
 {
-    public class AssignResponce
+    public class AssignResponse
     {
         public string? ExamCode { get; set; }    // mã đề
 

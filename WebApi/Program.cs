@@ -70,8 +70,9 @@ public class Program
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
 
         builder.Services.AddScoped<IAssignRepository, AssignRepository>();
+        builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
-		builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
+        builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
 		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
         builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();

@@ -241,7 +241,7 @@ public partial class QuizManagementContext : DbContext
             new CampusUserSubject { Id = 6, SubjectId = 2, CampusId = 2, UserId = 5 },
             new CampusUserSubject { Id = 7, SubjectId = 2, CampusId = 3, UserId = 7 },
             new CampusUserSubject { Id = 8, SubjectId = 2, CampusId = 4, UserId = 9 },
-            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 2, UserId = 6 },
+            new CampusUserSubject { Id = 9, SubjectId = 3, CampusId = 2, UserId = 6 }
         );
 
         // 7. Seed data for Exam table

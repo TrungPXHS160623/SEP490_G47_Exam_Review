@@ -13,7 +13,7 @@ public partial class Exam
 
     public string? ExamType { get; set; }
 
-    public int SubjectId { get; set; }
+    public int? SubjectId { get; set; }
 
     public int CreaterId { get; set; }
 
