@@ -11,13 +11,11 @@ public partial class Subject
 
     public string? SubjectName { get; set; }
 
-    public int HeadOfDepartmentId { get; set; }
-
     public DateTime? CreateDate { get; set; }
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+    public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; } = new List<CampusUserSubject>();
 
-    public virtual User HeadOfDepartment { get; set; } = null!;
+    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 }
