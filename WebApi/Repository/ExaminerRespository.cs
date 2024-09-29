@@ -19,6 +19,7 @@ namespace WebApi.Repository
         {
             var examiner = await dbContext.Users
            .Include(u => u.Campus)
+
            .FirstOrDefaultAsync(u => u.UserId == examinerId && u.Role.RoleName == "Examiner");
 
             if (examiner == null)
@@ -31,18 +32,25 @@ namespace WebApi.Repository
             }
             // Query to get exams based on the examiner's campus
             var examsQuery = dbContext.Exams
-                .Where(e => e.CampusId == examiner.CampusId); // Ensure this is CampusId
-            // Map the result to a list of ExamDto
+                .Where(e => e.CampusId == examiner.CampusId)
+                 .Select(e => new
+                 {
+                     Exam = e,
+                     HeadOfDepartment = dbContext.CampusUserSubjects
+                        .Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId)
+                        .Select(cus => cus.User)
+                        .FirstOrDefault()
+                 });
             var exams = await examsQuery
                 .Select(e => new ExamByCampusResponse
                 {
-                    ExamId = e.ExamId,
-                    ExamCode = e.ExamCode,
-                    StatusContent =e.ExamStatus.StatusContent,
-                    HeadOfDepartment = e.Subject.HeadOfDepartment.Mail,
-                    EstimatedTimeTest = e.EstimatedTimeTest,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate
+                    ExamId = e.Exam.ExamId,
+                    ExamCode = e.Exam.ExamCode,
+                    StatusContent =e.Exam.ExamStatus.StatusContent,
+                    HeadOfDepartment = e.HeadOfDepartment != null ? e.HeadOfDepartment.Mail : "Unknown",
+                    EstimatedTimeTest = e.Exam.EstimatedTimeTest,
+                    StartDate = e.Exam.StartDate,
+                    EndDate = e.Exam.EndDate
                 })
                 .ToListAsync();
             return new ResultResponse<ExamByCampusResponse>
@@ -55,29 +63,40 @@ namespace WebApi.Repository
         public async Task<ResultResponse<ExamDetailResponse>> GetExamsDetail(int examID)
         {
             var examsQuery = dbContext.Exams
-                .Where(e => e.ExamId == examID);
+                .Where(e => e.ExamId == examID)
+                .Select(e => new
+                {
+                    Exam = e,
+                    HeadOfDepartment = dbContext.CampusUserSubjects
+                        .Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId)
+                        .Select(cus => cus.User)
+                        .FirstOrDefault()
+                });
+
             var exams = await examsQuery
-               .Select(e => new ExamDetailResponse
-               {
-                   ExamId = e.ExamId,
-                   ExamCode = e.ExamCode,
-                   ExamDuration= e.ExamDuration,
-                   ExamType =e.ExamType,
-                   SubjectName=e.Subject.SubjectName,
-                   ExamCreater=e.Creater.Mail,
-                   HeadOfDepartment = e.Subject.HeadOfDepartment.Mail,
-                   ExamStatus =e.ExamStatus.StatusContent,
-                   EstimatedTimeTest = e.EstimatedTimeTest,
-                   StartDate = e.StartDate,
-                   EndDate = e.EndDate
-               })
-               .ToListAsync();
+                .Select(e => new ExamDetailResponse
+                {
+                    ExamId = e.Exam.ExamId,
+                    ExamCode = e.Exam.ExamCode,
+                    ExamDuration = e.Exam.ExamDuration,
+                    ExamType = e.Exam.ExamType,
+                    SubjectName = e.Exam.Subject.SubjectName,
+                    ExamCreater = e.Exam.Creater.Mail,
+                    HeadOfDepartment = e.HeadOfDepartment != null ? e.HeadOfDepartment.Mail : "Unknown",
+                    ExamStatus = e.Exam.ExamStatus.StatusContent,
+                    EstimatedTimeTest = e.Exam.EstimatedTimeTest,
+                    StartDate = e.Exam.StartDate,
+                    EndDate = e.Exam.EndDate
+                })
+                .ToListAsync();
+
             return new ResultResponse<ExamDetailResponse>
             {
                 IsSuccessful = true,
-                Items =exams
+                Items = exams
             };
         }
+
 
         //public async Task<IEnumerable<ExamAssignment>> GetAllExamAssignmentsAsync()
         //{
