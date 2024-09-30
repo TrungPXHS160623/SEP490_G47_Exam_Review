@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         }
         [HttpGet("assignments/head-to-lecturers")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssign()
+        public async Task<IActionResult> ListAssignmentsToLecturersByHead()
         {
             var data = await assignRepository.ListAssignmentsToLecturersByHead();
             return Ok(data);

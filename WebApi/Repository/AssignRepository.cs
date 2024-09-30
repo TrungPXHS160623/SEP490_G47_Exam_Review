@@ -121,7 +121,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByCampusId(int id)
+        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByCampusId(int campusID)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace WebApi.Repository
                                 // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-                            where c.CampusId == id
+                            where c.CampusId == campusID
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
@@ -181,7 +181,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByExamId(int id)
+        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByExamId(int examID)
         {
             try
             {
@@ -207,7 +207,7 @@ namespace WebApi.Repository
                                 // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-                            where e.ExamId == id
+                            where e.ExamId == examID
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
@@ -241,7 +241,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByHeadId(int id)
+        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByHeadId(int HeadID)
         {
             try
             {
@@ -267,7 +267,7 @@ namespace WebApi.Repository
                                 // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-                            where uHead.UserId == id
+                            where uHead.UserId == HeadID
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
@@ -301,7 +301,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByLecturerId(int id)
+        public async Task<ResultResponse<AssignResponse>> GetAssignmentsByLecturerId(int lecturerID)
         {
             try
             {
@@ -327,7 +327,7 @@ namespace WebApi.Repository
                                 // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-                            where lReceived.UserId == id
+                            where lReceived.UserId == lecturerID
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
