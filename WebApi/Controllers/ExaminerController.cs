@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
@@ -25,6 +26,22 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAllExamByCampus(int id)
         {
             var data = await this.examinerRepository.GetExamsByCampusAsync(id);
+
+            return Ok(data);
+        }
+        [HttpGet("GetAllSubject")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllSubject()
+        {
+            var data = await this.examinerRepository.GetAllSubject();
+
+            return Ok(data);
+        }
+        [HttpPost("CreateExam")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateExam(ExamRequest exam)
+        {
+            var data = await this.examinerRepository.CreateAsync(exam);
 
             return Ok(data);
         }
