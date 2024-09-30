@@ -17,48 +17,7 @@ namespace WebApi.Repository
         }
 
 
-        public async Task<ResultResponse<ReportResponse>> GetAllReport()
-        {
-            try
-            {
-                var data = (from r in this.dbContext.Reports
-                            // Tham chiếu bảng Exams (Kỳ thi) 
-                            join e in this.dbContext.Exams on r.ExamId equals e.ExamId
-                            // Tham chiếu bảng Subjects (Môn học) 
-                            join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
-                            // Tham chiếu bảng Users (Người dùng) 
-                            join uReviewer in this.dbContext.Users on r.UserId equals uReviewer.UserId into uReviewerJoin
-                            from uReviewer in uReviewerJoin.DefaultIfEmpty()
-
-                            select new ReportResponse
-                            {
-                                ExamCode = e.ExamCode,
-                                SubjectName = s.SubjectName,
-                                ReviewerMail = uReviewer.Mail,
-                                QuestionNumber = r.QuestionNumber,
-                                ReportContent = r.ReportContent,
-                                QuestionSolutionDetail = r.QuestionSolutionDetail,
-                                Score = r.Score,
-                                CreateDate = r.CreateDate,
-                                UpdateDate = r.UpdateDate
-                            }).ToList();
-
-                return new ResultResponse<ReportResponse>
-                {
-                    IsSuccessful = true,
-                    Items = data
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResultResponse<ReportResponse>
-                {
-                    IsSuccessful = false,
-                    Message = ex.Message,
-                };
-            }
-        }
-        public async Task<RequestResponse> AddReport(ReportRequest reportRequest)
+        public async Task<RequestResponse> CreateReport(ReportRequest reportRequest)
         {
             try
             {
@@ -151,7 +110,7 @@ namespace WebApi.Repository
             }
         }
 
-		public async Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest)
+        public async Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest)
 		{
 			try
 			{
@@ -246,5 +205,74 @@ namespace WebApi.Repository
 			}
 		}
 
-	}
+        public async Task<ResultResponse<ReportResponse>> GetReportsByLecturerId(int lecturerId)
+        {
+            // Xác thực ID
+            if (lecturerId <= 0)
+            {
+                return new ResultResponse<ReportResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "ID người dùng không hợp lệ."
+                };
+            }
+
+            try
+            {
+                // Kiểm tra xem người dùng có tồn tại không
+                var userExists = await this.dbContext.Users.AnyAsync(u => u.UserId == lecturerId);
+                if (!userExists)
+                {
+                    return new ResultResponse<ReportResponse>
+                    {
+                        IsSuccessful = false,
+                        Message = "Người dùng không tồn tại."
+                    };
+                }
+
+                var data = (from r in this.dbContext.Reports
+                            join e in this.dbContext.Exams on r.ExamId equals e.ExamId
+                            join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
+                            join uReviewer in this.dbContext.Users on r.UserId equals uReviewer.UserId into uReviewerJoin
+                            from uReviewer in uReviewerJoin.DefaultIfEmpty()
+                            where uReviewer.UserId == lecturerId
+                            select new ReportResponse
+                            {
+                                ExamCode = e.ExamCode,
+                                SubjectName = s.SubjectName,
+                                ReviewerMail = uReviewer.Mail,
+                                QuestionNumber = r.QuestionNumber,
+                                ReportContent = r.ReportContent,
+                                QuestionSolutionDetail = r.QuestionSolutionDetail,
+                                Score = r.Score,
+                                CreateDate = r.CreateDate,
+                                UpdateDate = r.UpdateDate
+                            }).ToList();
+
+                // Kiểm tra dữ liệu trả về
+                if (data == null || !data.Any())
+                {
+                    return new ResultResponse<ReportResponse>
+                    {
+                        IsSuccessful = false,
+                        Message = "Không tìm thấy báo cáo nào với giảng viên tương ứng"
+                    };
+                }
+
+                return new ResultResponse<ReportResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<ReportResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+    }
 }
