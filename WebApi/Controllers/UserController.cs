@@ -75,5 +75,12 @@ namespace WebApi.Controllers
             var deleteUser = await userRepository.DeleteAsync(id);
             return Ok(deleteUser);
         }
+
+        [HttpGet("GetHead/{subjectId}/{campusId}")]
+        public async Task<IActionResult> GetHead(int subjectId,int campusId)
+        {
+            var deleteUser = await userRepository.GetHeadOfDepartment(subjectId,campusId);
+            return Ok(deleteUser);
+        }
     }
 }

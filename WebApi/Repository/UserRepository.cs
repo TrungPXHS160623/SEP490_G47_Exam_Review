@@ -5,7 +5,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Repository
 {
@@ -222,7 +221,46 @@ namespace WebApi.Repository
             {
                 return new RequestResponse
                 {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId)
+        {
+            try
+            {
+                var user = await (from u in dbContext.Users
+                            join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                            join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
+                            join c in dbContext.Campuses on cus.CampusId equals c.CampusId
+                            where s.SubjectId == subjectId && c.CampusId == campusId
+                            select new UserResponse
+                            {
+                                Email = u.Mail,
+                                UserId = u.UserId,
+                            }).FirstOrDefaultAsync();
+                
+                if(user == null)
+                {
+                    return new ResultResponse<UserResponse>
+                    {
+                        IsSuccessful = true,
+                        Message = "Cannot find Head of Department.",
+                    };
+                }
+
+                return new ResultResponse<UserResponse>
+                {
                     IsSuccessful = true,
+                    Item = user
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
                     Message = ex.Message
                 };
             }

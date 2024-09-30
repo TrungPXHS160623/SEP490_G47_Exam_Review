@@ -14,5 +14,7 @@ namespace WebClient.IServices
 
         Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam);
 
+        Task<RequestResponse> CreateExam(ExamCreateRequest exam);
+
     }
 }

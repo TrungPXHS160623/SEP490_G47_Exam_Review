@@ -41,7 +41,8 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Add"
-                   Class="ms-4">
+                   Class="ms-4"
+                   OnClick="@(() => OpenAddEditDialogAsync(0,false))">
             Add Exam
         </MudButton>
     </div>
@@ -195,7 +196,7 @@
             {x => x.ExamId,examId}
         };
 
-        var dialog = await DialogService.ShowAsync<ExamDetail>(isView == true ? "Exam Detail" : "Exam Update", parameters, options);
+        var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
 
         var result = await dialog.Result;
 

@@ -21,5 +21,7 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> DeleteAsync(int id);
 
+        Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
+
     }
 }
