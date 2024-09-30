@@ -97,7 +97,9 @@
                     <RowTemplate>
                         <MudTd>@context.ExamCode</MudTd>
                         <MudTd>@context.CampusName</MudTd>
-                        <MudTd>@context.ExamStatusContent</MudTd>
+                        <MudTd>
+                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                        </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
                         <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
@@ -141,6 +143,17 @@
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
     public ExamSearchRequest request = new();
+
+    private Dictionary<int, string> ColorList = new Dictionary<int, string>
+    {
+        { 1, "#C0C0C0" }, // Not Assign
+        { 2, "#FFD700" }, // Waiting to Assign
+        { 3, "#1E90FF" }, // Assigned
+        { 4, "#FFA500" }, // Reviewing
+        { 5, "#32CD32" }, // Finish Review
+        { 6, "#228B22" }, // Complete
+        { 7, "#FF6347" }, // Cancel
+    };
 
     protected override async Task OnInitializedAsync()
     {

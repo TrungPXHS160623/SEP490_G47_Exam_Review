@@ -208,7 +208,8 @@ public class ExamRepository : IExamRepository
                             CampusName = ca.CampusName,
                             EstimatedTimeTest = ex.EstimatedTimeTest,
                             ExamStatusContent = st.StatusContent,
-                            HeadDepartmentName = u1.Mail, // Handle null for LEFT JOIN
+                            ExamStatusId = st.ExamStatusId,
+                            HeadDepartmentName = u1.Mail,
                             UpdateDate = ex.UpdateDate
                         }).ToList();
 
