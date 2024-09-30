@@ -7,6 +7,6 @@ namespace WebApi.IRepository
 {
 	public interface IExamAssignRepository
 	{
-		Task<ResultResponse<ExamAssignResponse>> GetExamsInProgressByHeadDepartmentIdAsync(int userId);
+		Task<ResultResponse<ExamAssignResponse>> GetExamAssignByHeadId(int userId);
 	}
 }

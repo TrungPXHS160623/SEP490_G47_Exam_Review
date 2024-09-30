@@ -16,7 +16,7 @@ namespace WebApi.Repository
             this.dbContext = dbContext;
         }
 
-        public async Task<ResultResponse<ExamAssignResponse>> GetExamsInProgressByHeadDepartmentIdAsync(int userId)
+        public async Task<ResultResponse<ExamAssignResponse>> GetExamAssignByHeadId(int userId)
         {
             var statusInProgress = 2;
 
