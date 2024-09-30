@@ -15,7 +15,7 @@ namespace WebApi.IRepository
 
         //api1: liệt kê tất cả các phân công hiện có của hệ thống
         //trả về 1 đối tượng hoặc 1 list
-        Task<ResultResponse<AssignResponce>> GetAllAssign();
+        Task<ResultResponse<AssignResponse>> GetAllAssign();
 
 
         //api2 : thêm 1 phân công vào hệ thống (role người gửi = trưởng bộ môn && role người nhận = giảng viên)
@@ -24,10 +24,10 @@ namespace WebApi.IRepository
 
         //api3 : tìm kiếm 1 bản ghi phân công dựa theo id của (th1 : trưởng bộ môn ,th2 : giảng viên, th3 : exam,th4 :campus)
         //trả về 1 đối tượng hoặc 1 list
-        Task<ResultResponse<AssignResponce>> GetAllAssignByHeadOfDepartmentId(int id);
-        Task<ResultResponse<AssignResponce>> GetAllAssignByLecturorId(int id);
-        Task<ResultResponse<AssignResponce>> GetAllAssignByExamId(int id);
-        Task<ResultResponse<AssignResponce>> GetAllAssignByCampusId(int id);
+        Task<ResultResponse<AssignResponse>> GetAllAssignByHeadOfDepartmentId(int id);
+        Task<ResultResponse<AssignResponse>> GetAllAssignByLecturorId(int id);
+        Task<ResultResponse<AssignResponse>> GetAllAssignByExamId(int id);
+        Task<ResultResponse<AssignResponse>> GetAllAssignByCampusId(int id);
 
 
 

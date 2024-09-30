@@ -38,6 +38,7 @@ namespace WebApi.Controllers
             var data = await assignRepository.GetAllAssignByExamId(id);
             return Ok(data);
         }
+
         [HttpGet("Get-All-Assign-With-HeadOfDepartment/{id:int}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllAssignGetAllAssignByHeadOfDepartmentId(int id)
@@ -60,9 +61,5 @@ namespace WebApi.Controllers
             var data = await assignRepository.AddAssign(assignRequest);
             return Ok(data);
         }
-
-
-
-
     }
 }
