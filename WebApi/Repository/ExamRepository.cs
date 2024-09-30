@@ -199,6 +199,8 @@ public class ExamRepository : IExamRepository
                         join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
+                        where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
+                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.Contains(req.ExamCode))
                         select new TestDepartmentExamResponse
                         {
                             EndDate = ex.EndDate,
