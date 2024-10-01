@@ -6,11 +6,11 @@ namespace WebApi.IRepository
 {
     public interface IReportRepository
     {
-        Task<ResultResponse<ReportResponse>> GetAllReport();
+        Task<ResultResponse<ReportResponse>> GetReportsByLecturerId(int lecturerId);
 
-        Task<RequestResponse> AddReport(ReportRequest reportRequest);
+        Task<RequestResponse> CreateReport(ReportRequest reportRequest);
 
-		Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
+        Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
 
 	}
 }

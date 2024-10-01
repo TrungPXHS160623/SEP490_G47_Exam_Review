@@ -17,18 +17,18 @@ namespace WebApi.Controllers
         {
             this.reportRepository = reportRepository;
         }
-        [HttpGet("Get-All-Report")]
+        [HttpGet("get-reports/by-lecturerId/{id:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllReport()
+        public async Task<IActionResult> GetReportsByLecturerId(int id)
         {
-            var data = await reportRepository.GetAllReport();
+            var data = await reportRepository.GetReportsByLecturerId(id);
             return Ok(data);
         }
-        [HttpPost("Create-Report")]
+        [HttpPost("create-reports/by-lecturer")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateReport([FromBody] ReportRequest reportRequest)
         {
-            var data = await reportRepository.AddReport(reportRequest);
+            var data = await reportRepository.CreateReport(reportRequest);
             return Ok(data);
         }
 

@@ -16,49 +16,49 @@ namespace WebApi.Controllers
         {
             this.assignRepository = assignRepository;
         }
-        [HttpGet("Get-All-Assign")]
+        [HttpGet("assignments/head-to-lecturers")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssign()
+        public async Task<IActionResult> ListAssignmentsToLecturersByHead()
         {
-            var data = await assignRepository.GetAllAssign();
+            var data = await assignRepository.ListAssignmentsToLecturersByHead();
             return Ok(data);
         }
 
-        [HttpGet("Get-All-Assign-With-CampusId/{id:int}")]
+        [HttpGet("assignments/by-campus/{campusId:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssignGetAllAssignByCampusId(int id)
+        public async Task<IActionResult> GetAssignmentsByCampusId(int campusId)
         {
-            var data = await assignRepository.GetAllAssignByCampusId(id);
+            var data = await assignRepository.GetAssignmentsByCampusId(campusId);
             return Ok(data);
         }
-        [HttpGet("Get-All-Assign-With-ExamId/{id:int}")]
+        [HttpGet("assignments/by-exam/{examId:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssignGetAllAssignByExamId(int id)
+        public async Task<IActionResult> GetAssignmentsByExamId(int examId)
         {
-            var data = await assignRepository.GetAllAssignByExamId(id);
-            return Ok(data);
-        }
-
-        [HttpGet("Get-All-Assign-With-HeadOfDepartment/{id:int}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssignGetAllAssignByHeadOfDepartmentId(int id)
-        {
-            var data = await assignRepository.GetAllAssignByHeadOfDepartmentId(id);
-            return Ok(data);
-        }
-        [HttpGet("Get-All-Assign-With-LecturorId/{id:int}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAllAssignGetAllAssignByLecturorId(int id)
-        {
-            var data = await assignRepository.GetAllAssignByLecturorId(id);
+            var data = await assignRepository.GetAssignmentsByExamId(examId);
             return Ok(data);
         }
 
-        [HttpPost("Create-Assign-InstructorAssign")]
+        [HttpGet("assignments/by-department-head/{headId:int}")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateInstructorAssign([FromBody] AssignRequest assignRequest)
+        public async Task<IActionResult> GetAssignmentsByHeadId(int headId)
         {
-            var data = await assignRepository.AddAssign(assignRequest);
+            var data = await assignRepository.GetAssignmentsByHeadId(headId);
+            return Ok(data);
+        }
+        [HttpGet("assignments/by-lecturer/{lecturerId:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAssignmentsByLecturerId(int lecturerId)
+        {
+            var data = await assignRepository.GetAssignmentsByLecturerId(lecturerId);
+            return Ok(data);
+        }
+
+        [HttpPost("assignments/assign-to-lecturer")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddAssignToLecturer([FromBody] AssignRequest assignRequest)
+        {
+            var data = await assignRepository.AddAssignToLecturer(assignRequest);
             return Ok(data);
         }
     }
