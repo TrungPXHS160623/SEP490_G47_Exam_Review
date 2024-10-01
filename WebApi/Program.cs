@@ -76,7 +76,11 @@ public class Program
 		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
         builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();
+
+        builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+
 		builder.Services.AddScoped<IEstimatedTimeRepository, EstimatedTimeRepository>();
+
 
 
 		var app = builder.Build();

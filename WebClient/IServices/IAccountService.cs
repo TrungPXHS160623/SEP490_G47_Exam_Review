@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
 
@@ -12,6 +11,7 @@ namespace WebClient.IServices
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
         Task<ResultResponse<UserResponse>> GetAllUserList();
+        Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId,int campusId);
         Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery);
         Task<AuthenticationResponse> GetJWT();
         Task<RequestResponse> ClearJWT();

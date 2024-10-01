@@ -109,5 +109,30 @@ namespace WebClient.Services
 
             return requestResponse;
         }
+
+        public async Task<RequestResponse> CreateExam(ExamCreateRequest exam)
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/CreateExam", exam);
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+            else
+            {
+                snackbar.Add(requestResponse.Message, Severity.Success);
+            }
+
+            return requestResponse;
+        }
     }
 }

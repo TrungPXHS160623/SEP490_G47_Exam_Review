@@ -202,6 +202,38 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetHead/{subjectId}/{campusId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
         public async Task<AuthenticationResponse> GetJWT()
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"api/Account/GetJWT");
