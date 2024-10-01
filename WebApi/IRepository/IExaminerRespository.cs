@@ -1,4 +1,6 @@
 ﻿using Library.Common;
+using Library.Models;
+using Library.Request;
 using Library.Response;
 namespace WebApi.IRepository
 {
@@ -6,6 +8,8 @@ namespace WebApi.IRepository
     {
         Task<ResultResponse<ExamByCampusResponse>> GetExamsByCampusAsync(int examinerId);
         Task<ResultResponse<ExamDetailResponse>> GetExamsDetail(int examID);
+        Task<ResultResponse<Subject>> GetAllSubject();
+        Task<RequestResponse> CreateAsync(ExamRequest exam);
         //Task<List<ExamDto>> GetExamsByCampusAsync(int examinerId, string subjectName = null);
         //Task<Exam> UpdateExamStatusAsync(int examId);
         //Task<ExamAssignment> AssignInstructor(ExamAssignment instructorAssignment);

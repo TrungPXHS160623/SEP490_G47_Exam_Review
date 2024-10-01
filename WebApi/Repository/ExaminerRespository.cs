@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
@@ -13,6 +14,70 @@ namespace WebApi.Repository
         public ExaminerRepository(QuizManagementContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<RequestResponse> CreateAsync(ExamRequest exam)
+        {
+            try
+            {
+                var data = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamCode.Equals(exam.ExamCode));
+
+                if (data != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Mail already exist!"
+                    };
+                }
+                else
+                {
+                    var newExam = new Exam
+                    {
+                        ExamCode = exam.ExamCode,
+                        ExamDuration = exam.ExamDuration,
+                        ExamType = exam.ExamType,
+                        SubjectId = exam.Subjectid
+                    };
+                    await dbContext.Exams.AddAsync(newExam);
+                    await dbContext.SaveChangesAsync();
+                }
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Create account successfully!"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<Subject>> GetAllSubject()
+        {
+            try
+            {
+                var data = await this.dbContext.Subjects.ToListAsync();
+
+                return new ResultResponse<Subject>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<Subject>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
         }
 
         public async Task<ResultResponse<ExamByCampusResponse>> GetExamsByCampusAsync(int examinerId)

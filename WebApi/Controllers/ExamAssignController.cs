@@ -23,7 +23,7 @@ namespace WebApi.Controllers
 		[HttpGet("in-progress/{userId}")]
 		public async Task<IActionResult> GetExamsInProgress(int userId)
 		{
-			var result = await examAssignRepository.GetExamsInProgressByHeadDepartmentIdAsync(userId);
+			var result = await examAssignRepository.GetExamAssignByHeadId(userId);
 			if (!result.IsSuccessful)
 			{
 				return NotFound(result.Message);

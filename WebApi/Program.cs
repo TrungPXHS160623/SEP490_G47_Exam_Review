@@ -76,9 +76,14 @@ public class Program
 		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
         builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();
+
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 
-        var app = builder.Build();
+		builder.Services.AddScoped<IEstimatedTimeRepository, EstimatedTimeRepository>();
+
+
+
+		var app = builder.Build();
 
 
         // Configure the HTTP request pipeline
