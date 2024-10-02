@@ -1,0 +1,44 @@
+﻿<h3>Report</h3>
+<style>
+    .image-placeholder {
+        width: 100%;
+        height: 200px;
+        background-color: #f7f7f7;
+        border: 1px solid #ddd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #888;
+    }
+
+    .image-placeholder img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+</style>
+<div class="container">
+    <div class="custom-box">
+        <h2>Exam Report Content</h2>
+        <div>
+            <div class="d-flex justify-content-between align-items-center">
+                <MudTextField @bind-Value=text Label="Question Id" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+            </div>
+            <div class="d-flex justify-content-between align-items-baseline">
+                <MudTextField @bind-Value=text Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="2" MaxLines="4" Class="col-5"></MudTextField>
+                <MudTextField @bind-Value=text Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="2" MaxLines="4"></MudTextField>
+            </div>
+            <div>
+                <div class="image-placeholder">
+                    <span>Image</span>
+                </div>
+                <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
+                <small class="text-muted">PNG, JPG (recommended size: 740x415px)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    string text = string.Empty;
+}

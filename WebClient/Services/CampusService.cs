@@ -19,13 +19,6 @@ namespace WebClient.Services
 
         public async Task<ResultResponse<Campus>> GetCampus()
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.GetAsync($"api/Campus/GetCampus");
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Campus>>();

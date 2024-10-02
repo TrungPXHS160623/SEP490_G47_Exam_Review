@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Hosting
-<style>
+﻿<style>
     .form-group {
         display: flex;
         align-items: center
@@ -109,10 +108,13 @@
                 <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
             </MudSelect>
         </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Estimate Date:</label>
-            <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-        </div>
+        @if (ExamId != 0)
+        {
+            <div class="form-group mb-4">
+                <label class="col-3">Exam Estimate Date:</label>
+                <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+            </div>
+        }
         <div class="form-group mb-4">
             <label class="col-3">Start Date:</label>
             <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
