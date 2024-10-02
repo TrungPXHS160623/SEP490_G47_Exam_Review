@@ -107,7 +107,6 @@
                 var customAuthStateProvider = AuthStateProvider as CustomAuthenticationStateProvider;
                 if (customAuthStateProvider != null)
                 {
-                    TokenService.SetToken(data.Token);
                     await customAuthStateProvider.UpdateAuthenticationState(data.Token);
                     // NavManager.NavigateTo("/Home");
                     await UpdateName();
@@ -119,6 +118,7 @@
             }
         }
     }
+
 
     public async Task UpdateName()
     {

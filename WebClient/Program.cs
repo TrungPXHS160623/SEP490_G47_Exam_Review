@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Library.Common;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using MudBlazor.Services;
+using System.Net.Http.Headers;
 using WebClient.Authentication;
 using WebClient.Common;
 using WebClient.Components;
@@ -22,11 +24,20 @@ namespace WebClient
 
             builder.Services.AddHttpClient();
 
-            builder.Services.AddScoped(x => new HttpClient { BaseAddress = new Uri("https://localhost:7255/") });
+            builder.Services.AddSingleton(sp => {
+                var httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7255/") };
+
+                // Chỉ thiết lập header nếu token tồn tại trong Constants
+                if (!string.IsNullOrEmpty(Constants.JWTToken))
+                {
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+                }
+
+                return httpClient;
+            });
 
             builder.Services.AddScoped<SpinnerService>();
             builder.Services.AddScoped<SpinnerHandler>();
-            builder.Services.AddScoped<TokenService>();
 
             builder.Services.AddScoped(s =>
             {
@@ -66,6 +77,8 @@ namespace WebClient
             builder.Services.AddTransient<IStatusService, StatusService>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<ISubjectService, SubjectService>();
+
+            builder.Services.AddScoped<TokenService>();
 
             var app = builder.Build();
 

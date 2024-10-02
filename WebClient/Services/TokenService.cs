@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using Library.Common;
+using System.Net.Http.Headers;
 
 namespace WebClient.Services
 {
@@ -13,14 +14,14 @@ namespace WebClient.Services
 
         public string Token { get; private set; }
 
-        public void SetToken(string token)
+        public void SetToken()
         {
-            Token = token;
+            Token = Constants.JWTToken;
 
             // Update HttpClient with the new token
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(Token))
             {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             }
             else
             {
