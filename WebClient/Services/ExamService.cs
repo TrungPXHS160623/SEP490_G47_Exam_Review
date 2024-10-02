@@ -21,13 +21,6 @@ namespace WebClient.Services
 
         public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamList",req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();

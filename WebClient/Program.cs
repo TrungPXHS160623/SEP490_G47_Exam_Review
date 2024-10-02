@@ -26,6 +26,7 @@ namespace WebClient
 
             builder.Services.AddScoped<SpinnerService>();
             builder.Services.AddScoped<SpinnerHandler>();
+            builder.Services.AddScoped<TokenService>();
 
             builder.Services.AddScoped(s =>
             {

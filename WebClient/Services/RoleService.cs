@@ -19,13 +19,6 @@ namespace WebClient.Services
 
         public async Task<ResultResponse<UserRole>> GetRoles()
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.GetAsync($"api/Role/GetRoles");
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserRole>>();
