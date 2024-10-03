@@ -118,14 +118,14 @@
         <div class="form-group mb-4">
             <label class="col-3">Start Date:</label>
             <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt > DateTime.Now))"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                            @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                            Margin="Margin.Dense" Clearable Disabled=@IsView />
         </div>
         <div class="form-group mb-4">
             <label class="col-3">End Date:</label>
             <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date )||( dt.Date > DateTime.Now.Date))"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                            @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                            Margin="Margin.Dense" Clearable Disabled=@IsView />
         </div>
