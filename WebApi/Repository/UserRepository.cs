@@ -34,7 +34,7 @@ namespace WebApi.Repository
                 {
                     var newUser = new User
                     {
-                        Mail = user.Email,
+                        Mail = user.Email+"@fpt.edu.vn",
                         RoleId = user.RoleId,
                         CampusId = user.CampusId,
                         CreateDate = DateTime.Now,
@@ -176,7 +176,7 @@ namespace WebApi.Repository
                         where u.UserId == id
                         select new UserRequest
                         {
-                            Email = u.Mail,
+                            Email = u.Mail.Replace("@fpt.edu.vn",string.Empty),
                             CampusId = u.CampusId,                        // Keep the CampusId from the Users table
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
@@ -206,7 +206,7 @@ namespace WebApi.Repository
                         Message = "User not exist"
                     };
                 }
-                existingUser.Mail = user.Email;
+                existingUser.Mail = user.Email + "@fpt.edu.vn";
                 existingUser.RoleId = user.RoleId;
                 existingUser.CampusId = user.CampusId;
                 existingUser.IsActive = user.IsActive.Value;
