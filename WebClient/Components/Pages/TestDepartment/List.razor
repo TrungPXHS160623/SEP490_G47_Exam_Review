@@ -314,6 +314,12 @@
             errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
         }
 
+        var examsWithMissingHead = selectedExams.Where(x => x.HeadDepartmentId == null).ToList();
+        foreach (var exam in examsWithMissingHead)
+        {
+            errors.Add($"Exam {exam.ExamCode} has no subject leader yet.");
+        }
+
         return errors.ToArray();
     }
 }
