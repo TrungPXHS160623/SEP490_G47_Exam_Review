@@ -126,7 +126,7 @@
         </div>
         <div class="mt-5">
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
         </div>
     </div>
 </div>
@@ -316,4 +316,28 @@
 
         return errors.ToArray();
     }
+    private async Task ExportAllExams()
+    {
+        var response = await this.ExamServive.ExportAllExams();
+
+        if (response != null && response.IsSuccessful)
+        {
+            try
+            {
+                using var stream = new MemoryStream(response.Item);
+                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(stream.ToArray())}";
+                await js.InvokeVoidAsync("open", fileUrl);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error during file download: {ex.Message}", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("Error exporting exams.", Severity.Error);
+        }
+    }
+
+
 }
