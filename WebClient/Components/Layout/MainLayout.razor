@@ -1,6 +1,7 @@
 ﻿@using WebClient.Services
 @inherits LayoutComponentBase
 @inject HttpClient Http
+@inject IHostEnvironment HostEnvironment
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -19,8 +20,8 @@
                                 <label>Exam Review System</label>
                             </div>
                             <div>
-                                <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
                                 <label @onclick=@OpenProfileModel style="cursor:pointer">Welcom: @Email</label>
+                                <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
                             </div>
                         </div>
                     </div>
@@ -67,8 +68,15 @@
     </AuthorizeView>
 </MudLayout>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
+<div id="blazor-error-ui" data-nosnippet>
+    @if (HostEnvironment.IsProduction())
+    {
+        <span>An error has occurred.</span>
+    }
+    else
+    {
+        <span>An unhandled exception occurred.</span>
+    }
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>

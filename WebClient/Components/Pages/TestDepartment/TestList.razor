@@ -83,7 +83,7 @@
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
