@@ -2,7 +2,7 @@
 <style>
     .form-group {
         display: flex;
-        align-items: center
+        align-items: center;
     }
 
     .mud-input.mud-disabled {
@@ -45,7 +45,7 @@
         </MudFileUpload>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick="Excute" Disabled="@_processing">
             @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -61,8 +61,6 @@
     </DialogActions>
 </MudDialog>
 
-
-
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
@@ -70,62 +68,77 @@
     [Parameter]
     public int? ExamId { get; set; }
 
-    IList<IBrowserFile> files = new List<IBrowserFile>();
+     private IList<IBrowserFile> files = new List<IBrowserFile>();
 
     private bool _processing = false;
-
-    private List<Campus> camList = new();
-
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
-
-    private void Cancel() => MudDialog.Cancel();
-
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
-
-    public async Task Excute()
-    {
-
-    }
-
-
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
-    private string _dragClass = DefaultDragClass;
     private readonly List<string> _fileNames = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
-    private async Task ClearAsync()
-    {
-        await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
-        _fileNames.Clear();
-        ClearDragClass();
-    }
+    private void Cancel() => MudDialog.Cancel();
 
-    private Task OpenFilePickerAsync()
-        => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+    public async Task Excute()
+    {
+        _processing = true;
+      
+            await UploadFilesAsync();
+       
+    }
 
     private void OnInputFileChanged(InputFileChangeEventArgs e)
     {
         ClearDragClass();
-        var files = e.GetMultipleFiles();
+        files = e.GetMultipleFiles().ToList();
+        _fileNames.Clear();
         foreach (var file in files)
         {
             _fileNames.Add(file.Name);
         }
     }
 
-    private void Upload()
+    private async Task UploadFilesAsync()
     {
-        // Upload the files here
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("TODO: Upload your files!");
+        if (files.Count == 0)
+        {
+            Snackbar.Add("No files to upload!", Severity.Warning);
+            return;
+        }
+
+        using (var content = new MultipartFormDataContent())
+        {
+            foreach (var file in files)
+            {
+                using (var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024)) // 10MB limit
+                {
+                    var fileStreamContent = new StreamContent(stream);
+                    fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    content.Add(fileStreamContent, "files", file.Name);
+                }
+            }
+
+            try
+            {
+                var response = await ExamServive.ImportExamsFromExcel(files.ToList());
+
+                if (response.IsSuccessful)
+                {
+                    Snackbar.Add("Exams imported successfully!", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Failed to upload files.", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
+            }
+        }
     }
 
-    private void SetDragClass()
-        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string _dragClass = DefaultDragClass;
 
-    private void ClearDragClass()
-        => _dragClass = DefaultDragClass;
+    private void SetDragClass() => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass() => _dragClass = DefaultDragClass;
 }

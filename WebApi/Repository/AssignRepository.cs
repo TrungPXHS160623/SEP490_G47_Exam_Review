@@ -3,6 +3,7 @@ using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -245,6 +246,9 @@ namespace WebApi.Repository
         {
             try
             {
+                int validMinStatus = 2; // Giá trị hợp lệ tối thiểu cho ExamStatusId
+                int validMaxStatus = 6; // Giá trị hợp lệ tối đa cho ExamStatusId
+
                 var data = (from a in this.dbContext.InstructorAssignments
                                 // Tham chiếu bảng Exams (Kỳ thi)
                             join e in this.dbContext.Exams on a.ExamId equals e.ExamId
@@ -267,7 +271,7 @@ namespace WebApi.Repository
                                 // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-                            where uHead.UserId == HeadID
+                            where uHead.UserId == HeadID && e.ExamStatusId > validMinStatus && e.ExamStatusId <= validMaxStatus
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
