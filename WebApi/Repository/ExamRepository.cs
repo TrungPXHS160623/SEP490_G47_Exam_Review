@@ -216,6 +216,7 @@ public class ExamRepository : IExamRepository
                             ExamStatusContent = st.StatusContent,
                             ExamStatusId = st.ExamStatusId,
                             HeadDepartmentName = u1.Mail,
+                            HeadDepartmentId = u1.UserId,
                             UpdateDate = ex.UpdateDate
                         }).ToList();
 
