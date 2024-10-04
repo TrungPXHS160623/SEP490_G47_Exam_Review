@@ -19,9 +19,9 @@ namespace WebApi.Repository
 		public async Task<ResultResponse<StatusRequest>> EditStatus(int examID, string newStatus)
 		{
 			var exam = await dbContext.Exams
-			.Include(e => e.ExamStatus)
-			.Include(e => e.Subject)  // Include the Subject entity
-			.FirstOrDefaultAsync(e => e.ExamId == examID);
+				.Include(e => e.ExamStatus)
+				.Include(e => e.Subject)
+				.FirstOrDefaultAsync(e => e.ExamId == examID);
 
 			if (exam == null)
 			{
@@ -43,6 +43,10 @@ namespace WebApi.Repository
 			}
 
 			exam.ExamStatusId = status.ExamStatusId;
+
+			// Update the status update date
+			status.UpdateDate = DateTime.Now;
+
 			await dbContext.SaveChangesAsync();
 
 			var response = new StatusRequest
@@ -53,6 +57,7 @@ namespace WebApi.Repository
 				ExamType = exam.ExamType,
 				SubjectName = exam.Subject.SubjectName,
 				ExamStatus = status.StatusContent,
+				UpdateDate = DateTime.Now, 
 				StartDate = exam.StartDate,
 				EndDate = exam.EndDate
 			};
