@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebApi.IRepository;
 using Library.Request;
 using Library.Response;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
@@ -19,8 +20,7 @@ namespace WebApi.Controllers
 			this.examAssignRepository = examAssignRepository;
 			this.mapper = mapper;
 		}
-
-		[HttpGet("in-progress/{userId}")]
+		[HttpGet("Waiting-to-Assign/{userId}")]
 		public async Task<IActionResult> GetExamsInProgress(int userId)
 		{
 			var result = await examAssignRepository.GetExamAssignByHeadId(userId);

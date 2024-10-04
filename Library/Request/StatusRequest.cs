@@ -14,6 +14,7 @@ namespace Library.Request
 		public string? ExamType { get; set; }
 		public string? SubjectName { get; set; }
 		public string? ExamStatus { get; set; }
+		public DateTime? UpdateDate { get; set; }
 		public DateTime? StartDate { get; set; }
 		public DateTime? EndDate { get; set; }
 	}

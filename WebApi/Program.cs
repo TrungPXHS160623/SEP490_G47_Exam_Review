@@ -81,6 +81,7 @@ public class Program
 
 		builder.Services.AddScoped<IEstimatedTimeRepository, EstimatedTimeRepository>();
 
+		builder.Services.AddScoped<IGenerateExcelRepository, GenerateExcelRepository>();
 
 
 		var app = builder.Build();
