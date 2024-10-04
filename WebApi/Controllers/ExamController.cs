@@ -1,5 +1,7 @@
-﻿using Library.Request;
+﻿
+using Library.Request;
 using Library.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
@@ -57,5 +59,13 @@ namespace WebApi.Controllers
             var examInfo = await _examRepository.CreateExam(req);
             return Ok(examInfo);
         }
+        
+        [HttpPost("ImportExamsFromExcel")]
+        public async Task<IActionResult> ImportExamsFromExcel([FromForm] IFormFile file)
+        {
+            var something = await _examRepository.ImportExamsFromExcel(file);
+            return Ok(something);
+        }
+        
     }
 }

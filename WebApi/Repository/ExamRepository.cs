@@ -1,8 +1,12 @@
-﻿using Library.Common;
+﻿using Azure;
+using ExcelDataReader;
+using Library.Common;
 using Library.Models;
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using WebApi.IRepository;
@@ -273,4 +277,178 @@ public class ExamRepository : IExamRepository
             };
         }
     }
+    public async Task<RequestResponse> ImportExamsFromCsv(List<ExamImportRequest> examImportDtos)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    public async Task<RequestResponse> ImportExamsFromExcel(IFormFile file)
+    {
+        var response = new RequestResponse();
+        var errors = new List<string>();
+        var examsToAdd = new List<Exam>();
+
+        try
+        {
+            // Đăng ký mã hóa hỗ trợ cho Excel
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            // Kiểm tra nếu file không tồn tại hoặc không có dữ liệu
+            if (file == null || file.Length == 0)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = "No file uploaded!",
+                };
+            }
+
+            // Thiết lập thư mục lưu file upload
+            var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads";
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            // Đường dẫn file (thay đổi từ file.Name thành file.FileName để đảm bảo an toàn)
+            var filePath = Path.Combine(uploadsFolder, Path.GetFileName(file.FileName)); // Sử dụng Path.GetFileName
+
+            // Ghi file lên server
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream); // Sử dụng CopyToAsync để ghi file một cách bất đồng bộ
+            }
+
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    bool isHeaderSkipped = false;
+
+                    do
+                    {
+                        while (reader.Read())
+                        {
+                            if (!isHeaderSkipped)
+                            {
+                                isHeaderSkipped = true;
+                                continue;
+                            }
+
+                            // Sử dụng DTO để lưu dữ liệu từ Excel
+                            var examImportRequest = new ExamImportRequest
+                            {
+                                ExamCode = reader.GetValue(0)?.ToString(),
+                                ExamDuration = reader.GetValue(1)?.ToString(),
+                                ExamType = reader.GetValue(2)?.ToString(),
+                                CampusName = reader.GetValue(3)?.ToString(),
+                                SubjectCode = reader.GetValue(4)?.ToString(),
+                                CreaterName = reader.GetValue(5)?.ToString(),
+                                StatusContent = reader.GetValue(6)?.ToString(),
+                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
+                                StartDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
+                                EndDate = DateTime.TryParse(reader.GetValue(9)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
+                            };
+
+                            // Kiểm tra tính hợp lệ của dữ liệu từ DTO
+                            var errorMessages = new List<string>();
+
+                            if (string.IsNullOrEmpty(examImportRequest.ExamCode))
+                                errorMessages.Add("ExamCode không được để trống.");
+
+                            if (string.IsNullOrEmpty(examImportRequest.ExamDuration))
+                                errorMessages.Add("ExamDuration không được để trống.");
+
+                            if (string.IsNullOrEmpty(examImportRequest.ExamType))
+                                errorMessages.Add("ExamType không được để trống.");
+
+                            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
+                            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
+                            var creator = await _context.Users.FirstOrDefaultAsync(u => u.Mail == examImportRequest.CreaterName);
+
+                            if (campus == null)
+                                errorMessages.Add($"Campus với tên là  {examImportRequest.CampusName} không tồn tại.");
+                            if (subject == null)
+                                errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
+                            if (creator == null)
+                                errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
+
+                            var existingExam = await _context.Exams.FirstOrDefaultAsync(e => e.ExamCode == examImportRequest.ExamCode);
+                            if (existingExam != null)
+                                errorMessages.Add($"Exam với mã {examImportRequest.ExamCode} đã tồn tại.");
+
+                            if (errorMessages.Any())
+                            {
+                                errors.Add($"Lỗi với ExamCode {examImportRequest.ExamCode} : {string.Join(", ", errorMessages)}");
+                                continue;
+                            }
+
+                            // Nếu không có lỗi, ánh xạ từ DTO sang model Exam
+                            var exam = new Exam
+                            {
+                                ExamCode = examImportRequest.ExamCode,
+                                ExamDuration = examImportRequest.ExamDuration,
+                                ExamType = examImportRequest.ExamType,
+                                CampusId = campus.CampusId,
+                                SubjectId = subject.SubjectId,
+                                CreaterId = creator.UserId,
+                                ExamStatusId = null, 
+                                EstimatedTimeTest = examImportRequest.EstimatedTimeTest,
+                                StartDate = examImportRequest.StartDate,
+                                EndDate = examImportRequest.EndDate
+                            };
+
+                            examsToAdd.Add(exam);
+                        }
+                    } while (reader.NextResult());
+                }
+            }
+
+            // Lưu các exam hợp lệ
+            if (examsToAdd.Any())
+            {
+                await _context.Exams.AddRangeAsync(examsToAdd);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                // Thêm phản hồi nếu không có dữ liệu hợp lệ
+                response.IsSuccessful = false;
+                response.Message = "Không có dữ liệu hợp lệ để nhập.";
+            }
+
+            if (errors.Any())
+            {
+                response.IsSuccessful = false;
+                response.Message = $"Còn tồn tại các lỗi sau: {string.Join("; ", errors)}";
+            }
+            else
+            {
+                response.IsSuccessful = true;
+                response.Message = "Import exams from Excel successfully.";
+            }
+        }
+        catch (Exception ex)
+        {
+            response.IsSuccessful = false;
+            response.Message = $"Có lỗi xảy ra: {ex.Message}";
+        }
+
+        return response;
+    }
+
+    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResultResponse<ExamExportResponse>> ExportExamsToExcel()
+    {
+        throw new NotImplementedException();
+    }
+    
+    
+    
+    
 }
