@@ -20,7 +20,7 @@ namespace WebApi.Repository
 
         private IConfiguration Configuration { get; }
 
-        public async Task<RequestResponse> SendMail(List<MailUtil> mail)
+        public async Task<RequestResponse> SendMail(MailModel mail)
         {
             RequestResponse? response;
 
@@ -36,18 +36,14 @@ namespace WebApi.Repository
                     Password = this.Configuration["BusinessEmail:Password"],
                 };
 
-                var subject = "Assign đề thi cho chủ nhiệm bộ môn";
-
-                var body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi";
-
                 using (var client = new SmtpClient(emailSettings.Host, emailSettings.Port))
                 {
                     client.EnableSsl = true;
                     client.Credentials = new NetworkCredential(emailSettings.Username, emailSettings.Password);
 
-                    foreach (var item in mail)
+                    foreach (var item in mail.MailList)
                     {
-                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, subject, body))
+                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, mail.Subject, mail.Body))
                         {
                             message.IsBodyHtml = true;
                             message.BodyEncoding = Encoding.UTF8;

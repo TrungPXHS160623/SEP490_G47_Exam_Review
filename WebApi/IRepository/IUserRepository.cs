@@ -23,5 +23,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
 
+        Task<ResultResponse<UserResponse>> GetLecture();
+
     }
 }

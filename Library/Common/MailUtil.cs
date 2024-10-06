@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace Library.Common
 {
+    public class MailModel
+    {
+        public string? Subject { get; set; }
+        public string? Body { get; set; }
+
+        public List<MailUtil> MailList { get; set; } = new List<MailUtil>();
+    }
+
     public partial class MailUtil
     {
         public string? MailCd { get; set; }

@@ -71,6 +71,8 @@ namespace WebClient
             builder.Services.AddTransient<IStatusService, StatusService>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<ISubjectService, SubjectService>();
+            builder.Services.AddTransient<IReportService, ReportService>();
+            builder.Services.AddTransient<IInstructorAssignmentService, InstructorAssignmentService>();
 
             var app = builder.Build();
 

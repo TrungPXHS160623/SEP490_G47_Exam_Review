@@ -112,6 +112,32 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<UserResponse>> GetLectureList()
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetLecture");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+
         public async Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery)
         {
             try

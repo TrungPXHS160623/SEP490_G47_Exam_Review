@@ -17,7 +17,7 @@ namespace WebClient.Services
         private ISnackbar SnackBar { get; }
 
 
-        public async Task<RequestResponse> SendMail(List<MailUtil> mail)
+        public async Task<RequestResponse> SendMail(MailModel mail)
         {
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/SendMail/SendMail",mail);
 

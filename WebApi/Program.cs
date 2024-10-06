@@ -78,6 +78,7 @@ public class Program
         builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();
 
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+        builder.Services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
 
 		builder.Services.AddScoped<IEstimatedTimeRepository, EstimatedTimeRepository>();
 

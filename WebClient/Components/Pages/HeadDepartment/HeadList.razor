@@ -67,7 +67,7 @@
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -118,9 +118,9 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
+    public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
 
-    private HashSet<TestDepartmentExamResponse> selectedExams = new HashSet<TestDepartmentExamResponse>();
+    private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -147,7 +147,9 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 3);
+            request.UserId = userId;
+
+            var response = await MenuServive.CheckAccess(userId, 4);
 
             if (!response.IsSuccessful)
             {
@@ -176,34 +178,33 @@
 
     private async Task OpenAddEditDialogAsync(int examId, bool isView = true)
     {
-        // var options = new DialogOptions
-        //     {
-        //         CloseOnEscapeKey = true,
-        //         MaxWidth = MaxWidth.Medium,
-        //         FullWidth = true,
-        //         BackdropClick = false,
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                BackdropClick = false,
 
-        //     };
+            };
 
-        // var parameters = new DialogParameters<ExamDetail>
-        // {
-        //     { x => x.IsView, isView },
-        //     {x => x.ExamId,examId}
-        // };
+        var parameters = new DialogParameters<ExamDetail>
+        {
+            {x => x.ExamId,examId}
+        };
 
-        // var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
+        var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
 
-        // var result = await dialog.Result;
+        var result = await dialog.Result;
 
-        // if (!result.Canceled)
-        // {
-        //     await GetData();
-        // }
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
     }
 
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetExamList(request);
+        var eList = await this.ExamServive.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items;

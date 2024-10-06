@@ -14,52 +14,72 @@
         <div class="form-group mb-4">
             <label class="col-3">Exam Code:</label>
             <MudText>@exam.ExamCode</MudText>
-        </div>
+            </div>
 
-        <div class="form-group mb-4">
-            <label class="col-3">Subject Name:</label>
-            <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Creater:</label>
-            <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Head of Department:</label>
-            <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+            <div class="form-group mb-4">
+                <label class="col-3">Subject Name:</label>
+                <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Exam Creater:</label>
+                <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Head of Department:</label>
+                <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Lecture:</label>
+                <MudSelect T="UserResponse"
+                           @bind-SelectedValues=@exam.LectureList
+                           Text="@("Selected Lecture : " + exam.LectureList.Count())"
+                           MultiSelection="true"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Placeholder="Choose Lecture to Assign to this Exam"
+                              Required>
+                @if (LectureList.Count() > 0)
+                {
+                    @foreach (var item in LectureList)
+                    {
+                        <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && exam.LectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
+                    }
+                }
+            </MudSelect>
         </div>
         <div class="form-group mb-4">
             <label class="col-3">Status:</label>
             <MudText>@exam.ExamStatusContent</MudText>
-        </div>
-           <div class="form-group mb-4">
-               <label class="col-3">Campus:</label>
-               <MudText>@exam.CampusName</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Duration:</label>
-            <MudText>@exam.ExamDuration</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Type:</label>
-            <MudText>@exam.ExamType</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Estimate Date:</label>
-            <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Start Date:</label>
-            <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-         </div>
-         <div class="form-group mb-4">
-             <label class="col-3">End Date:</label>
-             <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-         </div>
-     </DialogContent>
-     <DialogActions>
-         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-             @if (_processing)
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Campus:</label>
+                <MudText>@exam.CampusName</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Exam Duration:</label>
+                <MudText>@exam.ExamDuration</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Exam Type:</label>
+                <MudText>@exam.ExamType</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Exam Estimate Date:</label>
+                <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">Start Date:</label>
+                <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-3">End Date:</label>
+                <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+            </div>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
+                @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                 <MudText Class="ms-2">Saving</MudText>
@@ -84,7 +104,9 @@
 
     private bool _processing = false;
 
-    private TestDepartmentExamResponse exam = new TestDepartmentExamResponse();
+    private LeaderExamResponse exam = new LeaderExamResponse();
+
+    private IEnumerable<UserResponse> LectureList = new List<UserResponse>();
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
@@ -92,12 +114,52 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+        var resp = await this.ExamServive.GetLeaderExamById(ExamId.Value);
+
+        if (resp.IsSuccessful)
+        {
+            exam = resp.Item;
+        }
+
+        var result = await AccountService.GetLectureList();
+        if (result != null)
+        {
+            LectureList = result.Items;
+        }
     }
 
     public async Task Excute()
     {
-        
+        var resp = await AssignmentServive.AssignExamToLecture(exam);
+
+        if (resp.IsSuccessful)
+        {
+            List<MailUtil> list = new();
+
+            foreach (var item in exam.LectureList)
+            {
+                var mail = new MailUtil
+                    {
+                        MailTo = item.Email
+                    };
+                list.Add(mail);
+            }
+
+            var mailModel = new MailModel
+                {
+                    Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
+                    MailList = list,
+                    Subject = "Assign đề thi cho giảng vien"
+                };
+
+            var result = await this.MailServive.SendMail(mailModel);
+
+            if (result.IsSuccessful)
+            {
+                var x = await this.ExamServive.ChangeStatusExamById(ExamId.Value, 3);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
     }
 
 }

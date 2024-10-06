@@ -29,6 +29,14 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
+        [HttpGet("GetLecture")]
+        public async Task<IActionResult> GetLecture()
+        {
+            var data = await this.userRepository.GetLecture();
+
+            return Ok(data);
+        }
+
 
         [HttpGet("get-all-with-filter/{filterQuery}")]
         public async Task<IActionResult> GetAllUserWithFilter(string filterQuery)

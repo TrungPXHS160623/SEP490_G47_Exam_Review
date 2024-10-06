@@ -11,6 +11,8 @@ namespace WebClient.IServices
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
         Task<ResultResponse<UserResponse>> GetAllUserList();
+
+        Task<ResultResponse<UserResponse>> GetLectureList();
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId,int campusId);
         Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery);
         Task<AuthenticationResponse> GetJWT();

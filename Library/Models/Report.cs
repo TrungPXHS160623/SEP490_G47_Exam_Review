@@ -5,11 +5,9 @@ namespace Library.Models;
 
 public partial class Report
 {
-    public int ReviewId { get; set; }
+    public int ReportId { get; set; }
 
-    public int ExamId { get; set; }
-
-    public int UserId { get; set; }
+    public int? AssignemtId { get; set; }
 
     public string? ReportContent { get; set; }
 
@@ -23,7 +21,5 @@ public partial class Report
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual Exam Exam { get; set; } = null!;
-
-    public virtual User User { get; set; } = null!;
+    public virtual InstructorAssignment? Assignemt { get; set; }
 }
