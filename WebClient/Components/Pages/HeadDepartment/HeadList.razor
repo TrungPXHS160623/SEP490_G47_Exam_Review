@@ -1,4 +1,4 @@
-﻿@page "/TestDepartment/ExamList"
+﻿@page "/HeadDepartment/ExamList"
 
 <style>
     .mud-table-cell {
@@ -30,34 +30,18 @@
 </style>
 
 <div class="mt-4">
-    <div class="d-flex mb-4">
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   OnClick="OpenImportDialogAsync">
-            Import Exam
-        </MudButton>
-
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   Class="ms-4"
-                   OnClick="@(() => OpenAddEditDialogAsync(0,false))">
-            Add Exam
-        </MudButton>
-    </div>
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap w-50">
             <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
 
-            <MudSelect @bind-Value="request.StatusId"
-                       Variant="Variant.Outlined"
-                       Label="Status"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Clearable
-                       Class="me-4 col-auto">
-                @if (statusList.Count > 0)
+             <MudSelect @bind-Value="request.StatusId"
+                        Variant="Variant.Outlined"
+                        Label="Status"
+                        Margin="Margin.Dense"
+                        AnchorOrigin="Origin.BottomCenter"
+                                  Clearable
+                        Class="me-4 col-auto">
+                 @if (statusList.Count > 0)
                 {
                     @foreach (var item in statusList)
                     {
@@ -83,7 +67,7 @@
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -101,23 +85,22 @@
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
-                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>
-                            <div class="d-flex align-items-center justify-content-around">
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
-                                <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
-                            </div>
-                        </MudTd>
-                    </RowTemplate>
-                    @*<PagerContent>
+                            <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>
+                                <div class="d-flex align-items-center justify-content-around">
+                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+                        @*<PagerContent>
                 @if (AccList.Count > 10)
                 {
                 <MudTablePager />
                 }
                 </PagerContent> *@
-                </MudTable>
+                    </MudTable>
             }
             else
             {
@@ -126,7 +109,7 @@
         </div>
         <div class="mt-5">
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-            <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
         </div>
     </div>
 </div>
@@ -135,11 +118,9 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
+    public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
 
-    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
-
-    private HashSet<TestDepartmentExamResponse> selectedExams = new HashSet<TestDepartmentExamResponse>();
+    private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -166,7 +147,9 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 3);
+            request.UserId = userId;
+
+            var response = await MenuServive.CheckAccess(userId, 4);
 
             if (!response.IsSuccessful)
             {
@@ -206,7 +189,6 @@
 
         var parameters = new DialogParameters<ExamDetail>
         {
-            { x => x.IsView, isView },
             {x => x.ExamId,examId}
         };
 
@@ -220,38 +202,9 @@
         }
     }
 
-    private async Task OpenImportDialogAsync()
-    {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                BackdropClick = false,
-
-            };
-
-        var parameters = new DialogParameters<ImportDialog>();
-
-        var dialog = await DialogService.ShowAsync<ImportDialog>("Import Exam", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            await GetData();
-        }
-    }
-
-    private void UploadFiles(IBrowserFile file)
-    {
-        _files.Clear();
-        _files.Add(file);
-    }
-
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetExamList(request);
+        var eList = await this.ExamServive.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items;
@@ -261,41 +214,7 @@
 
     private async Task AssignExam()
     {
-        if (selectedExams.Count > 0)
-        {
-            var msg = CheckSelectedExam();
-
-            if (msg.Length == 0)
-            {
-                var mailList = selectedExams.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
-
-                List<MailUtil> list = new();
-
-                foreach (var item in mailList)
-                {
-                    var mail = new MailUtil
-                        {
-                            MailTo = item
-                        };
-                    list.Add(mail);
-                }
-
-                var resp = await this.ExamServive.ChangeStatusExam(selectedExams.ToList());
-
-                if (resp.IsSuccessful)
-                {
-                    var result = await this.MailServive.SendMail(list);
-                    await GetData();
-                }
-            }
-            else
-            {
-                foreach (var item in msg)
-                {
-                    Snackbar.Add(item, Severity.Warning);
-                }
-            }
-        }
+        
     }
 
     public string[] CheckSelectedExam()
@@ -316,28 +235,4 @@
 
         return errors.ToArray();
     }
-    private async Task ExportAllExams()
-    {
-        var response = await this.ExamServive.ExportAllExams();
-
-        if (response != null && response.IsSuccessful)
-        {
-            try
-            {
-                using var stream = new MemoryStream(response.Item);
-                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(stream.ToArray())}";
-                await js.InvokeVoidAsync("open", fileUrl);
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Error during file download: {ex.Message}", Severity.Error);
-            }
-        }
-        else
-        {
-            Snackbar.Add("Error exporting exams.", Severity.Error);
-        }
-    }
-
-
 }

@@ -9,6 +9,6 @@ namespace WebApi.IRepository
         /// </summary>
         /// <param name="mail">Content of the mail.</param>
         /// <returns>The request response.</returns>
-        Task<RequestResponse> SendMail(List<MailUtil> mail);
+        Task<RequestResponse> SendMail(MailModel mail);
     }
 }

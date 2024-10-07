@@ -20,4 +20,6 @@ public partial class InstructorAssignment
     public virtual User AssignedUser { get; set; } = null!;
 
     public virtual Exam Exam { get; set; } = null!;
+
+    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 }

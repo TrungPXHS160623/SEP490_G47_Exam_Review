@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Response
 {
-    public class TestDepartmentExamResponse
+    public class LeaderExamResponse
     {
         public int ExamId { get; set; }
 
@@ -30,9 +31,7 @@ namespace Library.Response
 
         public string? HeadDepartmentName { get; set; }
 
-        public int? LectureId { get; set; }
-
-        public string? LectureName { get; set; }
+        public IEnumerable<UserResponse> LectureList { get; set; } = new HashSet<UserResponse>();
 
         public int? CampusId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Library.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library.Response
 {
-    public class TestDepartmentExamResponse
+    public class LectureExamResponse
     {
         public int ExamId { get; set; }
 
@@ -30,9 +31,7 @@ namespace Library.Response
 
         public string? HeadDepartmentName { get; set; }
 
-        public int? LectureId { get; set; }
-
-        public string? LectureName { get; set; }
+        public List<ReportResponse> ReportList { get; set; } = new List<ReportResponse>();
 
         public int? CampusId { get; set; }
 
@@ -44,13 +43,15 @@ namespace Library.Response
 
         public int? AssignmentId { get; set; }
 
+        public int? AssignmentUserId { get; set; }
+
+        public DateTime? AssignmentDate { get; set; }
+
         public DateTime? EstimatedTimeTest { get; set; }
 
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
-
-        public DateTime? CreateDate { get; set; }
 
         public DateTime? UpdateDate { get; set; }
     }

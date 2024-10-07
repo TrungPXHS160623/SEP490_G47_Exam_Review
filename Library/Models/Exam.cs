@@ -39,7 +39,5 @@ public partial class Exam
 
     public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; } = new List<InstructorAssignment>();
 
-    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
-
-    public virtual Subject Subject { get; set; } = null!;
+    public virtual Subject? Subject { get; set; }
 }

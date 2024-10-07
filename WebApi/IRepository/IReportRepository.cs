@@ -8,7 +8,7 @@ namespace WebApi.IRepository
     {
         Task<ResultResponse<ReportResponse>> GetReportsByLecturerId(int lecturerId);
 
-        Task<RequestResponse> CreateReport(ReportRequest reportRequest);
+        Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest);
 
         Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
 

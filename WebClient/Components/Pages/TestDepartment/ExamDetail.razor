@@ -11,124 +11,130 @@
 </style>
 <MudDialog>
     <DialogContent>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Code:</label>
-            <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" />
-        </div>
-        @if (ExamId != 0)
-        {
+        <EditForm @ref=_refForm Model="exam">
             <div class="form-group mb-4">
-                <label class="col-3">Subject Name:</label>
-                <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                <label class="col-3">Exam Code:</label>
+                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Required />
             </div>
-        }
-        else
-        {
+            @if (ExamId != 0)
+            {
+                <div class="form-group mb-4">
+                    <label class="col-3">Subject Name:</label>
+                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                </div>
+            }
+            else
+            {
+                <div class="form-group mb-4">
+                    <label class="col-3">Subject Name:</label>
+                    <MudSelect T="int?"
+                               Value="exam.SubjectId"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Disabled=@IsView
+                               ValueChanged="SubjectChanged"
+                               Placeholder="Choose Subject"
+                               Required>
+                        @if (subList.Count > 0)
+                        {
+                            @foreach (var item in subList)
+                            {
+                                <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </div>
+            }
+            @if (ExamId != 0)
+            {
+                <div class="form-group mb-4">
+                    <label class="col-3">Exam Creater:</label>
+                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                </div>
+            }
             <div class="form-group mb-4">
-                <label class="col-3">Subject Name:</label>
+                <label class="col-3">Head of Department:</label>
+                <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+            </div>
+            @if (ExamId != 0)
+            {
+                <div class="form-group mb-4">
+                    <label class="col-3">Status:</label>
+                    <MudText>@exam.ExamStatusContent</MudText>
+                </div>
+            }
+            <div class="form-group mb-4">
+                <label class="col-3">Campus:</label>
                 <MudSelect T="int?"
-                           Value="exam.SubjectId"
+                           Value="exam.CampusId"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
                            Disabled=@IsView
-                           ValueChanged="SubjectChanged"
-                           Placeholder="Choose Subject">
-                    @if (subList.Count > 0)
+                           ValueChanged="CampusChanged"
+                           Placeholder="Choose Campus"
+                           Required>
+                    @if (camList.Count > 0)
                     {
-                        @foreach (var item in subList)
+                        @foreach (var item in camList)
                         {
-                            <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                            <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
                         }
                     }
                 </MudSelect>
             </div>
-        }
-        @if (ExamId != 0)
-        {
             <div class="form-group mb-4">
-                <label class="col-3">Exam Creater:</label>
-                <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                <label class="col-3">Exam Duration:</label>
+                <MudSelect @bind-Value="exam.ExamDuration"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled=@IsView
+                           Placeholder="Choose Exam Duration"
+                           Required>
+                    <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
+                </MudSelect>
             </div>
-        }
-        <div class="form-group mb-4">
-            <label class="col-3">Head of Department:</label>
-            <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-        </div>
-        @if (ExamId != 0)
-        {
             <div class="form-group mb-4">
-                <label class="col-3">Status:</label>
-                <MudText>@exam.ExamStatusContent</MudText>
+                <label class="col-3">Exam Type:</label>
+                <MudSelect @bind-Value="exam.ExamType"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled=@IsView
+                           Placeholder="Choose Exam Type"
+                           Required>
+                    <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
+                </MudSelect>
             </div>
-        }
-        <div class="form-group mb-4">
-            <label class="col-3">Campus:</label>
-            <MudSelect T="int?"
-                       Value="exam.CampusId"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Disabled=@IsView
-                       ValueChanged="CampusChanged"
-                       Placeholder="Choose Campus">
-                @if (camList.Count > 0)
-                {
-                    @foreach (var item in camList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                    }
-                }
-            </MudSelect>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Duration:</label>
-            <MudSelect @bind-Value="exam.ExamDuration"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Disabled=@IsView
-                       Placeholder="Choose Exam Duration">
-                <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
-                <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
-            </MudSelect>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Exam Type:</label>
-            <MudSelect @bind-Value="exam.ExamType"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Disabled=@IsView
-                       Placeholder="Choose Exam Type">
-                <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
-                <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
-                <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
-                <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
-                <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
-            </MudSelect>
-        </div>
-        @if (ExamId != 0)
-        {
+            @if (ExamId != 0)
+            {
+                <div class="form-group mb-4">
+                    <label class="col-3">Exam Estimate Date:</label>
+                    <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                </div>
+            }
             <div class="form-group mb-4">
-                <label class="col-3">Exam Estimate Date:</label>
-                <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                <label class="col-3">Start Date:</label>
+                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
+                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" Clearable Disabled=@IsView Required />
             </div>
-        }
-        <div class="form-group mb-4">
-            <label class="col-3">Start Date:</label>
-            <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt > DateTime.Now))"
-                           @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                           Margin="Margin.Dense" Clearable Disabled=@IsView />
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-3">End Date:</label>
-            <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date )||( dt.Date > DateTime.Now.Date))"
-                           @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                           Margin="Margin.Dense" Clearable Disabled=@IsView />
-        </div>
+            <div class="form-group mb-4">
+                <label class="col-3">End Date:</label>
+                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
+                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" Clearable Disabled=@IsView Required />
+            </div>
+        </EditForm>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
@@ -157,6 +163,8 @@
 
     [Parameter]
     public EventCallback<DateTime> DateChanged { get; set; }
+
+    EditForm _refForm;
 
     private DateTime? StartDate
     {
@@ -235,7 +243,6 @@
         }
         else
         {
-
             if (ExamId != 0)
             {
                 var resp = await this.ExamServive.UpdateExam(exam);
@@ -299,6 +306,7 @@
         if (resp.IsSuccessful)
         {
             exam.HeadDepartmentName = resp.Item?.Email ?? "N/A";
+            exam.HeadDepartmentId = resp.Item?.UserId ?? null;
         }
 
         this.StateHasChanged();

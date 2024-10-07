@@ -1,7 +1,7 @@
 ﻿@using WebClient.Services
 @inherits LayoutComponentBase
 @inject HttpClient Http
-@inject TokenService TokenService
+@inject IHostEnvironment HostEnvironment
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -20,8 +20,8 @@
                                 <label>Exam Review System</label>
                             </div>
                             <div>
-                                <a @onclick=@Logout class="text-white me-5" style="cursor:pointer">Log out</a>
-                                <label @onclick=@OpenProfileModel style="cursor:pointer">Welcom: @Email</label>
+                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcom: @Email</label> |
+                                <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
                             </div>
                         </div>
                     </div>
@@ -68,8 +68,15 @@
     </AuthorizeView>
 </MudLayout>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
+<div id="blazor-error-ui" data-nosnippet>
+    @if (HostEnvironment.IsProduction())
+    {
+        <span>An error has occurred.</span>
+    }
+    else
+    {
+        <span>An unhandled exception occurred.</span>
+    }
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
@@ -107,7 +114,6 @@
                 var customAuthStateProvider = AuthStateProvider as CustomAuthenticationStateProvider;
                 if (customAuthStateProvider != null)
                 {
-                    TokenService.SetToken(data.Token);
                     await customAuthStateProvider.UpdateAuthenticationState(data.Token);
                     // NavManager.NavigateTo("/Home");
                     await UpdateName();
@@ -119,6 +125,7 @@
             }
         }
     }
+
 
     public async Task UpdateName()
     {

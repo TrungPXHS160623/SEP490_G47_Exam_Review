@@ -9,6 +9,7 @@ namespace Library.Response
 {
     public class ReportResponse
     {
+        public int? RerportId { get; set; }
 
         public string? ExamCode { get; set; }
 

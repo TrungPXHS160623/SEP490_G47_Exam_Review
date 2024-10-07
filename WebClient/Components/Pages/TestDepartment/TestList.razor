@@ -1,4 +1,4 @@
-﻿@page "/AssignList"
+﻿@page "/TestDepartment/ExamList"
 
 <style>
     .mud-table-cell {
@@ -30,6 +30,22 @@
 </style>
 
 <div class="mt-4">
+    <div class="d-flex mb-4">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenImportDialogAsync">
+            Import Exam
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Class="ms-4"
+                   OnClick="@(() => OpenAddEditDialogAsync(0,false))">
+            Add Exam
+        </MudButton>
+    </div>
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap w-50">
             <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
@@ -67,7 +83,7 @@
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -80,9 +96,9 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>@context.CampusName</MudTd>
-                        <MudTd>
-                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                            <MudTd>@context.CampusName</MudTd>
+                            <MudTd>
+                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
                             <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
@@ -90,7 +106,8 @@
                             <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>
                                 <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
+                                    <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
                                 </div>
                             </MudTd>
                         </RowTemplate>
@@ -109,7 +126,7 @@
         </div>
         <div class="mt-5">
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
         </div>
     </div>
 </div>
@@ -117,6 +134,8 @@
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
+
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
 
     public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
 
@@ -176,29 +195,58 @@
 
     private async Task OpenAddEditDialogAsync(int examId, bool isView = true)
     {
-        // var options = new DialogOptions
-        //     {
-        //         CloseOnEscapeKey = true,
-        //         MaxWidth = MaxWidth.Medium,
-        //         FullWidth = true,
-        //         BackdropClick = false,
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                BackdropClick = false,
 
-        //     };
+            };
 
-        // var parameters = new DialogParameters<ExamDetail>
-        // {
-        //     { x => x.IsView, isView },
-        //     {x => x.ExamId,examId}
-        // };
+        var parameters = new DialogParameters<ExamDetail>
+        {
+            { x => x.IsView, isView },
+            {x => x.ExamId,examId}
+        };
 
-        // var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
+        var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
 
-        // var result = await dialog.Result;
+        var result = await dialog.Result;
 
-        // if (!result.Canceled)
-        // {
-        //     await GetData();
-        // }
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportDialog>();
+
+        var dialog = await DialogService.ShowAsync<ImportDialog>("Import Exam", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        _files.Clear();
+        _files.Add(file);
     }
 
     private async Task GetData()
@@ -213,7 +261,48 @@
 
     private async Task AssignExam()
     {
-        
+        if (selectedExams.Count > 0)
+        {
+            var msg = CheckSelectedExam();
+
+            if (msg.Length == 0)
+            {
+                var mailList = selectedExams.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
+
+                List<MailUtil> list = new();
+
+                foreach (var item in mailList)
+                {
+                    var mail = new MailUtil
+                        {
+                            MailTo = item
+                        };
+                    list.Add(mail);
+                }
+
+                var mailModel = new MailModel
+                    {
+                        Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
+                        MailList = list,
+                        Subject = "Assign đề thi cho chủ nhiệm bộ môn"
+                    };
+
+                var resp = await this.ExamServive.ChangeStatusExam(selectedExams.ToList());
+
+                if (resp.IsSuccessful)
+                {
+                    var result = await this.MailServive.SendMail(mailModel);
+                    await GetData();
+                }
+            }
+            else
+            {
+                foreach (var item in msg)
+                {
+                    Snackbar.Add(item, Severity.Warning);
+                }
+            }
+        }
     }
 
     public string[] CheckSelectedExam()
@@ -232,6 +321,36 @@
             errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
         }
 
+        var examsWithMissingHead = selectedExams.Where(x => x.HeadDepartmentId == null).ToList();
+        foreach (var exam in examsWithMissingHead)
+        {
+            errors.Add($"Exam {exam.ExamCode} has no subject leader yet.");
+        }
+
         return errors.ToArray();
     }
+    private async Task ExportAllExams()
+    {
+        var response = await this.ExamServive.ExportAllExams();
+
+        if (response != null && response.IsSuccessful)
+        {
+            try
+            {
+                using var stream = new MemoryStream(response.Item);
+                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(stream.ToArray())}";
+                await js.InvokeVoidAsync("open", fileUrl);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error during file download: {ex.Message}", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("Error exporting exams.", Severity.Error);
+        }
+    }
+
+
 }

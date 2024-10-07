@@ -3,6 +3,7 @@ using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using System.Net.Http.Json;
 using WebClient.IServices;
 
 namespace WebClient.Services
@@ -21,37 +22,179 @@ namespace WebClient.Services
 
         public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamList", req);
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
-
-            if (!requestResponse.IsSuccessful)
+            try
             {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamList", req);
 
-            return requestResponse;
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<TestDepartmentExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetLeaderExamList", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LeaderExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetLectureExamList", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LectureExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LectureExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
         }
 
         public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
+            try
             {
-                return null;
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamById/{examId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamById/{examId}");
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
-
-            if (!requestResponse.IsSuccessful)
+            catch (Exception ex)
             {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
+                snackbar.Add(ex.Message, Severity.Error);
 
-            return requestResponse;
+                return new ResultResponse<TestDepartmentExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLeaderExamById/{examId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LeaderExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId)
+        {
+            try
+            {
+                //Check JWT key
+                if (Constants.JWTToken == "")
+                {
+                    return null;
+                }
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLectureExamById/{examId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LectureExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LectureExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
         }
 
         public async Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam)
@@ -89,6 +232,31 @@ namespace WebClient.Services
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/ChangeStatus", exam);
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+            else
+            {
+                snackbar.Add(requestResponse.Message, Severity.Success);
+            }
+
+            return requestResponse;
+        }
+
+        public async Task<RequestResponse> ChangeStatusExamById(int examId, int statusId)
+        {
+            //Check JWT key
+            if (Constants.JWTToken == "")
+            {
+                return null;
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/ChangeStatus/{examId}", statusId);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 

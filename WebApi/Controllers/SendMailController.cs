@@ -15,7 +15,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("SendMail")]
-        public async Task<IActionResult> SendMail([FromBody] List<MailUtil> mail)
+        public async Task<IActionResult> SendMail([FromBody] MailModel mail)
         {
             var result = await this._sendMailRepository.SendMail(mail);
 

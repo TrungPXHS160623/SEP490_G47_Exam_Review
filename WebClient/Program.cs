@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Library.Common;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using MudBlazor.Services;
+using System.Net.Http.Headers;
 using WebClient.Authentication;
 using WebClient.Common;
 using WebClient.Components;
@@ -22,18 +24,21 @@ namespace WebClient
 
             builder.Services.AddHttpClient();
 
-            builder.Services.AddScoped(x => new HttpClient { BaseAddress = new Uri("https://localhost:7255/") });
+            builder.Services.AddScoped(opt => new HttpClient { BaseAddress = new Uri("https://localhost:7255/") });
+
 
             builder.Services.AddScoped<SpinnerService>();
             builder.Services.AddScoped<SpinnerHandler>();
-            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<AuthorizationHandler>();
 
             builder.Services.AddScoped(s =>
             {
                 SpinnerHandler spinHandler = s.GetRequiredService<SpinnerHandler>();
+                AuthorizationHandler authorHandler = s.GetRequiredService<AuthorizationHandler>();
+                authorHandler.InnerHandler = spinHandler;
                 spinHandler.InnerHandler = new HttpClientHandler();
                 NavigationManager navManager = s.GetRequiredService<NavigationManager>();
-                return new HttpClient(spinHandler)
+                return new HttpClient(authorHandler)
                 {
                     BaseAddress = new Uri("https://localhost:7255/")
                 };
@@ -66,6 +71,8 @@ namespace WebClient
             builder.Services.AddTransient<IStatusService, StatusService>();
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<ISubjectService, SubjectService>();
+            builder.Services.AddTransient<IReportService, ReportService>();
+            builder.Services.AddTransient<IInstructorAssignmentService, InstructorAssignmentService>();
 
             var app = builder.Build();
 

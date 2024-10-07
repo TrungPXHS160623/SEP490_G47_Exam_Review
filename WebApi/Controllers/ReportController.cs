@@ -1,4 +1,5 @@
 ﻿using Library.Request;
+using Library.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,11 @@ namespace WebApi.Controllers
             var data = await reportRepository.GetReportsByLecturerId(id);
             return Ok(data);
         }
-        [HttpPost("create-reports/by-lecturer")]
+        [HttpPost("SaveReport")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateReport([FromBody] ReportRequest reportRequest)
+        public async Task<IActionResult> CreateReport([FromBody] LectureExamResponse reportRequest)
         {
-            var data = await reportRepository.CreateReport(reportRequest);
+            var data = await reportRepository.AddEditReport(reportRequest);
             return Ok(data);
         }
 

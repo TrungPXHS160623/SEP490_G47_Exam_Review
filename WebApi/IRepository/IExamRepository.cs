@@ -11,12 +11,21 @@ namespace WebApi.IRepository
 		Task<IEnumerable<ExamInfoDto>> GetExamInfoAsync();
 
 		Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req);
+        Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId);
 
-		Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId);
+        Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
 
-		Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam);
+        Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
+
+        Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
+
+        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
+
+        Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam);
 
 		Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam);
+
+        Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
 
