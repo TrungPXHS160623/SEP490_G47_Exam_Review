@@ -13,6 +13,8 @@ public partial class InstructorAssignment
 
     public DateTime? AssignmentDate { get; set; }
 
+    public int? AssignStatusId { get; set; }
+
     public DateTime? CreateDate { get; set; }
 
     public DateTime? UpdateDate { get; set; }
@@ -22,4 +24,6 @@ public partial class InstructorAssignment
     public virtual Exam Exam { get; set; } = null!;
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual ExamStatus? ExamStatus { get; set; }
 }

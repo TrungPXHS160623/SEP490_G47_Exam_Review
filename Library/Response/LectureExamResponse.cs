@@ -37,9 +37,9 @@ namespace Library.Response
 
         public string? CampusName { get; set; }
 
-        public int? ExamStatusId { get; set; }
+        public int? AssignStatusId { get; set; }
 
-        public string? ExamStatusContent { get; set; }
+        public string? AssignStatusContent { get; set; }
 
         public int? AssignmentId { get; set; }
 
