@@ -3,7 +3,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Net.Http.Json;
 using WebClient.IServices;
 
 namespace WebClient.Services
@@ -339,7 +338,7 @@ namespace WebClient.Services
 
                 try
                 {
-                    HttpResponseMessage response = await _httpClient.PostAsync("api/Exam/ImportExamsFromExcel", content);
+                    HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/Exam/ImportExamsFromExcel", content);
 
                     response.EnsureSuccessStatusCode();
 
