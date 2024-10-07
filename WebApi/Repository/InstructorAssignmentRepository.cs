@@ -31,6 +31,7 @@ namespace WebApi.Repository
                             AssignedUserId = item.UserId,
                             AssignmentDate = DateTime.Now,
                             ExamId = req.ExamId,
+                            AssignStatusId = 3,
                             CreateDate = DateTime.Now,
                             UpdateDate = DateTime.Now
                         };
@@ -72,7 +73,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == x.AssignmentId);
+                var data = await this.DBcontext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == req.AssignmentId);
 
                 if(data == null)
                 {
@@ -84,6 +85,7 @@ namespace WebApi.Repository
                 }
 
                 data.AssignmentDate = req.AssignmentDate;
+                data.AssignStatusId = 4;
 
                 await this.DBcontext.SaveChangesAsync();
 

@@ -58,13 +58,12 @@
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <h4>Exam List</h4>
-                <h6>Selected Exam: @selectedExams.Count</h6>
             </div>
         </div>
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=LectureExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=LectureExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" >
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -79,7 +78,7 @@
                         <MudTd>@context.ExamCode</MudTd>
                             <MudTd>@context.CampusName</MudTd>
                             <MudTd>
-                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                                <label class="fw-bold" style="color:@(ColorList[context.AssignStatusId.Value])">@context.AssignStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
                             <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
@@ -87,7 +86,7 @@
                             <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>
                                 <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
+                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))">Detail</MudButton>
                                 </div>
                             </MudTd>
                         </RowTemplate>
@@ -112,8 +111,6 @@
     public MainLayout Layout { get; set; }
 
     public List<LectureExamResponse> ExamList = new List<LectureExamResponse>();
-
-    private HashSet<LectureExamResponse> selectedExams = new HashSet<LectureExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -142,7 +139,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 4);
+            var response = await MenuServive.CheckAccess(userId, 5);
 
             if (!response.IsSuccessful)
             {
@@ -169,11 +166,6 @@
         }
     }
 
-    private async Task OpenAddEditDialogAsync(int examId, bool isView = true)
-    {
-        
-    }
-
     private async Task GetData()
     {
         var eList = await this.ExamServive.GetLectureExamList(request);
@@ -181,7 +173,10 @@
         {
             ExamList = eList.Items;
         }
-        selectedExams.Clear();
     }
 
+    public void GoToDetail(int examId)
+    {
+        NavManager.NavigateTo($"/Lecture/ExamReport/{examId}");
+    }
 }

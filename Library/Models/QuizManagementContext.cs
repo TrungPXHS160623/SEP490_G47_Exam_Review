@@ -117,6 +117,8 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasIndex(e => e.ExamId, "IX_InstructorAssignments_ExamId");
 
+            entity.HasIndex(e => e.AssignStatusId, "IX_InstructorAssignments_AssignStatusId");
+
             entity.HasOne(d => d.AssignedUser).WithMany(p => p.InstructorAssignments)
                 .HasForeignKey(d => d.AssignedUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -125,6 +127,10 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.Exam).WithMany(p => p.InstructorAssignments)
                 .HasForeignKey(d => d.ExamId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.ExamStatus).WithMany(p => p.Assignments)
+                .HasForeignKey(d => d.AssignStatusId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MenuRole>(entity =>
@@ -401,18 +407,18 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<InstructorAssignment>().HasData(
 
         // Examiner => Heads of departmant
-        new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedUserId = 12, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedUserId = 12, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 3, ExamId = 3, AssignedUserId = 12, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 4, ExamId = 11, AssignedUserId = 13, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 5, ExamId = 12, AssignedUserId = 13, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3 ,CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3 ,CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 3, ExamId = 3, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3 ,CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 4, ExamId = 11, AssignedUserId = 13, AssignmentDate = DateTime.Now,AssignStatusId = 3 , CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 5, ExamId = 12, AssignedUserId = 13, AssignmentDate = DateTime.Now,AssignStatusId = 3 , CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
         // Head of departmant => Lecturers
-        new InstructorAssignment { AssignmentId = 6, ExamId = 1, AssignedUserId = 7, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 7, ExamId = 2, AssignedUserId = 7, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 8, ExamId = 3, AssignedUserId = 7, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 9, ExamId = 11, AssignedUserId = 27, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 10, ExamId = 12, AssignedUserId = 27, AssignmentDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        new InstructorAssignment { AssignmentId = 6, ExamId = 1, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 7, ExamId = 2, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 8, ExamId = 3, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 9, ExamId = 11, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 10, ExamId = 12, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
 
         );

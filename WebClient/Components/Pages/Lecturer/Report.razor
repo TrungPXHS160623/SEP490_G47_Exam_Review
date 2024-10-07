@@ -1,8 +1,8 @@
-﻿@page "/Lecture/ExamReport/{ExamId}"
+﻿@page "/Lecture/ExamReport/{ExamId:int}"
 
 <style>
     .image-placeholder {
-        width: 100%;
+        width: 200px;
         height: 200px;
         background-color: #f7f7f7;
         border: 1px solid #ddd;
@@ -13,114 +13,125 @@
     }
 
         .image-placeholder img {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 200px;
+            max-height: 200px;
         }
 
-    .split-row{
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
+    .split-row {
+        display: flex;
+        align-items: baseline;
     }
 
-    .report-content{
-        border-bottom: 1px solid rgba(0,0,0,0.5);
+    .report-content {
+        border-radius:10px;
+        border: 1px solid #d9d8d8;
+        box-shadow: 0px 6px 10px -7px #7777;
     }
 </style>
 <div class="container">
-    <div class="custom-box">
+    <div class="custom-box mb-5">
         <h2>Exam Detail</h2>
-        <div class="split-row">
-            <div>
+        <div class="split-row justify-content-between">
+            <div class="col-5">
                 <div class="split-row mb-4">
-                <label class="col-3">Exam Code:</label>
+                    <label class="col-5">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-3">Subject Name:</label>
-                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-3">Exam Creater:</label>
-                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                </div>
-                <div class="fsplit-row mb-4">
-                    <label class="col-3">Head of Department:</label>
-                    <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-                </div>
-             </div>
-             <div>
-                 <div class="split-row mb-4">
-                     <label class="col-3">Status:</label>
-                     <MudText>@exam.ExamStatusContent</MudText>
                  </div>
                  <div class="split-row mb-4">
-                     <label class="col-3">Campus:</label>
+                     <label class="col-5">Subject Name:</label>
+                     <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                 </div>
+                 <div class="split-row mb-4">
+                     <label class="col-5">Exam Creater:</label>
+                     <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                 </div>
+                 <div class="split-row mb-4">
+                     <label class="col-5">Head of Department:</label>
+                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                 </div>
+             </div>
+             <div class="col-5">
+                 <div class="split-row mb-4">
+                     <label class="col-5">Status:</label>
+                     <MudText>@exam.AssignStatusId</MudText>
+                 </div>
+                 <div class="split-row mb-4">
+                     <label class="col-5">Campus:</label>
                      <MudText>@exam.CampusName</MudText>
                  </div>
-                    <div class="split-row mb-4">
-                     <label class="col-3">Exam Duration:</label>
+                 <div class="split-row mb-4">
+                     <label class="col-5">Exam Duration:</label>
                      <MudText>@exam.ExamDuration</MudText>
                  </div>
                  <div class="split-row mb-4">
-                     <label class="col-3">Exam Type:</label>
+                     <label class="col-5">Exam Type:</label>
                      <MudText>@exam.ExamType</MudText>
                  </div>
 
-                @if(exam.AssignmentDate != null)
-                {
-                    <div class="split-row mb-4">
-                        <label class="col-3">Exam Estimate Date:</label>
-                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-                    </div>
-                } else
-                {
-                    <div class="form-group mb-4">
-                        <label class="col-3">Exam Estimate Date: </label>
-                        <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                                       IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
-                                       @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                                       Margin="Margin.Dense" Clearable Required />
+                    @if (exam.AssignStatusId != 3)
+                 {
+                     <div class="split-row mb-4">
+                         <label class="col-5">Exam Estimate Date:</label>
+                         <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
                      </div>
-                }
-             </div>
+                 }
+                 else
+                 {
+                     <div class="split-row mb-4">
+                         <label class="col-5">Exam Estimate Date: </label>
+                         <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                                        IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
+                                        @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                                        Margin="Margin.Dense" Clearable Required AnchorOrigin="Origin.BottomLeft" />
+                      </div>
+                 }
+            </div>
         </div>
-        @if (exam.AssignmentDate == null)
+        @if (exam.AssignStatusId == 3)
         {
-            <MudIconButton Class="me-4" Icon="@Icons.Material.Filled.NoteAdd" OnClick="SaveAssignDate">Save</MudIconButton>
+            <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" Variant="Variant.Filled" OnClick="SaveAssignDate">Save</MudButton>
+            <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
         }
     </div>
-    @if(exam.AssignmentDate != null)
+    @if (exam.AssignmentDate != null && exam.AssignStatusId != 3)
     {
         <div class="custom-box">
-            <h2>Exam Report Content</h2>
-            @if (exam.ReportList.Count > 0)
+            <h2 class="mb-4">Exam Report Detail</h2>
+            @if (exam.ReportList.Count > 0 )
             {
                 @foreach (var item in exam.ReportList)
                 {
-                    <div class="report-content">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <MudTextField @bind-Value=item.QuestionNumber Label="Question Number" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveReportRecord(item))"></MudIconButton>
+                    <div class="report-content mb-4 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="col-2">
+                                <MudTextField @bind-Value=item.QuestionNumber Label="Question Number" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                            </div>
+                            <div class="col-auto">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveReportRecord(item))" Color="Color.Error" Variant="Variant.Filled"></MudIconButton>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-baseline">
-                            <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="2" MaxLines="4" Class="col-5"></MudTextField>
-                            <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="2" MaxLines="4"></MudTextField>
+                        <div class="d-flex justify-content-between align-items-baseline mb-4">
+                            <div style="width:49%">
+                                <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+                            </div>
+                            <div style="width:49%">
+                                <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+                            </div>
                         </div>
-                        <div>
+                        <div class="mb-4">
                             <div class="image-placeholder">
                                 <span>Image</span>
                             </div>
                             <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
-                            <small class="text-muted">PNG, JPG (recommended size: 740x415px)</small>
+                            <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
                         </div>
                     </div>
                 }
             }
-            <MudIconButton Icon="@Icons.Material.Filled.NoteAdd" OnClick="AddReportRecord">Add Report Content</MudIconButton>
+            <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
             <div class="d-flex">
-                <MudIconButton Class="me-4" Icon="@Icons.Material.Filled.NoteAdd" OnClick="AddReportRecord">Save</MudIconButton>
-                <MudIconButton Icon="@Icons.Material.Filled.NoteAdd" OnClick="AddReportRecord">Submit</MudIconButton>
+                <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => Excute(false))">Save</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => Excute(true))">Submit</MudButton>
             </div>
         </div>
     }
@@ -143,39 +154,27 @@
 
         if (isAuthenticated)
         {
-            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-            var user = auth.User;
-            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
+            var resp = await ExamServive.GetLectureExamById(ExamId);
 
-            var response = await MenuServive.CheckAccess(userId, 4);
-
-            if (!response.IsSuccessful)
+            if (resp.IsSuccessful)
             {
-                NavManager.NavigateTo("/404");
-            }
-            else
-            {
-                var resp = await ExamServive.GetLectureExamById(ExamId);
+                exam = resp.Item;
 
-                if (resp.IsSuccessful)
+                if (exam.ReportList.Count == 0)
                 {
-                    exam = resp.Item;
-
-                    if(exam.ReportList.Count == 0)
-                    {
-                        exam.ReportList.Add(new ReportResponse());
-                    }
-                }
-
-                if (Layout != null)
-                {
-                    Layout.Header = "Home";
-                    Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Assign List";
-                    Layout.RefreshLayout();
+                    exam.ReportList.Add(new ReportResponse());
                 }
             }
+
+            if (Layout != null)
+            {
+                Layout.Header = "Home";
+                Layout.HeaderLink = "/Home";
+                Layout.SubHeader = "Exam Assign List";
+                Layout.RefreshLayout();
+            }
+
         }
     }
 
@@ -221,5 +220,10 @@
                 GetFunc = (e) => DateTime.TryParse(e, out DateTime data) ? data : null,
                 SetFunc = (e) => e?.ToString(format) ?? string.Empty
             };
+    }
+
+    public void GoBack()
+    {
+        NavManager.NavigateTo("/Lecture/ExamList");
     }
 }

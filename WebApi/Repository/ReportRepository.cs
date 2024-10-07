@@ -22,8 +22,7 @@ namespace WebApi.Repository
             try
             {
                 var list = await (from rp in dbContext.Reports
-                                  join ia in dbContext.InstructorAssignments on rp.AssignemtId equals ia.AssignmentId
-                                  where ia.ExamId == reportRequest.ExamId && ia.AssignedUserId == reportRequest.AssignmentUserId
+                                  where rp.AssignemtId == reportRequest.AssignmentId
                                   select rp).ToListAsync();
 
                 var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.RerportId == x.ReportId)).ToList();
