@@ -23,7 +23,7 @@
     }
 
     .report-content {
-        border-radius:10px;
+        border-radius: 10px;
         border: 1px solid #d9d8d8;
         box-shadow: 0px 6px 10px -7px #7777;
     }
@@ -36,55 +36,55 @@
                 <div class="split-row mb-4">
                     <label class="col-5">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Subject Name:</label>
-                     <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Exam Creater:</label>
-                     <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Head of Department:</label>
-                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-                 </div>
-             </div>
-             <div class="col-5">
-                 <div class="split-row mb-4">
-                     <label class="col-5">Status:</label>
-                     <MudText>@exam.AssignStatusId</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Campus:</label>
-                     <MudText>@exam.CampusName</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Exam Duration:</label>
-                     <MudText>@exam.ExamDuration</MudText>
-                 </div>
-                 <div class="split-row mb-4">
-                     <label class="col-5">Exam Type:</label>
-                     <MudText>@exam.ExamType</MudText>
-                 </div>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Subject Name:</label>
+                        <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Exam Creater:</label>
+                        <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Head of Department:</label>
+                        <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="split-row mb-4">
+                        <label class="col-5">Status:</label>
+                        <MudText>@exam.AssignStatusId</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Campus:</label>
+                        <MudText>@exam.CampusName</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Exam Duration:</label>
+                        <MudText>@exam.ExamDuration</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-5">Exam Type:</label>
+                        <MudText>@exam.ExamType</MudText>
+                    </div>
 
                     @if (exam.AssignStatusId != 3)
-                 {
-                     <div class="split-row mb-4">
-                         <label class="col-5">Exam Estimate Date:</label>
-                         <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                {
+                    <div class="split-row mb-4">
+                        <label class="col-5">Exam Estimate Date:</label>
+                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                    </div>
+                }
+                else
+                {
+                    <div class="split-row mb-4">
+                        <label class="col-5">Exam Estimate Date: </label>
+                        <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                                       IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
+                                       @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                                       Margin="Margin.Dense" Clearable Required AnchorOrigin="Origin.BottomLeft" />
                      </div>
-                 }
-                 else
-                 {
-                     <div class="split-row mb-4">
-                         <label class="col-5">Exam Estimate Date: </label>
-                         <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                                        IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
-                                        @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                                        Margin="Margin.Dense" Clearable Required AnchorOrigin="Origin.BottomLeft" />
-                      </div>
-                 }
+                }
             </div>
         </div>
         @if (exam.AssignStatusId == 3)
@@ -97,7 +97,7 @@
     {
         <div class="custom-box">
             <h2 class="mb-4">Exam Report Detail</h2>
-            @if (exam.ReportList.Count > 0 )
+            @if (exam.ReportList.Count > 0)
             {
                 @foreach (var item in exam.ReportList)
                 {
@@ -196,6 +196,24 @@
         {
             if (isSubmit)
             {
+                var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+                var user = auth.User;
+                var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+
+
+                var mailList = new List<MailUtil>
+                {
+                    new MailUtil{MailTo = exam.HeadDepartmentName}
+                };
+
+                var mailModel = new MailModel
+                    {
+                        Body = $"Giảng Viên {email.Replace("@fpr.edu.vn", string.Empty)} đã hoàn thành report test với mã đề là {exam.ExamCode}",
+                        Subject = $"Xác nhận ngày test môn {exam.SubjectName}",
+                        MailList = mailList
+                    };
+
+                var sendMail = await this.MailServive.SendMail(mailModel);
 
             }
 
@@ -209,6 +227,25 @@
 
         if (resp.IsSuccessful)
         {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+
+
+            var mailList = new List<MailUtil>
+                {
+                    new MailUtil{MailTo = exam.CreaterName}
+                };
+
+            var mailModel = new MailModel
+                {
+                    Body = $"Giảng Viên {email.Replace("@fpr.edu.vn", string.Empty)} đã chọn ngày để thực hiện test với mã đề là {exam.ExamCode} vào ngày {exam.AssignmentDate?.ToString("dd/MM/yyyy")}",
+                    Subject = $"Xác nhận ngày test môn {exam.SubjectName}",
+                    MailList = mailList
+                };
+
+            var sendMail = await this.MailServive.SendMail(mailModel);
+
             NavManager.NavigateTo("/Lecture/ExamList");
         }
     }
