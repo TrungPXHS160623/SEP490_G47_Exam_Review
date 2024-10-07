@@ -10,8 +10,8 @@ namespace WebApi.IRepository
 	{
 		Task<IEnumerable<ExamInfoDto>> GetExamInfoAsync();
 
-		Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req);
-        Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId);
+		Task<ResultResponse<ExaminerExamResponse>> GetExamList(ExamSearchRequest req);
+        Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
 
@@ -21,9 +21,9 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 
-        Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam);
+        Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
 
-		Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam);
+		Task<RequestResponse> ChangeStatusExam(List<ExaminerExamResponse> exam);
 
         Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 

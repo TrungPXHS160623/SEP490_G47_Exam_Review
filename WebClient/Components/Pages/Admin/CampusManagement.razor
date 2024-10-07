@@ -1,0 +1,156 @@
+﻿@page "/Admin/CampusManagement"
+@inject HttpClient Http
+
+<style>
+    td {
+        vertical-align: middle
+    }
+</style>
+
+<div class="w-50">
+    <div class="mt-4 mb-4">
+        <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
+    </div>
+    @if (campusList.Count > 0)
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Campus Id</th>
+                    <th>Campus Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (campusList != null)
+                {
+                    @foreach (var campus in campusList)
+                    {
+                        <tr>
+
+                            <td>@campus.CampusId </td>
+                            <td>@campus.CampusName</td>
+                            <td>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(campus.CampusId)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(campus.CampusId)"></MudIconButton>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <span class="text-danger">No data found.</span>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    private List<Campus> campusList = new List<Campus>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 1);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                await GetData();
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Campus Management";
+                    Layout.SubHeader1 = string.Empty;
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+    }
+
+    public async Task GetData()
+    {
+        var resp = await CampusServive.GetCampus();
+
+        if (resp.IsSuccessful)
+        {
+            campusList = resp.Items;
+        }
+    }
+
+    private async Task DeleteUser(int campusId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to delete this campus?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Campus", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
+            var response = await CampusServive.DeleteCampus(campusId);
+            if (response.IsSuccessful)
+            {
+                await GetData();
+            }
+
+        }
+    }
+
+    private async Task OpenAddEditDialogAsync(int campusId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<CampusModify>
+        {
+            {x => x.CampusId,campusId}
+        };
+
+        var dialog = await DialogService.ShowAsync<CampusModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
+}

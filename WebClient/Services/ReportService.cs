@@ -18,11 +18,11 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest)
+        public async Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest,bool isSubmit)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Report/SaveReport", reportRequest);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Report/SaveReport/{isSubmit}", reportRequest);
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 

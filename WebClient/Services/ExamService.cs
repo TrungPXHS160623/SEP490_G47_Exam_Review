@@ -20,13 +20,13 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req)
+        public async Task<ResultResponse<ExaminerExamResponse>> GetExamList(ExamSearchRequest req)
         {
             try
             {
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamList", req);
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<ExaminerExamResponse>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -39,7 +39,7 @@ namespace WebClient.Services
             {
                 snackbar.Add(ex.Message, Severity.Error);
 
-                return new ResultResponse<TestDepartmentExamResponse>
+                return new ResultResponse<ExaminerExamResponse>
                 {
                     IsSuccessful = false,
                 };
@@ -98,7 +98,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId)
+        public async Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace WebClient.Services
 
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamById/{examId}");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<TestDepartmentExamResponse>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<ExaminerExamResponse>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -124,7 +124,7 @@ namespace WebClient.Services
             {
                 snackbar.Add(ex.Message, Severity.Error);
 
-                return new ResultResponse<TestDepartmentExamResponse>
+                return new ResultResponse<ExaminerExamResponse>
                 {
                     IsSuccessful = false,
                 };
@@ -197,7 +197,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam)
+        public async Task<RequestResponse> UpdateExam(ExaminerExamResponse exam)
         {
             //Check JWT key
             if (Constants.JWTToken == "")
@@ -222,7 +222,7 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam)
+        public async Task<RequestResponse> ChangeStatusExam(List<ExaminerExamResponse> exam)
         {
             //Check JWT key
             if (Constants.JWTToken == "")
