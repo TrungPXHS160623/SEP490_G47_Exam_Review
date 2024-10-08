@@ -1,14 +1,10 @@
-﻿using Azure;
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using Library.Common;
 using Library.Models;
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 using WebApi.IRepository;
 
 public class ExamRepository : IExamRepository
