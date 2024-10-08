@@ -18,7 +18,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusName.Equals(req.CampusName));
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusName.Equals(req.CampusName) && x.IsDeleted != true);
 
                 if (data != null)
                 {
@@ -56,7 +56,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId && x.IsDeleted != true);
 
                 if (data == null)
                 {
@@ -68,7 +68,7 @@ namespace WebApi.Repository
                 }
                 else
                 {
-                    this.DBcontext.Campuses.Remove(data);
+                    data.IsDeleted = true;
 
                     await this.DBcontext.SaveChangesAsync();
 
@@ -94,7 +94,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.ToListAsync();
+                var data = await this.DBcontext.Campuses.Where(x => x.IsDeleted != true).ToListAsync();
 
                 if (data != null)
                 {
@@ -127,7 +127,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId && x.IsDeleted != true);
 
                 if (data != null)
                 {
@@ -161,7 +161,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == req.CampusId);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == req.CampusId && x.IsDeleted != true);
 
                 if (data == null)
                 {
