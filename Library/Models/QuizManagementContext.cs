@@ -448,15 +448,15 @@ new Exam { ExamId = 20, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
             new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "History", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "User Log", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 3, MenuLink = "/Examiner/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Exam Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 7, MenuLink = "/HeadDepartment/ExamStatus", MenuName = "Exam Status", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-              new Menu { MenuId = 10, MenuLink = "/Examiner/usermanagement", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 10, MenuLink = "/Examiner/usermanagement", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 8, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-             new Menu { MenuId = 11, MenuLink ="/Examiner/Create", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 11, MenuLink ="/Examiner/Create", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
