@@ -44,7 +44,7 @@
                 {
                     @foreach (var item in statusList)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                     //   <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -156,7 +156,7 @@
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items;
+                    //statusList = sList.Items;
                 }
 
                 if (Layout != null)
