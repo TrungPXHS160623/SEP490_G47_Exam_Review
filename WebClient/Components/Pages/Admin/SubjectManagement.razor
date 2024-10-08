@@ -7,7 +7,7 @@
     }
 </style>
 
-<div class="w-50">
+<div class="col-md-10 col-xl-6">
     <div class="mt-4 mb-4">
         <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Subject</MudButton>
     </div>
@@ -33,8 +33,10 @@
                             <td>@item.SubjectCode</td>
                             <td>@item.SubjectName</td>
                             <td>
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(item.SubjectId)"></MudIconButton>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteSubject(item.SubjectId)"></MudIconButton>
+                                <div class="d-flex justify-content-evenly align-items-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(item.SubjectId)" ></MudIconButton>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteSubject(item.SubjectId)"></MudIconButton>
+                                </div>
                             </td>
                         </tr>
                     }
