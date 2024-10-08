@@ -10,6 +10,10 @@ namespace WebApi.Repository
     {
         private readonly QuizManagementContext DBcontext;
 
+        public InstructorAssignmentRepository()
+        {
+        }
+
         public InstructorAssignmentRepository(QuizManagementContext DBcontext)
         {
             this.DBcontext = DBcontext;

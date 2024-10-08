@@ -58,16 +58,13 @@
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <h4>Exam List</h4>
-                <h6>Selected Exam: @selectedExams.Count</h6>
             </div>
-            <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)" OnClick="AssignExam">Tranfer Exam to Head Deparment</MudButton>
-            </div>
+           
         </div>
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" >
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -141,7 +138,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 5);
+            var response = await MenuServive.CheckAccess(userId, 4);
 
             if (!response.IsSuccessful)
             {
