@@ -127,25 +127,26 @@ namespace WebApi.Repository
             try
             {
                 var data = (from a in this.dbContext.InstructorAssignments
-                                // Tham chiếu bảng Exams (Kỳ thi)
+                            // Tham chiếu bảng Exams (Kỳ thi)
                             join e in this.dbContext.Exams on a.ExamId equals e.ExamId
                             // Tham chiếu bảng ExamStatuses (Trạng thái kỳ thi) 
                             join es in this.dbContext.ExamStatuses on e.ExamStatusId equals es.ExamStatusId into esJoin
                             from es in esJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Campuses (Cơ sở)
+                            // Tham chiếu bảng Campuses (Cơ sở)
                             join c in this.dbContext.Campuses on e.CampusId equals c.CampusId
                             // Tham chiếu bảng Subjects (Môn học)
                             join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
                             // Tham chiếu bảng CampusUserSubjects 
                             join cus in this.dbContext.CampusUserSubjects on new { e.SubjectId, e.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusJoin
                             from cus in cusJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
+                            where cus.IsLecturer == false || cus.IsLecturer == null
+                            // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
                             join uHead in this.dbContext.Users on cus.UserId equals uHead.UserId into uHeadJoin
                             from uHead in uHeadJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin khảo thí 
+                            // Tham chiếu bảng Users để lấy thông tin khảo thí 
                             join uCreater in this.dbContext.Users on e.CreaterId equals uCreater.UserId into uCreaterJoin
                             from uCreater in uCreaterJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
+                            // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
                             where c.CampusId == campusID
@@ -159,7 +160,7 @@ namespace WebApi.Repository
                                 CampusName = c.CampusName,
                                 ExaminorMail = uCreater.Mail, // Mail của người tạo đề
                                 HeadOfDepartmentMail = uHead.Mail, // Mail của trưởng bộ môn
-                                LecturorMail = lReceived.Mail,    //Mail của giảng viên
+                                LecturorMail = lReceived != null && lReceived.UserId != uHead.UserId ? lReceived.Mail : null,    //Mail của giảng viên
                                 ExamStatus = es.StatusContent,
                                 EstimatedTimeTest = e.EstimatedTimeTest,
                                 AssignmentDate = a.AssignmentDate
@@ -199,7 +200,8 @@ namespace WebApi.Repository
                             // Tham chiếu bảng CampusUserSubjects 
                             join cus in this.dbContext.CampusUserSubjects on new { e.SubjectId, e.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusJoin
                             from cus in cusJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
+                            where cus.IsLecturer == false || cus.IsLecturer == null
+                            // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
                             join uHead in this.dbContext.Users on cus.UserId equals uHead.UserId into uHeadJoin
                             from uHead in uHeadJoin.DefaultIfEmpty()
                                 // Tham chiếu bảng Users để lấy thông tin khảo thí 
@@ -219,7 +221,7 @@ namespace WebApi.Repository
                                 CampusName = c.CampusName,
                                 ExaminorMail = uCreater.Mail, // Mail của người tạo đề
                                 HeadOfDepartmentMail = uHead.Mail, // Mail của trưởng bộ môn
-                                LecturorMail = lReceived.Mail,    //Mail của giảng viên
+                                LecturorMail = lReceived != null && lReceived.UserId != uHead.UserId ? lReceived.Mail : null,   //Mail của giảng viên
                                 ExamStatus = es.StatusContent,
                                 EstimatedTimeTest = e.EstimatedTimeTest,
                                 AssignmentDate = a.AssignmentDate
@@ -262,7 +264,8 @@ namespace WebApi.Repository
                             // Tham chiếu bảng CampusUserSubjects 
                             join cus in this.dbContext.CampusUserSubjects on new { e.SubjectId, e.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusJoin
                             from cus in cusJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
+                            where cus.IsLecturer == false || cus.IsLecturer == null
+                            // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
                             join uHead in this.dbContext.Users on cus.UserId equals uHead.UserId into uHeadJoin
                             from uHead in uHeadJoin.DefaultIfEmpty()
                                 // Tham chiếu bảng Users để lấy thông tin khảo thí 
@@ -282,7 +285,7 @@ namespace WebApi.Repository
                                 CampusName = c.CampusName,
                                 ExaminorMail = uCreater.Mail, // Mail của người tạo đề
                                 HeadOfDepartmentMail = uHead.Mail, // Mail của trưởng bộ môn
-                                LecturorMail = lReceived.Mail,    //Mail của giảng viên
+                                LecturorMail = lReceived != null && lReceived.UserId != uHead.UserId ? lReceived.Mail : null,   //Mail của giảng viên
                                 ExamStatus = es.StatusContent,
                                 EstimatedTimeTest = e.EstimatedTimeTest,
                                 AssignmentDate = a.AssignmentDate
@@ -315,20 +318,21 @@ namespace WebApi.Repository
                             // Tham chiếu bảng ExamStatuses (Trạng thái kỳ thi) 
                             join es in this.dbContext.ExamStatuses on e.ExamStatusId equals es.ExamStatusId into esJoin
                             from es in esJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Campuses (Cơ sở)
+                            // Tham chiếu bảng Campuses (Cơ sở)
                             join c in this.dbContext.Campuses on e.CampusId equals c.CampusId
                             // Tham chiếu bảng Subjects (Môn học)
                             join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
                             // Tham chiếu bảng CampusUserSubjects 
                             join cus in this.dbContext.CampusUserSubjects on new { e.SubjectId, e.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusJoin
                             from cus in cusJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
+                            where cus.IsLecturer == false || cus.IsLecturer == null
+                            // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
                             join uHead in this.dbContext.Users on cus.UserId equals uHead.UserId into uHeadJoin
                             from uHead in uHeadJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin khảo thí 
+                            // Tham chiếu bảng Users để lấy thông tin khảo thí 
                             join uCreater in this.dbContext.Users on e.CreaterId equals uCreater.UserId into uCreaterJoin
                             from uCreater in uCreaterJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
+                            // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
                             where lReceived.UserId == lecturerID
@@ -342,7 +346,7 @@ namespace WebApi.Repository
                                 CampusName = c.CampusName,
                                 ExaminorMail = uCreater.Mail, // Mail của người tạo đề
                                 HeadOfDepartmentMail = uHead.Mail, // Mail của trưởng bộ môn
-                                LecturorMail = lReceived.Mail,    //Mail của giảng viên
+                                LecturorMail = lReceived != null && lReceived.UserId != uHead.UserId ? lReceived.Mail : null,
                                 ExamStatus = es.StatusContent,
                                 EstimatedTimeTest = e.EstimatedTimeTest,
                                 AssignmentDate = a.AssignmentDate
@@ -369,28 +373,31 @@ namespace WebApi.Repository
             try
             {
                 var data = (from a in this.dbContext.InstructorAssignments
-                                // Tham chiếu bảng Exams (Kỳ thi)
+                            // Tham chiếu bảng Exams (Kỳ thi)
                             join e in this.dbContext.Exams on a.ExamId equals e.ExamId
                             // Tham chiếu bảng ExamStatuses (Trạng thái kỳ thi) 
                             join es in this.dbContext.ExamStatuses on e.ExamStatusId equals es.ExamStatusId into esJoin
                             from es in esJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Campuses (Cơ sở)
+                            
+                            // Tham chiếu bảng Campuses (Cơ sở)
                             join c in this.dbContext.Campuses on e.CampusId equals c.CampusId
                             // Tham chiếu bảng Subjects (Môn học)
                             join s in this.dbContext.Subjects on e.SubjectId equals s.SubjectId
                             // Tham chiếu bảng CampusUserSubjects 
+
                             join cus in this.dbContext.CampusUserSubjects on new { e.SubjectId, e.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusJoin
                             from cus in cusJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
+                            where cus.IsLecturer == false || cus.IsLecturer == null
+                            // Tham chiếu bảng Users để lấy thông tin trưởng bộ môn 
                             join uHead in this.dbContext.Users on cus.UserId equals uHead.UserId into uHeadJoin
                             from uHead in uHeadJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin khảo thí 
+
+                            // Tham chiếu bảng Users để lấy thông tin khảo thí 
                             join uCreater in this.dbContext.Users on e.CreaterId equals uCreater.UserId into uCreaterJoin
                             from uCreater in uCreaterJoin.DefaultIfEmpty()
-                                // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
+                            // Tham chiếu bảng Users để lấy thông tin giảng viên được phân công 
                             join lReceived in this.dbContext.Users on a.AssignedUserId equals lReceived.UserId into lReceivedJoin
                             from lReceived in lReceivedJoin.DefaultIfEmpty()
-
                             select new AssignResponse
                             {
                                 // Gán các thuộc tính kết quả từ các bảng
@@ -401,13 +408,13 @@ namespace WebApi.Repository
                                 CampusName = c.CampusName,
                                 ExaminorMail = uCreater.Mail, // Mail của người tạo đề
                                 HeadOfDepartmentMail = uHead.Mail, // Mail của trưởng bộ môn
-                                LecturorMail = lReceived.Mail,    // Mail của giảng viên
+
+                                //LecturorMail = lReceived != null && lReceived.UserId != uHead.UserId ? lReceived.Mail : null,    // Mail của giảng viên
+                                LecturorMail = lReceived.Mail,
                                 ExamStatus = es.StatusContent,
                                 EstimatedTimeTest = e.EstimatedTimeTest,
                                 AssignmentDate = a.AssignmentDate
-
                             }).ToList();
-
                 return new ResultResponse<AssignResponse>
                 {
                     IsSuccessful = true,

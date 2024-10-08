@@ -6,16 +6,7 @@
         <div class="col-3">
             <label>Email:</label>
         </div>
-        @if (!isAddOrEdit)
-        {
-            <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
-        }
-        else
-        {
-            <div class="col-8">
-                <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" />
-            </div>
-        }
+        <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
     </div>
     <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-3">Role:</label>
