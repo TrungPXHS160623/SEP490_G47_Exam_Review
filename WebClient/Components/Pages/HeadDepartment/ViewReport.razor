@@ -1,4 +1,4 @@
-﻿@page "/HeadDepartment/ExamList"
+﻿@page "/HeadDepartment/Report"
 
 <style>
     .mud-table-cell {
@@ -28,24 +28,23 @@
         z-index: 99;
     }
 </style>
-
 <div class="mt-4">
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap w-50">
             <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
 
-             <MudSelect @bind-Value="request.StatusId"
-                        Variant="Variant.Outlined"
-                        Label="Status"
-                        Margin="Margin.Dense"
-                        AnchorOrigin="Origin.BottomCenter"
-                                  Clearable
-                        Class="me-4 col-auto">
-                 @if (statusList.Count > 0)
+            <MudSelect @bind-Value="request.StatusId"
+                       Variant="Variant.Outlined"
+                       Label="Status"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
                 {
                     @foreach (var item in statusList)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                     //   <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -57,7 +56,7 @@
     <div class="custom-box">
         <div class="d-flex align-items-center justify-content-between">
             <div>
-                <h4>Exam List</h4>
+                <h4>Report List</h4>
                 <h6>Selected Exam: @selectedExams.Count</h6>
             </div>
             <div>
@@ -72,8 +71,8 @@
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
-                        <MudTh>Start Date</MudTh>
-                        <MudTh>End Date</MudTh>
+                        <MudTh>Lecture Asigned</MudTh>
+                        <MudTh>Assignment Date</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -82,30 +81,33 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
-                            <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>
-                                <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
-                                </div>
-                            </MudTd>
-                        </RowTemplate>
-                        @*<PagerContent>
+                        <MudTd>@context.HeadDepartmentName</MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                    @*<PagerContent>
                 @if (AccList.Count > 10)
                 {
                 <MudTablePager />
                 }
                 </PagerContent> *@
-                    </MudTable>
+                </MudTable>
             }
             else
             {
                 <p>No Data</p>
             }
         </div>
+        <div class="mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
+        </div>
     </div>
 </div>
-
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
@@ -154,7 +156,7 @@
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items;
+                    //statusList = sList.Items;
                 }
 
                 if (Layout != null)
@@ -206,7 +208,7 @@
 
     private async Task AssignExam()
     {
-        
+
     }
 
     public string[] CheckSelectedExam()
