@@ -1,29 +1,31 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
 
-<EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:17%">
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:320px">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-2">Email:</label>
-        <div >
-            @if (!isAddOrEdit)
-            {
-                <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
-            }
-            else
-            {
+        <div class="col-3">
+            <label>Email:</label>
+        </div>
+        @if (!isAddOrEdit)
+        {
+            <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
+        }
+        else
+        {
+            <div class="col-8">
                 <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" />
-            }
-        </div>
+            </div>
+        }
     </div>
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-2">Role:</label>
-        <div class="col-auto">
-            @if (!isAddOrEdit)
-            {
-                <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
-            }
-            else
-            {
+        <label class="col-3">Role:</label>
+        @if (!isAddOrEdit)
+        {
+            <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
+        }
+        else
+        {
+            <div class="col-8">
                 <MudSelect @bind-Value="user.RoleId"
                            Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
                            Variant="Variant.Outlined"
@@ -39,18 +41,18 @@
                         }
                     }
                 </MudSelect>
-            }
-        </div>
+            </div>
+        }
     </div>
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    @* <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-2">Subject:</label>
-        <div class="col-auto">
-            @if (!isAddOrEdit)
-            {
-                <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
-            }
-            else
-            {
+        @if (!isAddOrEdit)
+        {
+            <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
+        }
+        else
+        {
+            <div>
                 <MudSelect @bind-Value="user.RoleId"
                            Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
                            Variant="Variant.Outlined"
@@ -66,20 +68,20 @@
                         }
                     }
                 </MudSelect>
-            }
-        </div>
-    </div>
+            </div>
+        }
+    </div> *@
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-2">Campus:</label>
-        <div class="col-auto">
+        <label class="col-3">Campus:</label>
+        <div>
 
             <MudText>@user.CampusName</MudText>
 
         </div>
     </div>
-        <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-2">Active:</label>
-        <div class="col-auto">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <label class="col-3">Active:</label>
+        <div>
             <MudCheckBox @bind-Value="user.IsActive" Disabled />
         </div>
     </div>
