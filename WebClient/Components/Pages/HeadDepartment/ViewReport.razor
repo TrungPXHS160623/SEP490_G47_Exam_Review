@@ -143,7 +143,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 5);
+            var response = await MenuServive.CheckAccess(userId, 1);
 
             if (!response.IsSuccessful)
             {
