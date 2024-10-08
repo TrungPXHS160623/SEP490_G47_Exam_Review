@@ -53,7 +53,8 @@
                        Variant="Variant.Outlined"
                        Margin="Margin.Dense"
                        AnchorOrigin="Origin.BottomCenter"
-                       ReadOnly=@(!isAddOrEdit)>
+                       ReadOnly=@(!isAddOrEdit)
+                       HelperText="Only display avaliable subject">
                 @if (subjectList.Count() > 0)
                 {
                     @foreach (var item in subjectList)
