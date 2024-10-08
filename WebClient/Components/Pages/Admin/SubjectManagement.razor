@@ -1,4 +1,4 @@
-﻿@page "/Admin/CampusManagement"
+﻿@page "/Admin/SubjectManagement"
 @inject HttpClient Http
 
 <style>
@@ -9,30 +9,32 @@
 
 <div class="w-50">
     <div class="mt-4 mb-4">
-        <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Subject</MudButton>
     </div>
-    @if (campusList.Count > 0)
+    @if (subjectList.Count > 0)
     {
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th>Campus Id</th>
-                    <th>Campus Name</th>
+                    <th>Subject Id</th>
+                    <th>Subject Code</th>
+                    <th>Subject Name</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @if (campusList != null)
+                @if (subjectList != null)
                 {
-                    @foreach (var campus in campusList)
+                    @foreach (var item in subjectList)
                     {
                         <tr>
 
-                            <td>@campus.CampusId </td>
-                            <td>@campus.CampusName</td>
+                            <td>@item.SubjectId </td>
+                            <td>@item.SubjectCode</td>
+                            <td>@item.SubjectName</td>
                             <td>
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(campus.CampusId)"></MudIconButton>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(campus.CampusId)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(item.SubjectId)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteSubject(item.SubjectId)"></MudIconButton>
                             </td>
                         </tr>
                     }
@@ -50,7 +52,7 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    private List<Campus> campusList = new List<Campus>();
+    private List<Subject> subjectList = new List<Subject>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +64,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 8);
+            var response = await MenuServive.CheckAccess(userId, 9);
 
             if (!response.IsSuccessful)
             {
@@ -76,7 +78,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Campus Management";
+                    Layout.SubHeader = "Subject Management";
                     Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }
@@ -86,15 +88,15 @@
 
     public async Task GetData()
     {
-        var resp = await CampusServive.GetCampus();
+        var resp = await SubjectServive.GetSubjects();
 
         if (resp.IsSuccessful)
         {
-            campusList = resp.Items;
+            subjectList = resp.Items;
         }
     }
 
-    private async Task DeleteUser(int campusId)
+    private async Task DeleteSubject(int subjectId)
     {
         var options = new DialogOptions
             {
@@ -106,19 +108,19 @@
 
         var parameters = new DialogParameters<Dialog>
         {
-            { x => x.Content, "Are you sure want to delete this campus?" },
+            { x => x.Content, "Are you sure want to delete this subject?" },
             { x => x.BtnTextConfirm, "Delete" },
             { x => x.BtnTextCancel, "Cancel" },
         };
 
-        var dialog = await DialogService.ShowAsync<Dialog>("Delete Campus", parameters, options);
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Subject", parameters, options);
 
         var result = await dialog.Result;
 
         if (!result.Canceled)
         {
 
-            var response = await CampusServive.DeleteCampus(campusId);
+            var response = await SubjectServive.DeleteSubject(subjectId);
             if (response.IsSuccessful)
             {
                 await GetData();
@@ -127,7 +129,7 @@
         }
     }
 
-    private async Task OpenAddEditDialogAsync(int campusId)
+    private async Task OpenAddEditDialogAsync(int subjectId)
     {
         var options = new DialogOptions
             {
@@ -138,12 +140,12 @@
 
             };
 
-        var parameters = new DialogParameters<CampusModify>
+        var parameters = new DialogParameters<SubjectModify>
         {
-            {x => x.CampusId,campusId}
+            {x => x.SubjectId,subjectId}
         };
 
-        var dialog = await DialogService.ShowAsync<CampusModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
+        var dialog = await DialogService.ShowAsync<SubjectModify>(subjectId == 0 ? "Subject Create" : "Subject Update", parameters, options);
 
         var result = await dialog.Result;
 

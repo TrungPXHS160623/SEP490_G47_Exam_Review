@@ -9,6 +9,8 @@ public partial class Campus
 
     public string? CampusName { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public DateTime? CreateDate { get; set; }
 
     public DateTime? UpdateDate { get; set; }

@@ -13,13 +13,25 @@ namespace WebClient.IServices
         Task<ResultResponse<UserResponse>> GetAllUserList();
 
         Task<ResultResponse<UserResponse>> GetLectureList();
+
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId,int campusId);
-        Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery);
+
+        Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
+
+        Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery);
+
         Task<AuthenticationResponse> GetJWT();
+
         Task<RequestResponse> ClearJWT();
+
         Task<ResultResponse<UserRequest>> GetByIdAsync(int id);
+
+        Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id);
+
         Task<RequestResponse> UpdateAsync(UserRequest user);
+
         Task<RequestResponse> DeleteAsync(int id);
+
         Task<RequestResponse> CreateAsync(UserRequest user);
     }
 }
