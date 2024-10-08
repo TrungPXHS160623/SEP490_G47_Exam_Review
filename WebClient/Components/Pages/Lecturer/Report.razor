@@ -112,19 +112,19 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-baseline mb-4">
                             <div style="width:49%">
-                                <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+                                <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6"></MudTextField>
                             </div>
                             <div style="width:49%">
-                                <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+                                <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6"></MudTextField>
                             </div>
                         </div>
-                        <div class="mb-4">
+                        @* <div class="mb-4">
                             <div class="image-placeholder">
                                 <span>Image</span>
                             </div>
                             <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
                             <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
-                        </div>
+                        </div> *@
                     </div>
                 }
             }
@@ -190,7 +190,7 @@
 
     public async Task Excute(bool isSubmit)
     {
-        var resp = await this.ReportServive.AddEditReport(exam);
+        var resp = await this.ReportServive.AddEditReport(exam,isSubmit);
 
         if (resp.IsSuccessful)
         {

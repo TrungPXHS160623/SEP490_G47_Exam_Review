@@ -69,14 +69,14 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("UpdateExam")]
-        public async Task<IActionResult> UpdateExam([FromBody] TestDepartmentExamResponse req)
+        public async Task<IActionResult> UpdateExam([FromBody] ExaminerExamResponse req)
         {
             var examInfo = await _examRepository.UpdateExam(req);
             return Ok(examInfo);
         }
 
         [HttpPut("ChangeStatus")]
-        public async Task<IActionResult> ChangeStatusExam([FromBody] List<TestDepartmentExamResponse> req)
+        public async Task<IActionResult> ChangeStatusExam([FromBody] List<ExaminerExamResponse> req)
         {
             var examInfo = await _examRepository.ChangeStatusExam(req);
             return Ok(examInfo);

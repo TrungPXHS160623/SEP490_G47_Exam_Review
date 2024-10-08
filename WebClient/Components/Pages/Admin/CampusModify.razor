@@ -1,0 +1,84 @@
+﻿<style>
+    .form-group {
+        display: flex;
+        align-items: center
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value=campus.CampusName Variant="Variant.Outlined" Label="Campus Name"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Saving</MudText>
+            }
+            else
+            {
+                <MudText>@(CampusId == 0 ? "Add" : "Save")</MudText>
+            }
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? CampusId { get; set; }
+
+    Campus campus = new Campus();
+
+    private bool _processing = false;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CampusId != 0)
+        {
+            var resp = await this.CampusServive.GetCampusById(CampusId.Value);
+
+            if (resp.IsSuccessful)
+            {
+                campus = resp.Item;
+            }
+        }
+    }
+
+    public async Task Excute()
+    {
+        if (CampusId != 0)
+        {
+            var resp = await this.CampusServive.UpdateCampus(campus);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        else
+        {
+            var resp = await this.CampusServive.AddCampus(campus);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+    }
+
+
+
+}

@@ -20,7 +20,7 @@
                                 <label>Exam Review System</label>
                             </div>
                             <div>
-                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcom: @Email</label> |
+                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcom: @Email?.Replace("@fpt.edu.vn",string.Empty) (@Role)</label> |
                                 <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
                             </div>
                         </div>
@@ -88,6 +88,8 @@
 
     public string Email { get; set; }
 
+    public string Role { get; set; }
+
     public string Header { get; set; }
 
     public string HeaderLink { get; set; }
@@ -132,6 +134,44 @@
         var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
         var user = auth.User;
         Email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+        var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
+
+        switch (userRole)
+        {
+            case 1:
+                {
+                    Role = "Admin";
+                    break;
+                }
+
+            case 2:
+                {
+                    Role = "Examiner";
+                    break;
+                }
+
+            case 3:
+                {
+                    Role = "Head Depaertment";
+                    break;
+                }
+
+            case 4:
+                {
+                    Role = "Lecture";
+                    break;
+                }
+            case 5:
+                {
+                    Role = "Curriculum Development";
+                    break;
+                }
+            default:
+                {
+                    Role = "Undefined";
+                    break;
+                }
+        }
     }
 
     private async Task<AuthenticationResponse> GetKeys()
@@ -161,7 +201,6 @@
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true,
                 BackdropClick = false,
-
             };
 
         var parameters = new DialogParameters<Profile>();

@@ -20,7 +20,7 @@ public class ExamRepository : IExamRepository
         _context = context;
     }
 
-    public async Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam)
+    public async Task<RequestResponse> ChangeStatusExam(List<ExaminerExamResponse> exam)
     {
         try
         {
@@ -151,7 +151,7 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId)
+    public async Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId)
     {
         try
         {
@@ -166,7 +166,7 @@ public class ExamRepository : IExamRepository
                         join u2 in _context.Users on ex.CreaterId equals u2.UserId
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where ex.ExamId == examId
-                        select new TestDepartmentExamResponse
+                        select new ExaminerExamResponse
                         {
                             CreaterId = u2.UserId,
                             CreaterName = u2.Mail,
@@ -189,7 +189,7 @@ public class ExamRepository : IExamRepository
                             UpdateDate = ex.UpdateDate,
                         }).FirstOrDefault();
 
-            return new ResultResponse<TestDepartmentExamResponse>
+            return new ResultResponse<ExaminerExamResponse>
             {
                 IsSuccessful = true,
                 Item = data,
@@ -197,7 +197,7 @@ public class ExamRepository : IExamRepository
         }
         catch (Exception ex)
         {
-            return new ResultResponse<TestDepartmentExamResponse>
+            return new ResultResponse<ExaminerExamResponse>
             {
                 IsSuccessful = false,
                 Message = ex.Message,
@@ -353,7 +353,7 @@ public class ExamRepository : IExamRepository
         return examInfo;
     }
 
-    public async Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req)
+    public async Task<ResultResponse<ExaminerExamResponse>> GetExamList(ExamSearchRequest req)
     {
         try
         {
@@ -368,7 +368,7 @@ public class ExamRepository : IExamRepository
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.Contains(req.ExamCode))
-                        select new TestDepartmentExamResponse
+                        select new ExaminerExamResponse
                         {
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
@@ -383,7 +383,7 @@ public class ExamRepository : IExamRepository
                             UpdateDate = ex.UpdateDate
                         }).ToList();
 
-            return new ResultResponse<TestDepartmentExamResponse>
+            return new ResultResponse<ExaminerExamResponse>
             {
                 IsSuccessful = true,
                 Items = data.OrderByDescending(x => x.UpdateDate).ToList(),
@@ -391,7 +391,7 @@ public class ExamRepository : IExamRepository
         }
         catch (Exception ex)
         {
-            return new ResultResponse<TestDepartmentExamResponse>
+            return new ResultResponse<ExaminerExamResponse>
             {
                 IsSuccessful = false,
                 Message = ex.Message,
@@ -498,7 +498,7 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public async Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam)
+    public async Task<RequestResponse> UpdateExam(ExaminerExamResponse exam)
     {
         try
         {

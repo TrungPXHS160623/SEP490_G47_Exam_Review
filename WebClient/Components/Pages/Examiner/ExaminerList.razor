@@ -1,4 +1,4 @@
-﻿@page "/TestDepartment/ExamList"
+﻿@page "/Examiner/ExamList"
 
 <style>
     .mud-table-cell {
@@ -83,7 +83,7 @@
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=TestDepartmentExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="selectedExams">
+                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -137,9 +137,9 @@
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
 
-    public List<TestDepartmentExamResponse> ExamList = new List<TestDepartmentExamResponse>();
+    public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
 
-    private HashSet<TestDepartmentExamResponse> selectedExams = new HashSet<TestDepartmentExamResponse>();
+    private HashSet<ExaminerExamResponse> selectedExams = new HashSet<ExaminerExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 

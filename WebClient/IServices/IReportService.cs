@@ -5,6 +5,6 @@ namespace WebClient.IServices
 {
     public interface IReportService
     {
-        Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest);
+        Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest,bool isSubmit);
     }
 }

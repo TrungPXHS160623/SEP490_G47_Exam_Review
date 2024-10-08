@@ -25,11 +25,11 @@ namespace WebApi.Controllers
             var data = await reportRepository.GetReportsByLecturerId(id);
             return Ok(data);
         }
-        [HttpPost("SaveReport")]
+        [HttpPost("SaveReport/{isSubmit:bool}")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateReport([FromBody] LectureExamResponse reportRequest)
+        public async Task<IActionResult> CreateReport([FromBody] LectureExamResponse reportRequest, bool isSubmit)
         {
-            var data = await reportRepository.AddEditReport(reportRequest);
+            var data = await reportRepository.AddEditReport(reportRequest,isSubmit);
             return Ok(data);
         }
 

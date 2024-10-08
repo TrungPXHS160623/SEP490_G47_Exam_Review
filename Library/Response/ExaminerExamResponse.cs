@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Response
 {
-    public class TestDepartmentExamResponse
+    public class ExaminerExamResponse
     {
         public int ExamId { get; set; }
 
