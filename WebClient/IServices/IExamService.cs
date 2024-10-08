@@ -24,7 +24,7 @@ namespace WebClient.IServices
         Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
-        Task<RequestResponse> ImportExamsFromExcel(List<IBrowserFile> files);
+        Task<RequestResponse> ImportExamsFromExcel(IBrowserFile files);
         Task<ResultResponse<byte[]>> ExportAllExams();
 
 
