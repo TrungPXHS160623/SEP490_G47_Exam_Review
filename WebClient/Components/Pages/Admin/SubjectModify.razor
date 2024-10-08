@@ -1,0 +1,85 @@
+﻿<style>
+    .form-group {
+        display: flex;
+        align-items: center
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code"></MudTextField>
+        <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Saving</MudText>
+            }
+            else
+            {
+                <MudText>@(SubjectId == 0 ? "Add" : "Save")</MudText>
+            }
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? SubjectId { get; set; }
+
+    Subject subject = new Subject();
+
+    private bool _processing = false;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SubjectId != 0)
+        {
+            var resp = await this.SubjectServive.GetSubjectById(SubjectId.Value);
+
+            if (resp.IsSuccessful)
+            {
+                subject = resp.Item;
+            }
+        }
+    }
+
+    public async Task Excute()
+    {
+        if (SubjectId != 0)
+        {
+            var resp = await this.SubjectServive.UpdateSubject(subject);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        else
+        {
+            var resp = await this.SubjectServive.AddSubject(subject);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+    }
+
+
+
+}

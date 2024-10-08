@@ -1,72 +1,87 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
 
-<EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="w-50">
-    <div class="d-flex align-items-center justify-content-between">
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:17%">
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-2">Email:</label>
-        @if (!isAddOrEdit)
-        {
-            <MudText>@(user.Email+"@fpt.edu.vn")</MudText>
-        }
-        else
-        {
-            <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" />
-        }
+        <div >
+            @if (!isAddOrEdit)
+            {
+                <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
+            }
+            else
+            {
+                <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" />
+            }
+        </div>
     </div>
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-2">Role:</label>
-        @if (!isAddOrEdit)
-        {
-            <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
-        }
-        else
-        {
-            <MudSelect @bind-Value="user.RoleId"
-                       Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                          Clearable
-                        AnchorOrigin="Origin.BottomCenter"
-                        Disabled="IsCurrentId">
+        <div class="col-auto">
+            @if (!isAddOrEdit)
+            {
+                <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
+            }
+            else
+            {
+                <MudSelect @bind-Value="user.RoleId"
+                           Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled="IsCurrentId">
 
-                 @if (roleList.Count > 0)
-                {
-                    @foreach (var item in roleList)
+                    @if (roleList.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                        @foreach (var item in roleList)
+                        {
+                            <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
-        }
+                </MudSelect>
+            }
+        </div>
     </div>
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <label class="col-2">Subject:</label>
+        <div class="col-auto">
+            @if (!isAddOrEdit)
+            {
+                <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
+            }
+            else
+            {
+                <MudSelect @bind-Value="user.RoleId"
+                           Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled="IsCurrentId">
+
+                    @if (roleList.Count > 0)
+                    {
+                        @foreach (var item in roleList)
+                        {
+                            <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            }
+        </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-2">Campus:</label>
-        @if (!isAddOrEdit)
-        {
-            <MudText>@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName ?? "N/A")</MudText>
-        }
-        else
-        {
-            <MudSelect @bind-Value="user.CampusId"
-                       Text="@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName)"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                          Clearable
-                        AnchorOrigin="Origin.BottomCenter">
+        <div class="col-auto">
 
-                 @if (camList.Count > 0)
-                {
-                    @foreach (var item in camList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                    }
-                }
-            </MudSelect>
-        }
+            <MudText>@user.CampusName</MudText>
+
+        </div>
     </div>
-    <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center justify-content-between mb-4">
         <label class="col-2">Active:</label>
-        <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit)" />
+        <div class="col-auto">
+            <MudCheckBox @bind-Value="user.IsActive" Disabled />
+        </div>
     </div>
     <div>
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(UserId != null ? (isAddOrEdit ? "Save" : "Update") : (isAddOrEdit ? "Create" : null))</MudButton>
@@ -86,11 +101,11 @@
     [Parameter]
     public int? UserId { get; set; }
 
-    private UserRequest user = new();
-
-    private List<Campus> camList = new();
+    private UserSubjectRequest user = new();
 
     private List<UserRole> roleList = new();
+
+    private List<UserRole> subjectList = new();
 
     private bool isAddOrEdit { get; set; } = false;
 
@@ -105,7 +120,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 1);
+            var response = await MenuServive.CheckAccess(userId, 7);
 
             if (!response.IsSuccessful)
             {
@@ -124,7 +139,6 @@
                     isAddOrEdit = true;
                 }
 
-                await GetCampus();
                 await GetRoles();
 
                 if (Layout != null)
@@ -141,7 +155,7 @@
 
     private async Task FetchUserDetails()
     {
-        var result = await AccountService.GetByIdAsync(UserId.Value);
+        var result = await AccountService.GetUserSubjectByIdAsync(UserId.Value);
         if (result != null)
         {
             user = result.Item;
@@ -167,24 +181,13 @@
 
         if (resp.IsSuccessful)
         {
-            NavManager.NavigateTo("/usermanagement");
-        }
-    }
-
-
-
-    private async Task GetCampus()
-    {
-        var result = await CampusServive.GetCampus();
-        if (result != null)
-        {
-            camList = result.Items;
+            NavManager.NavigateTo("/Examiner/usermanagement");
         }
     }
 
     private async Task GetRoles()
     {
-        var result = await RoleServive.GetRoles();
+        var result = await RoleServive.GetRolesForExaminer();
         if (result != null)
         {
             roleList = result.Items;
@@ -199,7 +202,7 @@
         }
         else
         {
-            NavManager.NavigateTo("/UserManagement");
+            NavManager.NavigateTo("/Examiner/usermanagement");
         }
     }
 }

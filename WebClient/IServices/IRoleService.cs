@@ -5,6 +5,8 @@ namespace WebClient.IServices
 {
     public interface IRoleService
     {
-        Task<ResultResponse<UserRole>> GetRoles();
+        Task<ResultResponse<UserRole>> GetRolesForAdmin();
+
+        Task<ResultResponse<UserRole>> GetRolesForExaminer();
     }
 }

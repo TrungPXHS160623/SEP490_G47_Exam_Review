@@ -101,22 +101,10 @@
 
     private async Task FetchUsers()
     {
-        // Check if there is search text to filter
-        if (!string.IsNullOrWhiteSpace(searchText))
+        var response = await AccountService.GetUserForAdmin(searchText);
+        if (response.IsSuccessful)
         {
-            var response = await AccountService.GetAllWithFilterAsync(searchText);
-            if (response.IsSuccessful)
-            {
-                users = response.Items;
-            }
-        }
-        else
-        {
-            var response = await AccountService.GetAllUserList();
-            if (response.IsSuccessful)
-            {
-                users = response.Items;
-            }
+            users = response.Items;
         }
     }
 

@@ -38,10 +38,17 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpGet("get-all-with-filter/{filterQuery}")]
-        public async Task<IActionResult> GetAllUserWithFilter(string filterQuery)
+        [HttpGet("GetUserForAdmin/{filterQuery?}")]
+        public async Task<IActionResult> GetAllUserWithFilter(string filterQuery =null)
         {
-            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterQuery);
+            var userDomainModels = await userRepository.GetUserForAdmin(filterQuery);
+            return Ok(userDomainModels);
+        }
+
+        [HttpGet("GetUserForExaminer/{filterQuery?}")]
+        public async Task<IActionResult> GetUserForExaminer(string filterQuery = null)
+        {
+            var userDomainModels = await userRepository.GetUserForExaminer(filterQuery);
             return Ok(userDomainModels);
         }
 

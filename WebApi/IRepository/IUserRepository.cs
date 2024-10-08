@@ -11,7 +11,9 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<UserResponse>> GetAllAsync();
 
-        Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery);
+        Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
+
+        Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery);
 
         Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true);
 

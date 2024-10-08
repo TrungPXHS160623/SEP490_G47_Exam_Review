@@ -97,14 +97,41 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery)
+        public async Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery)
         {
             var data = (from u in this.dbContext.Users
                         join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
                         from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                        where u.Mail.Contains(filterQuery)
+                        where (string.IsNullOrEmpty(filterQuery) || u.Mail.Contains(filterQuery))
+                        && (u.RoleId == 1 || u.RoleId == 2)
+                        select new UserResponse
+                        {
+                            Email = u.Mail,
+                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
+                            IsActive = u.IsActive,
+                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
+                            UserId = u.UserId,
+                            UpdateDt = u.UpdateDate,
+                        }).ToList();
+
+            return new ResultResponse<UserResponse>
+            {
+                IsSuccessful = true,
+                Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
+            };
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery)
+        {
+            var data = (from u in this.dbContext.Users
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        where (string.IsNullOrEmpty(filterQuery) || u.Mail.Contains(filterQuery))
+                        && (u.RoleId != 1 && u.RoleId != 2)
                         select new UserResponse
                         {
                             Email = u.Mail,
