@@ -97,31 +97,41 @@
 
     private async Task UploadFilesAsync()
     {
-        var file = files.FirstOrDefault(); // Take only the first file
-
-        if (file == null)
+        if (files.Count == 0)
         {
             Snackbar.Add("No files to upload!", Severity.Warning);
             return;
         }
 
-        try
+        using (var content = new MultipartFormDataContent())
         {
-            // Call the service method with the single file
-            var response = await ExamServive.ImportExamsFromExcel(file);
+            foreach (var file in files)
+            {
+                using (var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024)) // 10MB limit
+                {
+                    var fileStreamContent = new StreamContent(stream);
+                    fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    content.Add(fileStreamContent, "files", file.Name);
+                }
+            }
 
-            if (response.IsSuccessful)
+            try
             {
-                Snackbar.Add("Exams imported successfully!", Severity.Success);
+                var response = await ExamServive.ImportExamsFromExcel(files.ToList());
+
+                if (response.IsSuccessful)
+                {
+                    Snackbar.Add("Exams imported successfully!", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Failed to upload files.", Severity.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Snackbar.Add("Failed to upload the exam file.", Severity.Error);
+                Snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
             }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
         }
     }
 

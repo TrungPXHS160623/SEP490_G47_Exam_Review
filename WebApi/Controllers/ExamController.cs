@@ -1,27 +1,29 @@
-﻿using Library.Request;
+﻿
+using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
 {
-    public class ExamController : ApiBaseController
-    {
-        private readonly IExamRepository _examRepository;
+	public class ExamController : ApiBaseController
+	{
+		private readonly IExamRepository _examRepository;
 
-        public ExamController(IExamRepository examRepository)
-        {
-            _examRepository = examRepository;
-        }
+		public ExamController(IExamRepository examRepository)
+		{
+			_examRepository = examRepository;
+		}
 
-        [HttpGet("info")]
-        public async Task<IActionResult> GetExamInfo()
-        {
-            var examInfo = await _examRepository.GetExamInfoAsync();
-            return Ok(examInfo);
-        }
-
+		[HttpGet("info")]
+		public async Task<IActionResult> GetExamInfo()
+		{
+			var examInfo = await _examRepository.GetExamInfoAsync();
+			return Ok(examInfo);
+		}
+        
         [HttpPost("GetExamList")]
         public async Task<IActionResult> GetExamList([FromBody] ExamSearchRequest req)
         {
@@ -83,7 +85,7 @@ namespace WebApi.Controllers
         [HttpPut("ChangeStatus/{examid}")]
         public async Task<IActionResult> ChangeStatusExam(int examId, [FromBody] int statusId)
         {
-            var examInfo = await _examRepository.ChangeStatusExamById(examId, statusId);
+            var examInfo = await _examRepository.ChangeStatusExamById(examId,statusId);
             return Ok(examInfo);
         }
 
@@ -93,13 +95,13 @@ namespace WebApi.Controllers
             var examInfo = await _examRepository.CreateExam(req);
             return Ok(examInfo);
         }
-        [AllowAnonymous]
+        
         [HttpPost("ImportExamsFromExcel")]
         public async Task<IActionResult> ImportExamsFromExcel([FromForm] IFormFile file)
         {
             var something = await _examRepository.ImportExamsFromExcel(file);
             return Ok(something);
         }
-
+        
     }
 }

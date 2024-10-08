@@ -30,6 +30,22 @@
 </style>
 
 <div class="mt-4">
+    <div class="d-flex mb-4">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   OnClick="OpenImportDialogAsync">
+            Import Exam
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Class="ms-4"
+                   OnClick="@(() => OpenAddEditDialogAsync(0,false))">
+            Add Exam
+        </MudButton>
+    </div>
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap w-50">
             <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
