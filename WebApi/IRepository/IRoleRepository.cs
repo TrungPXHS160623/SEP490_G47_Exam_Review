@@ -5,6 +5,8 @@ namespace WebApi.IRepository
 {
     public interface IRoleRepository
     {
-        Task<ResultResponse<UserRole>> GetRoles();
+        Task<ResultResponse<UserRole>> GetRolesForAdmin();
+
+        Task<ResultResponse<UserRole>> GetRolesForExaminer();
     }
 }

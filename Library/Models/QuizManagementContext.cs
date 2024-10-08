@@ -289,18 +289,30 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<CampusUserSubject>().HasData(
 
             //Seed data for Heads of Department of Ha Noi campus
-            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 12 },
-            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 12 },
-            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 12 },
-            new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 12 },
-            new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 12 },
+            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 12 ,IsLecture = false},
+            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 12, IsLecture = false },
+            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 12, IsLecture = false },
+            new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 12, IsLecture = false },
+            new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 12, IsLecture = false },
+
+            new CampusUserSubject { Id = 51, SubjectId = 1, CampusId = 1, UserId = 7, IsLecture = true },
+            new CampusUserSubject { Id = 52, SubjectId = 2, CampusId = 1, UserId = 7, IsLecture = true },
+            new CampusUserSubject { Id = 53, SubjectId = 3, CampusId = 1, UserId = 7, IsLecture = true },
+            new CampusUserSubject { Id = 54, SubjectId = 4, CampusId = 1, UserId = 7, IsLecture = true },
+            new CampusUserSubject { Id = 55, SubjectId = 5, CampusId = 1, UserId = 7, IsLecture = true },
 
 
-            new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 9, SubjectId = 9, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13 },
+            new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 13, IsLecture = false },
+            new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 13, IsLecture = false },
+            new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 13, IsLecture = false },
+            new CampusUserSubject { Id = 9, SubjectId = 9, CampusId = 1, UserId = 13, IsLecture = false },
+            new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13, IsLecture = false },
+
+            new CampusUserSubject { Id = 56, SubjectId = 6, CampusId = 1, UserId = 27, IsLecture = true },
+            new CampusUserSubject { Id = 57, SubjectId = 7, CampusId = 1, UserId = 27, IsLecture = true },
+            new CampusUserSubject { Id = 58, SubjectId = 8, CampusId = 1, UserId = 27, IsLecture = true },
+            new CampusUserSubject { Id = 59, SubjectId = 9, CampusId = 1, UserId = 27, IsLecture = true },
+            new CampusUserSubject { Id = 60, SubjectId = 10, CampusId = 1, UserId = 27, IsLecture = true },
 
             // Seed data for Heads of Department of Da Nang campus
             new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 2, UserId = 14 },
@@ -426,8 +438,10 @@ public partial class QuizManagementContext : DbContext
             new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "History", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 3, MenuLink = "/TestDepartment/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Head Department List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Menu { MenuId = 5, MenuLink = "/HeadDepartment/ExamList", MenuName = "Head Department List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 6, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 7, MenuLink = "/Examiner/UserManagement", MenuName = "User management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 4, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
@@ -435,10 +449,9 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 7, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 3, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );

@@ -17,9 +17,9 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<ResultResponse<UserRole>> GetRoles()
+        public async Task<ResultResponse<UserRole>> GetRolesForAdmin()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Role/GetRoles");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Role/GetRolesForAdmin");
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserRole>>();
 
@@ -31,5 +31,18 @@ namespace WebClient.Services
             return requestResponse;
         }
 
+        public async Task<ResultResponse<UserRole>> GetRolesForExaminer()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Role/GetRolesForExaminer");
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserRole>>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+
+            return requestResponse;
+        }
     }
 }

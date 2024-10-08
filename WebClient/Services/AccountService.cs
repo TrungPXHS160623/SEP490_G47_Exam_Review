@@ -138,11 +138,36 @@ namespace WebClient.Services
         }
 
 
-        public async Task<ResultResponse<UserResponse>> GetAllWithFilterAsync(string filterQuery)
+        public async Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/get-all-with-filter/{filterQuery}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserForAdmin/{filterQuery}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserForExaminer/{filterQuery}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 
@@ -182,6 +207,31 @@ namespace WebClient.Services
             {
                 snackbar.Add(ex.Message, Severity.Error);
                 return new ResultResponse<UserRequest>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserSubject/{id}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserSubjectRequest>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserSubjectRequest>
                 {
                     IsSuccessful = false,
                 };

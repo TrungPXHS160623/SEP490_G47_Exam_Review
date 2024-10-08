@@ -14,10 +14,18 @@ namespace WebApi.Controllers
             _roleRepository = roleRepository;
         }
 
-        [HttpGet("GetRoles")]
-        public async Task<IActionResult> GetRoles()
+        [HttpGet("GetRolesForAdmin")]
+        public async Task<IActionResult> GetRolesForAdmin()
         {
-            var data = await this._roleRepository.GetRoles();
+            var data = await this._roleRepository.GetRolesForAdmin();
+
+            return Ok(data);
+        }
+
+        [HttpGet("GetRolesForExaminer")]
+        public async Task<IActionResult> GetRolesForExaminer()
+        {
+            var data = await this._roleRepository.GetRolesForExaminer();
 
             return Ok(data);
         }
