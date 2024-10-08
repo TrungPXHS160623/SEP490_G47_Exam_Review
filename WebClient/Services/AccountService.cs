@@ -163,11 +163,11 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery)
+        public async Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId, string filterQuery)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserForExaminer/{filterQuery}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserForExaminer/{userId}/{filterQuery}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 
@@ -217,7 +217,7 @@ namespace WebClient.Services
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserSubject/{id}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserSubjectById/{id}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserSubjectRequest>>();
 
@@ -331,6 +331,33 @@ namespace WebClient.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/User/update", user);
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "An error occurred." };
+            }
+        }
+
+        public async Task<RequestResponse> ExaminerUpdateUserAsync(UserSubjectRequest user)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/User/ExaminerUpdateUser", user);
 
                 // Reading the response content
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();

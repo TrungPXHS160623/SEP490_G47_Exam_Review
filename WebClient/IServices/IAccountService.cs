@@ -18,7 +18,7 @@ namespace WebClient.IServices
 
         Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
 
-        Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery);
+        Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId,string filterQuery);
 
         Task<AuthenticationResponse> GetJWT();
 
@@ -30,8 +30,11 @@ namespace WebClient.IServices
 
         Task<RequestResponse> UpdateAsync(UserRequest user);
 
+        Task<RequestResponse> ExaminerUpdateUserAsync(UserSubjectRequest user);
+
         Task<RequestResponse> DeleteAsync(int id);
 
         Task<RequestResponse> CreateAsync(UserRequest user);
+
     }
 }

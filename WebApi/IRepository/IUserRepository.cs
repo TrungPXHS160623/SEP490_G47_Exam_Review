@@ -13,7 +13,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
 
-        Task<ResultResponse<UserResponse>> GetUserForExaminer(string filterQuery);
+        Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId, string filterQuery);
 
         Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true);
 
@@ -22,6 +22,8 @@ namespace WebApi.IRepository
         Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id);
 
         Task<RequestResponse> UpdateAsync(UserRequest user);
+
+        Task<RequestResponse> ExaminerUpdateUserAsync(UserSubjectRequest user);
 
         Task<RequestResponse> DeleteAsync(int id);
 

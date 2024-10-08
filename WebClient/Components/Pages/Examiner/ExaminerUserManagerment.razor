@@ -64,6 +64,8 @@
 
     private string searchText;
 
+    private int UserId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -72,9 +74,9 @@
         {
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
-            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 7);
+            var response = await MenuServive.CheckAccess(UserId, 10);
 
             if (!response.IsSuccessful)
             {
@@ -100,7 +102,7 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetUserForExaminer(searchText);
+        var response = await AccountService.GetUserForExaminer(UserId,searchText);
         if (response.IsSuccessful)
         {
             users = response.Items;
