@@ -3,7 +3,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Net.Http.Json;
 using WebClient.IServices;
 
 namespace WebClient.Services
@@ -296,7 +295,7 @@ namespace WebClient.Services
 
             return requestResponse;
         }
-        public async Task<RequestResponse> ImportExamsFromExcel(List<IBrowserFile> files)
+        public async Task<RequestResponse> ImportExamsFromExcel(IBrowserFile files)
         {
             if (string.IsNullOrWhiteSpace(Constants.JWTToken))
             {
@@ -306,64 +305,40 @@ namespace WebClient.Services
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-            using (var content = new MultipartFormDataContent())
+            try
             {
-                if (files == null || files.Count == 0)
+                // Create multipart form data content
+                var content = new MultipartFormDataContent();
+
+                // Add the file to the multipart form data content
+                var fileStream = files.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // Adjust max size as needed
+                var streamContent = new StreamContent(fileStream);
+                content.Add(streamContent, "file", files.Name); // Name 'file' matches the parameter in your API
+
+                // Send the POST request
+                HttpResponseMessage response = await _httpClient.PostAsync("api/Exam/ImportExamsFromExcel", content);
+
+                response.EnsureSuccessStatusCode();  // Throw if the response is not a success
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (!requestResponse.IsSuccessful)
                 {
-                    snackbar.Add("No files selected for upload.", Severity.Warning);
-                    return new RequestResponse { IsSuccessful = false, Message = "No files selected." };
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+                else
+                {
+                    snackbar.Add("Exams imported successfully!", Severity.Success);
                 }
 
-                foreach (var file in files)
-                {
-                    if (file != null && file.Size > 0)
-                    {
-                        if (!file.ContentType.Equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                        {
-                            snackbar.Add($"File '{file.Name}' is not a valid Excel file.", Severity.Error);
-                            return new RequestResponse { IsSuccessful = false, Message = $"Invalid file format for file '{file.Name}'." };
-                        }
-
-                        using (var fileStreamContent = new StreamContent(file.OpenReadStream()))
-                        {
-                            fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                            content.Add(fileStreamContent, "files", file.Name);
-                        }
-                    }
-                    else
-                    {
-                        snackbar.Add($"File '{file?.Name}' is empty or invalid.", Severity.Warning);
-                        return new RequestResponse { IsSuccessful = false, Message = $"File '{file?.Name}' is empty or invalid." };
-                    }
-                }
-
-                try
-                {
-                    HttpResponseMessage response = await _httpClient.PostAsync("api/Exam/ImportExamsFromExcel", content);
-
-                    response.EnsureSuccessStatusCode();
-
-                    var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
-
-                    if (!requestResponse.IsSuccessful)
-                    {
-                        snackbar.Add(requestResponse.Message, Severity.Error);
-                    }
-                    else
-                    {
-                        snackbar.Add("Exams imported successfully!", Severity.Success);
-                    }
-
-                    return requestResponse;
-                }
-                catch (Exception ex)
-                {
-                    snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
-                    return new RequestResponse { IsSuccessful = false, Message = ex.Message };
-                }
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = ex.Message };
             }
         }
-
         public async Task<ResultResponse<byte[]>> ExportAllExams()
         {
             //Check JWT key
@@ -411,4 +386,9 @@ namespace WebClient.Services
         }
 
     }
+
 }
+
+
+
+
