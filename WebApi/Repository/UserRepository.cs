@@ -218,6 +218,41 @@ namespace WebApi.Repository
             };
         }
 
+        public async Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id)
+        {
+            var data = (from u in this.dbContext.Users
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        where u.UserId == id
+                        select new UserSubjectRequest
+                        {
+                            Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
+                            CampusId = u.CampusId,                        // Keep the CampusId from the Users table
+                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
+                            IsActive = u.IsActive,
+                            RoleId = u.RoleId,                            // Keep the RoleId from the Users table
+                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
+                            UserId = u.UserId,
+                            SubjectResponses = (from s in this.dbContext.Subjects 
+                                                join cus in this.dbContext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
+                                                where cus.UserId == id
+                                                select new SubjectResponse
+                                                {
+                                                    SubjectId = s.SubjectId,
+                                                    SubjectCode = s.SubjectCode,
+                                                    SubjectName = s.SubjectName,
+                                                }).ToList()
+                        }).FirstOrDefault();
+
+            return new ResultResponse<UserSubjectRequest>
+            {
+                IsSuccessful = true,
+                Item = data,
+            };
+        }
+
         public async Task<RequestResponse> UpdateAsync(UserRequest user)
         {
             try

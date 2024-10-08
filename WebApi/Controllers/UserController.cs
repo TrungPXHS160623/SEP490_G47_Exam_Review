@@ -69,6 +69,15 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
+        [HttpGet("GetUserSubjectById/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserSubjectByIdAsync(int id)
+        {
+            var data = await this.userRepository.GetUserSubjectByIdAsync(id);
+
+            return Ok(data);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] UserRequest user)
         {
