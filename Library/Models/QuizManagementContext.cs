@@ -268,7 +268,8 @@ public partial class QuizManagementContext : DbContext
             new User { UserId = 23, Mail = "thanhnt@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 24, Mail = "hungpv@fpt.edu.vn", CampusId = 3, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 25, Mail = "anhpt@fpt.edu.vn", CampusId = 4, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
 
         );

@@ -19,7 +19,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.UserRoles.Where(x => x.RoleId == 1 || x.RoleId == 2).ToListAsync();
+                var data = await this.DBcontext.UserRoles.Where(x => x.RoleId == 1 || x.RoleId == 2 || x.RoleId == 5).ToListAsync();
 
                 if (data != null)
                 {
@@ -53,7 +53,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.UserRoles.Where(x => x.RoleId != 1 || x.RoleId != 2).ToListAsync();
+                var data = await this.DBcontext.UserRoles.Where(x => x.RoleId != 1 || x.RoleId != 2 || x.RoleId != 5).ToListAsync();
 
                 if (data != null)
                 {

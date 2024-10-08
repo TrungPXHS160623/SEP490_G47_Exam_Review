@@ -9,6 +9,6 @@ namespace Library.Request
 {
     public class UserSubjectRequest : UserRequest
     {
-        public List<SubjectResponse> SubjectResponses = new List<SubjectResponse>();
+        public IEnumerable<SubjectResponse> SubjectResponses { get; set; } = new List<SubjectResponse>();
     }
 }

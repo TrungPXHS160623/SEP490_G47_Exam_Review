@@ -54,5 +54,14 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
+        [HttpGet("GetSubjectByRole/{roleId}/{userId}/{campusId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSubjectByRole(int roleId, int userId, int campusId)
+        {
+            var data = await this._subjectRepository.GetSubjectByRole(roleId, userId, campusId);
+
+            return Ok(data);
+        }
     }
 }

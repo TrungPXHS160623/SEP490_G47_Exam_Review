@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Response;
 
 namespace WebApi.IRepository
 {
@@ -10,5 +11,7 @@ namespace WebApi.IRepository
         Task<RequestResponse> AddSubject(Subject req);
         Task<RequestResponse> UpdateSubject(Subject req);
         Task<RequestResponse> DeleteSubject(int subjectId);
+
+        Task<ResultResponse<SubjectResponse>> GetSubjectByRole(int roleId, int userId,int campusId);
     }
 }

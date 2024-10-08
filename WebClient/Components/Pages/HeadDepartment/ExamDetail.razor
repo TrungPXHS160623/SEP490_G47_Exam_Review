@@ -14,34 +14,34 @@
         <div class="form-group mb-4">
             <label class="col-3">Exam Code:</label>
             <MudText>@exam.ExamCode</MudText>
-            </div>
+        </div>
 
-            <div class="form-group mb-4">
-                <label class="col-3">Subject Name:</label>
-                <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Exam Creater:</label>
-                <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Lecture:</label>
-                <MudSelect T="UserResponse"
-                           @bind-SelectedValues=@exam.LectureList
-                           Text="@("Selected Lecture : " + exam.LectureList.Count())"
-                           MultiSelection="true"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Placeholder="Choose Lecture to Assign to this Exam"
-                              Required>
-                @if (LectureList.Count() > 0)
+        <div class="form-group mb-4">
+            <label class="col-3">Subject Name:</label>
+            <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">Exam Creater:</label>
+            <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+        </div>
+        <div class="form-group mb-4">
+            <label class="col-3">Lecture:</label>
+            <MudSelect T="UserResponse"
+                       @bind-SelectedValues=@exam.LectureList
+                       Text="@("Selected Lecture : " + exam.LectureList.Count())"
+                       MultiSelection="true"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Placeholder="Choose Lecture to Assign to this Exam"
+                          Required>
+            @if (LectureList.Count() > 0)
+            {
+                @foreach (var item in LectureList)
                 {
-                    @foreach (var item in LectureList)
-                    {
-                        <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && exam.LectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
-                    }
+                    <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && exam.LectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
                 }
+            }
             </MudSelect>
         </div>
         <div class="form-group mb-4">

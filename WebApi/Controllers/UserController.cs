@@ -45,10 +45,10 @@ namespace WebApi.Controllers
             return Ok(userDomainModels);
         }
 
-        [HttpGet("GetUserForExaminer/{filterQuery?}")]
-        public async Task<IActionResult> GetUserForExaminer(string filterQuery = null)
+        [HttpGet("GetUserForExaminer/{userId}/{filterQuery?}")]
+        public async Task<IActionResult> GetUserForExaminer(int userId,string filterQuery = null)
         {
-            var userDomainModels = await userRepository.GetUserForExaminer(filterQuery);
+            var userDomainModels = await userRepository.GetUserForExaminer(userId,filterQuery);
             return Ok(userDomainModels);
         }
 
@@ -69,6 +69,15 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
+        [HttpGet("GetUserSubjectById/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserSubjectByIdAsync(int id)
+        {
+            var data = await this.userRepository.GetUserSubjectByIdAsync(id);
+
+            return Ok(data);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] UserRequest user)
         {
@@ -81,6 +90,13 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateUser(UserRequest updateUserRequestDto)
         {
             var updatedUser = await userRepository.UpdateAsync(updateUserRequestDto);
+            return Ok(updatedUser);
+        }
+
+        [HttpPut("ExaminerUpdateUser")]
+        public async Task<IActionResult> ExaminerUpdateUserAsync(UserSubjectRequest updateUserRequestDto)
+        {
+            var updatedUser = await userRepository.ExaminerUpdateUserAsync(updateUserRequestDto);
             return Ok(updatedUser);
         }
 

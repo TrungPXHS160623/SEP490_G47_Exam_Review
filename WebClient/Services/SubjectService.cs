@@ -101,6 +101,31 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<SubjectResponse>> GetSubjectByRole(int roleId, int userId, int campusId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Subject/GetSubjectByRole/{roleId}/{userId}/{campusId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<SubjectResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<SubjectResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
         public async Task<ResultResponse<Subject>> GetSubjects()
         {
             try
