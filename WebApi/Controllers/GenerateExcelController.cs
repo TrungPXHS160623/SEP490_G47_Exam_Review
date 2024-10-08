@@ -34,5 +34,24 @@ namespace WebApi.Controllers
             }
 
         }
-    }
+		[HttpGet("export/{statusId}")]
+		public IActionResult ExportToExcelByStatus(int statusId)
+		{
+			try
+			{
+				var excelData = _generateExcelRepository.GenerateExcelByStatus(statusId);
+
+				return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ExamData_Status_{statusId}.xlsx");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new ResultResponse<byte[]>
+				{
+					IsSuccessful = false,
+					Message = ex.Message
+				});
+			}
+		}
+
+	}
 }
