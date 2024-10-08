@@ -1,9 +1,7 @@
-﻿using Library.Common;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using MudBlazor.Services;
-using System.Net.Http.Headers;
 using WebClient.Authentication;
 using WebClient.Common;
 using WebClient.Components;
@@ -60,7 +58,7 @@ namespace WebClient
             });
 
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            builder.Services.AddScoped<CustomAuthenticationStateProvider>(); 
+            builder.Services.AddScoped<CustomAuthenticationStateProvider>();
             builder.Services.AddAuthorizationCore();
 
             builder.Services.AddTransient<IAccountService, AccountService>();
