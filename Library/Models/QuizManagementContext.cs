@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+
 
 namespace Library.Models;
 
@@ -65,9 +65,11 @@ public partial class QuizManagementContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.IsLecturer);
+            entity.Property(e => e.IsLecturer)
+            .IsRequired()
+            .HasDefaultValue(false);
+            entity.HasOne(d => d.Campus).WithMany(p => p.CampusUserSubjects)
 
-			entity.HasOne(d => d.Campus).WithMany(p => p.CampusUserSubjects)
                 .HasForeignKey(d => d.CampusId)
                 .HasConstraintName("FK_CampusUserSubject_Campuses");
 
@@ -224,7 +226,7 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 2, RoleName = "Examiner", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new UserRole { RoleId = 3, RoleName = "Lecturer", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new UserRole { RoleId = 4, RoleName = "Head of Department", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserRole { RoleId = 5, RoleName = "Curriculum Developer", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 4. Seed data for User table
@@ -309,7 +311,7 @@ public partial class QuizManagementContext : DbContext
             new CampusUserSubject { Id = 9, SubjectId = 9, CampusId = 1, UserId = 13 },
             new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13 },
 
-		//Seed data for Lecturer of Ha Noi campus
+            //Seed data for Lecturer of Ha Noi campus
             new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 1, UserId = 7, IsLecturer = true },
             new CampusUserSubject { Id = 12, SubjectId = 2, CampusId = 1, UserId = 7, IsLecturer = true },
             new CampusUserSubject { Id = 13, SubjectId = 3, CampusId = 1, UserId = 7, IsLecturer = true },
@@ -447,11 +449,12 @@ new Exam { ExamId = 20, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5
         modelBuilder.Entity<Menu>().HasData(
             new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 2, MenuLink = "/Admin/History", MenuName = "History (Not Available)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 3, MenuLink = "/TestDepartment/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 3, MenuLink = "/Examiner/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Exam Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Lecture List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 7, MenuLink = "/HeadDepartment/ExamStatus", MenuName = "Exam Status", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+              new Menu { MenuId = 10, MenuLink = "/Examiner/usermanagement", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 8, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
@@ -464,6 +467,7 @@ new Exam { ExamId = 20, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5
             new MenuRole { RoleId = 1, MenuId = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new MenuRole { RoleId = 2, MenuId = 10, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 7, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -486,7 +490,7 @@ new Exam { ExamId = 20, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-	
+
 }
 
 
