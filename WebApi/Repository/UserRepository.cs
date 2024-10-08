@@ -1,5 +1,4 @@
-﻿using Azure;
-using Library.Common;
+﻿using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
@@ -203,7 +202,7 @@ namespace WebApi.Repository
                         where u.UserId == id
                         select new UserRequest
                         {
-                            Email = u.Mail.Replace("@fpt.edu.vn",string.Empty),
+                            Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
                             CampusId = u.CampusId,                        // Keep the CampusId from the Users table
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
@@ -258,17 +257,17 @@ namespace WebApi.Repository
             try
             {
                 var user = await (from u in dbContext.Users
-                            join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
-                            join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
-                            join c in dbContext.Campuses on cus.CampusId equals c.CampusId
-                            where s.SubjectId == subjectId && c.CampusId == campusId
-                            select new UserResponse
-                            {
-                                Email = u.Mail,
-                                UserId = u.UserId,
-                            }).FirstOrDefaultAsync();
-                
-                if(user == null)
+                                  join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                                  join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
+                                  join c in dbContext.Campuses on cus.CampusId equals c.CampusId
+                                  where s.SubjectId == subjectId && c.CampusId == campusId
+                                  select new UserResponse
+                                  {
+                                      Email = u.Mail,
+                                      UserId = u.UserId,
+                                  }).FirstOrDefaultAsync();
+
+                if (user == null)
                 {
                     return new ResultResponse<UserResponse>
                     {

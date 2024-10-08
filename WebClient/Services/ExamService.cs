@@ -339,7 +339,6 @@ namespace WebClient.Services
                 return new RequestResponse { IsSuccessful = false, Message = ex.Message };
             }
         }
-
         public async Task<ResultResponse<byte[]>> ExportAllExams()
         {
             //Check JWT key
@@ -387,4 +386,9 @@ namespace WebClient.Services
         }
 
     }
+
 }
+
+
+
+
