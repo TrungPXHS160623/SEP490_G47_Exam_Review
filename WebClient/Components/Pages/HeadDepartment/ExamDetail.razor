@@ -25,10 +25,6 @@
                 <MudText>@(exam.CreaterName ?? "N/A")</MudText>
             </div>
             <div class="form-group mb-4">
-                <label class="col-3">Head of Department:</label>
-                <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-            </div>
-            <div class="form-group mb-4">
                 <label class="col-3">Lecture:</label>
                 <MudSelect T="UserResponse"
                            @bind-SelectedValues=@exam.LectureList
@@ -63,10 +59,6 @@
             <div class="form-group mb-4">
                 <label class="col-3">Exam Type:</label>
                 <MudText>@exam.ExamType</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Exam Estimate Date:</label>
-                <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
             </div>
             <div class="form-group mb-4">
                 <label class="col-3">Start Date:</label>

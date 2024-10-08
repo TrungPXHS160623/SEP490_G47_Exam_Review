@@ -22,9 +22,9 @@ namespace WebApi.Repository
 
                 var addLecture = req.LectureList.Where(x => !data.Any(y => y.AssignedUserId == x.UserId)).ToList();
 
-                if(addLecture.Any())
+                if (addLecture.Any())
                 {
-                    foreach(var item in addLecture)
+                    foreach (var item in addLecture)
                     {
                         var newData = new InstructorAssignment
                         {
@@ -41,7 +41,7 @@ namespace WebApi.Repository
                 }
 
 
-                var removeLecture = data.Where( x => !req.LectureList.Any(y => y.UserId == x.AssignedUserId)).ToList();
+                var removeLecture = data.Where(x => !req.LectureList.Any(y => y.UserId == x.AssignedUserId)).ToList();
 
                 if (removeLecture.Any())
                 {
@@ -75,7 +75,7 @@ namespace WebApi.Repository
             {
                 var data = await this.DBcontext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == req.AssignmentId);
 
-                if(data == null)
+                if (data == null)
                 {
                     return new RequestResponse
                     {
