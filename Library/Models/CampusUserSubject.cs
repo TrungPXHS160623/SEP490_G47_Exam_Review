@@ -13,7 +13,7 @@ public partial class CampusUserSubject
 
     public int? UserId { get; set; }
 
-    public bool? IsLecture { get; set; }
+    public bool? IsLecturer { get; set; }
 
     public virtual Campus? Campus { get; set; }
 

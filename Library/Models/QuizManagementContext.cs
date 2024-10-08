@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Library.Models;
@@ -39,8 +40,11 @@ public partial class QuizManagementContext : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(local);Initial Catalog=QuizManagement;User ID=sa;Password=123;TrustServerCertificate=True");
+    {
+        var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("MyConStr");
+        optionsBuilder.UseSqlServer(config);
+    }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,9 +65,8 @@ public partial class QuizManagementContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
 
-			entity.Property(e => e.IsLecturer)
-		    .IsRequired()
-		    .HasDefaultValue(false);
+            entity.Property(e => e.IsLecturer);
+
 			entity.HasOne(d => d.Campus).WithMany(p => p.CampusUserSubjects)
                 .HasForeignKey(d => d.CampusId)
                 .HasConstraintName("FK_CampusUserSubject_Campuses");
