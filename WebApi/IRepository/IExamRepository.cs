@@ -38,8 +38,8 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
 
-        
+		//get exam by status
+		Task<IEnumerable<ExamByStatusResponse>> GetExamsByStatusAsync(int statusId, int? campusId = null);
 
-
-    }
+	}
 }

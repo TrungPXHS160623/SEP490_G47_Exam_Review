@@ -701,7 +701,31 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+    //exam by status
+	public async Task<IEnumerable<ExamByStatusResponse>> GetExamsByStatusAsync(int statusId, int? campusId = null)
+	{
+		var query = _context.Exams
+			.Include(e => e.Campus)
+			.Include(e => e.InstructorAssignments)
+			.ThenInclude(ia => ia.AssignedUser)
+			.Where(e => e.ExamStatusId == statusId);
+
+		if (campusId.HasValue)
+		{
+			query = query.Where(e => e.CampusId == campusId.Value);
+		}
+
+		var results = await query.Select(e => new ExamByStatusResponse
+		{
+			ExamStatus = e.ExamStatus.StatusContent,
+			ExamCode = e.ExamCode,
+			Campus = e.Campus.CampusName,
+			Lecturer = e.InstructorAssignments.FirstOrDefault().AssignedUser.Mail
+		}).ToListAsync();
+
+		return results;
+	}
+	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();
     }

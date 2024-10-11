@@ -4,6 +4,7 @@ using Library.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -102,6 +103,15 @@ namespace WebApi.Controllers
             var something = await _examRepository.ImportExamsFromExcel(file);
             return Ok(something);
         }
-        
-    }
+
+        // exam by status
+        [AllowAnonymous]
+		[HttpGet("GetExambyStatus")]
+		public async Task<IActionResult> GetExams([Required] int statusId, int? campusId = null)
+		{
+			var exams = await _examRepository.GetExamsByStatusAsync(statusId, campusId);
+
+			return Ok(exams);
+		}
+	}
 }
