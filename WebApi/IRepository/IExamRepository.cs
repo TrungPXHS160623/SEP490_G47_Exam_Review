@@ -2,16 +2,15 @@
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.IRepository
 {
-	public interface IExamRepository
-	{
-		Task<IEnumerable<ExamInfoDto>> GetExamInfoAsync();
+    public interface IExamRepository
+    {
+        Task<IEnumerable<ExamInfoDto>> GetExamInfoAsync();
 
-		Task<ResultResponse<TestDepartmentExamResponse>> GetExamList(ExamSearchRequest req);
-        Task<ResultResponse<TestDepartmentExamResponse>> GetExamById(int examId);
+        Task<ResultResponse<ExaminerExamResponse>> GetExamList(ExamSearchRequest req);
+        Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
 
@@ -21,16 +20,16 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 
-        Task<RequestResponse> UpdateExam(TestDepartmentExamResponse exam);
+        Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
 
-		Task<RequestResponse> ChangeStatusExam(List<TestDepartmentExamResponse> exam);
+        Task<RequestResponse> ChangeStatusExam(List<ExaminerExamResponse> exam);
 
         Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
 
-		//phần tui làm
-		Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv();
+        //phần tui làm
+        Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv();
 
         Task<ResultResponse<ExamExportResponse>> ExportExamsToExcel();
 
@@ -40,6 +39,7 @@ namespace WebApi.IRepository
 
 		//get exam by status
 		Task<IEnumerable<ExamByStatusResponse>> GetExamsByStatusAsync(int statusId, int? campusId = null);
+
 
 	}
 }

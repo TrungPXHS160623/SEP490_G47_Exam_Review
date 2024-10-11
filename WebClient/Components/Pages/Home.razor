@@ -53,9 +53,9 @@
             if (resp.IsSuccessful)
             {
                 menuList = resp.Items;
-
-                TextInfo = menuList.Count > 0 ? "You dont have any permission on this site" : string.Empty;
             }
+
+            TextInfo = menuList.Count > 0 ? string.Empty : "You dont have any permission on this site";
 
         }
         if (Layout != null)

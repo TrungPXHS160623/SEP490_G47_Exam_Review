@@ -1,7 +1,7 @@
-﻿@page "/Admin/EditUser/{UserId:int}"
-@page "/Admin/AddUser"
+﻿@page "/Examiner/EditUser/{UserId:int}"
+@page "/Examiner/AddUser"
 
-<EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:320px">
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:400px">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="col-3">
             <label>Email:</label>
@@ -30,8 +30,7 @@
                            Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled="IsCurrentId">
+                           AnchorOrigin="Origin.BottomCenter">
 
                     @if (roleList.Count > 0)
                     {
@@ -44,66 +43,69 @@
             </div>
         }
     </div>
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-3">Campus:</label>
-        @if (!isAddOrEdit)
-        {
-            <MudText>@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName ?? "N/A")</MudText>
-        }
-        else
-        {
-            <div class="col-8">
-                <MudSelect @bind-Value="user.CampusId"
-                           Text="@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName)"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter">
-
-                    @if (camList.Count > 0)
+    <div class="d-flex align-items-baseline justify-content-between mb-4">
+        <label class="col-2">Subject:</label>
+        <div class="col-8">
+            <MudSelect T="SubjectResponse"
+                       @bind-SelectedValues=@user.SubjectResponses
+                       Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+                       MultiSelection="true"
+                       Variant="Variant.Outlined"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       ReadOnly=@(!isAddOrEdit)
+                       HelperText="Only display avaliable subject">
+                @if (subjectList.Count() > 0)
+                {
+                    @foreach (var item in subjectList)
                     {
-                        @foreach (var item in camList)
-                        {
-                            <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                        }
+                        <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
                     }
-                </MudSelect>
-            </div>
-
-        }
-    </div>
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <label class="col-3">Active:</label>
-        <div>
-            <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit)" />
+                }
+            </MudSelect>
+            <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
         </div>
     </div>
-    <div>
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(UserId != null ? (isAddOrEdit ? "Save" : "Update") : (isAddOrEdit ? "Create" : null))</MudButton>
-        <MudButton Variant="@(UserId != null && isAddOrEdit == true ? Variant.Outlined : Variant.Filled)"
-                   Color="@(UserId != null && isAddOrEdit == true ? Color.Error : Color.Default)"
-                   OnClick="Cancel" Class="ms-4">
-            @(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")
-        </MudButton>
-    </div>
-</EditForm>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <label class="col-3">Campus:</label>
+        <div>
+
+            <MudText>@user.CampusName</MudText>
+
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <label class="col-3">Active:</label>
+            <div>
+                <MudCheckBox @bind-Value="user.IsActive" Disabled />
+         </div>
+     </div>
+     <div>
+         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(UserId != null ? (isAddOrEdit ? "Save" : "Update") : (isAddOrEdit ? "Create" : null))</MudButton>
+         <MudButton Variant="@(UserId != null && isAddOrEdit == true ? Variant.Outlined : Variant.Filled)"
+                    Color="@(UserId != null && isAddOrEdit == true ? Color.Error : Color.Default)"
+                    OnClick="Cancel" Class="ms-4">
+             @(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")
+         </MudButton>
+     </div>
+ </EditForm>
 
 
-@code {
+ @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
     [Parameter]
     public int? UserId { get; set; }
 
-    private UserRequest user = new();
-
-    private List<Campus> camList = new();
+    private UserSubjectRequest user = new();
 
     private List<UserRole> roleList = new();
 
+    private List<SubjectResponse> subjectList = new();
+
     private bool isAddOrEdit { get; set; } = false;
 
-    private bool IsCurrentId { get; set; } = false;
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -114,7 +116,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 1);
+            var response = await MenuServive.CheckAccess(userId, 10);
 
             if (!response.IsSuccessful)
             {
@@ -126,14 +128,14 @@
                 {
                     await FetchUserDetails();
 
-                    IsCurrentId = userId == UserId;
+                    await GetSubjectList();
+
                 }
                 else
                 {
                     isAddOrEdit = true;
                 }
 
-                await GetCampus();
                 await GetRoles();
 
                 if (Layout != null)
@@ -150,10 +152,19 @@
 
     private async Task FetchUserDetails()
     {
-        var result = await AccountService.GetByIdAsync(UserId.Value);
+        var result = await AccountService.GetUserSubjectByIdAsync(UserId.Value);
         if (result != null)
         {
             user = result.Item;
+        }
+    }
+
+    private async Task GetSubjectList()
+    {
+        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        if (result != null)
+        {
+            subjectList = result.Items;
         }
     }
 
@@ -167,33 +178,18 @@
         }
         else if (UserId != null && isAddOrEdit == true)
         {
-            resp = await AccountService.UpdateAsync(user);
-        }
-        else
-        {
-            resp = await AccountService.CreateAsync(user);
+            resp = await AccountService.ExaminerUpdateUserAsync(user);
         }
 
         if (resp.IsSuccessful)
         {
-            NavManager.NavigateTo("/usermanagement");
-        }
-    }
-
-
-
-    private async Task GetCampus()
-    {
-        var result = await CampusServive.GetCampus();
-        if (result != null)
-        {
-            camList = result.Items;
+            NavManager.NavigateTo("/Examiner/usermanagement");
         }
     }
 
     private async Task GetRoles()
     {
-        var result = await RoleServive.GetRolesForAdmin();
+        var result = await RoleServive.GetRolesForExaminer();
         if (result != null)
         {
             roleList = result.Items;
@@ -208,7 +204,7 @@
         }
         else
         {
-            NavManager.NavigateTo("/UserManagement");
+            NavManager.NavigateTo("/Examiner/usermanagement");
         }
     }
 }

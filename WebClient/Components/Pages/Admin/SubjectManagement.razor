@@ -1,0 +1,160 @@
+﻿@page "/Admin/SubjectManagement"
+@inject HttpClient Http
+
+<style>
+    td {
+        vertical-align: middle
+    }
+</style>
+
+<div class="col-md-10 col-xl-6">
+    <div class="mt-4 mb-4">
+        <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Subject</MudButton>
+    </div>
+    @if (subjectList.Count > 0)
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Subject Code</th>
+                    <th>Subject Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (subjectList != null)
+                {
+                    @foreach (var item in subjectList)
+                    {
+                        <tr>
+
+                            <td>@item.SubjectId </td>
+                            <td>@item.SubjectCode</td>
+                            <td>@item.SubjectName</td>
+                            <td>
+                                <div class="d-flex justify-content-evenly align-items-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(item.SubjectId)" ></MudIconButton>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteSubject(item.SubjectId)"></MudIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <span class="text-danger">No data found.</span>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    private List<Subject> subjectList = new List<Subject>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 9);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                await GetData();
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Subject Management";
+                    Layout.SubHeader1 = string.Empty;
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+    }
+
+    public async Task GetData()
+    {
+        var resp = await SubjectServive.GetSubjects();
+
+        if (resp.IsSuccessful)
+        {
+            subjectList = resp.Items;
+        }
+    }
+
+    private async Task DeleteSubject(int subjectId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to delete this subject?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Subject", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
+            var response = await SubjectServive.DeleteSubject(subjectId);
+            if (response.IsSuccessful)
+            {
+                await GetData();
+            }
+
+        }
+    }
+
+    private async Task OpenAddEditDialogAsync(int subjectId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<SubjectModify>
+        {
+            {x => x.SubjectId,subjectId}
+        };
+
+        var dialog = await DialogService.ShowAsync<SubjectModify>(subjectId == 0 ? "Subject Create" : "Subject Update", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
+}

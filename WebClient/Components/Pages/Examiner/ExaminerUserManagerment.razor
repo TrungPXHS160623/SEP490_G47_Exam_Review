@@ -1,4 +1,4 @@
-﻿@page "/usermanagement"
+﻿@page "/Examiner/usermanagement"
 @inject HttpClient Http
 
 <style>
@@ -12,7 +12,6 @@
         <label class="me-5">User: </label>
         <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
         <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
-        <span class="text-info col-auto" style="cursor:pointer;" @onclick="AddNewUser">Add New User</span>
     </div>
 
     @if (users.Count > 0)
@@ -43,7 +42,7 @@
                              <td>@user.RoleName</td>
                             <td>@user.CampusName</td>
                             <td>
-                                <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ViewUserDetail(user.UserId)"></MudIconButton>
                             </td>
                         </tr>
                     }
@@ -65,6 +64,8 @@
 
     private string searchText;
 
+    private int UserId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -73,9 +74,9 @@
         {
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
-            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 1);
+            var response = await MenuServive.CheckAccess(UserId, 10);
 
             if (!response.IsSuccessful)
             {
@@ -101,64 +102,16 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetUserForAdmin(searchText);
+        var response = await AccountService.GetUserForExaminer(UserId,searchText);
         if (response.IsSuccessful)
         {
             users = response.Items;
         }
     }
 
-    private async Task DeleteUser(int UserId)
-    {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                BackdropClick = false,
-            };
-
-        var parameters = new DialogParameters<Dialog>
-        {
-            { x => x.Content, "Are you sure want to delete this account?" },
-            { x => x.BtnTextConfirm, "Delete" },
-            { x => x.BtnTextCancel, "Cancel" },
-        };
-
-        var dialog = await DialogService.ShowAsync<Dialog>("Delete Account", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-            var user = auth.User;
-            var currentUserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
-            if (currentUserId == UserId)
-            {
-                this.Snackbar.Add("You cannot delete your current account", Severity.Warning);
-            }
-            else
-            {
-                var response = await AccountService.DeleteAsync(UserId);
-                if (response.IsSuccessful)
-                {
-                    await FetchUsers();
-                }
-            }
-        }
-    }
-
-    private void AddNewUser()
-    {
-        NavManager.NavigateTo($"/Admin/AddUser");
-    }
-
-
     private void ViewUserDetail(int userId)
     {
-        NavManager.NavigateTo($"/Admin/EditUser/{userId}");
+        NavManager.NavigateTo($"/Examiner/EditUser/{userId}");
     }
 
 }

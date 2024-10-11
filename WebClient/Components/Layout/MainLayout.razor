@@ -1,4 +1,4 @@
-﻿@using WebClient.Services
+@using WebClient.Services
 @inherits LayoutComponentBase
 @inject HttpClient Http
 @inject IHostEnvironment HostEnvironment
@@ -20,7 +20,7 @@
                                 <label>Exam Review System</label>
                             </div>
                             <div>
-                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcom: @Email</label> |
+                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcome: @Email?.Replace("@fpt.edu.vn",string.Empty) (@Role)</label> |
                                 <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
 
                     <div class="content p-3">
                         <div style="border-top:1px solid #d9d8d8;" class="fs-5">
-                            <label class=" pt-4">© 2023 - FPT Education | <a href="#">About us</a></label>
+                            <label class=" pt-4">© 2024 - FPT Education | <a href="#">About us</a></label>
                         </div>
                     </div>
                 </main>
@@ -87,6 +87,8 @@
     public HttpContext? HttpContext { get; set; }
 
     public string Email { get; set; }
+
+    public string Role { get; set; }
 
     public string Header { get; set; }
 
@@ -132,6 +134,44 @@
         var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
         var user = auth.User;
         Email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+        var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
+
+        switch (userRole)
+        {
+            case 1:
+                {
+                    Role = "Admin";
+                    break;
+                }
+
+            case 2:
+                {
+                    Role = "Examiner";
+                    break;
+                }
+
+            case 3:
+                {
+                    Role = "Lecture";
+                    break;
+                }
+
+            case 4:
+                {
+                    Role = "Head of Department";
+                    break;
+                }
+            case 5:
+                {
+                    Role = "Curriculum Development";
+                    break;
+                }
+            default:
+                {
+                    Role = "Guest";
+                    break;
+                }
+        }
     }
 
     private async Task<AuthenticationResponse> GetKeys()
@@ -161,7 +201,6 @@
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true,
                 BackdropClick = false,
-
             };
 
         var parameters = new DialogParameters<Profile>();
