@@ -22,7 +22,7 @@ namespace WebApi.Repository
             try
             {
                 var list = await (from rp in dbContext.Reports
-                                  where rp.AssignemtId == reportRequest.AssignmentId
+                                  where rp.AssignmentId == reportRequest.AssignmentId
                                   select rp).ToListAsync();
 
                 var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.RerportId == x.ReportId)).ToList();
@@ -43,7 +43,7 @@ namespace WebApi.Repository
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
                             CreateDate = item.CreateDate,
                             UpdateDate = item.UpdateDate,
-                            AssignemtId = reportRequest.AssignmentId,
+							AssignmentId = reportRequest.AssignmentId,
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
