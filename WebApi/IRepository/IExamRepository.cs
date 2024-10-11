@@ -37,6 +37,8 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
 
+        Task<ResultResponse<CampusSubjectExamCodeResponse>> GetExamByCampusAndSubject(int campusId, int subjectId );
+
 
 
 
