@@ -701,20 +701,28 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-    //exam by status
-	public async Task<IEnumerable<ExamByStatusResponse>> GetExamsByStatusAsync(int statusId, int? campusId = null)
+	//exam by status
+	public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
 	{
-		var query = _context.Exams
+		// Start the query with the Exams DbSet
+		IQueryable<Exam> query = _context.Exams
 			.Include(e => e.Campus)
 			.Include(e => e.InstructorAssignments)
-			.ThenInclude(ia => ia.AssignedUser)
-			.Where(e => e.ExamStatusId == statusId);
+			.ThenInclude(ia => ia.AssignedUser);
 
+		// Apply filtering based on statusId if provided
+		if (statusId.HasValue)
+		{
+			query = query.Where(e => e.ExamStatusId == statusId.Value);
+		}
+
+		// Apply filtering based on campusId if provided
 		if (campusId.HasValue)
 		{
 			query = query.Where(e => e.CampusId == campusId.Value);
 		}
 
+		// Execute the query and project the results to the desired response structure
 		var results = await query.Select(e => new ExamByStatusResponse
 		{
 			ExamStatus = e.ExamStatus.StatusContent,
@@ -723,8 +731,11 @@ public class ExamRepository : IExamRepository
 			Lecturer = e.InstructorAssignments.FirstOrDefault().AssignedUser.Mail
 		}).ToListAsync();
 
-		return results;
+		return (results, results.Count);
 	}
+
+
+
 	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();

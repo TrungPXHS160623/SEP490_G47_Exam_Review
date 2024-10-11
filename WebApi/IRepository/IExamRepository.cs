@@ -39,7 +39,6 @@ namespace WebApi.IRepository
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
 
 		//get exam by status
-		Task<IEnumerable<ExamByStatusResponse>> GetExamsByStatusAsync(int statusId, int? campusId = null);
-
+		Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 	}
 }

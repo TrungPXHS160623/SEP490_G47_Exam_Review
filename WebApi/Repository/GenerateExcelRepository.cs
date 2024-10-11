@@ -61,29 +61,44 @@ namespace WebApi.Repository
 				foreach (var exam in sortedExams)
 				{
 					worksheet.Cells[row, 1].Value = index++;
+					var instructorAssignments = exam.InstructorAssignments;
 
-					// Chọn InstructorAssignment có chứa Report
-					var instructorAssignment = exam.InstructorAssignments.FirstOrDefault(ia => ia.Reports.Any());
-					if (instructorAssignment == null)
-					{
-						// Nếu không có InstructorAssignment nào có Report, lấy InstructorAssignment đầu tiên
-						instructorAssignment = exam.InstructorAssignments.FirstOrDefault();
-					}
+					// Create a string containing all reports
+					var allReports = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
+						.ToList();
 
-					worksheet.Cells[row, 2].Value = instructorAssignment?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+					string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
+
+					// Set lecturer (assuming you want to get the first one)
+					var assignedInstructor = instructorAssignments.FirstOrDefault();
+					worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+
 					worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
 					worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
 					worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
-					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy") ?? "N/A"; // Planned test date
+					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
 					worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
 					worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
 					worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
 
-					var report = instructorAssignment?.Reports.FirstOrDefault();
-					worksheet.Cells[row, 10].Value = report?.ReportContent ?? "N/A"; // Report Review
+					// Get the details of the reports
+					var allReportContents = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => r.ReportContent)
+						.ToList();
 
-					var solution = report?.QuestionSolutionDetail;
-					worksheet.Cells[row, 11].Value = solution ?? "N/A"; // Solution Details
+					string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
+					worksheet.Cells[row, 10].Value = combinedReportContents; 
+
+					var allSolutions = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => r.QuestionSolutionDetail)
+						.ToList();
+
+					string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
+					worksheet.Cells[row, 11].Value = combinedSolutions; 
 
 					// Set modification date only if status is "Complete"
 					if (exam.ExamStatus?.StatusContent == "Complete")
@@ -92,21 +107,40 @@ namespace WebApi.Repository
 					}
 					else
 					{
-						worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" nếu không hoàn thành
+						worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" if not complete
 					}
 
 					// Set the status
 					worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
 
+					// Enable text wrapping for the comments and solutions columns
+					worksheet.Cells[row, 10].Style.WrapText = true;
+					worksheet.Cells[row, 11].Style.WrapText = true;
+
+					// Left align the text in all columns and center vertically
+					for (int col = 1; col <= 13; col++)
+					{
+						worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+						worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					}
+
 					row++;
 				}
 
-				worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns();
+				// Left align the header row and center vertically
+				for (int col = 1; col <= 13; col++)
+				{
+					worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+					worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+				}
+
+				worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns(); // Auto-fit all columns
 
 				// Convert the package to a byte array
 				return package.GetAsByteArray();
 			}
 		}
+
 
 		public byte[] GenerateExcelByStatus(int statusId)
 		{
@@ -156,29 +190,44 @@ namespace WebApi.Repository
 				foreach (var exam in sortedExams)
 				{
 					worksheet.Cells[row, 1].Value = index++;
+					var instructorAssignments = exam.InstructorAssignments;
 
-					// Chọn InstructorAssignment có chứa Report
-					var instructorAssignment = exam.InstructorAssignments.FirstOrDefault(ia => ia.Reports.Any());
-					if (instructorAssignment == null)
-					{
-						// Nếu không có InstructorAssignment nào có Report, lấy InstructorAssignment đầu tiên
-						instructorAssignment = exam.InstructorAssignments.FirstOrDefault();
-					}
+					// Tạo chuỗi chứa tất cả các report
+					var allReports = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
+						.ToList();
 
-					worksheet.Cells[row, 2].Value = instructorAssignment?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+					string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
+
+					// Set lecturer (assuming bạn muốn lấy người đầu tiên)
+					var assignedInstructor = instructorAssignments.FirstOrDefault();
+					worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+
 					worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
 					worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
 					worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
-					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy") ?? "N/A"; // Planned test date
+					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
 					worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
 					worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
 					worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
 
-					var report = instructorAssignment?.Reports.FirstOrDefault();
-					worksheet.Cells[row, 10].Value = report?.ReportContent ?? "N/A"; // Report Review
+					// Chỉ lấy các report chứa report
+					var allReportContents = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => r.ReportContent)
+						.ToList();
 
-					var solution = report?.QuestionSolutionDetail;
-					worksheet.Cells[row, 11].Value = solution ?? "N/A"; // Solution Details
+					string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
+					worksheet.Cells[row, 10].Value = combinedReportContents; 
+
+					var allSolutions = instructorAssignments
+						.SelectMany(ia => ia.Reports)
+						.Select(r => r.QuestionSolutionDetail)
+						.ToList();
+
+					string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
+					worksheet.Cells[row, 11].Value = combinedSolutions; 
 
 					// Set modification date only if status is "Complete"
 					if (exam.ExamStatus?.StatusContent == "Complete")
@@ -193,7 +242,25 @@ namespace WebApi.Repository
 					// Set the status
 					worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
 
+					// Enable text wrapping for the comments and solutions columns
+					worksheet.Cells[row, 10].Style.WrapText = true;
+					worksheet.Cells[row, 11].Style.WrapText = true;
+
+					// Left align the text in all columns and center vertically
+					for (int col = 1; col <= 13; col++)
+					{
+						worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+						worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					}
+
 					row++;
+				}
+
+				// Left align the header row and center vertically
+				for (int col = 1; col <= 13; col++)
+				{
+					worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+					worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
 				}
 
 				worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns();
@@ -202,5 +269,6 @@ namespace WebApi.Repository
 				return package.GetAsByteArray();
 			}
 		}
+
 	}
 }
