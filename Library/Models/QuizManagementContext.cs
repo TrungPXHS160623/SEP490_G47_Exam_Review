@@ -156,7 +156,7 @@ public partial class QuizManagementContext : DbContext
             entity.HasKey(e => e.ReportId);
 
             entity.HasOne(d => d.Assignemt).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.AssignemtId)
+                .HasForeignKey(d => d.AssignmentId)
                 .HasConstraintName("FK_Reports_InstructorAssignments");
         });
 

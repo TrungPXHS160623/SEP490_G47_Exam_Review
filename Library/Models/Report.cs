@@ -7,7 +7,7 @@ public partial class Report
 {
     public int ReportId { get; set; }
 
-    public int? AssignemtId { get; set; }
+    public int? AssignmentId { get; set; }
 
     public string? ReportContent { get; set; }
 
