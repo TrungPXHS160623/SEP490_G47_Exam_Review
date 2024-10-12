@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
@@ -16,6 +17,7 @@ namespace WebApi.Controllers
 		}
 
 		// Endpoint xuất tất cả các exams
+		[AllowAnonymous]			
 		[HttpGet("export-all")]
 		public IActionResult ExportAllToExcel()
 		{
@@ -36,6 +38,7 @@ namespace WebApi.Controllers
 		}
 
 		// Endpoint xuất exams theo trạng thái bằng statusId
+		[AllowAnonymous]
 		[HttpGet("export/status/{statusId}")]
 		public IActionResult ExportToExcelByStatus(int statusId)
 		{

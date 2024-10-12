@@ -17,17 +17,20 @@ namespace WebApi.Repository
 		public async Task<IEnumerable<LecturerBySubjectResponse>> GetLecturersBySubjectAndCampus(int subjectId, int campusId)
 		{
 			var lecturers = await _context.CampusUserSubjects
-		.Where(cus => cus.SubjectId == subjectId && cus.CampusId == campusId && cus.IsLecturer)
-		.Select(cus => new LecturerBySubjectResponse
-		{
-			Lecturer = cus.User.Mail, // Assuming User entity has a Mail property
-			SubjectName = cus.Subject.SubjectName,		
-			Campus = cus.Campus.CampusName,
-			ExamCodes = cus.Subject.Exams.Select(e => e.ExamCode).ToList(),
-		})
-		.ToListAsync();
+				.Where(cus => cus.SubjectId == subjectId &&
+							  cus.CampusId == campusId &&
+							  cus.IsLecturer == true) // Check for true directly
+				.Select(cus => new LecturerBySubjectResponse
+				{
+					Lecturer = cus.User.Mail, // Assuming User entity has a Mail property
+					SubjectName = cus.Subject.SubjectName,
+					Campus = cus.Campus.CampusName,
+					ExamCodes = cus.Subject.Exams.Select(e => e.ExamCode).ToList(),
+				})
+				.ToListAsync();
 
 			return lecturers;
 		}
+
 	}
 }
