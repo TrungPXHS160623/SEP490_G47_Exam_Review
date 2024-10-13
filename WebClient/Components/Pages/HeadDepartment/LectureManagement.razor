@@ -1,0 +1,117 @@
+﻿@page "/HeadDepartment/lectureManagement"
+
+@inject HttpClient Http
+
+<style>
+    td {
+        vertical-align: middle
+    }
+</style>
+
+<div class="w-50">
+    <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
+        <label class="me-5">User: </label>
+        <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
+        <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
+    </div>
+
+    @if (users.Count > 0)
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Is Active</th>
+                    <th>Role</th>
+                    <th>Campus</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (users != null)
+                {
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td>
+                                <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
+                            </td>
+                            <td>
+                                <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
+                             </td>
+                             <td>@user.RoleName</td>
+                            <td>@user.CampusName</td>
+                            <td>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ViewUserDetail(user.UserId)"></MudIconButton>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <span class="text-danger">No data found.</span>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    private List<UserResponse> users = new List<UserResponse>();
+
+    private string searchText;
+
+    private int UserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(UserId, 12);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                await FetchUsers();
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader1 = string.Empty;
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+
+
+    }
+
+    private async Task FetchUsers()
+    {
+        var response = await AccountService.GetUserForExaminer(UserId,searchText);
+        if (response.IsSuccessful)
+        {
+            users = response.Items;
+        }
+    }
+
+    private void ViewUserDetail(int userId)
+    {
+        NavManager.NavigateTo($"/Examiner/EditUser/{userId}");
+    }
+
+}
