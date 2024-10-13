@@ -73,7 +73,7 @@
                         <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
                         <MudTh>Head of Department</MudTh>
-                        <MudTh>Estimate Time</MudTh>
+                        <MudTh>Exam Type</MudTh>
                         <MudTh>Start Date</MudTh>
                         <MudTh>End Date</MudTh>
                         <MudTh></MudTh>
@@ -85,7 +85,7 @@
                                 <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
-                            <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>@context.ExamType</MudTd>
                             <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>
