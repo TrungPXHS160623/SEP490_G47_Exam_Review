@@ -58,16 +58,12 @@
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <h4>Exam List</h4>
-                <h6>Selected Exam: @selectedExams.Count</h6>
-            </div>
-            <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)" OnClick="AssignExam">Tranfer Exam to Head Deparment</MudButton>
             </div>
         </div>
         <div>
             @if (ExamList.Count > 0)
             {
-                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" SelectOnRowClick="false" @bind-SelectedItems="selectedExams">
+                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -82,35 +78,39 @@
                         <MudTd>@context.ExamCode</MudTd>
                             <MudTd>@context.CampusName</MudTd>
                             <MudTd>
-                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
-                        </MudTd>
-                        <MudTd>@context.HeadDepartmentName</MudTd>
-                            <MudTd>@context.ExamType</MudTd>
-                            <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>
-                                <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
-                                    <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
-                                </div>
-                            </MudTd>
-                        </RowTemplate>
-                        @*<PagerContent>
+                                <label class=" fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                    </MudTd>
+                    <MudTd>@context.HeadDepartmentName</MudTd>
+                    <MudTd>@context.ExamType</MudTd>
+                    <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                    <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                    <MudTd>
+                        <div class="d-flex align-items-center justify-content-around">
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
+                            <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
+                        </div>
+                    </MudTd>
+                    </RowTemplate>
+                @*<PagerContent>
                 @if (AccList.Count > 10)
                 {
                 <MudTablePager />
                 }
                 </PagerContent> *@
-                    </MudTable>
+                </MudTable>
             }
             else
             {
                 <p>No Data</p>
             }
         </div>
-        <div class="mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-            <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+        <div class="mt-5 d-flex justify-content-between align-items-center">
+            <div>
+                <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+            </div>
+            <div>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="AssignExam">Tranfer Exam</MudButton>
+            </div>
         </div>
     </div>
 </div>
@@ -122,8 +122,7 @@
     IList<IBrowserFile> _files = new List<IBrowserFile>();
 
     public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
-
-    private HashSet<ExaminerExamResponse> selectedExams = new HashSet<ExaminerExamResponse>();
+    public List<ExaminerExamResponse> assignList = new List<ExaminerExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -240,18 +239,19 @@
         {
             ExamList = eList.Items;
         }
-        selectedExams.Clear();
     }
 
     private async Task AssignExam()
     {
-        if (selectedExams.Count > 0)
+        assignList = ExamList.Where(x => x.ExamStatusId == 1).Select(x => x).ToList();
+
+        if (assignList.Count > 0)
         {
             var msg = CheckSelectedExam();
 
             if (msg.Length == 0)
             {
-                var mailList = selectedExams.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
+                var mailList = assignList.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
 
                 List<MailUtil> list = new();
 
@@ -271,7 +271,7 @@
                         Subject = "Assign đề thi cho chủ nhiệm bộ môn"
                     };
 
-                var resp = await this.ExamServive.ChangeStatusExam(selectedExams.ToList());
+                var resp = await this.ExamServive.ChangeStatusExam(assignList.ToList());
 
                 if (resp.IsSuccessful)
                 {
@@ -293,19 +293,19 @@
     {
         List<string> errors = new List<string>();
 
-        var examsWithWrongStatus = selectedExams.Where(x => x.ExamStatusId != 1).ToList();
+        var examsWithWrongStatus = assignList.Where(x => x.ExamStatusId != 1).ToList();
         foreach (var exam in examsWithWrongStatus)
         {
             errors.Add($"Exam {exam.ExamCode} is already assigned. Cannot Re-Assign!");
         }
 
-        var examsWithMissingDates = selectedExams.Where(x => x.EndDate == null || x.StartDate == null).ToList();
+        var examsWithMissingDates = assignList.Where(x => x.EndDate == null || x.StartDate == null).ToList();
         foreach (var exam in examsWithMissingDates)
         {
             errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
         }
 
-        var examsWithMissingHead = selectedExams.Where(x => x.HeadDepartmentId == null).ToList();
+        var examsWithMissingHead = assignList.Where(x => x.HeadDepartmentId == null).ToList();
         foreach (var exam in examsWithMissingHead)
         {
             errors.Add($"Exam {exam.ExamCode} has no subject leader yet.");
