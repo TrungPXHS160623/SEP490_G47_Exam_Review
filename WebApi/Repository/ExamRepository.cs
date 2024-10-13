@@ -371,7 +371,7 @@ public class ExamRepository : IExamRepository
                             StartDate = ex.StartDate,
                             ExamCode = ex.ExamCode,
                             CampusName = ca.CampusName,
-                            EstimatedTimeTest = ex.EstimatedTimeTest,
+                            ExamType = ex.ExamType,
                             ExamStatusContent = st.StatusContent,
                             ExamStatusId = st.ExamStatusId,
                             HeadDepartmentName = u1.Mail,
