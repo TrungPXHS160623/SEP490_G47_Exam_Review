@@ -2,6 +2,7 @@
 @page "/Admin/AddUser"
 
 <EditForm Model="user" OnValidSubmit="HandleValidSubmit" style="width:320px">
+    <FluentValidationValidator />
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="col-3">
             <label>Email:</label>
@@ -13,7 +14,7 @@
         else
         {
             <div class="col-8">
-                <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" />
+                <MudTextField @bind-Value="user.Email" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" For="@(() => user.Email)" />
             </div>
         }
     </div>
@@ -31,7 +32,8 @@
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
-                           Disabled="IsCurrentId">
+                           Disabled="IsCurrentId"
+                           For="@(() => user.RoleId)">
 
                     @if (roleList.Count > 0)
                     {
@@ -57,7 +59,8 @@
                            Text="@(camList.FirstOrDefault(x => x.CampusId == user.CampusId)?.CampusName)"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter">
+                           AnchorOrigin="Origin.BottomCenter"
+                           For="@(() => user.CampusId)">
 
                     @if (camList.Count > 0)
                     {
