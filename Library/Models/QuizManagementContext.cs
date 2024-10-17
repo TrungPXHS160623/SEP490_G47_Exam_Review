@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 
 namespace Library.Models;
@@ -38,6 +39,13 @@ public partial class QuizManagementContext : DbContext
     public virtual DbSet<UserHistory> UserHistories { get; set; }
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
+
+    public virtual DbSet<Semester> Semesters { get; set; } = null!;
+
+    public virtual DbSet<SemesterCampusUserSubject> SemesterCampusUserSubjects { get; set; } = null!;
+
+
+    public virtual DbSet<UserDetail> UserDetails { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -181,6 +189,89 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.Users).HasForeignKey(d => d.RoleId);
         });
 
+        modelBuilder.Entity<Semester>(entity =>
+        {
+            entity.ToTable("Semester");
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+
+            entity.Property(e => e.EndDate).HasColumnType("date");
+
+            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+
+            entity.Property(e => e.SemesterName).HasMaxLength(100);
+
+            entity.Property(e => e.StartDate).HasColumnType("date");
+
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+        });
+
+        modelBuilder.Entity<SemesterCampusUserSubject>(entity =>
+        {
+            entity.HasKey(e => new { e.SemesterId, e.CampusUserSubjectId })
+                .HasName("PK__Semester__ACCC9C54F51488F5");
+
+            entity.ToTable("SemesterCampusUserSubject");
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+
+            entity.Property(e => e.UpdatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.CampusUserSubject)
+                .WithMany(p => p.SemesterCampusUserSubjects)
+                .HasForeignKey(d => d.CampusUserSubjectId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SemesterC__Campu__71D1E811");
+
+            entity.HasOne(d => d.Semester)
+                .WithMany(p => p.SemesterCampusUserSubjects)
+                .HasForeignKey(d => d.SemesterId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__SemesterC__Updat__70DDC3D8");
+        });
+
+        modelBuilder.Entity<UserDetail>(entity =>
+        {
+            entity.ToTable("UserDetail");
+
+            entity.HasIndex(e => e.UserId, "UQ__UserDeta__1788CC4DC8E24AA8")
+                .IsUnique();
+
+            entity.Property(e => e.Address).HasMaxLength(500);
+
+            entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+
+            entity.Property(e => e.DateOfBirth).HasColumnType("date");
+
+            entity.Property(e => e.EmailFe)
+                .HasMaxLength(250)
+                .HasColumnName("EmailFE");
+
+            entity.Property(e => e.FullName).HasMaxLength(250);
+
+            entity.Property(e => e.Gender).HasMaxLength(10);
+
+            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+
+            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
+
+            entity.Property(e => e.ProfilePicture).HasMaxLength(500);
+
+            entity.HasOne(d => d.User)
+                .WithOne(p => p.UserDetail)
+                .HasForeignKey<UserDetail>(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_User_UserDetail");
+        });
+
         modelBuilder.Entity<UserHistory>(entity =>
         {
             entity.ToTable("UserHistory");
@@ -210,6 +301,7 @@ public partial class QuizManagementContext : DbContext
 
         );
 
+
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
             new ExamStatus { ExamStatusId = 1, StatusContent = "Not Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -230,6 +322,10 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
+      
+
+
+       
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
 
@@ -242,6 +338,7 @@ public partial class QuizManagementContext : DbContext
             new User { UserId = 4, Mail = "anhnq@fpt.edu.vn", CampusId = 3, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 5, Mail = "minhnh@fpt.edu.vn", CampusId = 4, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 6, Mail = "phongtl@fpt.edu.vn", CampusId = 5, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for Lecturer
             new User { UserId = 7, Mail = "lanhbt@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -250,6 +347,7 @@ public partial class QuizManagementContext : DbContext
             new User { UserId = 10, Mail = "minhph@fpt.edu.vn", CampusId = 4, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 11, Mail = "trangnt@fpt.edu.vn", CampusId = 5, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 27, Mail = "quanpt@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 30, Mail = "trungpxhs160623@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
 
             // Seed data for Head of Department
@@ -263,19 +361,20 @@ public partial class QuizManagementContext : DbContext
             new User { UserId = 19, Mail = "lanhnv@fpt.edu.vn", CampusId = 4, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 20, Mail = "duongkt@fpt.edu.vn", CampusId = 5, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 21, Mail = "phuonglt@fpt.edu.vn", CampusId = 5, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 29, Mail = "tuanlmhe161245@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 31, Mail = "tungtkHS163077@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for Program Developer
             new User { UserId = 22, Mail = "phucdt@fpt.edu.vn", CampusId = 1, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 23, Mail = "thanhnt@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 24, Mail = "hungpv@fpt.edu.vn", CampusId = 3, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 25, Mail = "anhpt@fpt.edu.vn", CampusId = 4, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 29, Mail = "tuanlmhe161245@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 30, Mail = "trungpxhs160623@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 31, Mail = "tungtkHS163077@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+          
 
         );
+
+
 
         // 6. Seed data for Subject table
         modelBuilder.Entity<Subject>().HasData(
@@ -293,9 +392,6 @@ public partial class QuizManagementContext : DbContext
             new Subject { SubjectId = 8, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 9, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 10, SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-
-
-
 
         );
 
@@ -500,9 +596,115 @@ public partial class QuizManagementContext : DbContext
             new Report { ReportId = 4, AssignmentId = 12, ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 4, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Report { ReportId = 5, AssignmentId = 13, ReportContent = "In ENM401, question 3 has an error in the calculation.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 5, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Report { ReportId = 6, AssignmentId = 14, ReportContent = "In ENM401, question 4 has an error.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 6, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+         );
+
+        modelBuilder.Entity<Semester>().HasData(
+            new Semester { SemesterId = 1, SemesterName = "Fall2020", StartDate = new DateTime(2020, 9, 1), EndDate = new DateTime(2021, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 2, SemesterName = "Spring2021", StartDate = new DateTime(2021, 1, 16), EndDate = new DateTime(2021, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 3, SemesterName = "Summer2021", StartDate = new DateTime(2021, 6, 1), EndDate = new DateTime(2021, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 4, SemesterName = "Fall2021", StartDate = new DateTime(2021, 9, 1), EndDate = new DateTime(2022, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 5, SemesterName = "Spring2022", StartDate = new DateTime(2022, 1, 16), EndDate = new DateTime(2022, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 6, SemesterName = "Summer2022", StartDate = new DateTime(2022, 6, 1), EndDate = new DateTime(2022, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 7, SemesterName = "Fall2022", StartDate = new DateTime(2022, 9, 1), EndDate = new DateTime(2023, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 8, SemesterName = "Spring2023", StartDate = new DateTime(2023, 1, 16), EndDate = new DateTime(2023, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 9, SemesterName = "Summer2023", StartDate = new DateTime(2023, 6, 1), EndDate = new DateTime(2023, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 10, SemesterName = "Fall2023", StartDate = new DateTime(2023, 9, 1), EndDate = new DateTime(2024, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 11, SemesterName = "Spring2024", StartDate = new DateTime(2024, 1, 16), EndDate = new DateTime(2024, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 12, SemesterName = "Summer2024", StartDate = new DateTime(2024, 6, 1), EndDate = new DateTime(2024, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 13, SemesterName = "Fall2024", StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2025, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
+         );
+
+        // Seed data for SemesterCampusUserSubject
+        modelBuilder.Entity<SemesterCampusUserSubject>().HasData(
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 11, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 12, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 21, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 31, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 6, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 7, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 8, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 9, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 10, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 16, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 17, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 26, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 36, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 14, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 15, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 24, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 25, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 34, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 35, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 11, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 12, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 21, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 31, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 41, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 42, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 51, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
+        
+
+        );
 
 
-
+        modelBuilder.Entity<UserDetail>().HasData(
+            //User with Admin role
+            new UserDetail { UserDetailId = 1, UserId = 1, FullName = "Admin", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1980, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            //Users with Examiner role
+            new UserDetail { UserDetailId = 2, UserId = 2, FullName = "Liên Kết", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 3, UserId = 3, FullName = "Hoàng Lâm", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 3, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 4, UserId = 4, FullName = "Anh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 4, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 5, UserId = 5, FullName = "Minh Nhân", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 5, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 6, UserId = 6, FullName = "Phong Tài", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 6, 1), Gender = "Male", Address = "Huế", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 7, UserId = 28, FullName = "Hùng Lê", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 7, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            // Users with Lecturer role
+            new UserDetail { UserDetailId = 8, UserId = 7, FullName = "Lành Bích", PhoneNumber = "0123456789", EmailFe = "lanhbt@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = "Female", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 9, UserId = 8, FullName = "Khoa Đạt", PhoneNumber = "0123456789", EmailFe = "khoadt@fpt.edu.vn", DateOfBirth = new DateTime(1988, 9, 1), Gender = "Male", Address = "Hải Phòng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 10, UserId = 9, FullName = "Hoàng Tâm", PhoneNumber = "0123456789", EmailFe = "hoangtm@fpt.edu.vn", DateOfBirth = new DateTime(1987, 10, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 11, UserId = 10, FullName = "Minh Phúc", PhoneNumber = "0123456789", EmailFe = "minhph@fpt.edu.vn", DateOfBirth = new DateTime(1990, 11, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 12, UserId = 11, FullName = "Trạng Nguyên", PhoneNumber = "0123456789", EmailFe = "trangnt@fpt.edu.vn", DateOfBirth = new DateTime(1991, 12, 1), Gender = "Female", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 13, UserId = 27, FullName = "Quân Phạm", PhoneNumber = "0123456789", EmailFe = "quanpt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 14, UserId = 30, FullName = "Trung Phạm", PhoneNumber = "0123456789", EmailFe = "trungpxhs160623@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            //Users with Curriculum Development role
+            new UserDetail { UserDetailId = 15, UserId = 22, FullName = "Phúc Đạt", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1989, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 16, UserId = 23, FullName = "Thanh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 17, UserId = 24, FullName = "Hùng Phát", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 3, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 18, UserId = 25, FullName = "Anh Tùng", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 4, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 19, UserId = 26, FullName = "Trương Vĩnh", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 5, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            //Users with Head of Department role
+            new UserDetail { UserDetailId = 20, UserId = 12, FullName = "Nam Lê", PhoneNumber = "0123456789", EmailFe = "namlh@fpt.edu.vn", DateOfBirth = new DateTime(1988, 3, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 21, UserId = 13, FullName = "Quang Nguyễn", PhoneNumber = "0123456789", EmailFe = "quangnv@fpt.edu.vn", DateOfBirth = new DateTime(1986, 4, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 22, UserId = 14, FullName = "Huy Lê", PhoneNumber = "0123456789", EmailFe = "huylt@fpt.edu.vn", DateOfBirth = new DateTime(1985, 5, 1), Gender = "Male", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 23, UserId = 15, FullName = "Tuấn Phạm", PhoneNumber = "0123456789", EmailFe = "tuanpv@fpt.edu.vn", DateOfBirth = new DateTime(1984, 6, 1), Gender = "Male", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 24, UserId = 16, FullName = "Ngọc Đình", PhoneNumber = "0123456789", EmailFe = "ngocdt@fpt.edu.vn", DateOfBirth = new DateTime(1987, 7, 1), Gender = "Female", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 25, UserId = 17, FullName = "Minh Thảo", PhoneNumber = "0123456789", EmailFe = "minhth@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = "Female", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 26, UserId = 18, FullName = "Bình Lê", PhoneNumber = "0123456789", EmailFe = "binhlt@fpt.edu.vn", DateOfBirth = new DateTime(1990, 9, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 27, UserId = 19, FullName = "Lan Nguyễn", PhoneNumber = "0123456789", EmailFe = "lanhnv@fpt.edu.vn", DateOfBirth = new DateTime(1991, 10, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 28, UserId = 20, FullName = "Dương Khoa", PhoneNumber = "0123456789", EmailFe = "duongkt@fpt.edu.vn", DateOfBirth = new DateTime(1993, 11, 1), Gender = "Male", Address = "Huế", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 29, UserId = 21, FullName = "Phương Linh", PhoneNumber = "0123456789", EmailFe = "phuonglt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 12, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 30, UserId = 29, FullName = "Tuấn Lê", PhoneNumber = "0123456789", EmailFe = "tuanlmhe161245@fpt.edu.vn", DateOfBirth = new DateTime(1985, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new UserDetail { UserDetailId = 31, UserId = 31, FullName = "Tùng Khoa", PhoneNumber = "0123456789", EmailFe = "tungtkHS163077@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         OnModelCreatingPartial(modelBuilder);

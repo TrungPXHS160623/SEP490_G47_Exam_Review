@@ -29,5 +29,7 @@ public partial class User
 
     public virtual UserRole? Role { get; set; }
 
+    public virtual UserDetail? UserDetail { get; set; }
+
     public virtual ICollection<UserHistory> UserHistories { get; set; } = new List<UserHistory>();
 }
