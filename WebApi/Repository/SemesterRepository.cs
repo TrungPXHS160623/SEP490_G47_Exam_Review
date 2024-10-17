@@ -159,7 +159,7 @@ namespace WebApi.Repository
 
                 return new ResultResponse<SemesterResponse>
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     Message = ex.Message
                 };
             }
@@ -242,7 +242,7 @@ namespace WebApi.Repository
 
                 return new ResultResponse<SemesterResponse>
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     Message = ex.Message
                 };
             }
