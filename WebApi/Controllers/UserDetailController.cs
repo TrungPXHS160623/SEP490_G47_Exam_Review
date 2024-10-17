@@ -59,7 +59,7 @@ namespace WebApi.Controllers
         }
 
        
-        [HttpPut("{userDetailId}")]
+        [HttpPut("UpdateUserDetail/{userDetailId}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateUserDetail(int userDetailId, UserDetailRequest request)
         {
