@@ -6,7 +6,7 @@
         <FluentValidationValidator />
 
         <div class="mb-4 row">
-            <label class="col-4 text-end">Email:</label> 
+            <label class="col-4 text-end">Email:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -91,7 +91,7 @@
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
-
+        user.IsActive = true;
         if (isAuthenticated)
         {
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
@@ -106,6 +106,7 @@
             }
             else
             {
+
                 if (UserId != null)
                 {
                     await FetchUserDetails();
@@ -114,6 +115,7 @@
                 }
                 else
                 {
+
                     isAddOrEdit = true;
                 }
 
