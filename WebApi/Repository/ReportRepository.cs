@@ -45,6 +45,7 @@ namespace WebApi.Repository
                             CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  // Sử dụng thời gian hiện tại nếu không có CreateDate
                             UpdateDate = item.UpdateDate,  // UpdateDate có thể được cập nhật sau
                             AssignmentId = reportRequest.AssignmentId,
+
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);

@@ -1,7 +1,8 @@
 ﻿<style>
     .form-group {
         display: flex;
-        align-items: center
+        align-items: center;
+        justify-content:space-between
     }
 
     .mud-input.mud-disabled {
@@ -12,20 +13,20 @@
 <MudDialog>
     <DialogContent>
         <div class="form-group mb-4">
-            <label class="col-3">Exam Code:</label>
+            <label class="col-4 text-end">Exam Code:</label>
             <MudText>@exam.ExamCode</MudText>
         </div>
 
         <div class="form-group mb-4">
-            <label class="col-3">Subject Name:</label>
+            <label class="col-4 text-end">Subject Name:</label>
             <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Exam Creater:</label>
+            <label class="col-4 text-end">Exam Creater:</label>
             <MudText>@(exam.CreaterName ?? "N/A")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class="col-3">Lecture:</label>
+            <label class="col-4 text-end">Lecturer :</label>
             <MudSelect T="UserResponse"
                        @bind-SelectedValues=@exam.LectureList
                        Text="@("Selected Lecture : " + exam.LectureList.Count())"
@@ -44,33 +45,9 @@
             }
             </MudSelect>
         </div>
-        <div class="form-group mb-4">
-            <label class="col-3">Status:</label>
-            <MudText>@exam.ExamStatusContent</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Campus:</label>
-                <MudText>@exam.CampusName</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Exam Duration:</label>
-                <MudText>@exam.ExamDuration</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Exam Type:</label>
-                <MudText>@exam.ExamType</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">Start Date:</label>
-                <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-3">End Date:</label>
-                <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
-            </div>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
                 @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />

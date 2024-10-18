@@ -2,6 +2,7 @@
 using Library.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -108,5 +109,22 @@ namespace WebApi.Controllers
             return Ok(exams);
         }
 
-    }
+		// exam by status
+		[AllowAnonymous]
+		[HttpGet("GetExambyStatus")]
+		public async Task<IActionResult> GetExams(int? statusId = null, int? campusId = null)
+		{
+			var (exams, examCount) = await _examRepository.GetExamsByStatus(statusId, campusId);
+
+			var response = new
+			{
+				ExamCount = examCount, 
+				Exams = exams
+			};
+
+			return Ok(response);
+		}
+
+	}
+
 }

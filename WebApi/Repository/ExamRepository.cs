@@ -372,7 +372,7 @@ public class ExamRepository : IExamRepository
                             StartDate = ex.StartDate,
                             ExamCode = ex.ExamCode,
                             CampusName = ca.CampusName,
-                            EstimatedTimeTest = ex.EstimatedTimeTest,
+                            ExamType = ex.ExamType,
                             ExamStatusContent = st.StatusContent,
                             ExamStatusId = st.ExamStatusId,
                             HeadDepartmentName = u1.Mail,
@@ -698,7 +698,37 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+	//exam by status
+	public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
+	{
+		// Your existing implementation
+		IQueryable<Exam> query = _context.Exams
+			.Include(e => e.Campus)
+			.Include(e => e.InstructorAssignments)
+			.ThenInclude(ia => ia.AssignedUser);
+
+		if (statusId.HasValue)
+		{
+			query = query.Where(e => e.ExamStatusId == statusId.Value);
+		}
+
+		if (campusId.HasValue)
+		{
+			query = query.Where(e => e.CampusId == campusId.Value);
+		}
+
+		var results = await query.Select(e => new ExamByStatusResponse
+		{
+			ExamStatus = e.ExamStatus.StatusContent,
+			ExamCode = e.ExamCode,
+			Campus = e.Campus.CampusName,
+			Lecturer = e.InstructorAssignments.FirstOrDefault().AssignedUser.Mail
+		}).ToListAsync();
+
+		return (results, results.Count);
+	}
+
+	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();
     }

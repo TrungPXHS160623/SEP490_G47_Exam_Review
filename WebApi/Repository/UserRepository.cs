@@ -3,7 +3,6 @@ using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -431,7 +430,7 @@ namespace WebApi.Repository
                             from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
                             join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                             from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                            where r.RoleId == 4
+                            where r.RoleId == 3
                             select new UserResponse
                             {
                                 Email = u.Mail,

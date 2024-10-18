@@ -1,5 +1,5 @@
 ﻿@page "/HeadDepartment/ExamList"
-
+<h1 style="text-align: center;">Assign Exam</h1>
 <style>
     .mud-table-cell {
         border: none !important;
@@ -28,57 +28,51 @@
         z-index: 99;
     }
 </style>
-
-<div class="mt-4">
-    <div class="custom-box mb-4">
-        <div class="d-flex align-items-center flex-wrap w-50">
-            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
-
-             <MudSelect @bind-Value="request.StatusId"
-                        Variant="Variant.Outlined"
-                        Label="Status"
-                        Margin="Margin.Dense"
-                        AnchorOrigin="Origin.BottomCenter"
-                                  Clearable
-                        Class="me-4 col-auto">
-                 @if (statusList.Count > 0)
-                {
-                    @foreach (var item in statusList)
+<div class="d-flex justify-content-center">
+    <div class="mt-4">
+            <div class="d-flex align-items-center flex-wrap w-50">
+                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
+                <MudSelect @bind-Value="request.StatusId"
+                           Variant="Variant.Outlined"
+                           Label="Status"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Clearable
+                           Class="me-4 col-auto">
+                    @if (statusList.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        @foreach (var item in statusList)
+                        {
+                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
+                </MudSelect>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
-        </div>
-    </div>
-
-    <div class="custom-box">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h4>Exam List</h4>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
             </div>
-           
-        </div>
-        <div>
-            @if (ExamList.Count > 0)
-            {
-                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" >
-                    <HeaderContent>
-                        <MudTh>Exam Code</MudTh>
-                        <MudTh>Campus</MudTh>
-                        <MudTh>Status</MudTh>
-                        <MudTh>Start Date</MudTh>
-                        <MudTh>End Date</MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>@context.CampusName</MudTd>
-                        <MudTd>
-                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
-                        </MudTd>
+        <div class="custom-box">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h4>Exam List</h4>
+                </div>
+
+            </div>
+            <div>
+                @if (ExamList.Count > 0)
+                {
+                    <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
+                        <HeaderContent>
+                            <MudTh>Exam Code</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Review Start Date</MudTh>
+                            <MudTh>Review End Date</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.ExamCode</MudTd>
+                            <MudTd>
+                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                            </MudTd>
                             <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                             <MudTd>
@@ -88,20 +82,22 @@
                             </MudTd>
                         </RowTemplate>
                         @*<PagerContent>
-                @if (AccList.Count > 10)
-                {
-                <MudTablePager />
-                }
-                </PagerContent> *@
+                    @if (AccList.Count > 10)
+                    {
+                    <MudTablePager />
+                    }
+                    </PagerContent> *@
                     </MudTable>
-            }
-            else
-            {
-                <p>No Data</p>
-            }
+                }
+                else
+                {
+                    <p>No Data</p>
+                }
+            </div>
         </div>
     </div>
-</div>
+    </div>
+
 
 @code {
     [CascadingParameter]
@@ -170,7 +166,7 @@
         var options = new DialogOptions
             {
                 CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Medium,
+                MaxWidth = MaxWidth.Small,
                 FullWidth = true,
                 BackdropClick = false,
 

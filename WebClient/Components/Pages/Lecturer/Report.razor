@@ -34,51 +34,46 @@
         <div class="split-row justify-content-between">
             <div class="col-5">
                 <div class="split-row mb-4">
-                    <label class="col-5">Exam Code:</label>
+                    <label class="col-4 text-end">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
                     </div>
                     <div class="split-row mb-4">
-                        <label class="col-5">Subject Name:</label>
+                    <label class="col-4 text-end">Subject Name:</label>
                         <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                     </div>
                     <div class="split-row mb-4">
-                        <label class="col-5">Exam Creater:</label>
+                    <label class="col-4 text-end">Exam Creater:</label>
                         <MudText>@(exam.CreaterName ?? "N/A")</MudText>
                     </div>
                     <div class="split-row mb-4">
-                        <label class="col-5">Head of Department:</label>
+                    <label class="col-4 text-end">Head of Department:</label>
                         <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
                     </div>
                 </div>
                 <div class="col-5">
                     <div class="split-row mb-4">
-                        <label class="col-5">Status:</label>
+                    <label class="col-4 text-end">Status:</label>
                         <MudText>@exam.AssignStatusId</MudText>
                     </div>
                     <div class="split-row mb-4">
-                        <label class="col-5">Campus:</label>
-                        <MudText>@exam.CampusName</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-5">Exam Duration:</label>
+                    <label class="col-4 text-end">Exam Duration:</label>
                         <MudText>@exam.ExamDuration</MudText>
                     </div>
                     <div class="split-row mb-4">
-                        <label class="col-5">Exam Type:</label>
+                    <label class="col-4 text-end">Exam Type:</label>
                         <MudText>@exam.ExamType</MudText>
                     </div>
-
                     @if (exam.AssignStatusId != 3)
                 {
                     <div class="split-row mb-4">
-                        <label class="col-5">Exam Estimate Date:</label>
+                        <label class="col-4 text-end">Exam Estimate Date:</label>
                         <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
                     </div>
                 }
                 else
                 {
                     <div class="split-row mb-4">
-                        <label class="col-5">Exam Estimate Date: </label>
+                        <label class="col-4 text-end">Exam Estimate Date: </label>
                         <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                        IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
                                        @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
@@ -208,8 +203,8 @@
 
                 var mailModel = new MailModel
                     {
-                        Body = $"Giảng Viên {email.Replace("@fpr.edu.vn", string.Empty)} đã hoàn thành report test với mã đề là {exam.ExamCode}",
-                        Subject = $"Xác nhận ngày test môn {exam.SubjectName}",
+                        Body = $"Giảng Viên {email.Replace("@fpt.edu.vn", string.Empty)} đã hoàn thành report test với mã đề là {exam.ExamCode}",
+                        Subject = $"Hoàn thành Report môn {exam.SubjectName}",
                         MailList = mailList
                     };
 

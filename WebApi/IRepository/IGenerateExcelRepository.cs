@@ -3,5 +3,7 @@
 	public interface IGenerateExcelRepository
 	{
 		byte[] GenerateExcel();
+		byte[] GenerateExcelByStatus(int statusId);
 	}
+
 }

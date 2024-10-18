@@ -21,5 +21,5 @@ public partial class Report
 
     public DateTime? UpdateDate { get; set; }
 
-    public virtual InstructorAssignment? Assignemt { get; set; }
+    public virtual InstructorAssignment? Assignment { get; set; }
 }

@@ -39,8 +39,8 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<CampusSubjectExamCodeResponse>> GetExamByCampusAndSubject(int campusId, int subjectId );
 
+		Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 
 
-
-    }
+	}
 }
