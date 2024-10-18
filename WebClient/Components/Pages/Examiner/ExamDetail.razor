@@ -2,7 +2,7 @@
     .form-group {
         display: flex;
         align-items: center;
-        justify-content:space-between
+        justify-content: space-between
     }
 
     .mud-input.mud-disabled {
@@ -10,12 +10,13 @@
         color: black;
     }
 </style>
-<MudDialog>
-    <DialogContent>
-        <EditForm @ref=_refForm Model="exam">
+<EditForm @ref=_refForm Model="exam" OnValidSubmit="Excute">
+    <FluentValidationValidator/>
+    <MudDialog>
+        <DialogContent>
             <div class="form-group mb-4">
-               <label class="col-4 text-end">Exam Code:</label>
-                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Required RequiredError="This field is required." />
+                <label class="col-4 text-end">Exam Code:</label>
+                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" For="@(()=> exam.ExamCode)" />
             </div>
             @if (ExamId != 0)
             {
@@ -36,8 +37,7 @@
                                Disabled=@IsView
                                ValueChanged="SubjectChanged"
                                Placeholder="Choose Subject"
-                               Required
-                               RequiredError="This field is required." >
+                               For="@(()=> exam.SubjectId)">
                         @if (subList.Count > 0)
                         {
                             @foreach (var item in subList)
@@ -76,8 +76,7 @@
                            Disabled=@IsView
                            ValueChanged="CampusChanged"
                            Placeholder="Choose Campus"
-                           Required 
-                           RequiredError="This field is required.">
+                           For="@(()=> exam.CampusId)">
                     @if (camList.Count > 0)
                     {
                         @foreach (var item in camList)
@@ -95,8 +94,7 @@
                            AnchorOrigin="Origin.BottomCenter"
                            Disabled=@IsView
                            Placeholder="Choose Exam Duration"
-                           Required 
-                           RequiredError="This field is required.">
+                           For="@(()=> exam.ExamDuration)">
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
                 </MudSelect>
@@ -109,8 +107,7 @@
                            AnchorOrigin="Origin.BottomCenter"
                            Disabled=@IsView
                            Placeholder="Choose Exam Type"
-                           Required 
-                           RequiredError="This field is required.">
+                           For="@(()=> exam.ExamType)">
                     <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
@@ -123,32 +120,32 @@
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Clearable Disabled=@IsView Required RequiredError="This field is required."/>
+                               Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
             </div>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">End Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Clearable Disabled=@IsView Required RequiredError="This field is required." />
+                               Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.EndDate)" />
             </div>
-        </EditForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-            @if (_processing)
-            {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Saving</MudText>
-            }
-            else
-            {
-                <MudText>@(IsView ? "Edit" : "Save")</MudText>
-            }
-        </MudButton>
-        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-    </DialogActions>
-</MudDialog>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Saving</MudText>
+                }
+                else
+                {
+                    <MudText>@(IsView ? "Edit" : "Save")</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
 
 
 
