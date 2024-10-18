@@ -12,7 +12,12 @@ public partial class User
     public int? CampusId { get; set; }
 
     public int? RoleId { get; set; }
-
+    public string FullName { get; set; } = "Unknown";
+    public string PhoneNumber { get; set; } = "Unknown";
+    public string? EmailFe { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public bool? Gender { get; set; }
+    public string? Address { get; set; }
     public bool IsActive { get; set; }
 
     public DateTime? CreateDate { get; set; }
@@ -31,3 +36,6 @@ public partial class User
 
     public virtual ICollection<UserHistory> UserHistories { get; set; } = new List<UserHistory>();
 }
+
+
+

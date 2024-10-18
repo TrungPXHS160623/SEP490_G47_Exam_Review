@@ -20,4 +20,6 @@ public partial class CampusUserSubject
     public virtual Subject? Subject { get; set; }
 
     public virtual User? User { get; set; }
+
+    public virtual ICollection<SemesterCampusUserSubject> SemesterCampusUserSubjects { get; set; }
 }
