@@ -87,7 +87,7 @@ public class Program
 		builder.Services.AddScoped<ILecturerBySubjectRepository, LecturerBySubjectRepository>();
 
         builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
-        builder.Services.AddScoped<IUserDetailRepository, UserDetailRepository>();
+        
 
 
 		var app = builder.Build();

@@ -45,7 +45,7 @@ public partial class QuizManagementContext : DbContext
     public virtual DbSet<SemesterCampusUserSubject> SemesterCampusUserSubjects { get; set; } = null!;
 
 
-    public virtual DbSet<UserDetail> UserDetails { get; set; } = null!;
+    
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -238,39 +238,7 @@ public partial class QuizManagementContext : DbContext
                 .HasConstraintName("FK__SemesterC__Updat__70DDC3D8");
         });
 
-        modelBuilder.Entity<UserDetail>(entity =>
-        {
-            entity.ToTable("UserDetail");
-
-            entity.HasIndex(e => e.UserId, "UQ__UserDeta__1788CC4DC8E24AA8")
-                .IsUnique();
-
-            entity.Property(e => e.Address).HasMaxLength(500);
-
-            entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-
-            entity.Property(e => e.DateOfBirth).HasColumnType("date");
-
-            entity.Property(e => e.EmailFe)
-                .HasMaxLength(250)
-                .HasColumnName("EmailFE");
-
-            entity.Property(e => e.FullName).HasMaxLength(250);
-
-            entity.Property(e => e.Gender).HasMaxLength(10);
-
-            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
-
-            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
-
-            entity.Property(e => e.ProfilePicture).HasMaxLength(500);
-
-            entity.HasOne(d => d.User)
-                .WithOne(p => p.UserDetail)
-                .HasForeignKey<UserDetail>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_User_UserDetail");
-        });
+        
 
         modelBuilder.Entity<UserHistory>(entity =>
         {
@@ -330,51 +298,51 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<User>().HasData(
 
             // Seed data for role admin
-            new User { UserId = 1, Mail = "admin@fpt.edu.vn", CampusId = 1, RoleId = 1, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 1, Mail = "admin@fpt.edu.vn", CampusId = 1, RoleId = 1, FullName = "Admin", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1980, 1, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
 
             // Seed data for Examiner
-            new User { UserId = 2, Mail = "lienkt@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 3, Mail = "hoanglm@fpt.edu.vn", CampusId = 2, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 4, Mail = "anhnq@fpt.edu.vn", CampusId = 3, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 5, Mail = "minhnh@fpt.edu.vn", CampusId = 4, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 6, Mail = "phongtl@fpt.edu.vn", CampusId = 5, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 2, Mail = "lienkt@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Liên Kết", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 3, Mail = "hoanglm@fpt.edu.vn", CampusId = 2, RoleId = 2, FullName = "Hoàng Lâm", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 3, 1), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 4, Mail = "anhnq@fpt.edu.vn", CampusId = 3, RoleId = 2, FullName = "Anh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 4, 1), Gender = true, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 5, Mail = "minhnh@fpt.edu.vn", CampusId = 4, RoleId = 2, FullName = "Minh Nhân", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 5, 1), Gender = true, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 6, Mail = "phongtl@fpt.edu.vn", CampusId = 5, RoleId = 2, FullName = "Phong Tài", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 6, 1), Gender = true, Address = "Huế", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Hưng Lê", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 7, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
 
             // Seed data for Lecturer
-            new User { UserId = 7, Mail = "lanhbt@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 8, Mail = "khoadt@fpt.edu.vn", CampusId = 2, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 9, Mail = "hoangtm@fpt.edu.vn", CampusId = 3, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 10, Mail = "minhph@fpt.edu.vn", CampusId = 4, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 11, Mail = "trangnt@fpt.edu.vn", CampusId = 5, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 27, Mail = "quanpt@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 30, Mail = "trungpxhs160623@fpt.edu.vn", CampusId = 1, RoleId = 3, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 7, Mail = "lanhbt@fpt.edu.vn", CampusId = 1, RoleId = 3, FullName = "Lành Bích", PhoneNumber = "0123456789", EmailFe = "lanhbt@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = false, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 8, Mail = "khoadt@fpt.edu.vn", CampusId = 2, RoleId = 3, FullName = "Khoa Đạt", PhoneNumber = "0123456789", EmailFe = "khoadt@fpt.edu.vn", DateOfBirth = new DateTime(1988, 9, 1), Gender = true, Address = "Hải Phòng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 9, Mail = "hoangtm@fpt.edu.vn", CampusId = 3, RoleId = 3, FullName = "Hoàng Tâm", PhoneNumber = "0123456789", EmailFe = "hoangtm@fpt.edu.vn", DateOfBirth = new DateTime(1987, 10, 1), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 10, Mail = "minhph@fpt.edu.vn", CampusId = 4, RoleId = 3, FullName = "Minh Phúc", PhoneNumber = "0123456789", EmailFe = "minhph@fpt.edu.vn", DateOfBirth = new DateTime(1990, 11, 1), Gender = true, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 11, Mail = "trangnt@fpt.edu.vn", CampusId = 5, RoleId = 3, FullName = "Trạng Nguyên", PhoneNumber = "0123456789", EmailFe = "trangnt@fpt.edu.vn", DateOfBirth = new DateTime(1991, 12, 1), Gender = false, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 27, Mail = "quanpt@fpt.edu.vn", CampusId = 1, RoleId = 3, FullName = "Quân Phạm", PhoneNumber = "0123456789", EmailFe = "quanpt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 1, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 30, Mail = "trungpxhs160623@fpt.edu.vn", CampusId = 1, RoleId = 3, FullName = "Trung Phạm", PhoneNumber = "0123456789", EmailFe = "trungpxhs160623@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
 
             // Seed data for Head of Department
-            new User { UserId = 12, Mail = "namlh@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 13, Mail = "quangnv@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 14, Mail = "huylt@fpt.edu.vn", CampusId = 2, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 15, Mail = "tuanpv@fpt.edu.vn", CampusId = 2, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 16, Mail = "ngocdt@fpt.edu.vn", CampusId = 3, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 17, Mail = "minhth@fpt.edu.vn", CampusId = 3, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 18, Mail = "binhlt@fpt.edu.vn", CampusId = 4, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 19, Mail = "lanhnv@fpt.edu.vn", CampusId = 4, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 20, Mail = "duongkt@fpt.edu.vn", CampusId = 5, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 21, Mail = "phuonglt@fpt.edu.vn", CampusId = 5, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 29, Mail = "tuanlmhe161245@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 31, Mail = "tungtkHS163077@fpt.edu.vn", CampusId = 1, RoleId = 4, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 12, Mail = "namlh@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Nam Lê", PhoneNumber = "0123456789", EmailFe = "namlh@fpt.edu.vn", DateOfBirth = new DateTime(1988, 3, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 13, Mail = "quangnv@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Quang Nguyễn", PhoneNumber = "0123456789", EmailFe = "quangnv@fpt.edu.vn", DateOfBirth = new DateTime(1986, 4, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },              
+            new User { UserId = 14, Mail = "huylt@fpt.edu.vn", CampusId = 2, RoleId = 4, FullName = "Huy Lê", PhoneNumber = "0123456789", EmailFe = "huylt@fpt.edu.vn", DateOfBirth = new DateTime(1985, 5, 1), Gender = true, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 15, Mail = "tuanpv@fpt.edu.vn", CampusId = 2, RoleId = 4, FullName = "Tuấn Phạm", PhoneNumber = "0123456789", EmailFe = "tuanpv@fpt.edu.vn", DateOfBirth = new DateTime(1984, 6, 1), Gender = true, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 16, Mail = "ngocdt@fpt.edu.vn", CampusId = 3, RoleId = 4, FullName = "Ngọc Đình", PhoneNumber = "0123456789", EmailFe = "ngocdt@fpt.edu.vn", DateOfBirth = new DateTime(1987, 7, 1), Gender = false, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 17, Mail = "minhth@fpt.edu.vn", CampusId = 3, RoleId = 4, FullName = "Minh Thảo", PhoneNumber = "0123456789", EmailFe = "minhth@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = false, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 18, Mail = "binhlt@fpt.edu.vn", CampusId = 4, RoleId = 4, FullName = "Bình Lê", PhoneNumber = "0123456789", EmailFe = "binhlt@fpt.edu.vn", DateOfBirth = new DateTime(1990, 9, 1), Gender = true, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 19, Mail = "lanhnv@fpt.edu.vn", CampusId = 4, RoleId = 4, FullName = "Lan Nguyễn", PhoneNumber = "0123456789", EmailFe = "lanhnv@fpt.edu.vn", DateOfBirth = new DateTime(1991, 10, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 20, Mail = "duongkt@fpt.edu.vn", CampusId = 5, RoleId = 4, FullName = "Dương Khoa", PhoneNumber = "0123456789", EmailFe = "duongkt@fpt.edu.vn", DateOfBirth = new DateTime(1993, 11, 1), Gender = true, Address = "Huế", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 21, Mail = "phuonglt@fpt.edu.vn", CampusId = 5, RoleId = 4, FullName = "Phương Linh", PhoneNumber = "0123456789", EmailFe = "phuonglt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 12, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 29, Mail = "tuanlmhe161245@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Tuấn Lê", PhoneNumber = "0123456789", EmailFe = "tuanlmhe161245@fpt.edu.vn", DateOfBirth = new DateTime(1985, 1, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 31, Mail = "tungtkHS163077@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Tùng Khoa", PhoneNumber = "0123456789", EmailFe = "tungtkHS163077@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
 
             // Seed data for Program Developer
-            new User { UserId = 22, Mail = "phucdt@fpt.edu.vn", CampusId = 1, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 23, Mail = "thanhnt@fpt.edu.vn", CampusId = 2, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 24, Mail = "hungpv@fpt.edu.vn", CampusId = 3, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 25, Mail = "anhpt@fpt.edu.vn", CampusId = 4, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-          
+            new User { UserId = 22, Mail = "phucdt@fpt.edu.vn", CampusId = 1, RoleId = 5, FullName = "Phúc Đạt", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1989, 1, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 23, Mail = "thanhnt@fpt.edu.vn", CampusId = 2, RoleId = 5, FullName = "Thanh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 24, Mail = "hungpv@fpt.edu.vn", CampusId = 3, RoleId = 5, FullName = "Hùng Phát", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 3, 1), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 25, Mail = "anhpt@fpt.edu.vn", CampusId = 4, RoleId = 5, FullName = "Anh Tùng", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 4, 1), Gender = true, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 26, Mail = "truongvq@fpt.edu.vn", CampusId = 5, RoleId = 5, FullName = "Trương Vĩnh", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 5, 1), Gender = true, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
-
-
 
         // 6. Seed data for Subject table
         modelBuilder.Entity<Subject>().HasData(
@@ -668,44 +636,7 @@ public partial class QuizManagementContext : DbContext
         );
 
 
-        modelBuilder.Entity<UserDetail>().HasData(
-            //User with Admin role
-            new UserDetail { UserDetailId = 1, UserId = 1, FullName = "Admin", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1980, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            //Users with Examiner role
-            new UserDetail { UserDetailId = 2, UserId = 2, FullName = "Liên Kết", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 3, UserId = 3, FullName = "Hoàng Lâm", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 3, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 4, UserId = 4, FullName = "Anh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 4, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 5, UserId = 5, FullName = "Minh Nhân", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 5, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 6, UserId = 6, FullName = "Phong Tài", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 6, 1), Gender = "Male", Address = "Huế", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 7, UserId = 28, FullName = "Hùng Lê", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 7, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            // Users with Lecturer role
-            new UserDetail { UserDetailId = 8, UserId = 7, FullName = "Lành Bích", PhoneNumber = "0123456789", EmailFe = "lanhbt@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = "Female", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 9, UserId = 8, FullName = "Khoa Đạt", PhoneNumber = "0123456789", EmailFe = "khoadt@fpt.edu.vn", DateOfBirth = new DateTime(1988, 9, 1), Gender = "Male", Address = "Hải Phòng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 10, UserId = 9, FullName = "Hoàng Tâm", PhoneNumber = "0123456789", EmailFe = "hoangtm@fpt.edu.vn", DateOfBirth = new DateTime(1987, 10, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 11, UserId = 10, FullName = "Minh Phúc", PhoneNumber = "0123456789", EmailFe = "minhph@fpt.edu.vn", DateOfBirth = new DateTime(1990, 11, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 12, UserId = 11, FullName = "Trạng Nguyên", PhoneNumber = "0123456789", EmailFe = "trangnt@fpt.edu.vn", DateOfBirth = new DateTime(1991, 12, 1), Gender = "Female", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 13, UserId = 27, FullName = "Quân Phạm", PhoneNumber = "0123456789", EmailFe = "quanpt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 14, UserId = 30, FullName = "Trung Phạm", PhoneNumber = "0123456789", EmailFe = "trungpxhs160623@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            //Users with Curriculum Development role
-            new UserDetail { UserDetailId = 15, UserId = 22, FullName = "Phúc Đạt", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1989, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 16, UserId = 23, FullName = "Thanh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 17, UserId = 24, FullName = "Hùng Phát", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 3, 1), Gender = "Male", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 18, UserId = 25, FullName = "Anh Tùng", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 4, 1), Gender = "Male", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 19, UserId = 26, FullName = "Trương Vĩnh", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 5, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            //Users with Head of Department role
-            new UserDetail { UserDetailId = 20, UserId = 12, FullName = "Nam Lê", PhoneNumber = "0123456789", EmailFe = "namlh@fpt.edu.vn", DateOfBirth = new DateTime(1988, 3, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 21, UserId = 13, FullName = "Quang Nguyễn", PhoneNumber = "0123456789", EmailFe = "quangnv@fpt.edu.vn", DateOfBirth = new DateTime(1986, 4, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 22, UserId = 14, FullName = "Huy Lê", PhoneNumber = "0123456789", EmailFe = "huylt@fpt.edu.vn", DateOfBirth = new DateTime(1985, 5, 1), Gender = "Male", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 23, UserId = 15, FullName = "Tuấn Phạm", PhoneNumber = "0123456789", EmailFe = "tuanpv@fpt.edu.vn", DateOfBirth = new DateTime(1984, 6, 1), Gender = "Male", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 24, UserId = 16, FullName = "Ngọc Đình", PhoneNumber = "0123456789", EmailFe = "ngocdt@fpt.edu.vn", DateOfBirth = new DateTime(1987, 7, 1), Gender = "Female", Address = "Đà Nẵng", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 25, UserId = 17, FullName = "Minh Thảo", PhoneNumber = "0123456789", EmailFe = "minhth@fpt.edu.vn", DateOfBirth = new DateTime(1989, 8, 1), Gender = "Female", Address = "Nha Trang", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 26, UserId = 18, FullName = "Bình Lê", PhoneNumber = "0123456789", EmailFe = "binhlt@fpt.edu.vn", DateOfBirth = new DateTime(1990, 9, 1), Gender = "Male", Address = "Cần Thơ", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 27, UserId = 19, FullName = "Lan Nguyễn", PhoneNumber = "0123456789", EmailFe = "lanhnv@fpt.edu.vn", DateOfBirth = new DateTime(1991, 10, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 28, UserId = 20, FullName = "Dương Khoa", PhoneNumber = "0123456789", EmailFe = "duongkt@fpt.edu.vn", DateOfBirth = new DateTime(1993, 11, 1), Gender = "Male", Address = "Huế", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 29, UserId = 21, FullName = "Phương Linh", PhoneNumber = "0123456789", EmailFe = "phuonglt@fpt.edu.vn", DateOfBirth = new DateTime(1992, 12, 1), Gender = "Female", Address = "TP Hồ Chí Minh", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 30, UserId = 29, FullName = "Tuấn Lê", PhoneNumber = "0123456789", EmailFe = "tuanlmhe161245@fpt.edu.vn", DateOfBirth = new DateTime(1985, 1, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new UserDetail { UserDetailId = 31, UserId = 31, FullName = "Tùng Khoa", PhoneNumber = "0123456789", EmailFe = "tungtkHS163077@fpt.edu.vn", DateOfBirth = new DateTime(1995, 2, 1), Gender = "Male", Address = "Hà Nội", ProfilePicture = null, IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-        );
+        
 
         OnModelCreatingPartial(modelBuilder);
     }
