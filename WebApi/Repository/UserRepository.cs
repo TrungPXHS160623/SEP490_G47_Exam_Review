@@ -709,6 +709,25 @@ namespace WebApi.Repository
                                     }
                                 }
 
+                                // Kiểm tra vai trò của người dùng để validate EmailFe
+                                if ((currentUserRole == "Lecturer" || currentUserRole == "Head of Department"))
+                                {
+                                    // Vai trò "Lecturer" và "Head of Department" thì được nhập EmailFe
+                                    if (!string.IsNullOrEmpty(userImportRequest.EmailFe) && !IsValidEmail(userImportRequest.EmailFe))
+                                    {
+                                        errorMessages.Add($"This EmailFe '{userImportRequest.EmailFe}' is not valid.");
+                                    }
+                                }
+                                else
+                                {
+                                    // Các vai trò khác không được nhập EmailFe
+                                    if (!string.IsNullOrEmpty(userImportRequest.EmailFe))
+                                    {
+                                        errorMessages.Add($"Role '{currentUserRole}' is not allowed to have EmailFe.");
+                                    }
+                                }
+
+
                                 // Tạo khóa duy nhất cho mỗi người dùng
                                 string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
                                 // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
