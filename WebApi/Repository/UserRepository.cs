@@ -709,13 +709,17 @@ namespace WebApi.Repository
                                     }
                                 }
 
-                                // Kiểm tra xem người dùng đã tồn tại trong danh sách chưa
+                                // Tạo khóa duy nhất cho mỗi người dùng
                                 string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
+                                // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
                                 if (existingUserSet.Contains(uniqueKey))
                                 {
                                     errors.Add($"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.");
                                     continue; // Bỏ qua bản ghi trùng lặp
                                 }
+
+                                // Thêm vào HashSet nếu không trùng lặp
+                                existingUserSet.Add(uniqueKey);
                                 // Kiểm tra xem người dùng đã tồn tại hay chưa
                                 var existingUser = await dbContext.Users
                                     .FirstOrDefaultAsync(u => u.Mail == userImportRequest.Mail
