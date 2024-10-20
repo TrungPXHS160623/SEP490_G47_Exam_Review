@@ -565,7 +565,7 @@ public class ExamRepository : IExamRepository
             }
 
             // Thiết lập thư mục lưu file upload
-            var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads";
+            var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads\\Exams";
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
