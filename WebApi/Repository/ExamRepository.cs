@@ -363,7 +363,7 @@ public class ExamRepository : IExamRepository
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
-                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.Contains(req.ExamCode))
+                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                         select new ExaminerExamResponse
                         {
                             EndDate = ex.EndDate,
@@ -411,7 +411,7 @@ public class ExamRepository : IExamRepository
                               join ia in _context.InstructorAssignments on ex.ExamId equals ia.ExamId into iaGroup
                               from ia in iaGroup.DefaultIfEmpty() // LEFT JOIN
                               where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
-                                    && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.Contains(req.ExamCode))
+                                    && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                                     && req.UserId == u1.UserId
                               select new LeaderExamResponse
                               {
@@ -461,7 +461,7 @@ public class ExamRepository : IExamRepository
                               from ia in iaGroup.DefaultIfEmpty() // LEFT JOIN
                               join st in _context.ExamStatuses on ia.AssignStatusId equals st.ExamStatusId
                               where ((req.StatusId == null && ex.ExamStatusId != 1 && ex.ExamStatusId != 2) || ex.ExamStatusId == req.StatusId)
-                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.Contains(req.ExamCode))
+                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               && req.UserId == ia.AssignedUserId
                               select new LectureExamResponse
                               {
