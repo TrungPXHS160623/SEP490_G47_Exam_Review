@@ -85,6 +85,7 @@ public class Program
 
 		builder.Services.AddScoped<IGenerateExcelRepository, GenerateExcelRepository>();
 		builder.Services.AddScoped<ILecturerBySubjectRepository, LecturerBySubjectRepository>();
+		builder.Services.AddScoped<ILogHistoryRepository, LogHistoryRepository>();
 
 
 		var app = builder.Build();
