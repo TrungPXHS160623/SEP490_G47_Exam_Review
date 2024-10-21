@@ -548,6 +548,8 @@ public class ExamRepository : IExamRepository
         var response = new RequestResponse();
         var errors = new List<string>();
         var examsToAdd = new List<Exam>();
+        // Tạo một HashSet để theo dõi các bản ghi đã được thêm
+        var existingExamSet = new HashSet<string>();
 
         try
         {
@@ -633,7 +635,14 @@ public class ExamRepository : IExamRepository
                                 errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
                             if (creator == null)
                                 errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
-
+                            //tạo khoá duy nhất cho mỗi exam
+                            string uniquekey = examImportRequest.ExamCode;
+                            if(existingExamSet.Contains(uniquekey))
+                            {
+                                errorMessages.Add($"Duplicate entry for ExamCode '{examImportRequest.ExamCode}'.");
+                                continue;
+                            }
+                            existingExamSet.Add(uniquekey);
                             var existingExam = await _context.Exams.FirstOrDefaultAsync(e => e.ExamCode == examImportRequest.ExamCode);
                             if (existingExam != null)
                                 errorMessages.Add($"Exam với mã {examImportRequest.ExamCode} đã tồn tại.");
