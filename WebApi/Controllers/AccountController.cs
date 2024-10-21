@@ -77,6 +77,7 @@ namespace WebApi.Controllers
         {
             return Ok(new AuthenticationResponse
             {
+                IsSuccessful = true,
                 Token = Constants.JWTToken,
             });
         }
