@@ -12,5 +12,7 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
 
-	}
+        Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId);
+
+    }
 }

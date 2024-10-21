@@ -101,6 +101,13 @@ namespace WebApi.Controllers
             var something = await _examRepository.ImportExamsFromExcel(file);
             return Ok(something);
         }
+        [AllowAnonymous]
+        [HttpGet("GetExamByCampusAndSubject/{campusid}/{subjectid}")]
+        public async Task<IActionResult> GetExamByCampusAndSubject(int campusid , int subjectid)
+        {
+            var exams = await _examRepository.GetExamByCampusAndSubject(campusid, subjectid);
+            return Ok(exams);
+        }
 
 		// exam by status
 		[AllowAnonymous]

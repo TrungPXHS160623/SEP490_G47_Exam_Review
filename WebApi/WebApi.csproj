@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Uploads\" />
+    <Folder Include="Uploads\Exams\" />
   </ItemGroup>
 
 </Project>

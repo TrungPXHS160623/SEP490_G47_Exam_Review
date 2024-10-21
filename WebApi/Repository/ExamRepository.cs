@@ -6,6 +6,7 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ExamRepository : IExamRepository
 {
@@ -564,7 +565,7 @@ public class ExamRepository : IExamRepository
             }
 
             // Thiết lập thư mục lưu file upload
-            var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads";
+            var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads\\Exams";
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -737,7 +738,87 @@ public class ExamRepository : IExamRepository
         throw new NotImplementedException();
     }
 
+    public async Task<ResultResponse<CampusSubjectExamCodeResponse>> GetExamByCampusAndSubject(int campusId, int subjectId)
+    {
+        try
+        {
+            var exams = await _context.Exams
+            .AsNoTracking() // Tăng hiệu suất nếu không cần cập nhật đối tượng
+            .Where(e => e.CampusId == campusId && e.SubjectId == subjectId)
+            .Include(e => e.Campus)
+            .Include(e => e.Subject)
+            .ToListAsync();
 
 
+            // Kiểm tra xem có bài thi nào được tìm thấy hay không
+            if (!exams.Any())
+            {
+                return new ResultResponse<CampusSubjectExamCodeResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "No exams found for the provided campus and subject."
+                };
+            }
+
+            // Chuyển đổi dữ liệu từ Exam sang CampusSubjectExamCodeResponse
+
+            /////cách 1:
+            //// Tính số lượng mã đề cho từng tổ hợp môn và cơ sở
+            //var examCodeCount = exams.Count();
+
+            //// Tạo danh sách các mã đề
+            //var examCodes = exams.Select(e => new CampusSubjectExamCodeResponse
+            //{
+            //    ExamCode = e.ExamCode,
+            //    SubjectName = e.Subject != null ? e.Subject.SubjectCode : "No Subject Name",
+            //    CampusName = e.Campus != null ? e.Campus.CampusName : "No Campus Name"
+            //}).ToList();
+            ////kiểu return của cách 1
+            //return new ResultResponse<CampusSubjectExamResponse>
+            //{
+            //    IsSuccessful = true,
+            //    Items = new List<CampusSubjectExamResponse>  
+            //    {
+            //        new CampusSubjectExamResponse
+            //        {
+            //            ExamCodes = examCodes,
+            //            ExamCodeCount = examCodeCount
+            //        }
+            //    }
+            //};
+
+            //cách 2:
+            var response = exams
+           .GroupBy(e => new { e.CampusId, e.SubjectId }) // Nhóm theo CampusId và SubjectId
+           .Select(g =>
+           {
+               var firstExam = g.FirstOrDefault(); // Lưu trữ phần tử đầu tiên
+               return new CampusSubjectExamCodeResponse
+               {
+                   ExamCode = string.Join(", ", g.Select(e => e.ExamCode)),  // Gộp tất cả mã đề
+                   SubjectName = firstExam != null && firstExam.Subject != null ? firstExam.Subject.SubjectCode: "No Subject Name",  // Kiểm tra null cho tên môn học
+                   CampusName = firstExam != null && firstExam.Campus != null? firstExam.Campus.CampusName: "No Campus Name",   // Kiểm tra null cho tên cơ sở
+                   ExamCodeCount = g.Count()  // Đếm số lượng bài thi trong nhóm
+               };
+           })
+           .ToList();
+            //kiểu return của cách 2
+            return new ResultResponse<CampusSubjectExamCodeResponse>
+            {
+                IsSuccessful = true,
+                Items = response
+            };
+
+        }
+        catch (Exception ex)
+        {
+            // Log hoặc xử lý lỗi
+            return new ResultResponse<CampusSubjectExamCodeResponse>
+            {
+                IsSuccessful = false,
+                Message = "An error occurred while fetching the exams. Please try again later."
+            };
+        }
+    }
 
 }

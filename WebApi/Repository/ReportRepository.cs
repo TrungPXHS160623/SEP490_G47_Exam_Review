@@ -36,33 +36,37 @@ namespace WebApi.Repository
 
                     if (data == null)
                     {
+                        //Khi tạo mới báo cáo (chưa ấn nút submit):
                         var newRecord = new Report
                         {
                             QuestionNumber = item.QuestionNumber,
                             ReportContent = item.ReportContent,
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
-                            CreateDate = item.CreateDate,
-                            UpdateDate = item.UpdateDate,
-							AssignmentId = reportRequest.AssignmentId,
+                            CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  // Sử dụng thời gian hiện tại nếu không có CreateDate
+                            UpdateDate = item.UpdateDate,  // UpdateDate có thể được cập nhật sau
+                            AssignmentId = reportRequest.AssignmentId,
+
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
                     }
                     else
                     {
+                        //Khi chỉnh sửa báo cáo(nhưng chưa ấn submit):
                         data.QuestionNumber = item.QuestionNumber;
                         data.ReportContent = item.ReportContent;
                         data.QuestionSolutionDetail = item.QuestionSolutionDetail;
-                        data.UpdateDate = item.UpdateDate;
+                        data.UpdateDate = DateTime.Now;  // Khi chỉnh sửa, UpdateDate được cập nhật với thời gian hiện tại
                     }
                 }
 
                 if (isSubmit)
                 {
                     var assignment = await this.dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
-                    assignment.AssignStatusId = 5;
-                    assignment.UpdateDate = DateTime.Now;
+                    assignment.AssignStatusId = 5;  // Đặt trạng thái là đã nộp
+                    assignment.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
                 }
+
 
                 await this.dbContext.SaveChangesAsync();
 
@@ -172,6 +176,68 @@ namespace WebApi.Repository
                 {
                     IsSuccessful = false,
                     Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId)
+        {
+            try
+            {
+                //tìm kiếm report dựa theo id của phần phân công
+                var reports = await dbContext.Reports.Where(r => r.AssignmentId == assignmentId).ToListAsync();
+
+                //nếu không tìm thấy report nào 
+                if (reports == null || reports.Count == 0)
+                {
+                    return new ResultResponse<ReportDurationResponse>
+                    {
+                        IsSuccessful = false,
+                        Message = "No reports found for this assignment."
+                    };
+                }
+
+                // nếu tìm thấy report 
+                // Tính thời gian từng report
+                var reportDurations = reports.Select(r => new ReportDurationDetail
+                {
+                    ReportId = r.ReportId,
+                    QuestionNumber = r.QuestionNumber.HasValue ? r.QuestionNumber.Value : 0,
+                    // Tính toán tổng số giờ giữa thời điểm tạo và thời điểm cập nhật.
+                    // Nếu cả CreateDate và UpdateDate đều không null, tính thời gian chênh lệch giữa chúng.
+                    // Nếu chỉ có CreateDate không null, tính thời gian từ CreateDate đến thời điểm hiện tại.
+                    // Nếu cả hai đều null, gán giá trị 0.
+
+                    DurationHours = r.UpdateDate.HasValue && r.CreateDate.HasValue ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours: 0,
+
+                    //DurationHours = r.CreateDate != null && r.UpdateDate != null ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours : r.CreateDate != null? (DateTime.Now - r.CreateDate.Value).TotalHours: 0,
+                }).ToList();
+
+                // Tính tổng thời gian
+                var totalDuration = reportDurations.Sum(rd => rd.DurationHours);
+
+                // Tạo DTO trả về
+                var responseDto = new ReportDurationResponse
+                {
+                    AssignmentId = assignmentId,
+                    TotalDurationHours = totalDuration,
+                    ReportDurations = reportDurations
+                };
+
+                return new ResultResponse<ReportDurationResponse>
+                {
+                    IsSuccessful = true,
+                    Items = new List<ReportDurationResponse> { responseDto }
+                };
+            
+            }
+            catch (Exception ex )
+            {
+
+                return new ResultResponse<ReportDurationResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
                 };
             }
         }

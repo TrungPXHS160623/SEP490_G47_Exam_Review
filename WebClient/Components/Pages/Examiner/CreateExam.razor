@@ -42,7 +42,7 @@
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
                        Class="ms-4"
-                       OnClick="@(() => OpenAddEditDialogAsync(0,false))">
+                       OnClick="NavigateToCreatePage">
                 Add Exam
             </MudButton>
         </div>
@@ -113,31 +113,9 @@
         }
     }
 
-    private async Task OpenAddEditDialogAsync(int examId, bool isView = true)
+    private void NavigateToCreatePage()
     {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Medium,
-                FullWidth = true,
-                BackdropClick = false,
-
-            };
-
-        var parameters = new DialogParameters<ExamDetail>
-        {
-            { x => x.IsView, isView },
-            {x => x.ExamId,examId}
-        };
-
-        var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            await GetData();
-        }
+        NavManager.NavigateTo("/Examiner/CreateForm");
     }
 
     private async Task OpenImportDialogAsync()

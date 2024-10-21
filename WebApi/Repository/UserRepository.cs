@@ -1,8 +1,12 @@
-﻿using Library.Common;
+﻿using ExcelDataReader;
+using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
+using System.Security.Claims;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -455,6 +459,358 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
+        }
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                // Kiểm tra định dạng email
+                var addr = new System.Net.Mail.MailAddress(email);
+
+                // Kiểm tra xem email có kết thúc bằng .fpt.edu.vn không
+                if (addr.Address == email && email.EndsWith("@fpt.edu.vn"))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // Hàm để kiểm tra tính hợp lệ của số điện thoại
+        private bool IsValidPhoneNumber(string phoneNumber)
+        {
+            // Xóa khoảng trắng và ký tự đặc biệt
+            var cleanedNumber = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+            // Kiểm tra xem số điện thoại có chứa tất cả các ký tự là số hay không
+            if (cleanedNumber.Length == 0)
+            {
+                return false;
+            }
+
+            // Kiểm tra độ dài số điện thoại
+            if (cleanedNumber.Length < 9 || cleanedNumber.Length > 11)
+            {
+                return false;
+            }
+
+            // Kiểm tra xem có bắt đầu bằng mã vùng hợp lệ
+            // Ví dụ: mã vùng di động tại Việt Nam có thể là 09xx, 01xx, 03xx, 07xx, 08xx
+            // Nếu bạn có các mã vùng khác, hãy thêm vào danh sách này
+            var validPrefixes = new[] { "9", "1", "3", "7", "8" };
+
+            // Kiểm tra xem số điện thoại có bắt đầu bằng các mã vùng hợp lệ
+            if (!validPrefixes.Any(prefix => cleanedNumber.StartsWith(prefix)))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        public async Task<RequestResponse> ImportUsersFromExcel(IFormFile file, ClaimsPrincipal currentUser)
+        {
+            //khai báo biến
+            var response = new RequestResponse();
+            var errors = new List<string>();
+            var usersToAdd = new List<User>();
+            // Tạo một HashSet để theo dõi các bản ghi đã được thêm
+            var existingUserSet = new HashSet<string>();
+
+            try
+            {
+                // Đăng ký mã hóa hỗ trợ cho Excel
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                // Kiểm tra nếu file không tồn tại hoặc không có dữ liệu
+                if (file == null || file.Length == 0)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "No file uploaded!",
+                    };
+                }
+
+                // Lấy thông tin người dùng hiện tại từ Claims
+                var userId = int.TryParse(currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+                
+                
+                // Có được id của người dùng từ hệ thống thì liên kết tới database
+                var myUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                if (myUser == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "User not found.",
+                    };
+                }
+
+
+                // Lấy RoleId và CampusId từ đối tượng người dùng
+                var roleId = myUser.RoleId;
+                var currentUserCampusId = myUser.CampusId;
+
+                // Lấy RoleName dựa trên RoleId
+                var currentUserRole = await dbContext.UserRoles
+                    .Where(r => r.RoleId == roleId)
+                    .Select(r => r.RoleName)
+                    .FirstOrDefaultAsync();     
+                
+                if (string.IsNullOrEmpty(currentUserRole))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "User role not found.",
+                    };
+                }
+
+
+                // Thiết lập thư mục lưu file upload
+                var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads\\Users";
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // Đường dẫn file
+                var filePath = Path.Combine(uploadsFolder, Path.GetFileName(file.FileName));
+
+                // Ghi file lên server
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        bool isHeaderSkipped = false;
+
+                        do
+                        {
+                            while (reader.Read())
+                            {
+                                if (!isHeaderSkipped)
+                                {
+                                    isHeaderSkipped = true;
+                                    continue;
+                                }
+
+                                var userImportRequest = new UserImportRequest
+                                {
+                                    Mail = reader.GetValue(0)?.ToString(),
+                                    FullName = reader.GetValue(1)?.ToString(),
+                                    PhoneNumber = reader.GetValue(2)?.ToString(),
+                                    EmailFe = reader.GetValue(3)?.ToString(),
+                                    DateOfBirth = reader.GetValue(4)?.ToString(),
+                                    Gender = reader.GetValue(5)?.ToString().ToLower(),
+                                    Address = reader.GetValue(6)?.ToString()
+                                };
+
+                                
+                                var errorMessages = new List<string>();
+
+
+
+                                //kiểm tra định dang của mail
+
+                                if (userImportRequest.Mail.Length > 255)
+                                {
+                                    errorMessages.Add("Email must not exceed 255 characters.");
+                                }
+
+                                if (!IsValidEmail(userImportRequest.Mail))
+                                {
+                                    errorMessages.Add($"This email '{userImportRequest.Mail}' is not valid.");
+                                }
+
+                                // kiểm tra định dạng của fullName
+                                if (userImportRequest.FullName.Length > 100)
+                                {
+                                    errorMessages.Add("Full Name must not exceed 100 characters.");
+                                }
+
+
+                                // kiểm tra định dạng của phoneNumber
+                                if (!IsValidPhoneNumber(userImportRequest.PhoneNumber))
+                                {
+                                    errorMessages.Add($"This PhoneNumber '{userImportRequest.PhoneNumber}' is not valid. Please ensure it follows Vietnamese standards.");
+                                }
+
+
+                                // Kiểm tra vai trò được phép import
+                                string targetRoleName = null; 
+                                if (currentUserRole == "Admin")
+                                {
+                                    targetRoleName = "Examiner";
+                                }
+                                else if (currentUserRole == "Examiner")
+                                {
+                                    targetRoleName = "Head of Department";
+                                }
+                                else if (currentUserRole == "Head of Department")
+                                {
+                                    targetRoleName = "Lecturer";
+                                }
+                                var targetRoleId = await dbContext.UserRoles.Where(r => r.RoleName == targetRoleName).Select(r => r.RoleId).FirstOrDefaultAsync();
+
+                                // Xử lý DateOfBirth
+
+
+                                DateTime? dobValue = null;
+                                if (!string.IsNullOrEmpty(userImportRequest.DateOfBirth))
+                                {
+                                    // Thử phân tích cú pháp với định dạng cụ thể
+                                    var formats = new[] { "dd-MM-yyyy", "d/M/yyyy", "d/MM/yyyy", "dd/MM/yyyy", "MM-dd-yyyy" }; // Thêm các định dạng khác nếu cần
+                                    if (DateTime.TryParseExact(userImportRequest.DateOfBirth, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDob))
+                                    {
+                                        dobValue = parsedDob;
+                                    }
+                                    else
+                                    {
+                                        errorMessages.Add($"This DateOfBirth '{userImportRequest.DateOfBirth}' is not valid.");
+                                    }
+                                }
+
+                                if (dobValue.HasValue)
+                                {
+                                    if (dobValue.Value > DateTime.Now)
+                                    {
+                                        errorMessages.Add("Date of Birth cannot be in the future.");
+                                    }
+                                    if ((DateTime.Now.Year - dobValue.Value.Year) > 120)
+                                    {
+                                        errorMessages.Add("Date of Birth is not valid. User cannot be older than 120 years.");
+                                    }
+                                }
+
+                                // Xử lý chuyển đổi Gender
+                                bool? gender = null;
+                                if (!string.IsNullOrEmpty(userImportRequest.Gender))
+                                {
+                                    if (userImportRequest.Gender.Equals("male", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        gender = true;
+                                    }
+                                    else if (userImportRequest.Gender.Equals("female", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        gender = false;
+                                    }
+                                    else
+                                    {
+                                        errorMessages.Add($"This gender '{userImportRequest.Gender}' is not valid. Please input 'Male' or 'Female'.");
+                                    }
+                                }
+
+                                // Kiểm tra vai trò của người dùng để validate EmailFe
+                                if ((currentUserRole == "Lecturer" || currentUserRole == "Head of Department"))
+                                {
+                                    // Vai trò "Lecturer" và "Head of Department" thì được nhập EmailFe
+                                    if (!string.IsNullOrEmpty(userImportRequest.EmailFe) && !IsValidEmail(userImportRequest.EmailFe))
+                                    {
+                                        errorMessages.Add($"This EmailFe '{userImportRequest.EmailFe}' is not valid.");
+                                    }
+                                }
+                                else
+                                {
+                                    // Các vai trò khác không được nhập EmailFe
+                                    if (!string.IsNullOrEmpty(userImportRequest.EmailFe))
+                                    {
+                                        errorMessages.Add($"Role '{currentUserRole}' is not allowed to have EmailFe.");
+                                    }
+                                }
+
+
+                                // Tạo khóa duy nhất cho mỗi người dùng
+                                string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
+                                // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
+                                if (existingUserSet.Contains(uniqueKey))
+                                {
+                                    errors.Add($"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.");
+                                    continue; // Bỏ qua bản ghi trùng lặp
+                                }
+
+                                // Thêm vào HashSet nếu không trùng lặp
+                                existingUserSet.Add(uniqueKey);
+                                // Kiểm tra xem người dùng đã tồn tại hay chưa
+                                var existingUser = await dbContext.Users
+                                    .FirstOrDefaultAsync(u => u.Mail == userImportRequest.Mail
+                                                             && u.FullName == userImportRequest.FullName
+                                                             && u.PhoneNumber == userImportRequest.PhoneNumber);
+
+                                if (existingUser != null)
+                                {
+                                    errors.Add($"User with Mail '{userImportRequest.Mail}' already exists.");
+                                    continue;
+                                }
+
+                                if (errorMessages.Any())
+                                {
+                                    errors.Add($"Error with this Mail {userImportRequest.Mail} : {string.Join(", ", errorMessages)}");
+                                    continue;
+                                }
+
+                                // Tạo User nếu không có lỗi
+                                var user = new User
+                                {
+                                    Mail = userImportRequest.Mail,
+                                    CampusId = currentUserCampusId,
+                                    RoleId = targetRoleId,
+                                    FullName = userImportRequest.FullName,
+                                    PhoneNumber = userImportRequest.PhoneNumber,
+                                    EmailFe = userImportRequest.EmailFe,
+                                    DateOfBirth = dobValue,
+                                    Gender = gender,
+                                    Address = userImportRequest.Address,
+                                    IsActive = true,
+                                    CreateDate = DateTime.Now
+                                };
+
+                                usersToAdd.Add(user);
+                            }
+                        } while (reader.NextResult());
+                    }
+                }
+
+                // Lưu các user hợp lệ
+                if (usersToAdd.Any())
+                {
+                    await dbContext.Users.AddRangeAsync(usersToAdd);
+                    await dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    // Thêm phản hồi nếu không có dữ liệu hợp lệ
+                    response.IsSuccessful = false;
+                    response.Message = "No valid data to import.";
+                }
+
+                if (errors.Any())
+                {
+                    response.IsSuccessful = false;
+                    response.Message = $"There are the following errors: {string.Join("; ", errors)}";
+                }
+                else
+                {
+                    response.IsSuccessful = true;
+                    response.Message = $"{usersToAdd.Count} users added successfully. {errors.Count} errors found.";
+                    response.Message = "Import users from Excel successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccessful = false;
+                response.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return response;
         }
     }
 }
