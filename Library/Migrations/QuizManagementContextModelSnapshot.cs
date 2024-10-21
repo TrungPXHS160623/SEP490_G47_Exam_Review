@@ -52,36 +52,36 @@ namespace Library.Migrations
                         {
                             CampusId = 1,
                             CampusName = "Ha Noi",
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4235),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4248)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7834),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7846)
                         },
                         new
                         {
                             CampusId = 2,
                             CampusName = "Da Nang",
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4251),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4251)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7849),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7849)
                         },
                         new
                         {
                             CampusId = 3,
                             CampusName = "Can Tho",
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4253),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4254)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7851),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7851)
                         },
                         new
                         {
                             CampusId = 4,
                             CampusName = "Ho Chi Minh",
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4255),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4256)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7893),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7894)
                         },
                         new
                         {
                             CampusId = 5,
                             CampusName = "Quy Nhon",
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4257),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4258)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7895),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(7896)
                         });
                 });
 
@@ -125,35 +125,35 @@ namespace Library.Migrations
                             Id = 1,
                             CampusId = 1,
                             SubjectId = 1,
-                            UserId = 12
+                            UserId = 29
                         },
                         new
                         {
                             Id = 2,
                             CampusId = 1,
                             SubjectId = 2,
-                            UserId = 12
+                            UserId = 29
                         },
                         new
                         {
                             Id = 3,
                             CampusId = 1,
                             SubjectId = 3,
-                            UserId = 12
+                            UserId = 29
                         },
                         new
                         {
                             Id = 4,
                             CampusId = 1,
                             SubjectId = 4,
-                            UserId = 12
+                            UserId = 31
                         },
                         new
                         {
                             Id = 5,
                             CampusId = 1,
                             SubjectId = 5,
-                            UserId = 12
+                            UserId = 31
                         },
                         new
                         {
@@ -616,306 +616,338 @@ namespace Library.Migrations
                         {
                             ExamId = 1,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4795),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8484),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4794),
-                            EstimatedTimeTest = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4792),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8483),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8480),
                             ExamCode = "PRN211_Q1_10_123456",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 5,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4793),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8482),
                             SubjectId = 1,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4795)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8488)
                         },
                         new
                         {
                             ExamId = 2,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4820),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8492),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4819),
-                            EstimatedTimeTest = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4818),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8492),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8490),
                             ExamCode = "PRN211_Q2_5_654321",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 5,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4819),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8491),
                             SubjectId = 1,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4821)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8493)
                         },
                         new
                         {
                             ExamId = 3,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4824),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8496),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4824),
-                            EstimatedTimeTest = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4823),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8495),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8494),
                             ExamCode = "PRN221_Q1_10_789012",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 6,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4823),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8495),
                             SubjectId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4825)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8496)
                         },
                         new
                         {
                             ExamId = 4,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4828),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8499),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4828),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8499),
                             ExamCode = "PRN221_Q2_5_210987",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4827),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8498),
                             SubjectId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4829)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8500)
                         },
                         new
                         {
                             ExamId = 5,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4833),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8503),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4832),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8502),
                             ExamCode = "PRN231_Q1_10_345678",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4832),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8502),
                             SubjectId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4833)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8503)
                         },
                         new
                         {
                             ExamId = 6,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4836),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8548),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4836),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8548),
                             ExamCode = "PRN231_Q2_5_876543",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4835),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8547),
                             SubjectId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4837)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8549)
                         },
                         new
                         {
                             ExamId = 7,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4840),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8552),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4839),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8551),
                             ExamCode = "MAE101_Q1_10_234567",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4839),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8551),
                             SubjectId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4841)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8552)
                         },
                         new
                         {
                             ExamId = 8,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4844),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8555),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4843),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8555),
                             ExamCode = "MAE101_Q2_5_765432",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4843),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8554),
                             SubjectId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4844)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8556)
                         },
                         new
                         {
                             ExamId = 9,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4849),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8558),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4848),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8558),
                             ExamCode = "NWC203c_Q1_10_345678",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4848),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8558),
                             SubjectId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4849)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8559)
                         },
                         new
                         {
                             ExamId = 10,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4853),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8562),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4852),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8561),
                             ExamCode = "NWC203c_Q2_5_876543",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4852),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8561),
                             SubjectId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4854)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8562)
                         },
                         new
                         {
                             ExamId = 11,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4857),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8569),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4857),
-                            EstimatedTimeTest = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4855),
-                            ExamCode = "ECO111_Q1_10_111222",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8568),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8567),
+                            ExamCode = "ENM401_Q1_10_111222",
                             ExamDuration = "Block 10 (10 weeks)",
-                            ExamStatusId = 6,
+                            ExamStatusId = 7,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4856),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8568),
                             SubjectId = 6,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4857)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8569)
                         },
                         new
                         {
                             ExamId = 12,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4861),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8572),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4860),
-                            EstimatedTimeTest = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4859),
-                            ExamCode = "ECO111_Q2_5_222111",
-                            ExamDuration = "Block 5 (5 weeks)",
-                            ExamStatusId = 6,
-                            ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4860),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8572),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8571),
+                            ExamCode = "ENM401_Q2_5_222111",
+                            ExamDuration = "Block 10 (10 weeks)",
+                            ExamStatusId = 7,
+                            ExamType = "Reading",
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8571),
                             SubjectId = 6,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4861)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8573)
                         },
                         new
                         {
                             ExamId = 13,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4864),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8576),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4864),
-                            ExamCode = "ECO121_Q1_10_333444",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8576),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8575),
+                            ExamCode = "ENM401_Q3_7_222333",
                             ExamDuration = "Block 10 (10 weeks)",
-                            ExamStatusId = 1,
-                            ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4863),
-                            SubjectId = 7,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4865)
+                            ExamStatusId = 7,
+                            ExamType = "Writing",
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8575),
+                            SubjectId = 6,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8577)
                         },
                         new
                         {
                             ExamId = 14,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4868),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8580),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4867),
-                            ExamCode = "ECO121_Q2_5_444333",
-                            ExamDuration = "Block 5 (5 weeks)",
-                            ExamStatusId = 1,
-                            ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4867),
-                            SubjectId = 7,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4868)
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8580),
+                            EstimatedTimeTest = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8579),
+                            ExamCode = "ENM401_Q4_9_333111",
+                            ExamDuration = "Block 10 (10 weeks)",
+                            ExamStatusId = 7,
+                            ExamType = "Listening",
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8579),
+                            SubjectId = 6,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8581)
                         },
                         new
                         {
                             ExamId = 15,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4872),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8584),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4871),
-                            ExamCode = "ECO201_Q1_10_555666",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8584),
+                            ExamCode = "ECO121_Q1_10_333444",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4870),
-                            SubjectId = 8,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4872)
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8583),
+                            SubjectId = 7,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8585)
                         },
                         new
                         {
                             ExamId = 16,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4875),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8588),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4875),
-                            ExamCode = "ECO201_Q2_5_666555",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8588),
+                            ExamCode = "ECO121_Q2_5_444333",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4874),
-                            SubjectId = 8,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4876)
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8587),
+                            SubjectId = 7,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8589)
                         },
                         new
                         {
                             ExamId = 17,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4879),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8591),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4878),
-                            ExamCode = "ACC101_Q1_10_777888",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8591),
+                            ExamCode = "ECO201_Q1_10_555666",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4877),
-                            SubjectId = 9,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4879)
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8590),
+                            SubjectId = 8,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8592)
                         },
                         new
                         {
                             ExamId = 18,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4882),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8595),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4881),
-                            ExamCode = "ACC101_Q2_5_888777",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8594),
+                            ExamCode = "ECO201_Q2_5_666555",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4881),
-                            SubjectId = 9,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4882)
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8594),
+                            SubjectId = 8,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8595)
                         },
                         new
                         {
                             ExamId = 19,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4885),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8598),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4885),
-                            ExamCode = "MKT101_Q1_10_999000",
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8598),
+                            ExamCode = "ACC101_Q1_10_777888",
                             ExamDuration = "Block 10 (10 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4884),
-                            SubjectId = 10,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4886)
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8597),
+                            SubjectId = 9,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8599)
                         },
                         new
                         {
                             ExamId = 20,
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4890),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8602),
                             CreaterId = 2,
-                            EndDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4888),
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8601),
+                            ExamCode = "ACC101_Q2_5_888777",
+                            ExamDuration = "Block 5 (5 weeks)",
+                            ExamStatusId = 1,
+                            ExamType = "Multiple Choice",
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8601),
+                            SubjectId = 9,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8602)
+                        },
+                        new
+                        {
+                            ExamId = 21,
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8606),
+                            CreaterId = 2,
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8605),
+                            ExamCode = "MKT101_Q1_10_999000",
+                            ExamDuration = "Block 10 (10 weeks)",
+                            ExamStatusId = 1,
+                            ExamType = "Multiple Choice",
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8605),
+                            SubjectId = 10,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8606)
+                        },
+                        new
+                        {
+                            ExamId = 22,
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8609),
+                            CreaterId = 2,
+                            EndDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8608),
                             ExamCode = "MKT101_Q2_5_000999",
                             ExamDuration = "Block 5 (5 weeks)",
                             ExamStatusId = 1,
                             ExamType = "Multiple Choice",
-                            StartDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4888),
+                            StartDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8608),
                             SubjectId = 10,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4891)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8610)
                         });
                 });
 
@@ -945,44 +977,51 @@ namespace Library.Migrations
                         new
                         {
                             ExamStatusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4399),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8037),
                             StatusContent = "Not Assign",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4400)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8039)
                         },
                         new
                         {
                             ExamStatusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4402),
-                            StatusContent = "Waiting to Assign",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4402)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8040),
+                            StatusContent = "Waiting To Assign",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8041)
                         },
                         new
                         {
                             ExamStatusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4404),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8042),
                             StatusContent = "Assigned",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4404)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8043)
                         },
                         new
                         {
                             ExamStatusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4406),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8044),
                             StatusContent = "Reviewing",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4406)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8045)
                         },
                         new
                         {
                             ExamStatusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4408),
-                            StatusContent = "Finish Review",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4408)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8046),
+                            StatusContent = "Exam With Errors",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8047)
                         },
                         new
                         {
                             ExamStatusId = 6,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4409),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8048),
+                            StatusContent = "Faultless Exam",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8048)
+                        },
+                        new
+                        {
+                            ExamStatusId = 7,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8050),
                             StatusContent = "Complete",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4410)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8050)
                         });
                 });
 
@@ -1028,100 +1067,140 @@ namespace Library.Migrations
                             AssignmentId = 1,
                             AssignStatusId = 3,
                             AssignedUserId = 12,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4927),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4928),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8645),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8646),
                             ExamId = 1,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4929)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8647)
                         },
                         new
                         {
                             AssignmentId = 2,
                             AssignStatusId = 3,
                             AssignedUserId = 12,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4931),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4932),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8649),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8650),
                             ExamId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4933)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8650)
                         },
                         new
                         {
                             AssignmentId = 3,
                             AssignStatusId = 3,
                             AssignedUserId = 12,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4935),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4936),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8651),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8652),
                             ExamId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4937)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8653)
                         },
                         new
                         {
                             AssignmentId = 4,
                             AssignStatusId = 3,
                             AssignedUserId = 13,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4938),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4939),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8654),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8655),
                             ExamId = 11,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4940)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8655)
                         },
                         new
                         {
                             AssignmentId = 5,
                             AssignStatusId = 3,
                             AssignedUserId = 13,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4941),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4942),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8656),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8657),
                             ExamId = 12,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4942)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8658)
                         },
                         new
                         {
                             AssignmentId = 6,
                             AssignStatusId = 3,
-                            AssignedUserId = 7,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4943),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4944),
-                            ExamId = 1,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4945)
+                            AssignedUserId = 13,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8659),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8660),
+                            ExamId = 13,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8661)
                         },
                         new
                         {
                             AssignmentId = 7,
                             AssignStatusId = 3,
-                            AssignedUserId = 7,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4946),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4947),
-                            ExamId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4947)
+                            AssignedUserId = 13,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8662),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8663),
+                            ExamId = 14,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8663)
                         },
                         new
                         {
                             AssignmentId = 8,
-                            AssignStatusId = 3,
+                            AssignStatusId = 4,
                             AssignedUserId = 7,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4948),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4949),
-                            ExamId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4950)
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8664),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8665),
+                            ExamId = 1,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8666)
                         },
                         new
                         {
                             AssignmentId = 9,
-                            AssignStatusId = 3,
-                            AssignedUserId = 27,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4951),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4953),
-                            ExamId = 11,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4953)
+                            AssignStatusId = 4,
+                            AssignedUserId = 7,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8667),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8668),
+                            ExamId = 2,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8669)
                         },
                         new
                         {
                             AssignmentId = 10,
-                            AssignStatusId = 3,
+                            AssignStatusId = 4,
+                            AssignedUserId = 7,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8670),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8670),
+                            ExamId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8671)
+                        },
+                        new
+                        {
+                            AssignmentId = 11,
+                            AssignStatusId = 4,
                             AssignedUserId = 27,
-                            AssignmentDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4955),
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4955),
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8672),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8673),
+                            ExamId = 11,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8673)
+                        },
+                        new
+                        {
+                            AssignmentId = 12,
+                            AssignStatusId = 4,
+                            AssignedUserId = 27,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8674),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8675),
                             ExamId = 12,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4956)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8676)
+                        },
+                        new
+                        {
+                            AssignmentId = 13,
+                            AssignStatusId = 4,
+                            AssignedUserId = 27,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8677),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8678),
+                            ExamId = 13,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8679)
+                        },
+                        new
+                        {
+                            AssignmentId = 14,
+                            AssignStatusId = 4,
+                            AssignedUserId = 27,
+                            AssignmentDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8680),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8681),
+                            ExamId = 14,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8682)
                         });
                 });
 
@@ -1156,82 +1235,106 @@ namespace Library.Migrations
                         new
                         {
                             MenuId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4982),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8709),
                             MenuLink = "/usermanagement",
                             MenuName = "User Management",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4984)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8710)
                         },
                         new
                         {
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4985),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8712),
                             MenuLink = "/Admin/History",
-                            MenuName = "History (Not Available)",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4986)
+                            MenuName = "User Log",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8712)
                         },
                         new
                         {
                             MenuId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4987),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8714),
                             MenuLink = "/Examiner/ExamList",
                             MenuName = "Exam List",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4988)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8714)
                         },
                         new
                         {
                             MenuId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4990),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8715),
                             MenuLink = "/HeadDepartment/ExamList",
                             MenuName = "Exam Assign",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4990)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8716)
                         },
                         new
                         {
                             MenuId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4991),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8717),
                             MenuLink = "/Lecture/ExamList",
-                            MenuName = "Lecture List",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4992)
+                            MenuName = "List Asigned",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8717)
                         },
                         new
                         {
                             MenuId = 6,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4993),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8718),
                             MenuLink = "/HeadDepartment/Report",
                             MenuName = "View Report",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4993)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8719)
                         },
                         new
                         {
                             MenuId = 7,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4995),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8720),
                             MenuLink = "/HeadDepartment/ExamStatus",
                             MenuName = "Exam Status",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4995)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8720)
                         },
                         new
                         {
                             MenuId = 10,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4996),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8759),
                             MenuLink = "/Examiner/usermanagement",
-                            MenuName = "View Report",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4997)
+                            MenuName = "Head Department Management",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8759)
                         },
                         new
                         {
                             MenuId = 8,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5026),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8761),
                             MenuLink = "/Admin/CampusManagement",
                             MenuName = "Campus Management",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5026)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8761)
+                        },
+                        new
+                        {
+                            MenuId = 11,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8762),
+                            MenuLink = "/Examiner/Create",
+                            MenuName = "Create Exam",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8763)
+                        },
+                        new
+                        {
+                            MenuId = 12,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8764),
+                            MenuLink = "/HeadDepartment/lectureManagement",
+                            MenuName = "Lecture Management(UnderContrucst)",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8764)
+                        },
+                        new
+                        {
+                            MenuId = 13,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8765),
+                            MenuLink = "/Examiner/Statistical",
+                            MenuName = "Statistical",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8767)
                         },
                         new
                         {
                             MenuId = 9,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5028),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8768),
                             MenuLink = "/Admin/SubjectManagement",
                             MenuName = "Subject Management",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5028)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8768)
                         });
                 });
 
@@ -1260,71 +1363,92 @@ namespace Library.Migrations
                         {
                             RoleId = 1,
                             MenuId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5056),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5057)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8796),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8800)
                         },
                         new
                         {
                             RoleId = 1,
                             MenuId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5059),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5059)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8802),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8802)
                         },
                         new
                         {
                             RoleId = 1,
                             MenuId = 8,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5060),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5061)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8803),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8804)
                         },
                         new
                         {
                             RoleId = 1,
                             MenuId = 9,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5062),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5062)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8805),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8805)
                         },
                         new
                         {
                             RoleId = 2,
                             MenuId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5063),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5064)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8806),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8806)
                         },
                         new
                         {
                             RoleId = 2,
                             MenuId = 10,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5065),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5066)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8807),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8808)
                         },
                         new
                         {
                             RoleId = 4,
                             MenuId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5067),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5067)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8808),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8809)
                         },
                         new
                         {
                             RoleId = 4,
                             MenuId = 6,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5068),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5069)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8810),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8810)
                         },
                         new
                         {
                             RoleId = 4,
                             MenuId = 7,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5070),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5071)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8811),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8812)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            MenuId = 11,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8813),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8813)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            MenuId = 13,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8814),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8814)
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            MenuId = 12,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8816),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8816)
                         },
                         new
                         {
                             RoleId = 3,
                             MenuId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5072),
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5072)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8817),
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8818)
                         });
                 });
 
@@ -1336,7 +1460,7 @@ namespace Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
 
-                    b.Property<int?>("AssignemtId")
+                    b.Property<int?>("AssignmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreateDate")
@@ -1359,7 +1483,7 @@ namespace Library.Migrations
 
                     b.HasKey("ReportId");
 
-                    b.HasIndex("AssignemtId");
+                    b.HasIndex("AssignmentId");
 
                     b.ToTable("Reports");
 
@@ -1367,52 +1491,568 @@ namespace Library.Migrations
                         new
                         {
                             ReportId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5096),
+                            AssignmentId = 8,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8843),
                             QuestionNumber = 1,
                             QuestionSolutionDetail = "Correct the code snippet by replacing 'Console.Writeline' with 'Console.WriteLine'.",
                             ReportContent = "In PRN211, question 1 contains an incorrect code snippet that causes compilation errors.",
                             Score = 8f,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5097)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8843)
                         },
                         new
                         {
                             ReportId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5100),
+                            AssignmentId = 9,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8845),
                             QuestionNumber = 2,
                             QuestionSolutionDetail = "Revise the logic to ensure it follows the proper algorithmic steps.",
                             ReportContent = "In PRN211, question 2 has an outdated logic that leads to incorrect output.",
                             Score = 9f,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5101)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8846)
                         },
                         new
                         {
                             ReportId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5102),
+                            AssignmentId = 11,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8847),
                             QuestionNumber = 3,
-                            QuestionSolutionDetail = "Update the definition to clarify that asynchronous programming allows multiple tasks to run concurrently without blocking.",
-                            ReportContent = "In PRN221, question 3 incorrectly defines the concept of asynchronous programming.",
-                            Score = 8f,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5103)
+                            QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.",
+                            ReportContent = "In ENM401, question 1 fails to explain the principle of supply and demand adequately.",
+                            Score = 9f,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8848)
                         },
                         new
                         {
                             ReportId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5106),
+                            AssignmentId = 12,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8850),
                             QuestionNumber = 4,
-                            QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.",
-                            ReportContent = "In ECO111, question 4 fails to explain the principle of supply and demand adequately.",
-                            Score = 9f,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5106)
+                            QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.",
+                            ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.",
+                            Score = 8f,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8850)
                         },
                         new
                         {
                             ReportId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5108),
+                            AssignmentId = 13,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8852),
                             QuestionNumber = 5,
                             QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.",
-                            ReportContent = "In ECO111, question 5 has an error in the calculation of equilibrium price.",
+                            ReportContent = "In ENM401, question 3 has an error in the calculation.",
                             Score = 8f,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(5108)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8853)
+                        },
+                        new
+                        {
+                            ReportId = 6,
+                            AssignmentId = 14,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8855),
+                            QuestionNumber = 6,
+                            QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.",
+                            ReportContent = "In ENM401, question 4 has an error.",
+                            Score = 8f,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8856)
+                        });
+                });
+
+            modelBuilder.Entity("Library.Models.Semester", b =>
+                {
+                    b.Property<int>("SemesterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SemesterId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool?>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("((1))");
+
+                    b.Property<string>("SemesterName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.HasKey("SemesterId");
+
+                    b.ToTable("Semester", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            SemesterId = 1,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8886),
+                            EndDate = new DateTime(2021, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Fall2020",
+                            StartDate = new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8886)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8889),
+                            EndDate = new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Spring2021",
+                            StartDate = new DateTime(2021, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8890)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8891),
+                            EndDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Summer2021",
+                            StartDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8892)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8893),
+                            EndDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Fall2021",
+                            StartDate = new DateTime(2021, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8894)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8896),
+                            EndDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Spring2022",
+                            StartDate = new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8896)
+                        },
+                        new
+                        {
+                            SemesterId = 6,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8898),
+                            EndDate = new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Summer2022",
+                            StartDate = new DateTime(2022, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8898)
+                        },
+                        new
+                        {
+                            SemesterId = 7,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8900),
+                            EndDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Fall2022",
+                            StartDate = new DateTime(2022, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8900)
+                        },
+                        new
+                        {
+                            SemesterId = 8,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8901),
+                            EndDate = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Spring2023",
+                            StartDate = new DateTime(2023, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8902)
+                        },
+                        new
+                        {
+                            SemesterId = 9,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8903),
+                            EndDate = new DateTime(2023, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Summer2023",
+                            StartDate = new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8904)
+                        },
+                        new
+                        {
+                            SemesterId = 10,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8905),
+                            EndDate = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Fall2023",
+                            StartDate = new DateTime(2023, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8906)
+                        },
+                        new
+                        {
+                            SemesterId = 11,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8907),
+                            EndDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Spring2024",
+                            StartDate = new DateTime(2024, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8908)
+                        },
+                        new
+                        {
+                            SemesterId = 12,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8909),
+                            EndDate = new DateTime(2024, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Summer2024",
+                            StartDate = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8910)
+                        },
+                        new
+                        {
+                            SemesterId = 13,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8912),
+                            EndDate = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            SemesterName = "Fall2024",
+                            StartDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8913)
+                        });
+                });
+
+            modelBuilder.Entity("Library.Models.SemesterCampusUserSubject", b =>
+                {
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampusUserSubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.HasKey("SemesterId", "CampusUserSubjectId")
+                        .HasName("PK__Semester__ACCC9C54F51488F5");
+
+                    b.HasIndex("CampusUserSubjectId");
+
+                    b.ToTable("SemesterCampusUserSubject", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 1,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8938),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8939)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 2,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8941),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8941)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 3,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8942),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8942)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 4,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8943),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8944)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 5,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8945),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8945)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 11,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8946),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8947)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 12,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8947),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8948)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 21,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8949),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8949)
+                        },
+                        new
+                        {
+                            SemesterId = 1,
+                            CampusUserSubjectId = 31,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8950),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8950)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 6,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8951),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8952)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 7,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8952),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8953)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 8,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8954),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8954)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 9,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8955),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8956)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 10,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8957),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8957)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 16,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8958),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8959)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 17,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8959),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8960)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 26,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8961),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8961)
+                        },
+                        new
+                        {
+                            SemesterId = 2,
+                            CampusUserSubjectId = 36,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8962),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8962)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 4,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8963),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8963)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 5,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8965),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8965)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 14,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8966),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8967)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 15,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8967),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8968)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 24,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8969),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8969)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 25,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8970),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8970)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 34,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8971),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8972)
+                        },
+                        new
+                        {
+                            SemesterId = 3,
+                            CampusUserSubjectId = 35,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8973),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8973)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 1,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8995),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8996)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 2,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8997),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8997)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 3,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8998),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8998)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 4,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8999),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9000)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 5,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9001),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9001)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 11,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9002),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9002)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 12,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9003),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9003)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 21,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9004),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9005)
+                        },
+                        new
+                        {
+                            SemesterId = 4,
+                            CampusUserSubjectId = 31,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9005),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9006)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 1,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9007),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9007)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 2,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9008),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9008)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 3,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9009),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9009)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 4,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9010),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9011)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 5,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9011),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9012)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 41,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9013),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9013)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 42,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9014),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9014)
+                        },
+                        new
+                        {
+                            SemesterId = 5,
+                            CampusUserSubjectId = 51,
+                            CreatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9015),
+                            UpdatedDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(9016)
                         });
                 });
 
@@ -1449,82 +2089,82 @@ namespace Library.Migrations
                         new
                         {
                             SubjectId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4615),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8273),
                             SubjectCode = "PRN211",
                             SubjectName = "Basic Cross-Platform Application Programming With .NET",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4616)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8273)
                         },
                         new
                         {
                             SubjectId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4618),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8275),
                             SubjectCode = "PRN221",
                             SubjectName = "Advanced Cross-Platform Application Programming With .NET",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4618)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8276)
                         },
                         new
                         {
                             SubjectId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4646),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8277),
                             SubjectCode = "PRN231",
                             SubjectName = "Building Cross-Platform Back-End Application With .NET",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4646)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8277)
                         },
                         new
                         {
                             SubjectId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4648),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8278),
                             SubjectCode = "MAE101",
                             SubjectName = "Mathematics for Engineering",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4649)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8279)
                         },
                         new
                         {
                             SubjectId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4650),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8280),
                             SubjectCode = "NWC203c",
                             SubjectName = "Computer Networking",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4650)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8281)
                         },
                         new
                         {
                             SubjectId = 6,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4652),
-                            SubjectCode = "ECO111",
-                            SubjectName = "Microeconomics",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4653)
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8282),
+                            SubjectCode = "ENM401",
+                            SubjectName = "Business English",
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8283)
                         },
                         new
                         {
                             SubjectId = 7,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4654),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8284),
                             SubjectCode = "ECO121",
                             SubjectName = "Basic Macro Economics",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4655)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8284)
                         },
                         new
                         {
                             SubjectId = 8,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4656),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8285),
                             SubjectCode = "ECO201",
                             SubjectName = "International Economics",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4657)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8286)
                         },
                         new
                         {
                             SubjectId = 9,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4658),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8287),
                             SubjectCode = "ACC101",
                             SubjectName = "Principles of Accounting",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4659)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8288)
                         },
                         new
                         {
                             SubjectId = 10,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4660),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8289),
                             SubjectCode = "MKT101",
                             SubjectName = "Marketing Principles",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4660)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8289)
                         });
                 });
 
@@ -1536,11 +2176,27 @@ namespace Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmailFe")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Gender")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1549,6 +2205,10 @@ namespace Library.Migrations
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
@@ -1568,282 +2228,486 @@ namespace Library.Migrations
                         new
                         {
                             UserId = 1,
+                            Address = "Hà Nội",
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4466),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8114),
+                            DateOfBirth = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Admin",
+                            Gender = true,
                             IsActive = true,
                             Mail = "admin@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 1,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4467)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8115)
                         },
                         new
                         {
                             UserId = 2,
+                            Address = "TP Hồ Chí Minh",
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4512),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8118),
+                            DateOfBirth = new DateTime(1990, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Liên Kết",
+                            Gender = false,
                             IsActive = true,
                             Mail = "lienkt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4512)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8119)
                         },
                         new
                         {
                             UserId = 3,
+                            Address = "Đà Nẵng",
                             CampusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4514),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8122),
+                            DateOfBirth = new DateTime(1992, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Hoàng Lâm",
+                            Gender = true,
                             IsActive = true,
                             Mail = "hoanglm@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4515)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8123)
                         },
                         new
                         {
                             UserId = 4,
+                            Address = "Nha Trang",
                             CampusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4517),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8126),
+                            DateOfBirth = new DateTime(1995, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Anh Nguyễn",
+                            Gender = true,
                             IsActive = true,
                             Mail = "anhnq@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4518)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8126)
                         },
                         new
                         {
                             UserId = 5,
+                            Address = "Cần Thơ",
                             CampusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4520),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8129),
+                            DateOfBirth = new DateTime(1991, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Minh Nhân",
+                            Gender = true,
                             IsActive = true,
                             Mail = "minhnh@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4521)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8130)
                         },
                         new
                         {
                             UserId = 6,
+                            Address = "Huế",
                             CampusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4523),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8132),
+                            DateOfBirth = new DateTime(1993, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Phong Tài",
+                            Gender = true,
                             IsActive = true,
                             Mail = "phongtl@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4523)
-                        },
-                        new
-                        {
-                            UserId = 7,
-                            CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4525),
-                            IsActive = true,
-                            Mail = "lanhbt@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4526)
-                        },
-                        new
-                        {
-                            UserId = 8,
-                            CampusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4528),
-                            IsActive = true,
-                            Mail = "khoadt@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4528)
-                        },
-                        new
-                        {
-                            UserId = 9,
-                            CampusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4530),
-                            IsActive = true,
-                            Mail = "hoangtm@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4531)
-                        },
-                        new
-                        {
-                            UserId = 10,
-                            CampusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4533),
-                            IsActive = true,
-                            Mail = "minhph@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4534)
-                        },
-                        new
-                        {
-                            UserId = 11,
-                            CampusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4536),
-                            IsActive = true,
-                            Mail = "trangnt@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4537)
-                        },
-                        new
-                        {
-                            UserId = 27,
-                            CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4538),
-                            IsActive = true,
-                            Mail = "quanpt@fpt.edu.vn",
-                            RoleId = 3,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4539)
-                        },
-                        new
-                        {
-                            UserId = 12,
-                            CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4541),
-                            IsActive = true,
-                            Mail = "namlh@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4541)
-                        },
-                        new
-                        {
-                            UserId = 13,
-                            CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4543),
-                            IsActive = true,
-                            Mail = "quangnv@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4544)
-                        },
-                        new
-                        {
-                            UserId = 14,
-                            CampusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4546),
-                            IsActive = true,
-                            Mail = "huylt@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4547)
-                        },
-                        new
-                        {
-                            UserId = 15,
-                            CampusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4549),
-                            IsActive = true,
-                            Mail = "tuanpv@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4549)
-                        },
-                        new
-                        {
-                            UserId = 16,
-                            CampusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4552),
-                            IsActive = true,
-                            Mail = "ngocdt@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4552)
-                        },
-                        new
-                        {
-                            UserId = 17,
-                            CampusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4554),
-                            IsActive = true,
-                            Mail = "minhth@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4555)
-                        },
-                        new
-                        {
-                            UserId = 18,
-                            CampusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4557),
-                            IsActive = true,
-                            Mail = "binhlt@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4557)
-                        },
-                        new
-                        {
-                            UserId = 19,
-                            CampusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4559),
-                            IsActive = true,
-                            Mail = "lanhnv@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4560)
-                        },
-                        new
-                        {
-                            UserId = 20,
-                            CampusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4561),
-                            IsActive = true,
-                            Mail = "duongkt@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4562)
-                        },
-                        new
-                        {
-                            UserId = 21,
-                            CampusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4564),
-                            IsActive = true,
-                            Mail = "phuonglt@fpt.edu.vn",
-                            RoleId = 4,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4564)
-                        },
-                        new
-                        {
-                            UserId = 22,
-                            CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4566),
-                            IsActive = true,
-                            Mail = "phucdt@fpt.edu.vn",
-                            RoleId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4567)
-                        },
-                        new
-                        {
-                            UserId = 23,
-                            CampusId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4569),
-                            IsActive = true,
-                            Mail = "thanhnt@fpt.edu.vn",
-                            RoleId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4570)
-                        },
-                        new
-                        {
-                            UserId = 24,
-                            CampusId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4572),
-                            IsActive = true,
-                            Mail = "hungpv@fpt.edu.vn",
-                            RoleId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4572)
-                        },
-                        new
-                        {
-                            UserId = 25,
-                            CampusId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4574),
-                            IsActive = true,
-                            Mail = "anhpt@fpt.edu.vn",
-                            RoleId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4574)
-                        },
-                        new
-                        {
-                            UserId = 26,
-                            CampusId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4576),
-                            IsActive = true,
-                            Mail = "truongvq@fpt.edu.vn",
-                            RoleId = 5,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4577)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8133)
                         },
                         new
                         {
                             UserId = 28,
+                            Address = "Hà Nội",
                             CampusId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4579),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8136),
+                            DateOfBirth = new DateTime(1995, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Hưng Lê",
+                            Gender = true,
                             IsActive = true,
                             Mail = "hunglthe160235@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
                             RoleId = 2,
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4579)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8137)
+                        },
+                        new
+                        {
+                            UserId = 7,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8139),
+                            DateOfBirth = new DateTime(1989, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "lanhbt@fpt.edu.vn",
+                            FullName = "Lành Bích",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "lanhbt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8140)
+                        },
+                        new
+                        {
+                            UserId = 8,
+                            Address = "Hải Phòng",
+                            CampusId = 2,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8143),
+                            DateOfBirth = new DateTime(1988, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "khoadt@fpt.edu.vn",
+                            FullName = "Khoa Đạt",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "khoadt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8143)
+                        },
+                        new
+                        {
+                            UserId = 9,
+                            Address = "Đà Nẵng",
+                            CampusId = 3,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8145),
+                            DateOfBirth = new DateTime(1987, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "hoangtm@fpt.edu.vn",
+                            FullName = "Hoàng Tâm",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "hoangtm@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8146)
+                        },
+                        new
+                        {
+                            UserId = 10,
+                            Address = "Nha Trang",
+                            CampusId = 4,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8149),
+                            DateOfBirth = new DateTime(1990, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "minhph@fpt.edu.vn",
+                            FullName = "Minh Phúc",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "minhph@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8149)
+                        },
+                        new
+                        {
+                            UserId = 11,
+                            Address = "Cần Thơ",
+                            CampusId = 5,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8153),
+                            DateOfBirth = new DateTime(1991, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "trangnt@fpt.edu.vn",
+                            FullName = "Trạng Nguyên",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "trangnt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8153)
+                        },
+                        new
+                        {
+                            UserId = 27,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8156),
+                            DateOfBirth = new DateTime(1992, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "quanpt@fpt.edu.vn",
+                            FullName = "Quân Phạm",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "quanpt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8156)
+                        },
+                        new
+                        {
+                            UserId = 30,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8159),
+                            DateOfBirth = new DateTime(1995, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "trungpxhs160623@fpt.edu.vn",
+                            FullName = "Trung Phạm",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "trungpxhs160623@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 3,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8159)
+                        },
+                        new
+                        {
+                            UserId = 12,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8179),
+                            DateOfBirth = new DateTime(1988, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "namlh@fpt.edu.vn",
+                            FullName = "Nam Lê",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "namlh@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8180)
+                        },
+                        new
+                        {
+                            UserId = 13,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8182),
+                            DateOfBirth = new DateTime(1986, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "quangnv@fpt.edu.vn",
+                            FullName = "Quang Nguyễn",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "quangnv@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8183)
+                        },
+                        new
+                        {
+                            UserId = 14,
+                            Address = "TP Hồ Chí Minh",
+                            CampusId = 2,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8186),
+                            DateOfBirth = new DateTime(1985, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "huylt@fpt.edu.vn",
+                            FullName = "Huy Lê",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "huylt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8186)
+                        },
+                        new
+                        {
+                            UserId = 15,
+                            Address = "TP Hồ Chí Minh",
+                            CampusId = 2,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8190),
+                            DateOfBirth = new DateTime(1984, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "tuanpv@fpt.edu.vn",
+                            FullName = "Tuấn Phạm",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "tuanpv@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8190)
+                        },
+                        new
+                        {
+                            UserId = 16,
+                            Address = "Đà Nẵng",
+                            CampusId = 3,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8193),
+                            DateOfBirth = new DateTime(1987, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "ngocdt@fpt.edu.vn",
+                            FullName = "Ngọc Đình",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "ngocdt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8193)
+                        },
+                        new
+                        {
+                            UserId = 17,
+                            Address = "Nha Trang",
+                            CampusId = 3,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8196),
+                            DateOfBirth = new DateTime(1989, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "minhth@fpt.edu.vn",
+                            FullName = "Minh Thảo",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "minhth@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8196)
+                        },
+                        new
+                        {
+                            UserId = 18,
+                            Address = "Cần Thơ",
+                            CampusId = 4,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8199),
+                            DateOfBirth = new DateTime(1990, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "binhlt@fpt.edu.vn",
+                            FullName = "Bình Lê",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "binhlt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8199)
+                        },
+                        new
+                        {
+                            UserId = 19,
+                            Address = "TP Hồ Chí Minh",
+                            CampusId = 4,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8202),
+                            DateOfBirth = new DateTime(1991, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "lanhnv@fpt.edu.vn",
+                            FullName = "Lan Nguyễn",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "lanhnv@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8202)
+                        },
+                        new
+                        {
+                            UserId = 20,
+                            Address = "Huế",
+                            CampusId = 5,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8205),
+                            DateOfBirth = new DateTime(1993, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "duongkt@fpt.edu.vn",
+                            FullName = "Dương Khoa",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "duongkt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8205)
+                        },
+                        new
+                        {
+                            UserId = 21,
+                            Address = "TP Hồ Chí Minh",
+                            CampusId = 5,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8209),
+                            DateOfBirth = new DateTime(1992, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "phuonglt@fpt.edu.vn",
+                            FullName = "Phương Linh",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "phuonglt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8210)
+                        },
+                        new
+                        {
+                            UserId = 29,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8212),
+                            DateOfBirth = new DateTime(1985, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "tuanlmhe161245@fpt.edu.vn",
+                            FullName = "Tuấn Lê",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "tuanlmhe161245@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8213)
+                        },
+                        new
+                        {
+                            UserId = 31,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8215),
+                            DateOfBirth = new DateTime(1995, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailFe = "tungtkHS163077@fpt.edu.vn",
+                            FullName = "Tùng Khoa",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "tungtkHS163077@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 4,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8216)
+                        },
+                        new
+                        {
+                            UserId = 22,
+                            Address = "Hà Nội",
+                            CampusId = 1,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8219),
+                            DateOfBirth = new DateTime(1989, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Phúc Đạt",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "phucdt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 5,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8219)
+                        },
+                        new
+                        {
+                            UserId = 23,
+                            Address = "TP Hồ Chí Minh",
+                            CampusId = 2,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8222),
+                            DateOfBirth = new DateTime(1990, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Thanh Nguyễn",
+                            Gender = false,
+                            IsActive = true,
+                            Mail = "thanhnt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 5,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8222)
+                        },
+                        new
+                        {
+                            UserId = 24,
+                            Address = "Đà Nẵng",
+                            CampusId = 3,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8225),
+                            DateOfBirth = new DateTime(1991, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Hùng Phát",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "hungpv@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 5,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8226)
+                        },
+                        new
+                        {
+                            UserId = 25,
+                            Address = "Nha Trang",
+                            CampusId = 4,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8229),
+                            DateOfBirth = new DateTime(1992, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Anh Tùng",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "anhpt@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 5,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8229)
+                        },
+                        new
+                        {
+                            UserId = 26,
+                            Address = "Cần Thơ",
+                            CampusId = 5,
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8232),
+                            DateOfBirth = new DateTime(1993, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FullName = "Trương Vĩnh",
+                            Gender = true,
+                            IsActive = true,
+                            Mail = "truongvq@fpt.edu.vn",
+                            PhoneNumber = "0123456789",
+                            RoleId = 5,
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8232)
                         });
                 });
 
@@ -1897,37 +2761,37 @@ namespace Library.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4434),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8075),
                             RoleName = "Admin",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4435)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8077)
                         },
                         new
                         {
                             RoleId = 2,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4436),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8078),
                             RoleName = "Examiner",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4437)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8079)
                         },
                         new
                         {
                             RoleId = 3,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4438),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8080),
                             RoleName = "Lecturer",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4439)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8081)
                         },
                         new
                         {
                             RoleId = 4,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4440),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8082),
                             RoleName = "Head of Department",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4441)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8083)
                         },
                         new
                         {
                             RoleId = 5,
-                            CreateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4442),
+                            CreateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8084),
                             RoleName = "Curriculum Development",
-                            UpdateDate = new DateTime(2024, 10, 8, 21, 8, 25, 476, DateTimeKind.Local).AddTicks(4442)
+                            UpdateDate = new DateTime(2024, 10, 18, 19, 12, 17, 510, DateTimeKind.Local).AddTicks(8084)
                         });
                 });
 
@@ -2031,12 +2895,31 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Models.Report", b =>
                 {
-                    b.HasOne("Library.Models.InstructorAssignment", "Assignemt")
+                    b.HasOne("Library.Models.InstructorAssignment", "Assignment")
                         .WithMany("Reports")
-                        .HasForeignKey("AssignemtId")
+                        .HasForeignKey("AssignmentId")
                         .HasConstraintName("FK_Reports_InstructorAssignments");
 
-                    b.Navigation("Assignemt");
+                    b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("Library.Models.SemesterCampusUserSubject", b =>
+                {
+                    b.HasOne("Library.Models.CampusUserSubject", "CampusUserSubject")
+                        .WithMany("SemesterCampusUserSubjects")
+                        .HasForeignKey("CampusUserSubjectId")
+                        .IsRequired()
+                        .HasConstraintName("FK__SemesterC__Campu__71D1E811");
+
+                    b.HasOne("Library.Models.Semester", "Semester")
+                        .WithMany("SemesterCampusUserSubjects")
+                        .HasForeignKey("SemesterId")
+                        .IsRequired()
+                        .HasConstraintName("FK__SemesterC__Updat__70DDC3D8");
+
+                    b.Navigation("CampusUserSubject");
+
+                    b.Navigation("Semester");
                 });
 
             modelBuilder.Entity("Library.Models.User", b =>
@@ -2074,6 +2957,11 @@ namespace Library.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("Library.Models.CampusUserSubject", b =>
+                {
+                    b.Navigation("SemesterCampusUserSubjects");
+                });
+
             modelBuilder.Entity("Library.Models.Exam", b =>
                 {
                     b.Navigation("InstructorAssignments");
@@ -2094,6 +2982,11 @@ namespace Library.Migrations
             modelBuilder.Entity("Library.Models.Menu", b =>
                 {
                     b.Navigation("MenuRoles");
+                });
+
+            modelBuilder.Entity("Library.Models.Semester", b =>
+                {
+                    b.Navigation("SemesterCampusUserSubjects");
                 });
 
             modelBuilder.Entity("Library.Models.Subject", b =>

@@ -1,5 +1,5 @@
 ﻿@page "/Examiner/ExamList"
-
+<h1 style="text-align: center;">Exam List</h1>
 <style>
     .mud-table-cell {
         border: none !important;
@@ -28,92 +28,86 @@
         z-index: 99;
     }
 </style>
-
-<div class="mt-4">
-    <div class="custom-box mb-4">
-        <div class="d-flex align-items-center flex-wrap w-50">
-            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
-
-             <MudSelect @bind-Value="request.StatusId"
-                        Variant="Variant.Outlined"
-                        Label="Status"
-                        Margin="Margin.Dense"
-                        AnchorOrigin="Origin.BottomCenter"
-                                  Clearable
-                        Class="me-4 col-auto">
-                 @if (statusList.Count > 0)
-                {
-                    @foreach (var item in statusList)
+<div class="d-flex justify-content-center">
+    <div class="mt-4">
+            <div class="d-flex align-items-center flex-wrap">
+                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4" Clearable></MudTextField>
+                <MudSelect @bind-Value="request.StatusId"
+                           Variant="Variant.Outlined"
+                           Label="Status"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Clearable
+                           Class="me-4 col-auto">
+                    @if (statusList.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        @foreach (var item in statusList)
+                        {
+                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
+                </MudSelect>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
-        </div>
-    </div>
-
-    <div class="custom-box">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h4>Exam List</h4>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
             </div>
-        </div>
-        <div>
-            @if (ExamList.Count > 0)
-            {
-                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
-                    <HeaderContent>
-                        <MudTh>Exam Code</MudTh>
-                        <MudTh>Campus</MudTh>
-                        <MudTh>Status</MudTh>
-                        <MudTh>Head of Department</MudTh>
-                        <MudTh>Exam Type</MudTh>
-                        <MudTh>Start Date</MudTh>
-                        <MudTh>End Date</MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>@context.ExamCode</MudTd>
-                            <MudTd>@context.CampusName</MudTd>
-                            <MudTd>
-                                <label class=" fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
-                    </MudTd>
-                    <MudTd>@context.HeadDepartmentName</MudTd>
-                    <MudTd>@context.ExamType</MudTd>
-                    <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                    <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                    <MudTd>
-                        <div class="d-flex align-items-center justify-content-around">
-                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
-                            <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
-                        </div>
-                    </MudTd>
-                    </RowTemplate>
-                @*<PagerContent>
-                @if (AccList.Count > 10)
+        <div class="custom-box">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h4>Exam List</h4>
+                </div>
+            </div>
+            <div>
+                @if (ExamList.Count > 0)
                 {
-                <MudTablePager />
+                    int index = 1;
+                    <MudTable T="ExaminerExamResponse" Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
+                        <HeaderContent>
+                            <MudTh>#</MudTh>
+                            <MudTh>Exam Code</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Head of Department</MudTh>
+                            <MudTh>Exam Type</MudTh>
+                            <MudTh>Review Start Date</MudTh>
+                            <MudTh>Review End Date</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@((ExamList.IndexOf(@context) + 1))</MudTd>
+                            <MudTd>@context.ExamCode</MudTd>
+                            <MudTd>
+                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                            </MudTd>
+                            <MudTd>@context.HeadDepartmentName</MudTd>
+                            <MudTd>@context.ExamType</MudTd>
+                            <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                            <MudTd>
+                                <div class="d-flex align-items-center justify-content-around">
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
+                                    <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                    index++;
                 }
-                </PagerContent> *@
-                </MudTable>
-            }
-            else
-            {
-                <p>No Data</p>
-            }
-        </div>
-        <div class="mt-5 d-flex justify-content-between align-items-center">
-            <div>
-                <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+                else
+                {
+                    <p>No Data</p>
+                }
             </div>
-            <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="AssignExam">Tranfer Exam</MudButton>
+            <div class="mt-5 d-flex justify-content-between align-items-center">
+                <div>
+                    <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+                </div>
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="AssignExam">Transfer Exam</MudButton>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 @code {
     [CascadingParameter]

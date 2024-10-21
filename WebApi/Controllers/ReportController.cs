@@ -40,7 +40,15 @@ namespace WebApi.Controllers
 			var data = await reportRepository.EditReportById(id, reportRequest);
 			return Ok(data);
 		}
+        [HttpGet("GetReportDuration/{assignmentId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetReportDuration(int assignmentId)
+        {
+            var data = await reportRepository.GetReportDuration(assignmentId);
+            return Ok(data);
+        }
 
 
-	}
+
+    }
 }

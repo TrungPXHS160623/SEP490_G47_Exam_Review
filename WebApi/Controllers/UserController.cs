@@ -4,6 +4,7 @@ using Library.Models.Dtos;
 using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApi.CustomActionFilter;
 using WebApi.IRepository;
 
@@ -112,6 +113,15 @@ namespace WebApi.Controllers
         {
             var deleteUser = await userRepository.GetHeadOfDepartment(subjectId,campusId);
             return Ok(deleteUser);
+        }
+        [AllowAnonymous]
+        [HttpPost("ImportUsersFromExcel")]
+        public async Task<IActionResult> ImportUsersFromExcel([FromForm] IFormFile file)
+        {
+            // Lấy thông tin người dùng hiện tại từ HttpContext
+            var currentUser = HttpContext.User;
+            var something = await userRepository.ImportUsersFromExcel(file, currentUser);
+            return Ok(something);
         }
     }
 }
