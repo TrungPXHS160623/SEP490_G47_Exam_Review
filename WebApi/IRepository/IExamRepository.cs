@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Library.Models;
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
@@ -41,6 +42,7 @@ namespace WebApi.IRepository
 
 		Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 
+		Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId);
 
 	}
 }
