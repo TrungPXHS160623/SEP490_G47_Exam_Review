@@ -107,10 +107,10 @@ namespace WebApi.Repository
                 }
 
                 // Kiểm tra xem học kỳ có liên quan đến các bản ghi khác (ví dụ như kỳ thi, lớp học, v.v.)
-                var relatedExams = await dbContext.SemesterCampusUserSubjects.AnyAsync(e => e.SemesterId == semesterId);
+                var relatedExams = await dbContext.Exams.AnyAsync(e => e.SemesterId == semesterId);
                 if (relatedExams)
                 {
-                    // Nếu có kỳ thi nào liên quan đến học kỳ này, không thể xóa
+                    // Nếu có exam nào liên quan đến học kỳ này, không thể xóa
                     throw new InvalidOperationException("Cannot delete semester because it is related to existing exams.");
                 }
 

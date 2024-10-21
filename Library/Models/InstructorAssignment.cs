@@ -15,7 +15,7 @@ public partial class InstructorAssignment
 
     public int? AssignStatusId { get; set; }
 
-    //public TimeSpan? ExamTestDuration { get; set; }
+    public TimeSpan? ExamTestDuration { get; set; }
 
     public DateTime? CreateDate { get; set; }
 
