@@ -3,6 +3,7 @@ using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
+using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -62,6 +63,15 @@ namespace WebApi.Controllers
             var data = await this._subjectRepository.GetSubjectByRole(roleId, userId, campusId);
 
             return Ok(data);
+        }
+        [AllowAnonymous]
+        [HttpPost("ImportSubjectsFromExcel")]
+        public async Task<IActionResult> ImportSubjectsFromExcel([FromForm] IFormFile file)
+        {
+            // Lấy thông tin người dùng hiện tại từ HttpContext
+            var currentUser = HttpContext.User;
+            var something = await this._subjectRepository.ImportSubjectsFromExcel(file, currentUser);
+            return Ok(something);
         }
     }
 }

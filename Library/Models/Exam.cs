@@ -21,6 +21,8 @@ public partial class Exam
 
     public int? ExamStatusId { get; set; }
 
+    public DateTime? ExamDate { get; set; }
+
     public DateTime? EstimatedTimeTest { get; set; }
 
     public DateTime? StartDate { get; set; }
