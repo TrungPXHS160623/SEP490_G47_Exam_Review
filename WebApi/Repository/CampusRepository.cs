@@ -8,10 +8,12 @@ namespace WebApi.Repository
     public class CampusRepository : ICampusRepository
     {
         private readonly QuizManagementContext DBcontext;
+        private readonly ILogHistoryRepository logRepository;
 
-        public CampusRepository(QuizManagementContext DBcontext)
+        public CampusRepository(QuizManagementContext DBcontext, ILogHistoryRepository logRepository)
         {
             this.DBcontext = DBcontext;
+            this.logRepository = logRepository;
         }
 
         public async Task<RequestResponse> AddCampus(Campus req)
@@ -33,6 +35,8 @@ namespace WebApi.Repository
                     await this.DBcontext.Campuses.AddAsync(req);
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync("Add new campus");
 
                     return new RequestResponse
                     {
@@ -71,6 +75,8 @@ namespace WebApi.Repository
                     data.IsDeleted = true;
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Delete Campus {data.CampusName}");
 
                     return new RequestResponse
                     {
@@ -177,6 +183,8 @@ namespace WebApi.Repository
                     data.UpdateDate = DateTime.Now;
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Update campus {req.CampusName}");
 
                     return new RequestResponse
                     {
