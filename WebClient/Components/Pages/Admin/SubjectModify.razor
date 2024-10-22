@@ -9,26 +9,33 @@
         color: black;
     }
 </style>
-<MudDialog>
-    <DialogContent>
-        <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code"></MudTextField>
-        <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name"></MudTextField>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-            @if (_processing)
+<EditForm Model="subject" OnValidSubmit="Excute">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code" Class="mb-4" For="@(() => subject.SubjectCode)"></MudTextField>
+            <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name" Class="mb-4" For="@(() => subject.SubjectName)"></MudTextField>
+            @if (SubjectId != 0)
             {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Saving</MudText>
+                <MudCheckBox @bind-Value=subject.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
             }
-            else
-            {
-                <MudText>@(SubjectId == 0 ? "Add" : "Save")</MudText>
-            }
-        </MudButton>
-        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-    </DialogActions>
-</MudDialog>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Saving</MudText>
+                }
+                else
+                {
+                    <MudText>@(SubjectId == 0 ? "Add" : "Save")</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
 
 
 

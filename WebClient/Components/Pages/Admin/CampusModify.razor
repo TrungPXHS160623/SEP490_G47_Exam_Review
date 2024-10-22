@@ -9,25 +9,32 @@
         color: black;
     }
 </style>
-<MudDialog>
-    <DialogContent>
-        <MudTextField @bind-Value=campus.CampusName Variant="Variant.Outlined" Label="Campus Name"></MudTextField>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-            @if (_processing)
+<EditForm Model="campus" OnValidSubmit="Excute">
+    <FluentValidationValidator/>
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value=campus.CampusName Variant="Variant.Outlined" Label="Campus Name" Class="mb-4" For="@(() => campus.CampusName)"></MudTextField>
+            @if (CampusId != 0)
             {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Saving</MudText>
+                <MudCheckBox @bind-Value=campus.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
             }
-            else
-            {
-                <MudText>@(CampusId == 0 ? "Add" : "Save")</MudText>
-            }
-        </MudButton>
-        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-    </DialogActions>
-</MudDialog>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Saving</MudText>
+                }
+                else
+                {
+                    <MudText>@(CampusId == 0 ? "Add" : "Save")</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
 
 
 
