@@ -28,6 +28,7 @@
                         <th>Id</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
+                        <th>Is Disabled</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -40,6 +41,7 @@
                                 <td>@item.SubjectId</td>
                                 <td>@item.SubjectCode</td>
                                 <td>@item.SubjectName</td>
+                                <td class="d-flex justify-content-center"><MudCheckBox @bind-Value="@item.IsDeleted" Color="Color.Error" UncheckedColor="Color.Default" ReadOnly></MudCheckBox></td>
                                 <td>
                                     <div class="d-flex justify-content-evenly align-items-center">
                                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(item.SubjectId)"></MudIconButton>

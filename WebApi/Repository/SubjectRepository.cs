@@ -3,6 +3,7 @@ using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebApi.IRepository;
@@ -22,10 +23,12 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectCode.Equals(req.SubjectCode) && x.IsDeleted != true);
+                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectCode.Equals(req.SubjectCode));
 
                 if (data == null)
                 {
+                    req.IsDeleted = false;
+
                     await this.DBcontext.Subjects.AddAsync(req);
 
                     await this.DBcontext.SaveChangesAsync();
@@ -59,11 +62,11 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == subjectId && x.IsDeleted != true);
+                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == subjectId);
 
                 if (data != null)
                 {
-                    data.IsDeleted = true;
+                    this.DBcontext.Subjects.Remove(data);
 
                     await this.DBcontext.SaveChangesAsync();
 
@@ -82,6 +85,25 @@ namespace WebApi.Repository
                     };
                 }
             }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
             catch (Exception ex)
             {
                 return new RequestResponse
@@ -96,7 +118,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == subjectId && x.IsDeleted != true);
+                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == subjectId);
 
                 return new ResultResponse<Subject>
                 {
@@ -119,7 +141,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Subjects.Where(x => x.IsDeleted != true).ToListAsync();
+                var data = await this.DBcontext.Subjects.ToListAsync();
 
                 return new ResultResponse<Subject>
                 {
@@ -142,14 +164,14 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId && x.IsDeleted != true);
+                var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId);
 
                 if (data != null)
                 {
                     if (data.SubjectCode != req.SubjectCode)
                     {
                         var existingSubjectWithSameCode = await this.DBcontext.Subjects
-                            .AnyAsync(x => x.SubjectCode == req.SubjectCode && x.SubjectId != req.SubjectId && x.IsDeleted != true);
+                            .AnyAsync(x => x.SubjectCode == req.SubjectCode && x.SubjectId != req.SubjectId);
 
                         if (existingSubjectWithSameCode)
                         {
@@ -163,6 +185,7 @@ namespace WebApi.Repository
 
                     data.SubjectCode = req.SubjectCode;
                     data.SubjectName = req.SubjectName;
+                    data.IsDeleted = req.IsDeleted;
 
                     await this.DBcontext.SaveChangesAsync();
 

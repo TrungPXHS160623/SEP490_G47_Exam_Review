@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -8,17 +9,19 @@ namespace WebApi.Repository
     public class CampusRepository : ICampusRepository
     {
         private readonly QuizManagementContext DBcontext;
+        private readonly ILogHistoryRepository logRepository;
 
-        public CampusRepository(QuizManagementContext DBcontext)
+        public CampusRepository(QuizManagementContext DBcontext, ILogHistoryRepository logRepository)
         {
             this.DBcontext = DBcontext;
+            this.logRepository = logRepository;
         }
 
         public async Task<RequestResponse> AddCampus(Campus req)
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusName.Equals(req.CampusName) && x.IsDeleted != true);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusName.Equals(req.CampusName));
 
                 if (data != null)
                 {
@@ -30,9 +33,13 @@ namespace WebApi.Repository
                 }
                 else
                 {
+                    req.IsDeleted = false;
+
                     await this.DBcontext.Campuses.AddAsync(req);
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync("Add new campus");
 
                     return new RequestResponse
                     {
@@ -56,7 +63,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId && x.IsDeleted != true);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId);
 
                 if (data == null)
                 {
@@ -68,9 +75,11 @@ namespace WebApi.Repository
                 }
                 else
                 {
-                    data.IsDeleted = true;
+                    this.DBcontext.Campuses.Remove(data);
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Delete Campus {data.CampusName}");
 
                     return new RequestResponse
                     {
@@ -79,6 +88,25 @@ namespace WebApi.Repository
                     };
                 }
 
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
             }
             catch (Exception ex)
             {
@@ -94,7 +122,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.Where(x => x.IsDeleted != true).ToListAsync();
+                var data = await this.DBcontext.Campuses.ToListAsync();
 
                 if (data != null)
                 {
@@ -127,7 +155,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId && x.IsDeleted != true);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == campusId);
 
                 if (data != null)
                 {
@@ -161,7 +189,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == req.CampusId && x.IsDeleted != true);
+                var data = await this.DBcontext.Campuses.FirstOrDefaultAsync(x => x.CampusId == req.CampusId);
 
                 if (data == null)
                 {
@@ -175,8 +203,11 @@ namespace WebApi.Repository
                 {
                     data.CampusName = req.CampusName;
                     data.UpdateDate = DateTime.Now;
+                    data.IsDeleted = req.IsDeleted;
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Update campus {req.CampusName}");
 
                     return new RequestResponse
                     {

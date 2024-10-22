@@ -10,7 +10,7 @@
 </style>
 
 <div class="d-flex justify-content-center">
-    <div class="w-75">
+    <div class="col-md-10 col-xl-6">
         <div class="mt-4 mb-4">
             <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
         </div>
@@ -21,6 +21,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Campus Name</th>
+                        <th>Is Disabled</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -32,6 +33,7 @@
                             <tr>
                                 <td>@campus.CampusId</td>
                                 <td>@campus.CampusName</td>
+                                <td class="d-flex justify-content-center"><MudCheckBox @bind-Value="@campus.IsDeleted" Color="Color.Error" UncheckedColor="Color.Default" ReadOnly></MudCheckBox></td>
                                 <td>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(campus.CampusId)"></MudIconButton>
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(campus.CampusId)"></MudIconButton>
