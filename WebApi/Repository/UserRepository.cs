@@ -747,7 +747,7 @@ namespace WebApi.Repository
 
                                 if (existingUser != null)
                                 {
-                                    errors.Add($"User with Mail '{userImportRequest.Mail}' already exists.");
+                                    errorMessages.Add($"User with Mail '{userImportRequest.Mail}' already exists.");
                                     continue;
                                 }
 

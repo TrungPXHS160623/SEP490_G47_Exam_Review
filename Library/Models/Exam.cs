@@ -19,7 +19,11 @@ public partial class Exam
 
     public int? CampusId { get; set; }
 
+    public int? SemesterId { get; set; }
+
     public int? ExamStatusId { get; set; }
+
+    public DateTime? ExamDate { get; set; }
 
     public DateTime? EstimatedTimeTest { get; set; }
 
@@ -40,4 +44,6 @@ public partial class Exam
     public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; } = new List<InstructorAssignment>();
 
     public virtual Subject? Subject { get; set; }
+
+    public virtual Semester? Semester { get; set; }
 }

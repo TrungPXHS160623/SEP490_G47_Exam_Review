@@ -8,10 +8,6 @@ namespace Library.Models
 {
     public class Semester
     {
-        public Semester()
-        {
-            SemesterCampusUserSubjects = new HashSet<SemesterCampusUserSubject>();
-        }
 
         public int SemesterId { get; set; }
         public string SemesterName { get; set; } = null!;
@@ -21,6 +17,10 @@ namespace Library.Models
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public virtual ICollection<SemesterCampusUserSubject> SemesterCampusUserSubjects { get; set; }
+        public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
+        public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; } = new List<CampusUserSubject>();
+
+
     }
 }

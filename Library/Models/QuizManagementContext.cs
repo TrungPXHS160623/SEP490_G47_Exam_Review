@@ -42,7 +42,7 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<Semester> Semesters { get; set; } = null!;
 
-    public virtual DbSet<SemesterCampusUserSubject> SemesterCampusUserSubjects { get; set; } = null!;
+    
 
 
     
@@ -71,6 +71,8 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasIndex(e => e.UserId, "IX_CampusUserSubject_UserId");
 
+            entity.HasIndex(e => e.SemesterId, "IX_CampusUserSubject_SemesterId");
+
             entity.Property(e => e.Id).HasColumnName("id");
 
             entity.Property(e => e.IsLecturer)
@@ -88,6 +90,9 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.CampusUserSubjects)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_CampusUserSubject_Users");
+            entity.HasOne(d => d.Semester).WithMany(p => p.CampusUserSubjects)
+               .HasForeignKey(d => d.SemesterId)
+               .HasConstraintName("FK_CampusUserSubject_Semesters");
         });
 
         modelBuilder.Entity<Exam>(entity =>
@@ -99,6 +104,9 @@ public partial class QuizManagementContext : DbContext
             entity.HasIndex(e => e.ExamStatusId, "IX_Exams_ExamStatusId");
 
             entity.HasIndex(e => e.SubjectId, "IX_Exams_SubjectId");
+
+            entity.HasIndex(e => e.SemesterId, "IX_Exams_SemesterId");
+
 
             entity.Property(e => e.ExamCode).HasMaxLength(50);
             entity.Property(e => e.ExamDuration).HasMaxLength(100);
@@ -115,6 +123,10 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.ExamStatus).WithMany(p => p.Exams)
                 .HasForeignKey(d => d.ExamStatusId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Semester).WithMany(p => p.Exams)
+               .HasForeignKey(d => d.SemesterId)
+     .         HasConstraintName("FK_Exams_Semesters");
 
             entity.HasOne(d => d.Subject).WithMany(p => p.Exams).HasForeignKey(d => d.SubjectId);
         });
@@ -210,33 +222,7 @@ public partial class QuizManagementContext : DbContext
                 .HasDefaultValueSql("(getdate())");
         });
 
-        modelBuilder.Entity<SemesterCampusUserSubject>(entity =>
-        {
-            entity.HasKey(e => new { e.SemesterId, e.CampusUserSubjectId })
-                .HasName("PK__Semester__ACCC9C54F51488F5");
-
-            entity.ToTable("SemesterCampusUserSubject");
-
-            entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
-
-            entity.Property(e => e.UpdatedDate)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())");
-
-            entity.HasOne(d => d.CampusUserSubject)
-                .WithMany(p => p.SemesterCampusUserSubjects)
-                .HasForeignKey(d => d.CampusUserSubjectId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SemesterC__Campu__71D1E811");
-
-            entity.HasOne(d => d.Semester)
-                .WithMany(p => p.SemesterCampusUserSubjects)
-                .HasForeignKey(d => d.SemesterId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SemesterC__Updat__70DDC3D8");
-        });
+        
 
         
 
@@ -272,13 +258,13 @@ public partial class QuizManagementContext : DbContext
 
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
-            new ExamStatus { ExamStatusId = 1, StatusContent = "Not Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 2, StatusContent = "Waiting To Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 2, StatusContent = "Pending", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 3, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 5, StatusContent = "Exam With Errors", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 6, StatusContent = "Faultless Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 7, StatusContent = "Complete", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 5, StatusContent = "Erroneous", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 6, StatusContent = "Faultless", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 3. Seed data for UserRole table
@@ -366,89 +352,89 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<CampusUserSubject>().HasData(
 
             //Seed data for Heads of Department of Ha Noi campus
-            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 29 },
-            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 29 },
-            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 29 },
-            new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 31 },
-            new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 31 },
+            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 29 ,SemesterId = 1 },
+            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 29, SemesterId = 1 },
+            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 29, SemesterId = 1 },
+            new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 31, SemesterId = 1 },
+            new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 31, SemesterId = 1 },
 
 
-            new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 9, SubjectId = 9, CampusId = 1, UserId = 13 },
-            new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13 },
+            new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 13, SemesterId = 2 },
+            new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 13, SemesterId = 2 },
+            new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 13, SemesterId = 2 },
+            new CampusUserSubject { Id = 9, SubjectId = 9, CampusId = 1, UserId = 13, SemesterId = 2 },
+            new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13, SemesterId = 2 },
 
             //Seed data for Lecturer of Ha Noi campus
-            new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 1, UserId = 7, IsLecturer = true },
-            new CampusUserSubject { Id = 12, SubjectId = 2, CampusId = 1, UserId = 7, IsLecturer = true },
-            new CampusUserSubject { Id = 13, SubjectId = 3, CampusId = 1, UserId = 7, IsLecturer = true },
-            new CampusUserSubject { Id = 14, SubjectId = 4, CampusId = 1, UserId = 7, IsLecturer = true },
-            new CampusUserSubject { Id = 15, SubjectId = 5, CampusId = 1, UserId = 7, IsLecturer = true },
+            new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 1, UserId = 7, IsLecturer = true , SemesterId = 3},
+            new CampusUserSubject { Id = 12, SubjectId = 2, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
+            new CampusUserSubject { Id = 13, SubjectId = 3, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
+            new CampusUserSubject { Id = 14, SubjectId = 4, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
+            new CampusUserSubject { Id = 15, SubjectId = 5, CampusId = 1, UserId = 7, IsLecturer = true , SemesterId = 3 },
 
 
-            new CampusUserSubject { Id = 16, SubjectId = 6, CampusId = 1, UserId = 27, IsLecturer = true },
-            new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 1, UserId = 27, IsLecturer = true },
-            new CampusUserSubject { Id = 18, SubjectId = 8, CampusId = 1, UserId = 27, IsLecturer = true },
-            new CampusUserSubject { Id = 19, SubjectId = 9, CampusId = 1, UserId = 27, IsLecturer = true },
-            new CampusUserSubject { Id = 20, SubjectId = 10, CampusId = 1, UserId = 27, IsLecturer = true },
+            new CampusUserSubject { Id = 16, SubjectId = 6, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
+            new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4},
+            new CampusUserSubject { Id = 18, SubjectId = 8, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
+            new CampusUserSubject { Id = 19, SubjectId = 9, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
+            new CampusUserSubject { Id = 20, SubjectId = 10, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
 
             // Seed data for Heads of Department of Can Tho campus
-            new CampusUserSubject { Id = 21, SubjectId = 1, CampusId = 3, UserId = 16 },
-            new CampusUserSubject { Id = 22, SubjectId = 2, CampusId = 3, UserId = 16 },
-            new CampusUserSubject { Id = 23, SubjectId = 3, CampusId = 3, UserId = 16 },
-            new CampusUserSubject { Id = 24, SubjectId = 4, CampusId = 3, UserId = 16 },
+            new CampusUserSubject { Id = 21, SubjectId = 1, CampusId = 3, UserId = 16, SemesterId = 5},
+            new CampusUserSubject { Id = 22, SubjectId = 2, CampusId = 3, UserId = 16, SemesterId = 5},
+            new CampusUserSubject { Id = 23, SubjectId = 3, CampusId = 3, UserId = 16, SemesterId = 5 },
+            new CampusUserSubject { Id = 24, SubjectId = 4, CampusId = 3, UserId = 16, SemesterId = 5 },
             new CampusUserSubject { Id = 25, SubjectId = 5, CampusId = 3, UserId = 16 },
 
 
-            new CampusUserSubject { Id = 26, SubjectId = 6, CampusId = 3, UserId = 17 },
-            new CampusUserSubject { Id = 27, SubjectId = 7, CampusId = 3, UserId = 17 },
-            new CampusUserSubject { Id = 28, SubjectId = 8, CampusId = 3, UserId = 17 },
-            new CampusUserSubject { Id = 29, SubjectId = 9, CampusId = 3, UserId = 17 },
-            new CampusUserSubject { Id = 30, SubjectId = 10, CampusId = 3, UserId = 17 },
+            new CampusUserSubject { Id = 26, SubjectId = 6, CampusId = 3, UserId = 17, SemesterId = 6 },
+            new CampusUserSubject { Id = 27, SubjectId = 7, CampusId = 3, UserId = 17, SemesterId = 6},
+            new CampusUserSubject { Id = 28, SubjectId = 8, CampusId = 3, UserId = 17, SemesterId = 6 },
+            new CampusUserSubject { Id = 29, SubjectId = 9, CampusId = 3, UserId = 17, SemesterId = 6},
+            new CampusUserSubject { Id = 30, SubjectId = 10, CampusId = 3, UserId = 17, SemesterId = 6},
 
             // Seed data for Heads of Department of Ho Chi minh campus
-            new CampusUserSubject { Id = 31, SubjectId = 1, CampusId = 4, UserId = 18 },
-            new CampusUserSubject { Id = 32, SubjectId = 2, CampusId = 4, UserId = 18 },
-            new CampusUserSubject { Id = 33, SubjectId = 3, CampusId = 4, UserId = 18 },
-            new CampusUserSubject { Id = 34, SubjectId = 4, CampusId = 4, UserId = 18 },
-            new CampusUserSubject { Id = 35, SubjectId = 5, CampusId = 4, UserId = 18 },
+            new CampusUserSubject { Id = 31, SubjectId = 1, CampusId = 4, UserId = 18, SemesterId = 7 },
+            new CampusUserSubject { Id = 32, SubjectId = 2, CampusId = 4, UserId = 18, SemesterId = 7 },
+            new CampusUserSubject { Id = 33, SubjectId = 3, CampusId = 4, UserId = 18 , SemesterId = 7 },
+            new CampusUserSubject { Id = 34, SubjectId = 4, CampusId = 4, UserId = 18 , SemesterId = 7 },
+            new CampusUserSubject { Id = 35, SubjectId = 5, CampusId = 4, UserId = 18 , SemesterId = 7 },
 
 
-            new CampusUserSubject { Id = 36, SubjectId = 6, CampusId = 4, UserId = 19 },
-            new CampusUserSubject { Id = 37, SubjectId = 7, CampusId = 4, UserId = 19 },
-            new CampusUserSubject { Id = 38, SubjectId = 8, CampusId = 4, UserId = 19 },
-            new CampusUserSubject { Id = 39, SubjectId = 9, CampusId = 4, UserId = 19 },
-            new CampusUserSubject { Id = 40, SubjectId = 10, CampusId = 4, UserId = 19 },
+            new CampusUserSubject { Id = 36, SubjectId = 6, CampusId = 4, UserId = 19 ,SemesterId = 8},
+            new CampusUserSubject { Id = 37, SubjectId = 7, CampusId = 4, UserId = 19 ,SemesterId = 8 },
+            new CampusUserSubject { Id = 38, SubjectId = 8, CampusId = 4, UserId = 19, SemesterId = 8 },
+            new CampusUserSubject { Id = 39, SubjectId = 9, CampusId = 4, UserId = 19, SemesterId = 8 },
+            new CampusUserSubject { Id = 40, SubjectId = 10, CampusId = 4, UserId = 19, SemesterId = 8 },
 
 
             // Seed data for Heads of Department of Quy nhon campus
-            new CampusUserSubject { Id = 41, SubjectId = 1, CampusId = 5, UserId = 20 },
-            new CampusUserSubject { Id = 42, SubjectId = 2, CampusId = 5, UserId = 20 },
-            new CampusUserSubject { Id = 43, SubjectId = 3, CampusId = 5, UserId = 20 },
-            new CampusUserSubject { Id = 44, SubjectId = 4, CampusId = 5, UserId = 20 },
-            new CampusUserSubject { Id = 45, SubjectId = 5, CampusId = 5, UserId = 20 },
+            new CampusUserSubject { Id = 41, SubjectId = 1, CampusId = 5, UserId = 20, SemesterId = 9 },
+            new CampusUserSubject { Id = 42, SubjectId = 2, CampusId = 5, UserId = 20, SemesterId = 9 },
+            new CampusUserSubject { Id = 43, SubjectId = 3, CampusId = 5, UserId = 20, SemesterId = 9 },
+            new CampusUserSubject { Id = 44, SubjectId = 4, CampusId = 5, UserId = 20, SemesterId = 9 },
+            new CampusUserSubject { Id = 45, SubjectId = 5, CampusId = 5, UserId = 20, SemesterId = 9 },
 
 
-            new CampusUserSubject { Id = 46, SubjectId = 6, CampusId = 5, UserId = 21 },
-            new CampusUserSubject { Id = 47, SubjectId = 7, CampusId = 5, UserId = 21 },
-            new CampusUserSubject { Id = 48, SubjectId = 8, CampusId = 5, UserId = 21 },
-            new CampusUserSubject { Id = 49, SubjectId = 9, CampusId = 5, UserId = 21 },
-            new CampusUserSubject { Id = 50, SubjectId = 10, CampusId = 5, UserId = 21 },
+            new CampusUserSubject { Id = 46, SubjectId = 6, CampusId = 5, UserId = 21, SemesterId = 10 },
+            new CampusUserSubject { Id = 47, SubjectId = 7, CampusId = 5, UserId = 21, SemesterId = 10 },
+            new CampusUserSubject { Id = 48, SubjectId = 8, CampusId = 5, UserId = 21, SemesterId = 10 },
+            new CampusUserSubject { Id = 49, SubjectId = 9, CampusId = 5, UserId = 21, SemesterId = 10 },
+            new CampusUserSubject { Id = 50, SubjectId = 10, CampusId = 5, UserId = 21, SemesterId = 10 },
 
             // Seed data for Heads of Department of Da Nang campus
-            new CampusUserSubject { Id = 51, SubjectId = 1, CampusId = 2, UserId = 14 },
-            new CampusUserSubject { Id = 52, SubjectId = 2, CampusId = 2, UserId = 14 },
-            new CampusUserSubject { Id = 53, SubjectId = 3, CampusId = 2, UserId = 14 },
-            new CampusUserSubject { Id = 54, SubjectId = 4, CampusId = 2, UserId = 14 },
-            new CampusUserSubject { Id = 55, SubjectId = 5, CampusId = 2, UserId = 14 },
+            new CampusUserSubject { Id = 51, SubjectId = 1, CampusId = 2, UserId = 14, SemesterId = 1 },
+            new CampusUserSubject { Id = 52, SubjectId = 2, CampusId = 2, UserId = 14, SemesterId = 1 },
+            new CampusUserSubject { Id = 53, SubjectId = 3, CampusId = 2, UserId = 14, SemesterId = 1 },
+            new CampusUserSubject { Id = 54, SubjectId = 4, CampusId = 2, UserId = 14 , SemesterId = 1 },
+            new CampusUserSubject { Id = 55, SubjectId = 5, CampusId = 2, UserId = 14 , SemesterId = 1 },
 
 
-            new CampusUserSubject { Id = 56, SubjectId = 6, CampusId = 2, UserId = 15 },
-            new CampusUserSubject { Id = 57, SubjectId = 7, CampusId = 2, UserId = 15 },
-            new CampusUserSubject { Id = 58, SubjectId = 8, CampusId = 2, UserId = 15 },
-            new CampusUserSubject { Id = 59, SubjectId = 9, CampusId = 2, UserId = 15 },
-            new CampusUserSubject { Id = 60, SubjectId = 10, CampusId = 2, UserId = 15 }
+            new CampusUserSubject { Id = 56, SubjectId = 6, CampusId = 2, UserId = 15, SemesterId = 2 },
+            new CampusUserSubject { Id = 57, SubjectId = 7, CampusId = 2, UserId = 15, SemesterId = 2 },
+            new CampusUserSubject { Id = 58, SubjectId = 8, CampusId = 2, UserId = 15 , SemesterId = 2 },
+            new CampusUserSubject { Id = 59, SubjectId = 9, CampusId = 2, UserId = 15, SemesterId = 2  },
+            new CampusUserSubject { Id = 60, SubjectId = 10, CampusId = 2, UserId = 15, SemesterId = 2 }
 
         );
 
@@ -457,65 +443,66 @@ public partial class QuizManagementContext : DbContext
 
             // Ha Noi's Examiners create exams
             // Seed data for software engineering major
-            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, ExamStatusId = 5, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, ExamStatusId = 5, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1,SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 2, 15), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 3, 10), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, ExamStatusId = 6, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 4, ExamCode = "PRN221_Q2_5_210987", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 6, ExamDate = new DateTime(2024, 4, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 4, ExamCode = "PRN221_Q2_5_210987", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 5, ExamCode = "PRN231_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 6, ExamCode = "PRN231_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 5, ExamCode = "PRN231_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 10), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 6, ExamCode = "PRN231_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 7, ExamCode = "MAE101_Q1_10_234567", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 8, ExamCode = "MAE101_Q2_5_765432", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 7, ExamCode = "MAE101_Q1_10_234567", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 8, ExamCode = "MAE101_Q2_5_765432", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 9, ExamCode = "NWC203c_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 10, ExamCode = "NWC203c_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 9, ExamCode = "NWC203c_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 1), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 10, ExamCode = "NWC203c_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 8), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for international business major
-            new Exam { ExamId = 11, ExamCode = "ENM401_Q1_10_111222", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 6, CreaterId = 2, CampusId = 1, ExamStatusId = 7, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 12, ExamCode = "ENM401_Q2_5_222111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Reading", SubjectId = 6, CreaterId = 2, CampusId = 1, ExamStatusId = 7, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 13, ExamCode = "ENM401_Q3_7_222333", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 6, CreaterId = 2, CampusId = 1, ExamStatusId = 7, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 14, ExamCode = "ENM401_Q4_9_333111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Listening", SubjectId = 6, CreaterId = 2, CampusId = 1, ExamStatusId = 7, EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 11, ExamCode = "ENM401_Q1_10_111222", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 12, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 12, ExamCode = "ENM401_Q2_5_222111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Reading", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 1, 12), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 13, ExamCode = "ENM401_Q3_7_222333", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 2, 7), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 14, ExamCode = "ENM401_Q4_9_333111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Listening", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 3, 3), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 15, ExamCode = "ECO121_Q1_10_333444", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 16, ExamCode = "ECO121_Q2_5_444333", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 15, ExamCode = "ECO121_Q1_10_333444", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 4, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 16, ExamCode = "ECO121_Q2_5_444333", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 17, ExamCode = "ECO201_Q1_10_555666", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 18, ExamCode = "ECO201_Q2_5_666555", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 17, ExamCode = "ECO201_Q1_10_555666", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 14), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 18, ExamCode = "ECO201_Q2_5_666555", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 30), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 19, ExamCode = "ACC101_Q1_10_777888", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 20, ExamCode = "ACC101_Q2_5_888777", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 19, ExamCode = "ACC101_Q1_10_777888", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 19), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 20, ExamCode = "ACC101_Q2_5_888777", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 21, ExamCode = "MKT101_Q1_10_999000", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 22, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, ExamStatusId = 1, EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-
-
-
+            new Exam { ExamId = 21, ExamCode = "MKT101_Q1_10_999000", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 22), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 22, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
         // 9. Seed data for InstructorAssignment table
         modelBuilder.Entity<InstructorAssignment>().HasData(
 
+
+
+
+
         // Examiner => Heads of departmant
-        new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 3, ExamId = 3, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 4, ExamId = 11, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 5, ExamId = 12, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 6, ExamId = 13, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 7, ExamId = 14, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 3, ExamId = 3, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 4, ExamId = 11, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 5, ExamId = 12, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 6, ExamId = 13, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 7, ExamId = 14, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
 
         // Head of departmant => Lecturers
-        new InstructorAssignment { AssignmentId = 8, ExamId = 1, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 9, ExamId = 2, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 10, ExamId = 3, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 11, ExamId = 11, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 12, ExamId = 12, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 13, ExamId = 13, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 14, ExamId = 14, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        new InstructorAssignment { AssignmentId = 8, ExamId = 1, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 9, ExamId = 2, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 10, ExamId = 3, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 11, ExamId = 11, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 12, ExamId = 12, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 13, ExamId = 13, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        new InstructorAssignment { AssignmentId = 14, ExamId = 14, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
 
 
@@ -582,58 +569,7 @@ public partial class QuizManagementContext : DbContext
             new Semester { SemesterId = 13, SemesterName = "Fall2024", StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2025, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
          );
 
-        // Seed data for SemesterCampusUserSubject
-        modelBuilder.Entity<SemesterCampusUserSubject>().HasData(
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 11, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 12, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 21, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 1, CampusUserSubjectId = 31, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 6, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 7, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 8, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 9, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 10, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 16, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 17, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 26, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 2, CampusUserSubjectId = 36, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 14, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 15, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 24, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 25, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 34, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 3, CampusUserSubjectId = 35, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 11, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 12, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 21, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 4, CampusUserSubjectId = 31, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 1, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 2, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 3, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 4, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 5, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 41, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 42, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new SemesterCampusUserSubject { SemesterId = 5, CampusUserSubjectId = 51, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
-        
-
-        );
+       
 
 
         

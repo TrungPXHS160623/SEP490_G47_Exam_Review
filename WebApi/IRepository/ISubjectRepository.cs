@@ -1,6 +1,7 @@
 ﻿using Library.Common;
 using Library.Models;
 using Library.Response;
+using System.Security.Claims;
 
 namespace WebApi.IRepository
 {
@@ -13,5 +14,7 @@ namespace WebApi.IRepository
         Task<RequestResponse> DeleteSubject(int subjectId);
 
         Task<ResultResponse<SubjectResponse>> GetSubjectByRole(int roleId, int userId,int campusId);
+
+        Task<RequestResponse> ImportSubjectsFromExcel(IFormFile file, ClaimsPrincipal currentUser);
     }
 }
