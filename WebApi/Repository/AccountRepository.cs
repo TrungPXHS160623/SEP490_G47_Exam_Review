@@ -16,11 +16,13 @@ namespace WebApi.Repository
     {
         private readonly QuizManagementContext DBcontext;
         private readonly IConfiguration config;
+        private readonly ILogHistoryRepository logRepository;
 
-        public AccountRepository(QuizManagementContext DBcontext, IConfiguration Config)
+        public AccountRepository(QuizManagementContext DBcontext, IConfiguration Config, ILogHistoryRepository logRepository)
         {
             this.DBcontext = DBcontext;
             this.config = Config;
+            this.logRepository = logRepository;
         }
 
         public async Task<AuthenticationResponse> UserLogin(UserRequest request)
@@ -139,6 +141,7 @@ namespace WebApi.Repository
                         {
                             var token = GenerateToken(user);
                             Constants.JWTToken = token;
+                            await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
                                 IsSuccessful = true,

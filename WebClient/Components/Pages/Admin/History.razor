@@ -32,45 +32,39 @@
 <div class="container mt-4">
     <div class="custom-box mb-4">
         <div class="d-flex align-items-center flex-wrap justify-content-between">
-            <MudTextField @bind-Value="UserName" Label="User: " Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
+            <MudTextField @bind-Value="req.Mail" Label="Mail" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4"></MudTextField>
 
             <MudDatePicker Label="From" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
-                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > date2?.Date) ||(dt > DateTime.Now))" @bind-Date="date1"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > req.EndDate?.Date) ||(dt > DateTime.Now))" @bind-Date="req.StartDate"
                            DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft"
-                           Margin="Margin.Dense" Clearable Mask="@(new DateMask("yyyy-MM-dd"))" />
-             <h3 class="pl-3">~</h3>
-             <MudDatePicker Label="To" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
-                            IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < date1?.Date )||( dt.Date > DateTime.Now.Date))"
-                            @bind-Date="date2" DateFormat="yyyy-MM-dd" AnchorOrigin="Origin.BottomLeft"
-                            Variant="Variant.Outlined" Margin="Margin.Dense" Clearable Mask="@(new DateMask("yyyy-MM-dd"))" Class="ms-4 me-4" />
+                           Margin="Margin.Dense" Clearable />
+            <h3 class="pl-3">~</h3>
+            <MudDatePicker Label="To" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < req.StartDate )||( dt.Date > DateTime.Now.Date))"
+                           @bind-Date="req.EndDate" DateFormat="yyyy-MM-dd" AnchorOrigin="Origin.BottomLeft"
+                           Variant="Variant.Outlined" Margin="Margin.Dense" Clearable Class="ms-4 me-4" />
 
-             <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
-         </div>
-     </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetLog">Search</MudButton>
+        </div>
+    </div>
 
-     <div class="custom-box ">
-         <h4>History List</h4>
-         <div>
-             @if (AccList.Count > 0)
+    <div class="custom-box ">
+        <h4>History List</h4>
+        <div>
+            @if (LogList.Count > 0)
             {
-                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                <MudTable Items="@LogList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
-                        <MudTh>Exam Code</MudTh>
-                        <MudTh>Status</MudTh>
-                        <MudTh>Duration</MudTh>
+                        <MudTh>Mail</MudTh>
+                        <MudTh>Log Content</MudTh>
+                        <MudTh>Date</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.ExamCode</MudTd>
-                            <MudTd>@context.ExamStatusId</MudTd>
-                            <MudTd>@context.ExamDuration</MudTd>
-                        </RowTemplate>
-                        @*                     <PagerContent>
-                @if (AccList.Count > 10)
-                {
-                <MudTablePager />
-                }
-                </PagerContent> *@
-                    </MudTable>
+                        <MudTd>@context.Mail</MudTd>
+                        <MudTd>@context.LogContent</MudTd>
+                        <MudTd>@context.LogDt</MudTd>
+                    </RowTemplate>
+                </MudTable>
             }
             else
             {
@@ -83,15 +77,9 @@
 @code {
     [CascadingParameter] public MainLayout Layout { get; set; }
 
-    public List<Exam> AccList = new List<Exam>();
+    public List<LogResponse> LogList = new List<LogResponse>();
 
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
-
-    public string UserName { get; set; }
-
-    public DateTime? date1 { get; set; }
-
-    public DateTime? date2 { get; set; }
+    public LogRequest req = new LogRequest();
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,15 +99,7 @@
             }
             else
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    AccList.Add(new Exam
-                        {
-                            ExamCode = "PRN231_Fall24_Q1_201" + i,
-                            ExamStatusId = i % 2 == 0 ? 1 : 2,
-                            ExamDuration = "60:00"
-                        });
-                }
+                await GetLog();
 
                 if (Layout != null)
                 {
@@ -128,10 +108,19 @@
                     Layout.SubHeader = "User History";
                     Layout.RefreshLayout();
                 }
+
             }
         }
+    }
 
+    public async Task GetLog()
+    {
+        var resp = await HistoryService.GetLog(req);
 
+        if (resp.IsSuccessful)
+        {
+            LogList = resp.Items;
+        }
     }
 
     MudBlazor.Converter<DateTime?, string> ConvertDate(string format, DateTime max)
