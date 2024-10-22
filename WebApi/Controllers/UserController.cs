@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Library.Models;
 using Library.Models.Dtos;
 using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using WebApi.CustomActionFilter;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -30,26 +27,26 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-        [HttpGet("GetLecture")]
-        public async Task<IActionResult> GetLecture()
+        [HttpGet("GetLecture/{userId}/{filterQuery?}")]
+        public async Task<IActionResult> GetLecture(int userId, string filterQuery = null)
         {
-            var data = await this.userRepository.GetLecture();
+            var data = await this.userRepository.GetLecture(userId, filterQuery);
 
             return Ok(data);
         }
 
 
         [HttpGet("GetUserForAdmin/{filterQuery?}")]
-        public async Task<IActionResult> GetAllUserWithFilter(string filterQuery =null)
+        public async Task<IActionResult> GetAllUserWithFilter(string filterQuery = null)
         {
             var userDomainModels = await userRepository.GetUserForAdmin(filterQuery);
             return Ok(userDomainModels);
         }
 
         [HttpGet("GetUserForExaminer/{userId}/{filterQuery?}")]
-        public async Task<IActionResult> GetUserForExaminer(int userId,string filterQuery = null)
+        public async Task<IActionResult> GetUserForExaminer(int userId, string filterQuery = null)
         {
-            var userDomainModels = await userRepository.GetUserForExaminer(userId,filterQuery);
+            var userDomainModels = await userRepository.GetUserForExaminer(userId, filterQuery);
             return Ok(userDomainModels);
         }
 
@@ -109,9 +106,9 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GetHead/{subjectId}/{campusId}")]
-        public async Task<IActionResult> GetHead(int subjectId,int campusId)
+        public async Task<IActionResult> GetHead(int subjectId, int campusId)
         {
-            var deleteUser = await userRepository.GetHeadOfDepartment(subjectId,campusId);
+            var deleteUser = await userRepository.GetHeadOfDepartment(subjectId, campusId);
             return Ok(deleteUser);
         }
         [AllowAnonymous]

@@ -208,9 +208,9 @@
 
             };
 
-        var parameters = new DialogParameters<ImportDialog>();
+        var parameters = new DialogParameters<ImportExam>();
 
-        var dialog = await DialogService.ShowAsync<ImportDialog>("Import Exam", parameters, options);
+        var dialog = await DialogService.ShowAsync<ImportExam>("Import Exam", parameters, options);
 
         var result = await dialog.Result;
 
