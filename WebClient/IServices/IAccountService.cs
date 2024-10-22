@@ -1,6 +1,7 @@
 ﻿using Library.Common;
 using Library.Request;
 using Library.Response;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace WebClient.IServices
 {
@@ -14,11 +15,11 @@ namespace WebClient.IServices
 
         Task<ResultResponse<UserResponse>> GetLectureList();
 
-        Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId,int campusId);
+        Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
 
         Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
 
-        Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId,string filterQuery);
+        Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId, string filterQuery);
 
         Task<AuthenticationResponse> GetJWT();
 
@@ -35,6 +36,7 @@ namespace WebClient.IServices
         Task<RequestResponse> DeleteAsync(int id);
 
         Task<RequestResponse> CreateAsync(UserRequest user);
+        Task<RequestResponse> ImportUserFromExcel(IBrowserFile files);
 
     }
 }

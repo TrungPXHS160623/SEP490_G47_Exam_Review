@@ -6,7 +6,6 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebApi.IRepository;
-using static MudBlazor.Colors;
 
 namespace WebApi.Repository
 {
