@@ -38,22 +38,22 @@
                            IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > req.EndDate?.Date) ||(dt > DateTime.Now))" @bind-Date="req.StartDate"
                            DateFormat="yyyy-MM-dd" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft"
                            Margin="Margin.Dense" Clearable />
-             <h3 class="pl-3">~</h3>
-             <MudDatePicker Label="To" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
-                            IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < req.StartDate )||( dt.Date > DateTime.Now.Date))"
-                            @bind-Date="req.EndDate" DateFormat="yyyy-MM-dd" AnchorOrigin="Origin.BottomLeft"
-                            Variant="Variant.Outlined" Margin="Margin.Dense" Clearable Class="ms-4 me-4" />
+            <h3 class="pl-3">~</h3>
+            <MudDatePicker Label="To" Converter="@ConvertDate("yyyy-MM-dd",DateTime.Now.Date)"
+                           IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < req.StartDate )||( dt.Date > DateTime.Now.Date))"
+                           @bind-Date="req.EndDate" DateFormat="yyyy-MM-dd" AnchorOrigin="Origin.BottomLeft"
+                           Variant="Variant.Outlined" Margin="Margin.Dense" Clearable Class="ms-4 me-4" />
 
-             <MudButton Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
-         </div>
-     </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetLog">Search</MudButton>
+        </div>
+    </div>
 
-     <div class="custom-box ">
-         <h4>History List</h4>
-         <div>
-             @if (AccList.Count > 0)
+    <div class="custom-box ">
+        <h4>History List</h4>
+        <div>
+            @if (LogList.Count > 0)
             {
-                <MudTable Items="@AccList" FixedHeader="true" Height="400px" Hover="true">
+                <MudTable Items="@LogList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
                         <MudTh>Mail</MudTh>
                         <MudTh>Log Content</MudTh>
@@ -77,9 +77,7 @@
 @code {
     [CascadingParameter] public MainLayout Layout { get; set; }
 
-    public List<LogResponse> AccList = new List<LogResponse>();
-
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
+    public List<LogResponse> LogList = new List<LogResponse>();
 
     public LogRequest req = new LogRequest();
 
@@ -101,6 +99,8 @@
             }
             else
             {
+                await GetLog();
+
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
@@ -108,7 +108,18 @@
                     Layout.SubHeader = "User History";
                     Layout.RefreshLayout();
                 }
+
             }
+        }
+    }
+
+    public async Task GetLog()
+    {
+        var resp = await HistoryService.GetLog(req);
+
+        if (resp.IsSuccessful)
+        {
+            LogList = resp.Items;
         }
     }
 

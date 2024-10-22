@@ -6,7 +6,7 @@ namespace WebApi.IRepository
 {
     public interface ILogHistoryRepository
     {
-        public Task LogAsync(string message,int userId);
+        public Task LogAsync(string message);
 
         public Task<ResultResponse<LogResponse>> GetLog(LogRequest req);
     }

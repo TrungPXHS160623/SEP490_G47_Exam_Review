@@ -3,6 +3,11 @@ using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -10,10 +15,12 @@ namespace WebApi.Repository
     public class LogHistoryRepository : ILogHistoryRepository
     {
         private readonly QuizManagementContext DBcontext;
+        private readonly IConfiguration Config;
 
-        public LogHistoryRepository(QuizManagementContext DBcontext)
+        public LogHistoryRepository(QuizManagementContext DBcontext, IConfiguration config)
         {
             this.DBcontext = DBcontext;
+            Config = config;
         }
 
         public async Task<ResultResponse<LogResponse>> GetLog(LogRequest req)
@@ -30,7 +37,7 @@ namespace WebApi.Repository
                                Mail = u.Mail,
                                LogDt = uh.LogDt,
                                LogContent = uh.LogContent,
-                           }).ToListAsync();
+                           }).OrderByDescending(x => x.LogDt).ToListAsync();
 
                 return new ResultResponse<LogResponse>
                 {
@@ -49,10 +56,19 @@ namespace WebApi.Repository
 
         }
 
-        public async Task LogAsync(string message,int userId)
+        public async Task LogAsync(string message)
         {
             try
             {
+                var claimsPrincipal = GetClaimsFromToken(Constants.JWTToken);
+
+                if (claimsPrincipal == null)
+                {
+                    return;
+                }
+
+                var userId = int.Parse(claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
                 var log = new UserHistory
                 {
                     LogContent = message,
@@ -66,7 +82,34 @@ namespace WebApi.Repository
             }
             catch (Exception ex)
             {
+                return;
+            }
+        }
 
+        public ClaimsPrincipal? GetClaimsFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(Config["Jwt:Key"]!);
+
+            try
+            {
+                var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = Config["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = Config["Jwt:Audience"],
+                    ValidateLifetime = true, 
+                    ClockSkew = TimeSpan.Zero 
+                }, out SecurityToken validatedToken);
+
+                return claimsPrincipal; 
+            }
+            catch
+            {
+                return null;
             }
         }
     }

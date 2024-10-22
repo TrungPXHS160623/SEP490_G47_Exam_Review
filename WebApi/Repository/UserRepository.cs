@@ -4,7 +4,6 @@ using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Security.Claims;
 using WebApi.IRepository;
@@ -14,10 +13,12 @@ namespace WebApi.Repository
     public class UserRepository : IUserRepository
     {
         private readonly QuizManagementContext dbContext;
+        private readonly ILogHistoryRepository logRepository;
 
-        public UserRepository(QuizManagementContext dbContext)
+        public UserRepository(QuizManagementContext dbContext, ILogHistoryRepository logRepository)
         {
             this.dbContext = dbContext;
+            this.logRepository = logRepository;
         }
         public async Task<RequestResponse> CreateAsync(UserRequest user)
         {
@@ -48,6 +49,7 @@ namespace WebApi.Repository
                     await dbContext.SaveChangesAsync();
                 }
 
+                await logRepository.LogAsync($"Create user {user.Email}");
 
                 return new RequestResponse
                 {
@@ -283,6 +285,7 @@ namespace WebApi.Repository
                 response.IsSuccessful = true;
 
                 response.Message = "Update account successfuly";
+                await logRepository.LogAsync($"Update user {user.Email}");
                 return response;
             }
             catch (Exception ex)
