@@ -12,7 +12,13 @@
 <div class="d-flex justify-content-center">
     <div class="col-md-10 col-xl-6">
         <div class="mt-4 mb-4">
-            <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Subject</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Subject</MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                       OnClick="OpenImportDialogAsync">
+                Import Subject
+            </MudButton>
         </div>
         @if (subjectList.Count > 0)
         {
@@ -90,6 +96,29 @@
             }
         }
     }
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportSubject>();
+
+        var dialog = await DialogService.ShowAsync<ImportSubject>("Import Subject", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetData();
+        }
+    }
+
 
     public async Task GetData()
     {
