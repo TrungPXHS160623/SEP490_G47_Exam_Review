@@ -12,6 +12,13 @@
             <label class="me-5">User: </label>
             <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
             <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddNewUser">Add New User</MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                       OnClick="OpenImportDialogAsync">
+                Import User
+            </MudButton>
         </div>
 
         @if (users.Count > 0)
@@ -103,6 +110,32 @@
         }
 
 
+    }
+    private void AddNewUser()
+    {
+        NavManager.NavigateTo($"/Examiner/AddUser");
+    }
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportUser>();
+
+        var dialog = await DialogService.ShowAsync<ImportUser>("Import User", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await FetchUsers();
+        }
     }
 
     private async Task FetchUsers()

@@ -540,8 +540,8 @@ namespace WebApi.Repository
 
                 // Lấy thông tin người dùng hiện tại từ Claims
                 var userId = int.TryParse(currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-                
-                
+
+
                 // Có được id của người dùng từ hệ thống thì liên kết tới database
                 var myUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userId);
                 if (myUser == null)
@@ -562,8 +562,8 @@ namespace WebApi.Repository
                 var currentUserRole = await dbContext.UserRoles
                     .Where(r => r.RoleId == roleId)
                     .Select(r => r.RoleName)
-                    .FirstOrDefaultAsync();     
-                
+                    .FirstOrDefaultAsync();
+
                 if (string.IsNullOrEmpty(currentUserRole))
                 {
                     return new RequestResponse
@@ -617,7 +617,7 @@ namespace WebApi.Repository
                                     Address = reader.GetValue(6)?.ToString()
                                 };
 
-                                
+
                                 var errorMessages = new List<string>();
 
 
@@ -649,7 +649,7 @@ namespace WebApi.Repository
 
 
                                 // Kiểm tra vai trò được phép import
-                                string targetRoleName = null; 
+                                string targetRoleName = null;
                                 if (currentUserRole == "Admin")
                                 {
                                     targetRoleName = "Examiner";
