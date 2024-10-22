@@ -13,6 +13,16 @@ namespace WebClient.Validation
                 .NotNull().WithMessage("Email is required!")
                 .MaximumLength(100).WithMessage("Email must less than 100 character!");
 
+            this.RuleFor(v => v.UserName)
+                .NotEmpty().WithMessage("Name is required!")
+                .NotNull().WithMessage("Name is required!")
+                .MaximumLength(100).WithMessage("Name must less than 100 character!");
+
+            this.RuleFor(v => v.Phone)
+                .MaximumLength(11).WithMessage("Phone number must less than 11 number")
+                .Matches(@"^[0-9]*$").When(e => !string.IsNullOrEmpty(e.Phone)).WithMessage("Phone number must be a number")
+                .MinimumLength(8).When(e => !string.IsNullOrEmpty(e.Phone)).WithMessage("Phone number must at least 8 number");
+
             this.RuleFor(v => v.RoleId)
                 .NotEmpty().WithMessage("Role is required!")
                 .NotNull().WithMessage("Role is required!");
@@ -21,5 +31,7 @@ namespace WebClient.Validation
                 .NotEmpty().WithMessage("Campus is required!")
                 .NotNull().WithMessage("Campus is required!");
         }
+
+
     }
 }

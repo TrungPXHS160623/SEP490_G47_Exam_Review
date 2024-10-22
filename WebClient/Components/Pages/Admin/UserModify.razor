@@ -20,6 +20,34 @@
         </div>
 
         <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">User Name:</label>
+            <div class="col-8">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.UserName)</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)"/>
+                }
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">Phone Number:</label>
+            <div class="col-8">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.Phone)</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.Phone" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
+                }
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Role:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
