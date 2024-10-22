@@ -1,7 +1,7 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using WebClient.IServices;
 
@@ -380,5 +380,49 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<RequestResponse> ImportUserFromExcel(IBrowserFile files)
+        {
+            if (string.IsNullOrWhiteSpace(Constants.JWTToken))
+            {
+                snackbar.Add("Authorization token is missing.", Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "Missing Authorization Token" };
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
+
+            try
+            {
+                // Create multipart form data content
+                var content = new MultipartFormDataContent();
+
+                // Add the file to the multipart form data content
+                var fileStream = files.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // Adjust max size as needed
+                var streamContent = new StreamContent(fileStream);
+                content.Add(streamContent, "file", files.Name); // Name 'file' matches the parameter in your API
+
+                // Send the POST request
+                HttpResponseMessage response = await _httpClient.PostAsync("api/User/ImportUsersFromExcel", content);
+
+                response.EnsureSuccessStatusCode();  // Throw if the response is not a success
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+                else
+                {
+                    snackbar.Add("Exams imported successfully!", Severity.Success);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add($"Error during file upload: {ex.Message}", Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = ex.Message };
+            }
+        }
     }
 }
