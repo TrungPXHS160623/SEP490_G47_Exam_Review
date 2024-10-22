@@ -32,6 +32,8 @@
                     <tr>
                         <th>#</th>
                         <th>Email</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
                         <th>Is Active</th>
                         <th>Role</th>
                         <th>Campus</th>
@@ -49,13 +51,15 @@
                                 <td>
                                     <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
                                 </td>
-                                <td>
+                                <td>@user.UserName</td>
+                                <td>@user.Tel</td>
+                                <td class="d-flex justify-content-center">
                                     <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
                                 </td>
                                 <td>@user.RoleName</td>
                                 <td>@user.CampusName</td>
                                 <td>
-                                    <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
+                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                                 </td>
                             </tr>
                             index++;

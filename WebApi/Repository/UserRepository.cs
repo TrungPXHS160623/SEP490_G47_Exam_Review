@@ -39,6 +39,8 @@ namespace WebApi.Repository
                     var newUser = new User
                     {
                         Mail = user.Email + "@fpt.edu.vn",
+                        FullName = user.UserName,
+                        PhoneNumber = user.Phone,
                         RoleId = user.RoleId,
                         CampusId = user.CampusId,
                         CreateDate = DateTime.Now,
@@ -114,6 +116,8 @@ namespace WebApi.Repository
                         select new UserResponse
                         {
                             Email = u.Mail,
+                            Tel = u.PhoneNumber,
+                            UserName = u.FullName,
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
                             RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
@@ -212,6 +216,8 @@ namespace WebApi.Repository
                         select new UserRequest
                         {
                             Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
+                            Phone = u.PhoneNumber,
+                            UserName = u.FullName,
                             CampusId = u.CampusId,                        // Keep the CampusId from the Users table
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
@@ -277,6 +283,8 @@ namespace WebApi.Repository
                     };
                 }
                 existingUser.Mail = user.Email + "@fpt.edu.vn";
+                existingUser.FullName = user.UserName;
+                existingUser.PhoneNumber = user.Phone;
                 existingUser.RoleId = user.RoleId;
                 existingUser.CampusId = user.CampusId;
                 existingUser.IsActive = user.IsActive.Value;
