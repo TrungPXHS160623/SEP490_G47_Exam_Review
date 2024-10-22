@@ -428,40 +428,34 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetLecture()
+        public async Task<ResultResponse<UserResponse>> GetLecture(int userId, string filterQuery)
         {
-            try
-            {
-                var data = (from u in this.dbContext.Users
-                            join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
-                            from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
-                            join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
-                            from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                            where r.RoleId == 3
-                            select new UserResponse
-                            {
-                                Email = u.Mail,
-                                CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
-                                IsActive = u.IsActive,
-                                RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
-                                UserId = u.UserId,
-                                UpdateDt = u.UpdateDate,
-                            }).ToList();
 
-                return new ResultResponse<UserResponse>
-                {
-                    IsSuccessful = true,
-                    Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
-                };
-            }
-            catch (Exception ex)
+            var campusId = (await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == userId))?.CampusId;
+
+            var data = (from u in this.dbContext.Users
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
+                        && (u.RoleId==3|| u.RoleId == null)
+                        && u.CampusId == campusId
+                        select new UserResponse
+                        {
+                            Email = u.Mail,
+                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
+                            IsActive = u.IsActive,
+                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
+                            UserId = u.UserId,
+                            UpdateDt = u.UpdateDate,
+                        }).ToList();
+
+            return new ResultResponse<UserResponse>
             {
-                return new ResultResponse<UserResponse>
-                {
-                    IsSuccessful = false,
-                    Message = ex.Message,
-                };
-            }
+                IsSuccessful = true,
+                Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
+            };
         }
         private bool IsValidEmail(string email)
         {
