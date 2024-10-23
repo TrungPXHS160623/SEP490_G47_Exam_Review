@@ -16,12 +16,18 @@
                 <main class="d-flex flex-column">
                     <div class="top-row px-4">
                         <div class="d-flex justify-content-between align-items-center text-white">
-                            <div>
+                            <div class="d-flex align-items-center">
+                                <img src="/image/logo1.png" style="width:auto;height:40px" />
                                 <h4>Exam Review System</h4>
                             </div>
-                            <div>
-                                <label @onclick=@OpenProfileModel style="cursor:pointer" class="me-5">Welcome: @Email?.Replace("@fpt.edu.vn",string.Empty) (@Role)</label> |
-                                <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
+                            <div class="d-flex align-items-center">
+                                <div @onclick=@OpenProfileModel style="border-right:1px solid white">
+                                    <label style="cursor:pointer" class="me-5">Welcome: @Email?.Replace("@fpt.edu.vn", string.Empty) (@Role)</label><br/>
+                                    <label style="cursor:pointer" class="me-5">Campus: @Campus</label>
+                                </div>
+                                <div>
+                                    <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,6 +96,8 @@
 
     public string Role { get; set; }
 
+    public string Campus { get; set; }
+
     public string Header { get; set; }
 
     public string HeaderLink { get; set; }
@@ -134,7 +142,15 @@
         var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
         var user = auth.User;
         Email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
-        var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
+        var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var roleId) ? roleId : 0;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+        var resp = await AccountService.GetByIdAsync(userId);
+
+        if (resp.IsSuccessful)
+        {
+            Campus = resp.Item.CampusName;
+        }
 
         switch (userRole)
         {
