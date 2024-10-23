@@ -464,6 +464,7 @@ public class ExamRepository : IExamRepository
                               where ((req.StatusId == null && ex.ExamStatusId != 1 && ex.ExamStatusId != 2) || ex.ExamStatusId == req.StatusId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               && req.UserId == ia.AssignedUserId
+                              && cus.IsLecturer == false
                               select new LectureExamResponse
                               {
                                   EndDate = ex.EndDate,

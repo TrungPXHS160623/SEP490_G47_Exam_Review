@@ -8,29 +8,29 @@
                         <!-- Profile Picture Update Button -->
                         <div class="d-flex flex-column align-items-center justify-content-center mb-3">
                             <img src="https://via.placeholder.com/100" alt="Profile" class="rounded-circle mb-3">
-                            <button class="btn btn-primary">Cập nhật ảnh đại diện</button>
+                            <button class="btn btn-primary" disabled>Update Avatar (Not Available)</button>
                         </div>
                         <!-- Profile Information Form -->
                         <form>
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Họ *" required>
+                                    <MudTextField @bind-Value=@request.UserName Variant="Variant.Outlined" Margin="Margin.Dense" Label="Name" ReadOnly></MudTextField>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Tên *" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <input type="email" class="form-control" placeholder="Email *" required>
+                                    <MudTextField @bind-Value=@request.RoleName Variant="Variant.Outlined" Margin="Margin.Dense" Label="Role" ReadOnly></MudTextField>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="date" class="form-control" placeholder="Ngày sinh *" required>
+                                    <MudTextField @bind-Value=@request.Email Variant="Variant.Outlined" Margin="Margin.Dense" Label="Email" AdornmentText="@("@fpt.edu.vn")" Adornment="Adornment.End" ReadOnly></MudTextField>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <MudTextField @bind-Value=@request.CampusName Variant="Variant.Outlined" Margin="Margin.Dense" Label="Campus" ReadOnly></MudTextField>
                                 </div>
                                 <div class="col">
-                                    <input type="tel" class="form-control" placeholder="Số điện thoại *" required>
+                                    <MudTextField @bind-Value=@request.Phone Variant="Variant.Outlined" Margin="Margin.Dense" Label="Phone Number" ReadOnly></MudTextField>
                                 </div>
                             </div>
                         </form>
@@ -40,7 +40,7 @@
         </div>
      </DialogContent>
      <DialogActions>
-         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" OnClick=Submit Disabled="@_processing">
+         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" OnClick=Submit Disabled>
              @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -68,6 +68,8 @@
     [Parameter]
     public bool IsView { get; set; }
 
+    public UserRequest request = new UserRequest();
+
     private bool _processing = false;
 
     private string ExcuteText { get; set; } = string.Empty;
@@ -83,6 +85,17 @@
     protected override async Task OnInitializedAsync()
     {
         ExcuteText = "Edit";
+
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+        var resp = await AccountService.GetByIdAsync(userId);
+
+        if (resp.IsSuccessful)
+        {
+            request = resp.Item;
+        }
     }
 
     public async Task Excute()
