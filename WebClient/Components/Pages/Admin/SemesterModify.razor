@@ -1,0 +1,94 @@
+﻿<style>
+    .form-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+</style>
+
+<EditForm Model="semester" OnValidSubmit="Execute">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudTextField @bind-Value=semester.SemesterName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => semester.SemesterName)"></MudTextField>
+
+            <MudDatePicker @bind-Value=semester.StartDate Label="Start Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
+            <MudDatePicker @bind-Value=semester.EndDate Label="End Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
+            @if (SemesterId != 0)
+            {
+                <MudCheckBox @bind-Value=semester.IsActive Label="Is Active" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
+            }
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Saving</MudText>
+                }
+                else
+                {
+                    <MudText>@(SemesterId == 0 ? "Add" : "Save")</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    @inject ISemesterService SemesterService
+    [Parameter]
+    public int? SemesterId { get; set; }
+
+    Semester semester = new Semester();
+
+    private bool _processing = false;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SemesterId != 0)
+        {
+            var resp = await this.SemesterService.GetSemesterId(SemesterId.Value);
+
+            if (resp.IsSuccessful)
+            {
+                semester = resp.Item;
+            }
+        }
+    }
+
+    public async Task Execute()
+    {
+        _processing = true;
+
+        if (SemesterId != 0)
+        {
+            var resp = await this.SemesterService.UpdateSemester(semester);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        else
+        {
+            var resp = await this.SemesterService.AddSemester(semester);
+
+            if (resp.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+
+        _processing = false;
+    }
+}

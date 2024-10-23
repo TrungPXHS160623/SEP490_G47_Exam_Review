@@ -70,6 +70,7 @@ namespace WebClient
             builder.Services.AddTransient<ISendMailService, SendMailService>();
             builder.Services.AddTransient<ISubjectService, SubjectService>();
             builder.Services.AddTransient<IReportService, ReportService>();
+            builder.Services.AddTransient<ISemesterService, SemesterService>();
             builder.Services.AddTransient<IInstructorAssignmentService, InstructorAssignmentService>();
             builder.Services.AddTransient<IUserHistoryService, UserHistoryService>();
 
