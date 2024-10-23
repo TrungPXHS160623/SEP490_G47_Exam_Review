@@ -73,7 +73,7 @@
                             <label class="fw-bold" style="color:@(ColorList[context.AssignStatusId.Value])">@context.AssignStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
-                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>
