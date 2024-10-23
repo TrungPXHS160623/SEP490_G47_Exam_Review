@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Data;
 
 
 namespace Library.Models;
@@ -42,10 +41,10 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<Semester> Semesters { get; set; } = null!;
 
-    
 
 
-    
+
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -126,7 +125,7 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasOne(d => d.Semester).WithMany(p => p.Exams)
                .HasForeignKey(d => d.SemesterId)
-     .         HasConstraintName("FK_Exams_Semesters");
+     .HasConstraintName("FK_Exams_Semesters");
 
             entity.HasOne(d => d.Subject).WithMany(p => p.Exams).HasForeignKey(d => d.SubjectId);
         });
@@ -222,9 +221,9 @@ public partial class QuizManagementContext : DbContext
                 .HasDefaultValueSql("(getdate())");
         });
 
-        
 
-        
+
+
 
         modelBuilder.Entity<UserHistory>(entity =>
         {
@@ -276,10 +275,10 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-      
 
 
-       
+
+
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
 
@@ -308,7 +307,7 @@ public partial class QuizManagementContext : DbContext
 
             // Seed data for Head of Department
             new User { UserId = 12, Mail = "namlh@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Nam Lê", PhoneNumber = "0123456789", EmailFe = "namlh@fe.edu.vn", DateOfBirth = new DateTime(1988, 3, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 13, Mail = "quangnv@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Quang Nguyễn", PhoneNumber = "0123456789", EmailFe = "quangnv@fe.edu.vn", DateOfBirth = new DateTime(1986, 4, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },              
+            new User { UserId = 13, Mail = "quangnv@fpt.edu.vn", CampusId = 1, RoleId = 4, FullName = "Quang Nguyễn", PhoneNumber = "0123456789", EmailFe = "quangnv@fe.edu.vn", DateOfBirth = new DateTime(1986, 4, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 14, Mail = "huylt@fpt.edu.vn", CampusId = 2, RoleId = 4, FullName = "Huy Lê", PhoneNumber = "0123456789", EmailFe = "huylt@fe.edu.vn", DateOfBirth = new DateTime(1985, 5, 1), Gender = true, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 15, Mail = "tuanpv@fpt.edu.vn", CampusId = 2, RoleId = 4, FullName = "Tuấn Phạm", PhoneNumber = "0123456789", EmailFe = "tuanpv@fe.edu.vn", DateOfBirth = new DateTime(1984, 6, 1), Gender = true, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 16, Mail = "ngocdt@fpt.edu.vn", CampusId = 3, RoleId = 4, FullName = "Ngọc Đình", PhoneNumber = "0123456789", EmailFe = "ngocdt@fe.edu.vn", DateOfBirth = new DateTime(1987, 7, 1), Gender = false, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -352,7 +351,7 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<CampusUserSubject>().HasData(
 
             //Seed data for Heads of Department of Ha Noi campus
-            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 29 ,SemesterId = 1 },
+            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 29, SemesterId = 1 },
             new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 29, SemesterId = 1 },
             new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 29, SemesterId = 1 },
             new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 31, SemesterId = 1 },
@@ -366,43 +365,43 @@ public partial class QuizManagementContext : DbContext
             new CampusUserSubject { Id = 10, SubjectId = 10, CampusId = 1, UserId = 13, SemesterId = 2 },
 
             //Seed data for Lecturer of Ha Noi campus
-            new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 1, UserId = 7, IsLecturer = true , SemesterId = 3},
+            new CampusUserSubject { Id = 11, SubjectId = 1, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
             new CampusUserSubject { Id = 12, SubjectId = 2, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
             new CampusUserSubject { Id = 13, SubjectId = 3, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
             new CampusUserSubject { Id = 14, SubjectId = 4, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
-            new CampusUserSubject { Id = 15, SubjectId = 5, CampusId = 1, UserId = 7, IsLecturer = true , SemesterId = 3 },
+            new CampusUserSubject { Id = 15, SubjectId = 5, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 3 },
 
 
             new CampusUserSubject { Id = 16, SubjectId = 6, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
-            new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4},
+            new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
             new CampusUserSubject { Id = 18, SubjectId = 8, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
             new CampusUserSubject { Id = 19, SubjectId = 9, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
             new CampusUserSubject { Id = 20, SubjectId = 10, CampusId = 1, UserId = 27, IsLecturer = true, SemesterId = 4 },
 
             // Seed data for Heads of Department of Can Tho campus
-            new CampusUserSubject { Id = 21, SubjectId = 1, CampusId = 3, UserId = 16, SemesterId = 5},
-            new CampusUserSubject { Id = 22, SubjectId = 2, CampusId = 3, UserId = 16, SemesterId = 5},
+            new CampusUserSubject { Id = 21, SubjectId = 1, CampusId = 3, UserId = 16, SemesterId = 5 },
+            new CampusUserSubject { Id = 22, SubjectId = 2, CampusId = 3, UserId = 16, SemesterId = 5 },
             new CampusUserSubject { Id = 23, SubjectId = 3, CampusId = 3, UserId = 16, SemesterId = 5 },
             new CampusUserSubject { Id = 24, SubjectId = 4, CampusId = 3, UserId = 16, SemesterId = 5 },
             new CampusUserSubject { Id = 25, SubjectId = 5, CampusId = 3, UserId = 16 },
 
 
             new CampusUserSubject { Id = 26, SubjectId = 6, CampusId = 3, UserId = 17, SemesterId = 6 },
-            new CampusUserSubject { Id = 27, SubjectId = 7, CampusId = 3, UserId = 17, SemesterId = 6},
+            new CampusUserSubject { Id = 27, SubjectId = 7, CampusId = 3, UserId = 17, SemesterId = 6 },
             new CampusUserSubject { Id = 28, SubjectId = 8, CampusId = 3, UserId = 17, SemesterId = 6 },
-            new CampusUserSubject { Id = 29, SubjectId = 9, CampusId = 3, UserId = 17, SemesterId = 6},
-            new CampusUserSubject { Id = 30, SubjectId = 10, CampusId = 3, UserId = 17, SemesterId = 6},
+            new CampusUserSubject { Id = 29, SubjectId = 9, CampusId = 3, UserId = 17, SemesterId = 6 },
+            new CampusUserSubject { Id = 30, SubjectId = 10, CampusId = 3, UserId = 17, SemesterId = 6 },
 
             // Seed data for Heads of Department of Ho Chi minh campus
             new CampusUserSubject { Id = 31, SubjectId = 1, CampusId = 4, UserId = 18, SemesterId = 7 },
             new CampusUserSubject { Id = 32, SubjectId = 2, CampusId = 4, UserId = 18, SemesterId = 7 },
-            new CampusUserSubject { Id = 33, SubjectId = 3, CampusId = 4, UserId = 18 , SemesterId = 7 },
-            new CampusUserSubject { Id = 34, SubjectId = 4, CampusId = 4, UserId = 18 , SemesterId = 7 },
-            new CampusUserSubject { Id = 35, SubjectId = 5, CampusId = 4, UserId = 18 , SemesterId = 7 },
+            new CampusUserSubject { Id = 33, SubjectId = 3, CampusId = 4, UserId = 18, SemesterId = 7 },
+            new CampusUserSubject { Id = 34, SubjectId = 4, CampusId = 4, UserId = 18, SemesterId = 7 },
+            new CampusUserSubject { Id = 35, SubjectId = 5, CampusId = 4, UserId = 18, SemesterId = 7 },
 
 
-            new CampusUserSubject { Id = 36, SubjectId = 6, CampusId = 4, UserId = 19 ,SemesterId = 8},
-            new CampusUserSubject { Id = 37, SubjectId = 7, CampusId = 4, UserId = 19 ,SemesterId = 8 },
+            new CampusUserSubject { Id = 36, SubjectId = 6, CampusId = 4, UserId = 19, SemesterId = 8 },
+            new CampusUserSubject { Id = 37, SubjectId = 7, CampusId = 4, UserId = 19, SemesterId = 8 },
             new CampusUserSubject { Id = 38, SubjectId = 8, CampusId = 4, UserId = 19, SemesterId = 8 },
             new CampusUserSubject { Id = 39, SubjectId = 9, CampusId = 4, UserId = 19, SemesterId = 8 },
             new CampusUserSubject { Id = 40, SubjectId = 10, CampusId = 4, UserId = 19, SemesterId = 8 },
@@ -426,14 +425,14 @@ public partial class QuizManagementContext : DbContext
             new CampusUserSubject { Id = 51, SubjectId = 1, CampusId = 2, UserId = 14, SemesterId = 1 },
             new CampusUserSubject { Id = 52, SubjectId = 2, CampusId = 2, UserId = 14, SemesterId = 1 },
             new CampusUserSubject { Id = 53, SubjectId = 3, CampusId = 2, UserId = 14, SemesterId = 1 },
-            new CampusUserSubject { Id = 54, SubjectId = 4, CampusId = 2, UserId = 14 , SemesterId = 1 },
-            new CampusUserSubject { Id = 55, SubjectId = 5, CampusId = 2, UserId = 14 , SemesterId = 1 },
+            new CampusUserSubject { Id = 54, SubjectId = 4, CampusId = 2, UserId = 14, SemesterId = 1 },
+            new CampusUserSubject { Id = 55, SubjectId = 5, CampusId = 2, UserId = 14, SemesterId = 1 },
 
 
             new CampusUserSubject { Id = 56, SubjectId = 6, CampusId = 2, UserId = 15, SemesterId = 2 },
             new CampusUserSubject { Id = 57, SubjectId = 7, CampusId = 2, UserId = 15, SemesterId = 2 },
-            new CampusUserSubject { Id = 58, SubjectId = 8, CampusId = 2, UserId = 15 , SemesterId = 2 },
-            new CampusUserSubject { Id = 59, SubjectId = 9, CampusId = 2, UserId = 15, SemesterId = 2  },
+            new CampusUserSubject { Id = 58, SubjectId = 8, CampusId = 2, UserId = 15, SemesterId = 2 },
+            new CampusUserSubject { Id = 59, SubjectId = 9, CampusId = 2, UserId = 15, SemesterId = 2 },
             new CampusUserSubject { Id = 60, SubjectId = 10, CampusId = 2, UserId = 15, SemesterId = 2 }
 
         );
@@ -443,7 +442,7 @@ public partial class QuizManagementContext : DbContext
 
             // Ha Noi's Examiners create exams
             // Seed data for software engineering major
-            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1,SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 2, 15), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 2, 15), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 3, 10), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 6, ExamDate = new DateTime(2024, 4, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -522,8 +521,13 @@ public partial class QuizManagementContext : DbContext
             new Menu { MenuId = 11, MenuLink ="/Examiner/Create", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 12, MenuLink = "/HeadDepartment/lectureManagement", MenuName = "Lecture Management(UnderContrucst)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 13, MenuLink = "/Examiner/Statistical", MenuName = "Statistical", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+<<<<<<< HEAD
+            new Menu { MenuId = 14, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+=======
             new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 14, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+>>>>>>> a633264f85506672c2305b31621425f9f74dcfea
 
         );
 
@@ -531,6 +535,7 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+              new MenuRole { RoleId = 1, MenuId = 14, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 14, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -571,10 +576,10 @@ public partial class QuizManagementContext : DbContext
             new Semester { SemesterId = 13, SemesterName = "Fall2024", StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2025, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
          );
 
-       
 
 
-        
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

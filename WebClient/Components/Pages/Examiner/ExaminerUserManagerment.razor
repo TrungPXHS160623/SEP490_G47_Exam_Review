@@ -6,12 +6,12 @@
         vertical-align: middle
     }
 </style>
-<div class ="d-flex justify-content-center">
-    <div class="w-75">
+<div class="d-flex justify-content-center">
+    <div class="w-75 custom-box ">
         <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
-            <label class="me-5">User: </label>
-            <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
-            <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
+            <label class="me-5">User:</label>
+            <input class="form-control me-3" type="text" @bind="searchText" placeholder="Search users" style="width: 50%;" />
+            <button class="btn btn-success me-3" @onclick="FetchUsers">Search</button>
             <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddNewUser">Add New User</MudButton>
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"

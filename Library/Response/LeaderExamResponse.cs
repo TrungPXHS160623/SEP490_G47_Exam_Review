@@ -1,11 +1,4 @@
-﻿using Library.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Response
+﻿namespace Library.Response
 {
     public class LeaderExamResponse
     {
@@ -44,7 +37,7 @@ namespace Library.Response
         public int? AssignmentId { get; set; }
 
         public DateTime? EstimatedTimeTest { get; set; }
-
+        public DateTime? ExamDate { get; set; }
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
