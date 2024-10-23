@@ -124,7 +124,19 @@ namespace WebApi.Controllers
 
 			return Ok(response);
 		}
+        [AllowAnonymous]
+		[HttpGet("searchExamBySemester")]
+		public async Task<IActionResult> SearchExamsBySemester([FromQuery] int semesterId, [FromQuery] int userId)
+		{
+			var exams = await _examRepository.ExamBySemesterNameAndUserId(semesterId, userId);
+			if (exams == null || !exams.Any())
+			{
+				return NotFound("No exams found for the specified semester and user.");
+			}
 
+			return Ok(exams);
+		}
 	}
+	
 
 }

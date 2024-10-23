@@ -30,7 +30,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
 
-        Task<ResultResponse<UserResponse>> GetLecture();
+        Task<ResultResponse<UserResponse>> GetLecture(int userId, string filterQuery);
 
         Task<RequestResponse> ImportUsersFromExcel(IFormFile file, ClaimsPrincipal currentUser);
 
