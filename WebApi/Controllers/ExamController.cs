@@ -2,7 +2,6 @@
 using Library.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -103,40 +102,40 @@ namespace WebApi.Controllers
         }
         [AllowAnonymous]
         [HttpGet("GetExamByCampusAndSubject/{campusid}/{subjectid}")]
-        public async Task<IActionResult> GetExamByCampusAndSubject(int campusid , int subjectid)
+        public async Task<IActionResult> GetExamByCampusAndSubject(int campusid, int subjectid)
         {
             var exams = await _examRepository.GetExamByCampusAndSubject(campusid, subjectid);
             return Ok(exams);
         }
 
-		// exam by status
-		[AllowAnonymous]
-		[HttpGet("GetExambyStatus")]
-		public async Task<IActionResult> GetExams(int? statusId = null, int? campusId = null)
-		{
-			var (exams, examCount) = await _examRepository.GetExamsByStatus(statusId, campusId);
-
-			var response = new
-			{
-				ExamCount = examCount, 
-				Exams = exams
-			};
-
-			return Ok(response);
-		}
+        // exam by status
         [AllowAnonymous]
-		[HttpGet("searchExamBySemester")]
-		public async Task<IActionResult> SearchExamsBySemester([FromQuery] int semesterId, [FromQuery] int userId)
-		{
-			var exams = await _examRepository.ExamBySemesterNameAndUserId(semesterId, userId);
-			if (exams == null || !exams.Any())
-			{
-				return NotFound("No exams found for the specified semester and user.");
-			}
+        [HttpGet("GetExambyStatus")]
+        public async Task<IActionResult> GetExams(int? statusId = null, int? campusId = null)
+        {
+            var (exams, examCount) = await _examRepository.GetExamsByStatus(statusId, campusId);
 
-			return Ok(exams);
-		}
-	}
-	
+            var response = new
+            {
+                ExamCount = examCount,
+                Exams = exams
+            };
+
+            return Ok(response);
+        }
+        [AllowAnonymous]
+        [HttpGet("searchExamBySemester")]
+        public async Task<IActionResult> SearchExamsBySemester([FromQuery] int semesterId, [FromQuery] int userId)
+        {
+            var exams = await _examRepository.ExamBySemesterNameAndUserId(semesterId, userId);
+            if (exams == null || !exams.Any())
+            {
+                return NotFound("No exams found for the specified semester and user.");
+            }
+
+            return Ok(exams);
+        }
+    }
+
 
 }

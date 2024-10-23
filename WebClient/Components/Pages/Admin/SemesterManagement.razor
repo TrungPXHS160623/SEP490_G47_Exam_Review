@@ -10,8 +10,8 @@
 </style>
 
 <div class="d-flex justify-content-center">
-    <div class="col-md-10 col-xl-6">
-        <div class="mt-4 mb-4">
+    <div class="w-75 custom-box ">
+        <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
             <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
         </div>
         @if (SemesterList.Count > 0)
@@ -146,12 +146,12 @@
 
             };
 
-        var parameters = new DialogParameters<CampusModify>
+        var parameters = new DialogParameters<SemesterModify>
         {
-            {x => x.CampusId,campusId}
+            {x => x.SemesterId,campusId}
         };
 
-        var dialog = await DialogService.ShowAsync<CampusModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
+        var dialog = await DialogService.ShowAsync<SemesterModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
 
         var result = await dialog.Result;
 

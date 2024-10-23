@@ -6,7 +6,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ExamRepository : IExamRepository
 {
@@ -369,6 +368,7 @@ public class ExamRepository : IExamRepository
                         {
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
+                            ExamDate = ex.ExamDate,
                             StartDate = ex.StartDate,
                             ExamCode = ex.ExamCode,
                             CampusName = ca.CampusName,
@@ -419,6 +419,7 @@ public class ExamRepository : IExamRepository
                                   EndDate = ex.EndDate,
                                   ExamId = ex.ExamId,
                                   StartDate = ex.StartDate,
+                                  ExamDate = ex.ExamDate,
                                   ExamCode = ex.ExamCode,
                                   CampusName = ca.CampusName,
                                   EstimatedTimeTest = ex.EstimatedTimeTest,
@@ -638,7 +639,7 @@ public class ExamRepository : IExamRepository
                                 errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
                             //tạo khoá duy nhất cho mỗi exam
                             string uniquekey = examImportRequest.ExamCode;
-                            if(existingExamSet.Contains(uniquekey))
+                            if (existingExamSet.Contains(uniquekey))
                             {
                                 errorMessages.Add($"Duplicate entry for ExamCode '{examImportRequest.ExamCode}'.");
                                 continue;
@@ -708,37 +709,37 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-	//exam by status
-	public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
-	{
-		// Your existing implementation
-		IQueryable<Exam> query = _context.Exams
-			.Include(e => e.Campus)
-			.Include(e => e.InstructorAssignments)
-			.ThenInclude(ia => ia.AssignedUser);
+    //exam by status
+    public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
+    {
+        // Your existing implementation
+        IQueryable<Exam> query = _context.Exams
+            .Include(e => e.Campus)
+            .Include(e => e.InstructorAssignments)
+            .ThenInclude(ia => ia.AssignedUser);
 
-		if (statusId.HasValue)
-		{
-			query = query.Where(e => e.ExamStatusId == statusId.Value);
-		}
+        if (statusId.HasValue)
+        {
+            query = query.Where(e => e.ExamStatusId == statusId.Value);
+        }
 
-		if (campusId.HasValue)
-		{
-			query = query.Where(e => e.CampusId == campusId.Value);
-		}
+        if (campusId.HasValue)
+        {
+            query = query.Where(e => e.CampusId == campusId.Value);
+        }
 
-		var results = await query.Select(e => new ExamByStatusResponse
-		{
-			ExamStatus = e.ExamStatus.StatusContent,
-			ExamCode = e.ExamCode,
-			Campus = e.Campus.CampusName,
-			Lecturer = e.InstructorAssignments.FirstOrDefault().AssignedUser.Mail
-		}).ToListAsync();
+        var results = await query.Select(e => new ExamByStatusResponse
+        {
+            ExamStatus = e.ExamStatus.StatusContent,
+            ExamCode = e.ExamCode,
+            Campus = e.Campus.CampusName,
+            Lecturer = e.InstructorAssignments.FirstOrDefault().AssignedUser.Mail
+        }).ToListAsync();
 
-		return (results, results.Count);
-	}
+        return (results, results.Count);
+    }
 
-	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();
     }
@@ -806,8 +807,8 @@ public class ExamRepository : IExamRepository
                return new CampusSubjectExamCodeResponse
                {
                    ExamCode = string.Join(", ", g.Select(e => e.ExamCode)),  // Gộp tất cả mã đề
-                   SubjectName = firstExam != null && firstExam.Subject != null ? firstExam.Subject.SubjectCode: "No Subject Name",  // Kiểm tra null cho tên môn học
-                   CampusName = firstExam != null && firstExam.Campus != null? firstExam.Campus.CampusName: "No Campus Name",   // Kiểm tra null cho tên cơ sở
+                   SubjectName = firstExam != null && firstExam.Subject != null ? firstExam.Subject.SubjectCode : "No Subject Name",  // Kiểm tra null cho tên môn học
+                   CampusName = firstExam != null && firstExam.Campus != null ? firstExam.Campus.CampusName : "No Campus Name",   // Kiểm tra null cho tên cơ sở
                    ExamCodeCount = g.Count()  // Đếm số lượng bài thi trong nhóm
                };
            })
@@ -832,43 +833,43 @@ public class ExamRepository : IExamRepository
     }
 
     // Tìm Môn theo kì và name
-	public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
-	{
-		// Retrieve the full name of the user first
-		var user = await _context.Users
-			.Where(u => u.UserId == userId)
-			.Select(u => new { u.FullName, u.RoleId })
-			.FirstOrDefaultAsync();
+    public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
+    {
+        // Retrieve the full name of the user first
+        var user = await _context.Users
+            .Where(u => u.UserId == userId)
+            .Select(u => new { u.FullName, u.RoleId })
+            .FirstOrDefaultAsync();
 
-		if (user == null)
-		{
-			
-			return new List<ExamBySemesterResponse>(); 
-		}
+        if (user == null)
+        {
 
-		// muốn hiển thị tìm kiếm được cả InstructorAssignment cho lecturer thì bỏ if.
-		if (user.RoleId != 4) 
-		{
-			return new List<ExamBySemesterResponse>();
-		}
+            return new List<ExamBySemesterResponse>();
+        }
 
-		var examAssignments = await _context.Exams
-			.Include(e => e.Semester) 
-			.Include(e => e.Subject)   
-			.Include(e => e.InstructorAssignments) 
-			.Where(e => e.SemesterId == semesterId &&
-						e.InstructorAssignments.Any(ia => ia.AssignedUserId == userId)) 
-			.Select(e => new ExamBySemesterResponse
-			{
-				ExamCode = e.ExamCode,
-				SubjectName = e.Subject.SubjectName,
-				FullName = user.FullName, 
-				SemesterName = e.Semester.SemesterName 
-			})
-			.ToListAsync();
+        // muốn hiển thị tìm kiếm được cả InstructorAssignment cho lecturer thì bỏ if.
+        if (user.RoleId != 4)
+        {
+            return new List<ExamBySemesterResponse>();
+        }
 
-		return examAssignments;
-	}
+        var examAssignments = await _context.Exams
+            .Include(e => e.Semester)
+            .Include(e => e.Subject)
+            .Include(e => e.InstructorAssignments)
+            .Where(e => e.SemesterId == semesterId &&
+                        e.InstructorAssignments.Any(ia => ia.AssignedUserId == userId))
+            .Select(e => new ExamBySemesterResponse
+            {
+                ExamCode = e.ExamCode,
+                SubjectName = e.Subject.SubjectName,
+                FullName = user.FullName,
+                SemesterName = e.Semester.SemesterName
+            })
+            .ToListAsync();
+
+        return examAssignments;
+    }
 
 
 }
