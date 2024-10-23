@@ -31,54 +31,65 @@
 <div class="container">
     <div class="custom-box mb-5">
         <h2>Exam Detail</h2>
-        <div class="split-row justify-content-between">
-            <div class="col-5">
+        <div class="split-row justify-content-evenly">
+            <div class="col-4">
                 <div class="split-row mb-4">
-                    <label class="col-4 text-end">Exam Code:</label>
+                    <label class="col-4 text-end me-3">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Subject Name:</label>
-                        <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Exam Creater:</label>
-                        <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Head of Department:</label>
-                        <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-                    </div>
                 </div>
-                <div class="col-5">
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Status:</label>
-                        <MudText>@exam.AssignStatusId</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Exam Duration:</label>
-                        <MudText>@exam.ExamDuration</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                    <label class="col-4 text-end">Exam Type:</label>
-                        <MudText>@exam.ExamType</MudText>
-                    </div>
-                    @if (exam.AssignStatusId != 3)
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Subject Name:</label>
+                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Creater:</label>
+                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Head of Department:</label>
+                    <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Duration:</label>
+                    <MudText>@exam.ExamDuration</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Type:</label>
+                    <MudText>@exam.ExamType</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                </div>
+                @if (exam.AssignStatusId != 3)
                 {
                     <div class="split-row mb-4">
-                        <label class="col-4 text-end">Exam Estimate Date:</label>
+                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
                         <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
                     </div>
                 }
                 else
                 {
                     <div class="split-row mb-4">
-                        <label class="col-4 text-end">Exam Estimate Date: </label>
-                        <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                                       IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
-                                       @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                                       Margin="Margin.Dense" Clearable Required AnchorOrigin="Origin.BottomLeft" />
-                     </div>
+                        <label class="col-4 text-end me-3">Exam Estimate Date: </label>
+                        <div class="row">
+                            <div class="col-7">
+                                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
+                                               @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                                               Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft" />
+                            </div>
+                            <div class="col-5">
+                                <MudTimePicker AmPm="true" Time=exam.AssignmentDate?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
+                            </div>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -114,12 +125,12 @@
                             </div>
                         </div>
                         @* <div class="mb-4">
-                            <div class="image-placeholder">
-                                <span>Image</span>
-                            </div>
-                            <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
-                            <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
-                        </div> *@
+            <div class="image-placeholder">
+            <span>Image</span>
+            </div>
+            <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
+            <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
+            </div> *@
                     </div>
                 }
             }
@@ -185,7 +196,7 @@
 
     public async Task Excute(bool isSubmit)
     {
-        var resp = await this.ReportServive.AddEditReport(exam,isSubmit);
+        var resp = await this.ReportServive.AddEditReport(exam, isSubmit);
 
         if (resp.IsSuccessful)
         {
@@ -257,5 +268,14 @@
     public void GoBack()
     {
         NavManager.NavigateTo("/Lecture/ExamList");
+    }
+
+    public void OnTimeChanged(TimeSpan? value)
+    {
+        if (exam.AssignmentDate.HasValue)
+        {
+            exam.AssignmentDate = new DateTime(exam.AssignmentDate.Value.Year, exam.AssignmentDate.Value.Month, exam.AssignmentDate.Value.Day,
+                                               value.Value.Hours, value.Value.Minutes, 0);
+        }
     }
 }

@@ -10,7 +10,7 @@
 </style>
 
 <div class="d-flex justify-content-center">
-    <div class="w-75">
+    <div class="w-75 custom-box ">
         <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
             <label class="me-3">User:</label>
             <input class="form-control me-3" type="text" @bind="searchText" placeholder="Search users" style="width: 50%;" /> <!-- Adjust width -->
@@ -32,6 +32,8 @@
                     <tr>
                         <th>#</th>
                         <th>Email</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
                         <th>Is Active</th>
                         <th>Role</th>
                         <th>Campus</th>
@@ -49,13 +51,15 @@
                                 <td>
                                     <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
                                 </td>
-                                <td>
+                                <td>@user.UserName</td>
+                                <td>@user.Tel</td>
+                                <td class="d-flex justify-content-center">
                                     <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
                                 </td>
                                 <td>@user.RoleName</td>
                                 <td>@user.CampusName</td>
                                 <td>
-                                    <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
+                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                                 </td>
                             </tr>
                             index++;

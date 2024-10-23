@@ -57,6 +57,7 @@
         if (SubjectId != 0)
         {
             var resp = await this.SubjectServive.GetSubjectById(SubjectId.Value);
+            await Task.Delay(100);
 
             if (resp.IsSuccessful)
             {

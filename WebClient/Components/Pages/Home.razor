@@ -14,15 +14,16 @@
 </style>
 
 <div>
-    @if(menuList.Count > 0)
+    @if (menuList.Count > 0)
     {
-        @foreach(var item in menuList)
+        @foreach (var item in menuList)
         {
             <div class="action-item">
                 <NavLink @onclick="@(() => GoToPage(item.MenuLink))">@item.MenuName</NavLink>
             </div>
         }
-    } else
+    }
+    else
     {
         <div>
             <h1 class="text-center">@TextInfo</h1>
@@ -48,16 +49,23 @@
             var user = auth.User;
             var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
 
-            var resp = await MenuServive.GetMenuByUser(id);
-
-            if (resp.IsSuccessful)
+            if (userRole == 3)
             {
-                menuList = resp.Items;
+                NavManager.NavigateTo("/Lecture/ExamList");
             }
+            else
+            {
+                var resp = await MenuServive.GetMenuByUser(id);
 
-            TextInfo = menuList.Count > 0 ? string.Empty : "You dont have any permission on this site";
+                if (resp.IsSuccessful)
+                {
+                    menuList = resp.Items;
+                }
 
+                TextInfo = menuList.Count > 0 ? string.Empty : "You dont have any permission on this site";
+            }
         }
+
         if (Layout != null)
         {
             Layout.Header = string.Empty;
@@ -66,8 +74,6 @@
             Layout.SubHeader1 = string.Empty;
             Layout.RefreshLayout();
         }
-
-
     }
 
     public void GoToPage(string url)

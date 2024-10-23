@@ -464,6 +464,7 @@ public class ExamRepository : IExamRepository
                               where ((req.StatusId == null && ex.ExamStatusId != 1 && ex.ExamStatusId != 2) || ex.ExamStatusId == req.StatusId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               && req.UserId == ia.AssignedUserId
+                              && cus.IsLecturer == false
                               select new LectureExamResponse
                               {
                                   EndDate = ex.EndDate,
@@ -829,5 +830,45 @@ public class ExamRepository : IExamRepository
             };
         }
     }
+
+    // Tìm Môn theo kì và name
+	public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
+	{
+		// Retrieve the full name of the user first
+		var user = await _context.Users
+			.Where(u => u.UserId == userId)
+			.Select(u => new { u.FullName, u.RoleId })
+			.FirstOrDefaultAsync();
+
+		if (user == null)
+		{
+			
+			return new List<ExamBySemesterResponse>(); 
+		}
+
+		// muốn hiển thị tìm kiếm được cả InstructorAssignment cho lecturer thì bỏ if.
+		if (user.RoleId != 4) 
+		{
+			return new List<ExamBySemesterResponse>();
+		}
+
+		var examAssignments = await _context.Exams
+			.Include(e => e.Semester) 
+			.Include(e => e.Subject)   
+			.Include(e => e.InstructorAssignments) 
+			.Where(e => e.SemesterId == semesterId &&
+						e.InstructorAssignments.Any(ia => ia.AssignedUserId == userId)) 
+			.Select(e => new ExamBySemesterResponse
+			{
+				ExamCode = e.ExamCode,
+				SubjectName = e.Subject.SubjectName,
+				FullName = user.FullName, 
+				SemesterName = e.Semester.SemesterName 
+			})
+			.ToListAsync();
+
+		return examAssignments;
+	}
+
 
 }

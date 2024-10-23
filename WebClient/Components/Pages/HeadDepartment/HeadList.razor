@@ -30,26 +30,26 @@
 </style>
 <div class="d-flex justify-content-center">
     <div class="mt-4">
-            <div class="d-flex align-items-center flex-wrap w-50">
-                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
-                <MudSelect @bind-Value="request.StatusId"
-                           Variant="Variant.Outlined"
-                           Label="Status"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Clearable
-                           Class="me-4 col-auto">
-                    @if (statusList.Count > 0)
+        <div class="d-flex align-items-center flex-wrap custom-box mb-4">
+            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
+            <MudSelect @bind-Value="request.StatusId"
+                       Variant="Variant.Outlined"
+                       Label="Status"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in statusList)
                     {
-                        @foreach (var item in statusList)
-                        {
-                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
-                        }
+                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
-                </MudSelect>
+                }
+            </MudSelect>
 
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
-            </div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
+        </div>
         <div class="custom-box">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -58,45 +58,43 @@
 
             </div>
             <div>
-                @if (ExamList.Count > 0)
-                {
-                    <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
-                        <HeaderContent>
-                            <MudTh>Exam Code</MudTh>
-                            <MudTh>Status</MudTh>
-                            <MudTh>Review Start Date</MudTh>
-                            <MudTh>Review End Date</MudTh>
-                            <MudTh></MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd>@context.ExamCode</MudTd>
-                            <MudTd>
-                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
-                            </MudTd>
-                            <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                            <MudTd>
-                                <div class="d-flex align-items-center justify-content-around">
-                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
-                                </div>
-                            </MudTd>
-                        </RowTemplate>
-                        @*<PagerContent>
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
+                    <HeaderContent>
+                        <MudTh>Exam Code</MudTh>
+                        <MudTh>Status</MudTh>
+                        <MudTh>Review Start Date</MudTh>
+                        <MudTh>Review End Date</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.ExamCode</MudTd>
+                        <MudTd>
+                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                        </MudTd>
+                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                    @*<PagerContent>
                     @if (AccList.Count > 10)
                     {
                     <MudTablePager />
                     }
                     </PagerContent> *@
-                    </MudTable>
-                }
-                else
+                </MudTable>
+                @if (ExamList.Count == 0)
+
                 {
-                    <p>No Data</p>
+                    <p class="text-center fs-6 mt-4">No Data</p>
                 }
             </div>
         </div>
     </div>
-    </div>
+</div>
 
 
 @code {
@@ -114,12 +112,12 @@
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
         { 1, "#C0C0C0" }, // Not Assign
-        { 2, "#FFD700" }, // Waiting to Assign
+        { 2, "#FFD700" }, // Pending
         { 3, "#1E90FF" }, // Assigned
-        { 4, "#FFA500" }, // Reviewing
-        { 5, "#32CD32" }, // Finish Review
-        { 6, "#228B22" }, // Complete
-        { 7, "#FF6347" }, // Cancel
+        { 4, "#FFA500" }, // Reviewed
+        { 6, "#32CD32" }, // Faultless
+        { 7, "#228B22" }, // Complete
+        { 5, "#FF6347" }, // Erroneous
     };
 
     protected override async Task OnInitializedAsync()
@@ -199,7 +197,7 @@
 
     private async Task AssignExam()
     {
-        
+
     }
 
     public string[] CheckSelectedExam()
