@@ -1,5 +1,5 @@
 ﻿@page "/Admin/History"
-<h1 style="text-align: center;">User History</h1>
+<h1 style="text-align: center;">User Activity Log</h1>
 <style>
     .mud-table-cell {
         border: none !important;
@@ -55,9 +55,9 @@
             {
                 <MudTable Items="@LogList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
-                        <MudTh>Mail</MudTh>
+                        <MudTh>User</MudTh>
                         <MudTh>Log Content</MudTh>
-                        <MudTh>Date</MudTh>
+                        <MudTh>Time</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.Mail</MudTd>
