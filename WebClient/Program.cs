@@ -38,7 +38,7 @@ namespace WebClient
                 NavigationManager navManager = s.GetRequiredService<NavigationManager>();
                 return new HttpClient(authorHandler)
                 {
-                    BaseAddress = new Uri("https://localhost:7255/")
+                    BaseAddress = new Uri("https://localhost:7255/"),
                 };
             });
 

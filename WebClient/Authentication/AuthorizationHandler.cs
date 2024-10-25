@@ -15,6 +15,7 @@ namespace WebClient.Authentication
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
+            await Task.Delay(50);
             return await base.SendAsync(request, cancellationToken);
         }
     }
