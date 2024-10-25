@@ -1,6 +1,13 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
-<h1 style="text-align: center;">User Modify</h1>
+@if (!isAddOrEdit)
+{
+      <h1 style="text-align: center;">Update HeadDepartment</h1>
+}
+else
+{
+    <h1 style="text-align: center;">Add HeadDepartment</h1>
+}
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 400px;">
         <FluentValidationValidator />
