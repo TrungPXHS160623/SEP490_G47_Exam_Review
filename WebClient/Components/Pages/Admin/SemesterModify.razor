@@ -1,7 +1,7 @@
 ﻿<style>
     .form-group {
         display: flex;
-        align-items: center
+        align-items: center;
     }
 
     .mud-input.mud-disabled {
@@ -9,14 +9,18 @@
         color: black;
     }
 </style>
-<EditForm Model="campus" OnValidSubmit="Excute">
-    <FluentValidationValidator/>
+
+<EditForm Model="semester" OnValidSubmit="Execute">
+    <FluentValidationValidator />
     <MudDialog>
         <DialogContent>
-            <MudTextField @bind-Value=campus.CampusName Variant="Variant.Outlined" Label="Campus Name" Class="mb-4" For="@(() => campus.CampusName)"></MudTextField>
-            @if (CampusId != 0)
+            <MudTextField @bind-Value=semester.SemesterName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => semester.SemesterName)"></MudTextField>
+
+            <MudDatePicker @bind-Value=semester.StartDate Label="Start Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
+            <MudDatePicker @bind-Value=semester.EndDate Label="End Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
+            @if (SemesterId != 0)
             {
-                <MudCheckBox @bind-Value=campus.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
+                <MudCheckBox @bind-Value=semester.IsActive Label="Is Active" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
             }
         </DialogContent>
         <DialogActions>
@@ -28,7 +32,7 @@
                 }
                 else
                 {
-                    <MudText>@(CampusId == 0 ? "Add" : "Save")</MudText>
+                    <MudText>@(SemesterId == 0 ? "Add" : "Save")</MudText>
                 }
             </MudButton>
             <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
@@ -36,16 +40,14 @@
     </MudDialog>
 </EditForm>
 
-
-
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
-
+    @inject ISemesterService SemesterService
     [Parameter]
-    public int? CampusId { get; set; }
+    public int? SemesterId { get; set; }
 
-    Campus campus = new Campus();
+    Semester semester = new Semester();
 
     private bool _processing = false;
 
@@ -53,22 +55,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (CampusId != 0)
+        if (SemesterId != 0)
         {
-            var resp = await this.CampusServive.GetCampusById(CampusId.Value);
+            var resp = await this.SemesterService.GetSemesterId(SemesterId.Value);
 
             if (resp.IsSuccessful)
             {
-                campus = resp.Item;
+                semester = resp.Item;
             }
         }
     }
 
-    public async Task Excute()
+    public async Task Execute()
     {
-        if (CampusId != 0)
+        _processing = true;
+
+        if (SemesterId != 0)
         {
-            var resp = await this.CampusServive.UpdateCampus(campus);
+            var resp = await this.SemesterService.UpdateSemester(semester);
 
             if (resp.IsSuccessful)
             {
@@ -77,15 +81,14 @@
         }
         else
         {
-            var resp = await this.CampusServive.AddCampus(campus);
+            var resp = await this.SemesterService.AddSemester(semester);
 
             if (resp.IsSuccessful)
             {
                 MudDialog.Close(DialogResult.Ok(true));
             }
         }
+
+        _processing = false;
     }
-
-
-
 }
