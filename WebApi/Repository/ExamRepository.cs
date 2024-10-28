@@ -6,7 +6,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ExamRepository : IExamRepository
 {
@@ -870,5 +869,8 @@ public class ExamRepository : IExamRepository
 		return examAssignments;
 	}
 
-
+    public Task<ResultResponse<LeaderExamResponse>> GetRemindExamList()
+    {
+        throw new NotImplementedException();
+    }
 }

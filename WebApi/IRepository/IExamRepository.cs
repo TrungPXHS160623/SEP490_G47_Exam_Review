@@ -14,6 +14,7 @@ namespace WebApi.IRepository
         Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
+        Task<ResultResponse<LeaderExamResponse>> GetRemindExamList();
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
 
