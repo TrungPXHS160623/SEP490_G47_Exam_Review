@@ -15,6 +15,9 @@ public partial class InstructorAssignment
 
     public int? AssignStatusId { get; set; }
 
+    public string? GeneralFeedback { get; set; } // Phản hồi tổng quát
+    public bool IsReady { get; set; } = false; //xác định đề thi đã sẵn sàng thi hay chưa
+
     public TimeSpan? ExamTestDuration { get; set; }
 
     public DateTime? CreateDate { get; set; }

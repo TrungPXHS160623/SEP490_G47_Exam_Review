@@ -7,6 +7,8 @@ public partial class Subject
 {
     public int SubjectId { get; set; }
 
+    public int? FacultyId { get; set; }
+
     public string? SubjectCode { get; set; }
 
     public string? SubjectName { get; set; }
@@ -20,4 +22,6 @@ public partial class Subject
     public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; } = new List<CampusUserSubject>();
 
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
+    public virtual Faculty Faculty { get; set; }
 }

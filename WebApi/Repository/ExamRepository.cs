@@ -305,7 +305,7 @@ public class ExamRepository : IExamRepository
                                           where rp.AssignmentId == ia.AssignmentId
                                           select new ReportResponse
                                           {
-                                              RerportId = rp.ReportId,
+                                              ReportId = rp.ReportId,
                                               QuestionNumber = rp.QuestionNumber,
                                               QuestionSolutionDetail = rp.QuestionSolutionDetail,
                                               ReportContent = rp.ReportContent,
@@ -609,10 +609,9 @@ public class ExamRepository : IExamRepository
                                 CampusName = reader.GetValue(3)?.ToString(),
                                 SubjectCode = reader.GetValue(4)?.ToString(),
                                 CreaterName = reader.GetValue(5)?.ToString(),
-                                StatusContent = reader.GetValue(6)?.ToString(),
-                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
-                                StartDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
-                                EndDate = DateTime.TryParse(reader.GetValue(9)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
+                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(6)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
+                                StartDate = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
+                                EndDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
                             };
 
                             // Kiểm tra tính hợp lệ của dữ liệu từ DTO

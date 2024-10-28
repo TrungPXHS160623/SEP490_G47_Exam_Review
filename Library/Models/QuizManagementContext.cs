@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using static System.Net.WebRequestMethods;
 
 
 namespace Library.Models;
@@ -41,9 +42,9 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<Semester> Semesters { get; set; } = null!;
 
+    public virtual DbSet<ReportFile> ReportFiles { get; set; }
 
-
-
+    public virtual DbSet<Faculty> Faculties { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -179,10 +180,66 @@ public partial class QuizManagementContext : DbContext
                 .HasConstraintName("FK_Reports_InstructorAssignments");
         });
 
+        // Cấu hình bảng Faculty
+        modelBuilder.Entity<Faculty>(entity =>
+        {
+            entity.HasKey(f => f.FacultyId); // Đặt khóa chính
+
+            entity.Property(f => f.FacultyName)
+                .IsRequired()
+                .HasMaxLength(100); // Giới hạn độ dài cho tên khoa
+
+            entity.Property(f => f.Description)
+                .HasMaxLength(500); // Giới hạn độ dài cho mô tả khoa
+
+            // Cấu hình quan hệ với User cho Dean
+            entity.HasOne(f => f.Deans) // Đảm bảo Deans là thuộc tính điều hướng
+                .WithMany(u => u.Faculties) // Liên kết hai chiều: User có thể có nhiều Faculty
+                .HasForeignKey(f => f.DeanId) // Khóa ngoại cho Dean
+                .OnDelete(DeleteBehavior.Restrict); // Hành động xóa
+        });
+
+
+        modelBuilder.Entity<ReportFile>(entity =>
+        {
+            entity.HasKey(e => e.FileId); // Thiết lập FileId là khóa chính
+
+            entity.Property(e => e.FileName)
+                .IsRequired() // Là bắt buộc
+                .HasMaxLength(255); // Đặt độ dài tối đa cho FileName
+
+            entity.Property(e => e.FilePath)
+                .IsRequired() // Là bắt buộc
+                .HasMaxLength(500); // Đặt độ dài tối đa cho FilePath
+
+            entity.Property(e => e.FileType)
+                .IsRequired() // Là bắt buộc
+                .HasMaxLength(100); // Đặt độ dài tối đa cho FileType
+
+            entity.Property(e => e.FileSize) // Không bắt buộc
+                .IsRequired(false); // Có thể null
+
+            entity.Property(e => e.UploadDate) // Ngày tải lên
+                .IsRequired(); // Là bắt buộc
+
+            // Cấu hình mối quan hệ với bảng Report
+            entity.HasOne(rf => rf.Report)
+                .WithMany(r => r.ReportFiles) // Giả định bạn có ICollection<ReportFile> trong model Report
+                .HasForeignKey(rf => rf.ReportId)
+                .OnDelete(DeleteBehavior.Cascade); // Xóa cascade
+        });
+
+
         modelBuilder.Entity<Subject>(entity =>
         {
             entity.Property(e => e.SubjectCode).HasMaxLength(255);
             entity.Property(e => e.SubjectName).HasMaxLength(255);
+
+            // Cấu hình mối quan hệ với bảng Faculty
+            entity.HasOne(s => s.Faculty)
+                  .WithMany(f => f.Subjects)
+                  .HasForeignKey(s => s.FacultyId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -221,10 +278,6 @@ public partial class QuizManagementContext : DbContext
                 .HasDefaultValueSql("(getdate())");
         });
 
-
-
-
-
         modelBuilder.Entity<UserHistory>(entity =>
         {
             entity.ToTable("UserHistory");
@@ -237,6 +290,8 @@ public partial class QuizManagementContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_UserHistory_Users");
         });
+
+
 
         modelBuilder.Entity<UserRole>(entity =>
         {
@@ -275,9 +330,14 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-
-
-
+        //Seed data for Faculty table
+        modelBuilder.Entity<Faculty>().HasData(
+            new Faculty { FacultyId = 1, FacultyName = "Faculty of Information Technology", Description = "Specializes in training related to information technology and software.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 2, FacultyName = "Faculty of Economics", Description = "Specializes in training in economics, business administration, and finance.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 3, FacultyName = "Faculty of Foreign Languages", Description = "Trains in language, culture, and international communication.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 4, FacultyName = "Faculty of Engineering", Description = "Specializes in engineering, electronics, and mechanics.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 5, FacultyName = "Faculty of Management", Description = "Trains in management, leadership, and organization.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+        );
 
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
@@ -286,13 +346,13 @@ public partial class QuizManagementContext : DbContext
             new User { UserId = 1, Mail = "admin@fpt.edu.vn", CampusId = 1, RoleId = 1, FullName = "Admin", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1980, 1, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
 
-            // Seed data for Examiner
-            new User { UserId = 2, Mail = "lienkt@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Liên Kết", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1990, 2, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 3, Mail = "hoanglm@fpt.edu.vn", CampusId = 2, RoleId = 2, FullName = "Hoàng Lâm", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1992, 3, 1), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 4, Mail = "anhnq@fpt.edu.vn", CampusId = 3, RoleId = 2, FullName = "Anh Nguyễn", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 4, 1), Gender = true, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 5, Mail = "minhnh@fpt.edu.vn", CampusId = 4, RoleId = 2, FullName = "Minh Nhân", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1991, 5, 1), Gender = true, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 6, Mail = "phongtl@fpt.edu.vn", CampusId = 5, RoleId = 2, FullName = "Phong Tài", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1993, 6, 1), Gender = true, Address = "Huế", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Hưng Lê", PhoneNumber = "0123456789", EmailFe = null, DateOfBirth = new DateTime(1995, 7, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+        // Seed data for Examiner
+            new User { UserId = 2, Mail = "lienkt@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Liên Kết", PhoneNumber = "0123456789", EmailFe = "lienkt@fe.edu.vn", DateOfBirth = new DateTime(1990, 2, 1), Gender = false, Address = "TP Hồ Chí Minh", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 3, Mail = "hoanglm@fpt.edu.vn", CampusId = 2, RoleId = 2, FullName = "Hoàng Lâm", PhoneNumber = "0123456789", EmailFe = "hoanglm@fe.edu.vn", DateOfBirth = new DateTime(1992, 3, 1), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 4, Mail = "anhnq@fpt.edu.vn", CampusId = 3, RoleId = 2, FullName = "Anh Nguyễn", PhoneNumber = "0123456789", EmailFe = "anhnq@fe.edu.vn", DateOfBirth = new DateTime(1995, 4, 1), Gender = true, Address = "Nha Trang", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 5, Mail = "minhnh@fpt.edu.vn", CampusId = 4, RoleId = 2, FullName = "Minh Nhân", PhoneNumber = "0123456789", EmailFe = "minhnh@fe.edu.vn", DateOfBirth = new DateTime(1991, 5, 1), Gender = true, Address = "Cần Thơ", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 6, Mail = "phongtl@fpt.edu.vn", CampusId = 5, RoleId = 2, FullName = "Phong Tài", PhoneNumber = "0123456789", EmailFe = "phongtl@fe.edu.vn", DateOfBirth = new DateTime(1993, 6, 1), Gender = true, Address = "Huế", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new User { UserId = 28, Mail = "hunglthe160235@fpt.edu.vn", CampusId = 1, RoleId = 2, FullName = "Hưng Lê", PhoneNumber = "0123456789", EmailFe = "hunglthe160235@fe.edu.vn", DateOfBirth = new DateTime(1995, 7, 1), Gender = true, Address = "Hà Nội", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
 
             // Seed data for Lecturer
@@ -333,18 +393,18 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<Subject>().HasData(
 
             // Seed data for software engineering major
-            new Subject { SubjectId = 1, SubjectCode = "PRN211", SubjectName = "Basic Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 2, SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 3, SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 4, SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 5, SubjectCode = "NWC203c", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 1, FacultyId = 1,SubjectCode = "PRN211", SubjectName = "Basic Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 2, FacultyId = 1,SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 3, FacultyId = 1,SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 4, FacultyId = 1,SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 5, FacultyId = 1,SubjectCode = "NWC203c", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for international business major
-            new Subject { SubjectId = 6, SubjectCode = "ENM401", SubjectName = "Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 7, SubjectCode = "ECO121", SubjectName = "Basic Macro Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 8, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 9, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 10, SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Subject { SubjectId = 6, FacultyId = 2, SubjectCode = "ENM401", SubjectName = "Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 7, FacultyId = 2, SubjectCode = "ECO121", SubjectName = "Basic Macro Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 8, FacultyId = 2, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 9, FacultyId = 2, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 10, FacultyId = 2 , SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
@@ -442,38 +502,38 @@ public partial class QuizManagementContext : DbContext
 
             // Ha Noi's Examiners create exams
             // Seed data for software engineering major
-            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 2, 15), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 3, 10), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 2, 15), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 3, 10), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 6, ExamDate = new DateTime(2024, 4, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 4, ExamCode = "PRN221_Q2_5_210987", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)" , ExamType = "Other", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 6, ExamDate = new DateTime(2024, 4, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 4, ExamCode = "PRN221_Q2_5_210987", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 5, ExamCode = "PRN231_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 10), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 6, ExamCode = "PRN231_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 5, ExamCode = "PRN231_Q1_10_345678", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 10), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 6, ExamCode = "PRN231_Q2_5_876543", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 3, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 7, ExamCode = "MAE101_Q1_10_234567", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 8, ExamCode = "MAE101_Q2_5_765432", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 7, ExamCode = "MAE101_Q1_10_234567", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 8, ExamCode = "MAE101_Q2_5_765432", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 4, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 9, ExamCode = "NWC203c_Q1_10_345678", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 1), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 10, ExamCode = "NWC203c_Q2_5_876543", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 8), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 9, ExamCode = "NWC203c_Q1_10_345678", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 1), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 10, ExamCode = "NWC203c_Q2_5_876543", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 5, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 8), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for international business major
-            new Exam { ExamId = 11, ExamCode = "ENM401_Q1_10_111222", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 12, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 12, ExamCode = "ENM401_Q2_5_222111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Reading", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 1, 12), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 13, ExamCode = "ENM401_Q3_7_222333", ExamDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 2, 7), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 14, ExamCode = "ENM401_Q4_9_333111", ExamDuration = "Block 10 (10 weeks)", ExamType = "Listening", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 3, 3), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 11, ExamCode = "ENM401_Q1_10_111222", ExamDuration = "90"   , TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 12, 5), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 12, ExamCode = "ENM401_Q2_5_222111", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Reading", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 1, 12), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 13, ExamCode = "ENM401_Q3_7_222333", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Writing", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 2, 7), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 14, ExamCode = "ENM401_Q4_9_333111", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Listening", SubjectId = 6, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 7, ExamDate = new DateTime(2024, 3, 3), EstimatedTimeTest = DateTime.Now, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 15, ExamCode = "ECO121_Q1_10_333444", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 4, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 16, ExamCode = "ECO121_Q2_5_444333", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 15, ExamCode = "ECO121_Q1_10_333444", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 4, 20), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 16, ExamCode = "ECO121_Q2_5_444333", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 7, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 5, 25), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 17, ExamCode = "ECO201_Q1_10_555666", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 14), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 18, ExamCode = "ECO201_Q2_5_666555", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 30), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 17, ExamCode = "ECO201_Q1_10_555666", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 6, 14), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 18, ExamCode = "ECO201_Q2_5_666555", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 8, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 7, 30), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 19, ExamCode = "ACC101_Q1_10_777888", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 19), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 20, ExamCode = "ACC101_Q2_5_888777", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 19, ExamCode = "ACC101_Q1_10_777888", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 8, 19), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 20, ExamCode = "ACC101_Q2_5_888777", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 9, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 9, 15), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            new Exam { ExamId = 21, ExamCode = "MKT101_Q1_10_999000", ExamDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 22), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Exam { ExamId = 22, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Exam { ExamId = 21, ExamCode = "MKT101_Q1_10_999000", ExamDuration = "90", TermDuration = "Block 10 (10 weeks)", ExamType = "Other", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 10, 22), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 22, ExamCode = "MKT101_Q2_5_000999", ExamDuration = "60", TermDuration = "Block 5 (5 weeks)", ExamType = "Other", SubjectId = 10, CreaterId = 2, CampusId = 1, SemesterId = 2, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 18), EstimatedTimeTest = null, StartDate = DateTime.Now, EndDate = DateTime.Now, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
@@ -546,28 +606,29 @@ public partial class QuizManagementContext : DbContext
 
         // 12. Seed data for Report table
         modelBuilder.Entity<Report>().HasData(
-            new Report { ReportId = 1, AssignmentId = 8, ReportContent = "In PRN211, question 1 contains an incorrect code snippet that causes compilation errors.", QuestionSolutionDetail = "Correct the code snippet by replacing 'Console.Writeline' with 'Console.WriteLine'.", QuestionNumber = 1, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 2, AssignmentId = 9, ReportContent = "In PRN211, question 2 has an outdated logic that leads to incorrect output.", QuestionSolutionDetail = "Revise the logic to ensure it follows the proper algorithmic steps.", QuestionNumber = 2, Score = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 3, AssignmentId = 11, ReportContent = "In ENM401, question 1 fails to explain the principle of supply and demand adequately.", QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.", QuestionNumber = 3, Score = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 4, AssignmentId = 12, ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 4, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 5, AssignmentId = 13, ReportContent = "In ENM401, question 3 has an error in the calculation.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 5, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 6, AssignmentId = 14, ReportContent = "In ENM401, question 4 has an error.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 6, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Report { ReportId = 1, AssignmentId = 8, ReportContent = "In PRN211, question 1 contains an incorrect code snippet that causes compilation errors.", QuestionSolutionDetail = "Correct the code snippet by replacing 'Console.Writeline' with 'Console.WriteLine'.", QuestionNumber = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 2, AssignmentId = 9, ReportContent = "In PRN211, question 2 has an outdated logic that leads to incorrect output.", QuestionSolutionDetail = "Revise the logic to ensure it follows the proper algorithmic steps.", QuestionNumber = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 3, AssignmentId = 11, ReportContent = "In ENM401, question 1 fails to explain the principle of supply and demand adequately.", QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.", QuestionNumber = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 4, AssignmentId = 12, ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 5, AssignmentId = 13, ReportContent = "In ENM401, question 3 has an error in the calculation.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 6, AssignmentId = 14, ReportContent = "In ENM401, question 4 has an error.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
          );
 
+
         modelBuilder.Entity<Semester>().HasData(
-            new Semester { SemesterId = 1, SemesterName = "Fall2020", StartDate = new DateTime(2020, 9, 1), EndDate = new DateTime(2021, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 2, SemesterName = "Spring2021", StartDate = new DateTime(2021, 1, 16), EndDate = new DateTime(2021, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 3, SemesterName = "Summer2021", StartDate = new DateTime(2021, 6, 1), EndDate = new DateTime(2021, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 4, SemesterName = "Fall2021", StartDate = new DateTime(2021, 9, 1), EndDate = new DateTime(2022, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 5, SemesterName = "Spring2022", StartDate = new DateTime(2022, 1, 16), EndDate = new DateTime(2022, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 6, SemesterName = "Summer2022", StartDate = new DateTime(2022, 6, 1), EndDate = new DateTime(2022, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 7, SemesterName = "Fall2022", StartDate = new DateTime(2022, 9, 1), EndDate = new DateTime(2023, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 8, SemesterName = "Spring2023", StartDate = new DateTime(2023, 1, 16), EndDate = new DateTime(2023, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 9, SemesterName = "Summer2023", StartDate = new DateTime(2023, 6, 1), EndDate = new DateTime(2023, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 10, SemesterName = "Fall2023", StartDate = new DateTime(2023, 9, 1), EndDate = new DateTime(2024, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 11, SemesterName = "Spring2024", StartDate = new DateTime(2024, 1, 16), EndDate = new DateTime(2024, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 12, SemesterName = "Summer2024", StartDate = new DateTime(2024, 6, 1), EndDate = new DateTime(2024, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
-            new Semester { SemesterId = 13, SemesterName = "Fall2024", StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2025, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
+            new Semester { SemesterId = 1, SemesterName = "Fa21", StartDate = new DateTime(2020, 9, 1), EndDate = new DateTime(2021, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 2, SemesterName = "Sp21", StartDate = new DateTime(2021, 1, 16), EndDate = new DateTime(2021, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 3, SemesterName = "Su21", StartDate = new DateTime(2021, 6, 1), EndDate = new DateTime(2021, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 4, SemesterName = "Fa21", StartDate = new DateTime(2021, 9, 1), EndDate = new DateTime(2022, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 5, SemesterName = "Sp22", StartDate = new DateTime(2022, 1, 16), EndDate = new DateTime(2022, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 6, SemesterName = "Su22", StartDate = new DateTime(2022, 6, 1), EndDate = new DateTime(2022, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 7, SemesterName = "Fa22", StartDate = new DateTime(2022, 9, 1), EndDate = new DateTime(2023, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 8, SemesterName = "Sp23", StartDate = new DateTime(2023, 1, 16), EndDate = new DateTime(2023, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 9, SemesterName = "Su23", StartDate = new DateTime(2023, 6, 1), EndDate = new DateTime(2023, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 10, SemesterName = "Fa23", StartDate = new DateTime(2023, 9, 1), EndDate = new DateTime(2024, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 11, SemesterName = "Sp24", StartDate = new DateTime(2024, 1, 16), EndDate = new DateTime(2024, 5, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 12, SemesterName = "Su24", StartDate = new DateTime(2024, 6, 1), EndDate = new DateTime(2024, 8, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now },
+            new Semester { SemesterId = 13, SemesterName = "Fa24", StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2025, 1, 15), IsActive = true, CreatedDate = DateTime.Now, UpdatedDate = DateTime.Now }
          );
 
 

@@ -1,4 +1,5 @@
-﻿using Library.Common;
+﻿using BootstrapBlazor.Components;
+using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
@@ -25,14 +26,14 @@ namespace WebApi.Repository
                                   where rp.AssignmentId == reportRequest.AssignmentId
                                   select rp).ToListAsync();
 
-                var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.RerportId == x.ReportId)).ToList();
+                var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.ReportId == x.ReportId)).ToList();
 
                 this.dbContext.Reports.RemoveRange(deleteRecord);
 
 
                 foreach (var item in reportRequest.ReportList)
                 {
-                    var data = await this.dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.RerportId);
+                    var data = await this.dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.ReportId);
 
                     if (data == null)
                     {
@@ -144,21 +145,12 @@ namespace WebApi.Repository
                     };
                 }
 
-                // Validate Score
-                if (reportRequest.Score < 0 || reportRequest.Score > 10)
-                {
-                    return new RequestResponse
-                    {
-                        IsSuccessful = false,
-                        Message = "Score must be between 0 and 10."
-                    };
-                }
+             
 
                 // Update the existing report with new values
                 existingReport.QuestionNumber = reportRequest.QuestionNumber;
                 existingReport.ReportContent = reportRequest.ReportContent;
                 existingReport.QuestionSolutionDetail = reportRequest.QuestionSolutionDetail;
-                existingReport.Score = reportRequest.Score;
                 existingReport.UpdateDate = DateTime.Now;
 
                 dbContext.Reports.Update(existingReport);
@@ -281,7 +273,6 @@ namespace WebApi.Repository
             //                    QuestionNumber = r.QuestionNumber,
             //                    ReportContent = r.ReportContent,
             //                    QuestionSolutionDetail = r.QuestionSolutionDetail,
-            //                    Score = r.Score,
             //                    CreateDate = r.CreateDate,
             //                    UpdateDate = r.UpdateDate
             //                }).ToList();
@@ -312,6 +303,264 @@ namespace WebApi.Repository
             //}
 
             return null;
+        }
+
+        public async Task<RequestResponse> UploadFiles(int reportId, IList<IFormFile> files)
+        {
+            var response = new RequestResponse();
+            var errors = new List<string>();
+            var existingFileNames = new HashSet<string>();
+            try
+            {
+                // Kiểm tra file đính kèm có bằng null không
+                if (files == null || files.Count == 0)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "No files uploaded."
+                    };
+                }
+
+                // Danh sách các định dạng tệp và MIME được hỗ trợ
+                var supportedTypes = new[] { "xlsx", "pdf", "docx", "doc", "xls", "jpg", "png", "zip" };
+                var allowedMimeTypes = new[]
+                {
+                  "application/pdf",
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  "application/msword",
+                  "application/vnd.ms-excel",
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                  "image/jpeg",
+                  "image/png",
+                  "application/zip"
+                 };
+
+                // Giới hạn dung lượng file (ví dụ: 5MB)
+                const long MaxFileSize = 5 * 1024 * 1024;
+
+                // Thiết lập thư mục lưu file upload
+                var baseUploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Reports");
+                if (!Directory.Exists(baseUploadsFolder))
+                {
+                    Directory.CreateDirectory(baseUploadsFolder);
+                }
+
+                // Thư mục cho báo cáo cụ thể
+                var uploadsFolder = Path.Combine(baseUploadsFolder, reportId.ToString());
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                
+                foreach (var file in files)
+                {
+                    /*
+                     Nếu file.FileName là "image.JPG", thì:
+                     Path.GetExtension(file.FileName) sẽ trả về ".JPG".
+                     Substring(1) sẽ trả về "JPG".
+                     ToLower() sẽ chuyển đổi nó thành "jpg".
+                     */
+                    var fileExtension = Path.GetExtension(file.FileName).Substring(1).ToLower();
+
+                    // Kiểm tra định dạng tệp
+                    if (!supportedTypes.Contains(fileExtension))
+                    {
+                        errors.Add($"File type '{file.FileName}' is not supported.");
+                        continue; // Bỏ qua file không hợp lệ
+                    }
+
+                    // Kiểm tra loại MIME
+                    if (!allowedMimeTypes.Contains(file.ContentType.ToLower()))
+                    {
+                        errors.Add($"MIME type '{file.ContentType}' is not supported for file '{file.FileName}'.");
+                        continue; // Bỏ qua file quá lớn
+                    }
+
+                    // Kiểm tra kích thước file
+                    if (file.Length > MaxFileSize)
+                    {
+                        errors.Add($"File {file.FileName} size exceeds the maximum allowed limit of {MaxFileSize / (1024 * 1024)}MB.");
+                        continue ;
+                    }
+                    // Kiểm tra xem tên file đã tồn tại trong HashSet chưa
+                    if (existingFileNames.Contains(file.FileName))
+                    {
+                        errors.Add($"Duplicate file name '{file.FileName}' within the current upload.");
+                        continue; // Bỏ qua file trùng lặp
+                    }
+
+                    // Thêm tên file vào HashSet để kiểm tra sau
+                    existingFileNames.Add(file.FileName);
+
+                    if (file.FileName.Length > 255)
+                    {
+                        errors.Add($"File {file.FileName} 's name is too long. ");
+                        continue;
+                    }
+
+                    // Lấy danh sách các ký tự không hợp lệ
+                    char[] invalidChars = Path.GetInvalidFileNameChars();
+
+                    // Kiểm tra xem tên tệp có chứa ký tự không hợp lệ không
+                    if (invalidChars.Any(c => file.FileName.Contains(c)) || file.FileName.Contains(".."))
+                    {
+                        errors.Add("Invalid file name or path.");
+                        continue;
+                    }
+
+                    var existingFile = await dbContext.ReportFiles.FirstOrDefaultAsync(f => f.FileName == file.FileName && f.ReportId == reportId);
+                    if (existingFile != null)
+                    {
+                        errors.Add($"File '{file.FileName}' already exists.");
+                        continue;
+                    }
+                    // Đường dẫn file
+                    var filePath = Path.Combine(uploadsFolder, Path.GetFileName(file.FileName));
+
+                    // Ghi file lên server
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // Tạo đối tượng ReportFile và lưu vào database
+                    var reportFile = new ReportFile
+                    {
+                        ReportId = reportId,
+                        FileName = file.FileName,
+                        FilePath = filePath,
+                        FileType = fileExtension,
+                        FileSize = file.Length,
+                        UploadDate = DateTime.Now
+                    };
+
+                    dbContext.ReportFiles.Add(reportFile);
+                }
+
+                await dbContext.SaveChangesAsync();
+                if (errors.Any())
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = $"There were errors during file upload: {string.Join("; ", errors)}"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = true,
+                        Message = "All files uploaded successfully!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccessful = false;
+                response.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return response; 
+        }
+
+        public async Task<RequestResponse> UploadReportWithFiles(LectureExamResponseFinal reportRequest, bool isSubmit)
+        {
+            try
+            {
+                // Lấy danh sách báo cáo hiện tại dựa trên AssignmentId
+                var existingReports = await dbContext.Reports
+                                                     .Where(rp => rp.AssignmentId == reportRequest.AssignmentId)
+                                                     .ToListAsync();
+
+                // Xóa các báo cáo không còn trong request
+                var deleteRecord = existingReports.Where(x => !reportRequest.ReportList.Any(y => y.ReportId == x.ReportId)).ToList();
+                dbContext.Reports.RemoveRange(deleteRecord);
+
+                foreach (var item in reportRequest.ReportList)
+                {
+                    // Kiểm tra nếu báo cáo đã tồn tại trong cơ sở dữ liệu
+                    var existingReport = await dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.ReportId);
+
+                    if (existingReport == null)
+                    {
+                        // Tạo mới báo cáo
+                        var newReport = new Report
+                        {
+                            QuestionNumber = item.QuestionNumber,
+                            ReportContent = item.ReportContent,
+                            QuestionSolutionDetail = item.QuestionSolutionDetail,
+                            CreateDate = item.CreateDate ?? DateTime.Now, // Sử dụng thời gian hiện tại nếu không có CreateDate
+                            UpdateDate = DateTime.Now, // Cập nhật ngay tại đây
+                            AssignmentId = reportRequest.AssignmentId,
+                        };
+
+                        await dbContext.Reports.AddAsync(newReport);
+                        await dbContext.SaveChangesAsync(); // Lưu thay đổi để có ReportId
+
+                        // Tải lên tệp ngay sau khi tạo báo cáo mới
+                        var uploadResponse = await UploadFiles(newReport.ReportId, item.Files); // Truyền files từ item
+                        if (!uploadResponse.IsSuccessful)
+                        {
+                            return new RequestResponse
+                            {
+                                IsSuccessful = false,
+                                Message = uploadResponse.Message
+                            };
+                        }
+                    }
+                    else
+                    {
+                        // Khi chỉnh sửa báo cáo
+                        existingReport.QuestionNumber = item.QuestionNumber;
+                        existingReport.ReportContent = item.ReportContent;
+                        existingReport.QuestionSolutionDetail = item.QuestionSolutionDetail;
+                        existingReport.UpdateDate = DateTime.Now; // Cập nhật thời gian chỉnh sửa
+
+                        // Cập nhật file nếu cần thiết
+                        // Gọi UploadFiles nếu có file mới
+                        var uploadResponse = await UploadFiles(existingReport.ReportId, item.Files); // Truyền files từ item
+                        if (!uploadResponse.IsSuccessful)
+                        {
+                            return new RequestResponse
+                            {
+                                IsSuccessful = false,
+                                Message = uploadResponse.Message
+                            };
+                        }
+                    }
+                }
+
+                // Cập nhật trạng thái nộp nếu isSubmit là true
+                if (isSubmit)
+                {
+                    var assignment = await dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
+                    if (assignment != null)
+                    {
+                        assignment.AssignStatusId = 5; // Đặt trạng thái là đã nộp
+                        assignment.UpdateDate = DateTime.Now; // Cập nhật thời gian submit
+                    }
+                }
+
+                await dbContext.SaveChangesAsync(); // Lưu tất cả thay đổi
+
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Report saved successfully!"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+
         }
     }
 }
