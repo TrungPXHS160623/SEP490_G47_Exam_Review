@@ -35,6 +35,8 @@ public partial class User
     public virtual UserRole? Role { get; set; }
 
     public virtual ICollection<UserHistory> UserHistories { get; set; } = new List<UserHistory>();
+
+    public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>(); // Mối quan hệ tới Faculty
 }
 
 

@@ -11,6 +11,8 @@ public partial class Exam
 
     public string? ExamDuration { get; set; }
 
+    public string? TermDuration { get; set; }
+
     public string? ExamType { get; set; }
 
     public int? SubjectId { get; set; }

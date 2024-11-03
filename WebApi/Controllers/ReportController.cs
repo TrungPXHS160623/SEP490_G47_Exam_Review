@@ -47,6 +47,29 @@ namespace WebApi.Controllers
             var data = await reportRepository.GetReportDuration(assignmentId);
             return Ok(data);
         }
+        [HttpPost("UploadReportWithFiles/{isSubmit:bool}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UploadReportWithFiles([FromForm] LectureExamResponseFinal reportRequest, bool isSubmit)
+        {
+            // Kiểm tra nếu báo cáo là null hoặc không có file
+            if (reportRequest == null ||
+                reportRequest.ReportList == null ||
+                !reportRequest.ReportList.Any() ||
+                reportRequest.ReportList.Any(r => r.Files == null || !r.Files.Any()))
+            {
+                return BadRequest("Invalid report data.");
+            }
+
+            // Gọi phương thức UploadReportWithFiles từ service hoặc repository
+            var response = await reportRepository.UploadReportWithFiles(reportRequest, isSubmit);
+
+            if (response.IsSuccessful)
+            {
+                return Ok(response);
+            }
+
+            return BadRequest(response.Message);
+        }
 
 
 

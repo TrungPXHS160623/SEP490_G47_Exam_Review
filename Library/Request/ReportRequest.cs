@@ -19,8 +19,6 @@ namespace Library.Request
 
         public int? QuestionNumber { get; set; }
 
-        public float? Score { get; set; }
-
         public DateTime? CreateDate { get; set; }
 
     }
