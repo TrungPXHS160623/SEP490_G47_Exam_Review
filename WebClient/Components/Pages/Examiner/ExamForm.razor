@@ -2,25 +2,24 @@
 <h1 style="text-align: center;">Add Exam</h1>
 @inject NavigationManager Navigation
 <div class="d-flex justify-content-center">
-    <EditForm Model="exam" class="border p-4" style="width: 600px;">
-
+    <EditForm Model="exam" class="border p-4" style="width: 600px;" OnValidSubmit="Excute">
         <FluentValidationValidator />
 
         <!-- Exam Code -->
-        <div class="mb-4 row">
+        <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Code:</label>
             <div class="col-8">
                 <MudTextField @bind-Value="exam.ExamCode" Variant="Variant.Outlined" Margin="Margin.Dense"
-                              Placeholder="Enter Exam Code" Required RequiredError="This field is required." />
+                              Placeholder="Enter Exam Code" For="@(() => exam.ExamCode)" />
             </div>
         </div>
 
         <!-- Subject Name -->
-        <div class="mb-4 row">
+        <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Subject Name:</label>
             <div class="col-8">
                 <MudSelect T="int?" @bind-Value="exam.SubjectId" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Subject" Required RequiredError="This field is required.">
+                           Placeholder="Choose Subject" For="@(() => exam.SubjectId)">
                     @foreach (var item in subList)
                     {
                         <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
@@ -47,6 +46,7 @@
             <div class="col-8">
                 <MudSelect @bind-Value="exam.TermDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
                            Placeholder="Choose Exam TermDuration" Required RequiredError="This field is required.">
+
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
                 </MudSelect>
@@ -54,12 +54,13 @@
         </div>
 
         <!-- Exam Type -->
-        <div class="mb-4 row">
+        <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Type:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
                            Placeholder="Choose Exam Type" Required RequiredError="This field is required.">
                     <MudSelectItem T="string" Value="@("Other")">Other</MudSelectItem>
+
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
@@ -71,20 +72,24 @@
         <!-- Start Date -->
         <div class="mb-4 row">
             <label class="col-4 text-end">Start Review Date:</label>
+
             <div class="col-8">
-                <MudDatePicker @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy"
-                               Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Required RequiredError="This field is required." />
+                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
+                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" For="@(()=> exam.StartDate)" />
             </div>
         </div>
 
         <!-- End Date -->
         <div class="mb-4 row">
             <label class="col-4 text-end">End Review Date:</label>
+
             <div class="col-8">
-                <MudDatePicker @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy"
-                               Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Required RequiredError="This field is required." />
+                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
+                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" For="@(()=> exam.EndDate)" />
             </div>
         </div>
 
@@ -108,20 +113,78 @@
 
 
 @code {
-    EditForm _refForm;
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
     private bool _processing = false;
 
-    private ExaminerExamResponse exam = new ExaminerExamResponse();
+    private ExamCreateRequest exam = new ExamCreateRequest();
     private List<Campus> camList = new();
     private List<Subject> subList = new();
 
+    [Parameter]
+    public EventCallback<DateTime> DateChanged { get; set; }
+
+    EditForm _refForm;
+
+    private DateTime? StartDate
+    {
+        get => exam.StartDate;
+        set
+        {
+            if (value is not null)
+            {
+                exam.StartDate = value;
+                DateChanged.InvokeAsync(exam.StartDate ?? DateTime.MinValue);
+            }
+        }
+    }
+    private DateTime? EndDate
+    {
+        get => exam.EndDate;
+        set
+        {
+            if (value is not null)
+            {
+                exam.EndDate = value;
+                DateChanged.InvokeAsync(exam.EndDate ?? DateTime.MinValue);
+            }
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        var resp = await SubjectServive.GetSubjects();
-        if (resp.IsSuccessful) subList = resp.Items;
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
 
-        var result = await CampusServive.GetCampus();
-        if (result.IsSuccessful) camList = result.Items;
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 3);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                var resp = await SubjectServive.GetSubjects();
+                if (resp.IsSuccessful) subList = resp.Items;
+
+                var result = await CampusServive.GetCampus();
+                if (result.IsSuccessful) camList = result.Items;
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Exam Create";
+                    Layout.RefreshLayout();
+                }
+            }
+        }
     }
 
     private async Task Excute()
@@ -132,23 +195,21 @@
         if (auth.User.Identity.IsAuthenticated)
         {
             var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-            var req = new ExamCreateRequest
-                {
-                    ExamCode = exam.ExamCode,
-                    CampusId = exam.CampusId,
-                    CreaterId = userId,
-                    EndDate = exam.EndDate,
-                    StartDate = exam.StartDate,
-                    EstimatedTimeTest = exam.EstimatedTimeTest,
-                    ExamDuration = exam.ExamDuration,
-                    ExamType = exam.ExamType,
-                    SubjectId = exam.SubjectId
-                };
+            exam.CreaterId = userId;
 
-            var resp = await ExamServive.CreateExam(req);
-            if (resp.IsSuccessful) Navigation.NavigateTo("/exams");
+            var resp = await ExamServive.CreateExam(exam);
+            if (resp.IsSuccessful) Navigation.NavigateTo("/Examiner/ExamList");
         }
 
         _processing = false;
+    }
+
+    MudBlazor.Converter<DateTime?, string> ConvertDate(string format)
+    {
+        return new()
+            {
+                GetFunc = (e) => DateTime.TryParse(e, out DateTime data) ? data : null,
+                SetFunc = (e) => e?.ToString(format) ?? string.Empty
+            };
     }
 }

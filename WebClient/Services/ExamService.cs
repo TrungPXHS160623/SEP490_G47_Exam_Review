@@ -163,7 +163,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId)
+        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId, int userId)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace WebClient.Services
                 }
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLectureExamById/{examId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLectureExamById/{examId}/{userId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LectureExamResponse>>();
 

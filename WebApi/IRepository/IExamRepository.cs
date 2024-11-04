@@ -14,12 +14,13 @@ namespace WebApi.IRepository
         Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
+        Task<ResultResponse<LeaderExamResponse>> GetRemindExamList();
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
 
-        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
+        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId, int userId);
 
         Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
 

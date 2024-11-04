@@ -141,7 +141,7 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetLectureList();
+        var response = await AccountService.GetLectureListByHead(UserId);
         if (response.IsSuccessful)
         {
             users = response.Items;
