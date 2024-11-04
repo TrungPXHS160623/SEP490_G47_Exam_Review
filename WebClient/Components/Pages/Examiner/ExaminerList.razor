@@ -47,7 +47,21 @@
                     }
                 }
             </MudSelect>
-
+            <MudSelect @bind-Value="request.SemesterId"
+                       Variant="Variant.Outlined"
+                       Label="Semester"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in semesters)
+                    {
+                        <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
+                    }
+                }
+            </MudSelect>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
         <div class="custom-box">
@@ -67,6 +81,7 @@
                         <MudTh>Exam Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
+                        <MudTh>Semester</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -80,12 +95,14 @@
                         <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@context.SemseterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>
                                 <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
                             </div>
                         </MudTd>
+                       
                     </RowTemplate>
                 </MudTable>
                 @if (ExamList.Count == 0)
@@ -111,12 +128,12 @@
     public MainLayout Layout { get; set; }
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
-
+    @inject ISemesterService SemesterService
     public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
     public List<ExaminerExamResponse> assignList = new List<ExaminerExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
-
+    public List<Semester> semesters = new List<Semester>();
     public ExamSearchRequest request = new();
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
@@ -149,7 +166,11 @@
             else
             {
                 await GetData();
-
+                var semesterrList = await this.SemesterService.GetSemester();
+                if (semesterrList.IsSuccessful)
+                {
+                    semesters = semesterrList.Items;
+                }
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {

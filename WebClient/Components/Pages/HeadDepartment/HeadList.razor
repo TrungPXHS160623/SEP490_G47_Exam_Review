@@ -46,8 +46,23 @@
                         <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
                 }
+           
             </MudSelect>
-
+            <MudSelect @bind-Value="request.SemesterId"
+                       Variant="Variant.Outlined"
+                       Label="Semester"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in semesters)
+                    {
+                        <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
+                    }
+                }
+            </MudSelect>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
         <div class="custom-box">
@@ -65,6 +80,7 @@
                         <MudTh>Exam Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
+                        <MudTh>Semester</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -75,6 +91,7 @@
                         <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@context.SemesterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
                                 <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
@@ -104,9 +121,9 @@
     public MainLayout Layout { get; set; }
 
     public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
-
+    @inject ISemesterService SemesterService
     private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
-
+    public List<Semester> semesters = new List<Semester>();
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
     public ExamSearchRequest request = new();
@@ -192,6 +209,11 @@
         var eList = await this.ExamServive.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
+            var semesterrList = await this.SemesterService.GetSemester();
+            if (semesterrList.IsSuccessful)
+            {
+                semesters = semesterrList.Items;
+            }
             ExamList = eList.Items
                            .Where(e => e.ExamDate.HasValue)
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)

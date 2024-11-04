@@ -29,26 +29,24 @@
             </div>
         </div>
 
-        <!-- Campus -->
-        <div class="mb-4 row">
-            <label class="col-4 text-end">Campus:</label>
-            <div class="col-8">
-                <MudSelect T="int?" @bind-Value="exam.CampusId" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Campus" Required RequiredError="This field is required.">
-                    @foreach (var item in camList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                    }
-                </MudSelect>
-            </div>
-        </div>
-
+  
         <!-- Exam Duration -->
         <div class="mb-4 row">
             <label class="col-4 text-end">Exam Duration:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam Duration" Required RequiredError="This field is required.">
+                           Placeholder="Choose Exam TermDuration" Required RequiredError="This field is required.">
+                    <MudSelectItem T="string" Value="@("60")">60</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("90")">90</MudSelectItem>
+                </MudSelect>
+            </div>
+        </div>
+        <!-- Exam Term Duration -->
+        <div class="mb-4 row">
+            <label class="col-4 text-end">Exam TermDuration:</label>
+            <div class="col-8">
+                <MudSelect @bind-Value="exam.TermDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
+                           Placeholder="Choose Exam TermDuration" Required RequiredError="This field is required.">
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
                 </MudSelect>
@@ -61,7 +59,7 @@
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
                            Placeholder="Choose Exam Type" Required RequiredError="This field is required.">
-                    <MudSelectItem T="string" Value="@("Other")">Multiple Choices</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Other")">Other</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
@@ -72,7 +70,7 @@
 
         <!-- Start Date -->
         <div class="mb-4 row">
-            <label class="col-4 text-end">Start Date:</label>
+            <label class="col-4 text-end">Start Review Date:</label>
             <div class="col-8">
                 <MudDatePicker @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy"
                                Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
@@ -82,7 +80,7 @@
 
         <!-- End Date -->
         <div class="mb-4 row">
-            <label class="col-4 text-end">End Date:</label>
+            <label class="col-4 text-end">End Review Date:</label>
             <div class="col-8">
                 <MudDatePicker @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy"
                                Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
