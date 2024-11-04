@@ -59,8 +59,8 @@
             <label class="col-4 text-end">Exam Type:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam Type" For="@(() => exam.ExamType)">
-                    <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
+                           Placeholder="Choose Exam Type">
+                    <MudSelectItem T="string" Value="@("Other")">Multiple Choices</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>

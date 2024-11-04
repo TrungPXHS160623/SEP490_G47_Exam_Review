@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <Folder Include="Uploads\Exams\" />
+    <Folder Include="Uploads\Reports\" />
     <Folder Include="Uploads\Subjects\" />
   </ItemGroup>
 
