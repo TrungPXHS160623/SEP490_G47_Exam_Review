@@ -142,7 +142,7 @@ namespace WebApi.Repository
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
-                        && (u.RoleId != 1 && u.RoleId != 2 && u.RoleId != 5 || u.RoleId == null)
+                        && (u.RoleId == 4  || u.RoleId == null)
                         && u.CampusId == campusId
                         select new UserResponse
                         {
