@@ -302,6 +302,7 @@ public class ExamRepository : IExamRepository
                             HeadDepartmentName = u1.Mail,
                             SubjectId = su.SubjectId,
                             SubjectName = su.SubjectName,
+                            Summary = ia.GeneralFeedback,
                             ReportList = (from rp in _context.Reports
                                           where rp.AssignmentId == ia.AssignmentId
                                           select new ReportResponse
