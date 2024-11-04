@@ -1,8 +1,7 @@
 ﻿<style>
     .form-group {
         display: flex;
-        align-items: center;
-        justify-content:space-between
+        align-items: baseline;
     }
 
     .mud-input.mud-disabled {
@@ -13,42 +12,44 @@
 <MudDialog>
     <DialogContent>
         <div class="form-group mb-4">
-            <label class="col-4 text-end">Exam Code:</label>
+            <label class="col-4 text-end me-4">Exam Code:</label>
             <MudText>@exam.ExamCode</MudText>
         </div>
 
         <div class="form-group mb-4">
-            <label class="col-4 text-end">Subject Name:</label>
+            <label class="col-4 text-end  me-4">Subject Name:</label>
             <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class="col-4 text-end">Exam Creater:</label>
+            <label class="col-4 text-end  me-4">Exam Creater:</label>
             <MudText>@(exam.CreaterName ?? "N/A")</MudText>
         </div>
         <div class="form-group mb-4">
-            <label class="col-4 text-end">Lecturer :</label>
-            <MudSelect T="UserResponse"
-                       @bind-SelectedValues=@exam.LectureList
-                       Text="@("Selected Lecture : " + exam.LectureList.Count())"
-                       MultiSelection="true"
-                       Variant="Variant.Outlined"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Placeholder="Choose Lecture to Assign to this Exam"
-                          Required>
-            @if (LectureList.Count() > 0)
-            {
-                @foreach (var item in LectureList)
-                {
-                    <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && exam.LectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
-                }
-            }
-            </MudSelect>
+            <label class="col-4 text-end  me-4">Lecturer :</label>
+            <div>
+                <MudSelect T="UserResponse"
+                           @bind-SelectedValues=@exam.LectureList
+                           Text="@("Selected Lecture : " + exam.LectureList.Count())"
+                           MultiSelection="true"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Placeholder="Choose Lecture to Assign to this Exam"
+                           HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")">
+                    @if (LectureList.Count() > 0)
+                    {
+                        @foreach (var item in LectureList)
+                        {
+                            <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && CurrentLectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </div>
         </div>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-                @if (_processing)
+            @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                 <MudText Class="ms-2">Saving</MudText>
@@ -77,6 +78,8 @@
 
     private IEnumerable<UserResponse> LectureList = new List<UserResponse>();
 
+    private IEnumerable<UserResponse> CurrentLectureList = new List<UserResponse>();
+
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
     private void Cancel() => MudDialog.Cancel();
@@ -88,9 +91,10 @@
         if (resp.IsSuccessful)
         {
             exam = resp.Item;
+            CurrentLectureList = exam.LectureList;
         }
 
-        var result = await AccountService.GetLectureList();
+        var result = await AccountService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
         if (result != null)
         {
             LectureList = result.Items;
@@ -131,4 +135,8 @@
         }
     }
 
+    private void RemoveLecturer(UserResponse lecturer)
+    {
+
+    }
 }

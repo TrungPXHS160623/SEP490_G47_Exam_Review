@@ -133,6 +133,10 @@
             </div> *@
                     </div>
                 }
+
+                <div class="report-content mb-4 p-4">
+                    <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
+                </div>
             }
             <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
             <div class="d-flex">
@@ -160,8 +164,10 @@
 
         if (isAuthenticated)
         {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var resp = await ExamServive.GetLectureExamById(ExamId);
+            var resp = await ExamServive.GetLectureExamById(ExamId,userId);
 
             if (resp.IsSuccessful)
             {
@@ -177,7 +183,8 @@
             {
                 Layout.Header = "Home";
                 Layout.HeaderLink = "/Home";
-                Layout.SubHeader = "Exam Assign List";
+                Layout.SubHeader = "Exam Assgined List";
+                Layout.SubHeader1 = "Exam Report Detail";
                 Layout.RefreshLayout();
             }
 

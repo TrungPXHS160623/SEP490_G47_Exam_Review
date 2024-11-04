@@ -27,10 +27,10 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-        [HttpGet("GetLecture/{userId}/{filterQuery?}")]
-        public async Task<IActionResult> GetLecture(int userId, string filterQuery = null)
+        [HttpGet("GetLectureBySubject/{subjectId}/{campusId}")]
+        public async Task<IActionResult> GetLecture(int subjectId,int campusId)
         {
-            var data = await this.userRepository.GetLecture(userId, filterQuery);
+            var data = await this.userRepository.GetLectureBySubject(subjectId,campusId);
 
             return Ok(data);
         }
@@ -119,6 +119,20 @@ namespace WebApi.Controllers
             var currentUser = HttpContext.User;
             var something = await userRepository.ImportUsersFromExcel(file, currentUser);
             return Ok(something);
+        }
+
+        [HttpGet("GetAssignedUser/{examId}")]
+        public async Task<IActionResult> GetHead(int examId)
+        {
+            var data = await userRepository.GetAssignedUserByExam(examId);
+            return Ok(data);
+        }
+
+        [HttpGet("GetLectureListByHead/{userId}")]
+        public async Task<IActionResult> GetLectureListByHead(int userId)
+        {
+            var data = await userRepository.GetLectureListByHead(userId);
+            return Ok(data);
         }
     }
 }

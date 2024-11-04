@@ -15,7 +15,7 @@ namespace WebClient.IServices
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
 
-        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
+        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId,int userId);
 
         Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
 
