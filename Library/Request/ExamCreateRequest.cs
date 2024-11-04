@@ -11,6 +11,7 @@ namespace Library.Request
         public string? ExamCode { get; set; }
 
         public string? ExamDuration { get; set; }
+        public string? TermDuration { get; set; }
 
         public string? ExamType { get; set; }
 
