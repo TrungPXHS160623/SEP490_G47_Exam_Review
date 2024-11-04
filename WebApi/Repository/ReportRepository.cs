@@ -1,5 +1,4 @@
-﻿using BootstrapBlazor.Components;
-using Library.Common;
+﻿using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
@@ -61,7 +60,7 @@ namespace WebApi.Repository
                     }
                 }
                 var assignment = await this.dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
-                //assignment.Summary
+                assignment.GeneralFeedback = reportRequest.Summary;
                 if (isSubmit)
                 {
                     assignment.AssignStatusId = 5;  // Đặt trạng thái là đã nộp
@@ -145,7 +144,6 @@ namespace WebApi.Repository
                     };
                 }
 
-             
 
                 // Update the existing report with new values
                 existingReport.QuestionNumber = reportRequest.QuestionNumber;
