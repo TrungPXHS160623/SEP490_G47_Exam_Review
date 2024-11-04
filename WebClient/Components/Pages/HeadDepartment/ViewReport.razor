@@ -28,11 +28,10 @@
         z-index: 99;
     }
 </style>
-<div class="mt-4">
-    <div class="custom-box mb-4">
-        <div class="d-flex align-items-center flex-wrap w-50">
-            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
-
+<div class="d-flex justify-content-center">
+    <div class="mt-4">
+        <div class="d-flex align-items-center flex-wrap custom-box mb-4">
+            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4" Clearable></MudTextField>
             <MudSelect @bind-Value="request.StatusId"
                        Variant="Variant.Outlined"
                        Label="Status"
@@ -44,28 +43,21 @@
                 {
                     @foreach (var item in statusList)
                     {
-                     //   <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
                 }
             </MudSelect>
 
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
-    </div>
 
-    <div class="custom-box">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h4>Report List</h4>
-                <h6>Selected Exam: @selectedExams.Count</h6>
+        <div class="custom-box">
+            <div class="d-flex align-items-center">
+                <div>
+                    <h4>Report List</h4>
+                </div>
             </div>
             <div>
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(selectedExams.Count == 0)" OnClick="AssignExam">Tranfer Exam to Head Deparment</MudButton>
-            </div>
-        </div>
-        <div>
-            @if (ExamList.Count > 0)
-            {
                 <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
@@ -90,21 +82,21 @@
                         </MudTd>
                     </RowTemplate>
                     @*<PagerContent>
-                @if (AccList.Count > 10)
-                {
-                <MudTablePager />
-                }
-                </PagerContent> *@
+                    @if (AccList.Count > 10)
+                    {
+                    <MudTablePager />
+                    }
+                    </PagerContent> *@
                 </MudTable>
-            }
-            else
-            {
-                <p>No Data</p>
-            }
-        </div>
-        <div class="mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
+                @if (ExamList.Count == 0)
+                {
+                    <p class="text-center  fs-6 mt-4">No Data</p>
+                }
+            </div>
+            <div class="mt-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
+            </div>
         </div>
     </div>
 </div>
@@ -123,12 +115,12 @@
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
         { 1, "#C0C0C0" }, // Not Assign
-        { 2, "#FFD700" }, // Waiting to Assign
+        { 2, "#FFD700" }, // Pending
         { 3, "#1E90FF" }, // Assigned
-        { 4, "#FFA500" }, // Reviewing
-        { 5, "#32CD32" }, // Finish Review
-        { 6, "#228B22" }, // Complete
-        { 7, "#FF6347" }, // Cancel
+        { 4, "#FFA500" }, // Reviewed
+        { 6, "#32CD32" }, // Faultless
+        { 7, "#228B22" }, // Complete
+        { 5, "#FF6347" }, // Erroneous
     };
 
     protected override async Task OnInitializedAsync()
@@ -143,7 +135,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 1);
+            var response = await MenuServive.CheckAccess(userId, 6);
 
             if (!response.IsSuccessful)
             {
