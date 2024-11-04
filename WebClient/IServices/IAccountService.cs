@@ -13,7 +13,8 @@ namespace WebClient.IServices
 
         Task<ResultResponse<UserResponse>> GetAllUserList();
 
-        Task<ResultResponse<UserResponse>> GetLectureList();
+        Task<ResultResponse<UserResponse>> GetLectureListBySubject(int subjectId,int campusId);
+        Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId);
 
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
 
@@ -37,6 +38,8 @@ namespace WebClient.IServices
 
         Task<RequestResponse> CreateAsync(UserRequest user);
         Task<RequestResponse> ImportUserFromExcel(IBrowserFile files);
+
+        Task<ResultResponse<UserResponse>> GetAssignedUserByExam(int examId);
 
     }
 }

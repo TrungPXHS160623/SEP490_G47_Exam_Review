@@ -59,10 +59,10 @@ namespace WebApi.Repository
                         data.UpdateDate = DateTime.Now;  // Khi chỉnh sửa, UpdateDate được cập nhật với thời gian hiện tại
                     }
                 }
-
+                var assignment = await this.dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
+                //assignment.Summary
                 if (isSubmit)
                 {
-                    var assignment = await this.dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
                     assignment.AssignStatusId = 5;  // Đặt trạng thái là đã nộp
                     assignment.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
                 }

@@ -31,6 +31,8 @@ namespace Library.Response
 
         public string? HeadDepartmentName { get; set; }
 
+        public string? Summary { get;set; }
+
         public List<ReportResponse> ReportList { get; set; } = new List<ReportResponse>();
 
         public int? CampusId { get; set; }

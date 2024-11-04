@@ -1,6 +1,5 @@
 ﻿using Quartz;
 using WebApi.IRepository;
-using WebClient.IServices;
 
 namespace WebApi.JobSchedule
 {

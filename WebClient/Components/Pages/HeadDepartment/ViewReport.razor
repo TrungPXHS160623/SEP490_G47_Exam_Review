@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div>
-                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true" MultiSelection="true" @bind-SelectedItems="selectedExams">
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
@@ -77,7 +77,7 @@
                         <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
-                                <MudButton Color="Color.Secondary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)">Report</MudButton>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="@(context.ExamStatusId != 5)" OnClick="@(() => GoToDetail(context.ExamId))">Report</MudButton>
                             </div>
                         </MudTd>
                     </RowTemplate>
@@ -93,10 +93,6 @@
                     <p class="text-center  fs-6 mt-4">No Data</p>
                 }
             </div>
-            <div class="mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(selectedExams.Count == 0)" Class="me-4">Export Selected Exam</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Surface">Export All</MudButton>
-            </div>
         </div>
     </div>
 </div>
@@ -105,8 +101,6 @@
     public MainLayout Layout { get; set; }
 
     public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
-
-    private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -155,7 +149,8 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Assign List";
+                    Layout.SubHeader = "Exam Report List";
+                    Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }
             }
@@ -195,7 +190,6 @@
         {
             ExamList = eList.Items;
         }
-        selectedExams.Clear();
     }
 
     private async Task AssignExam()
@@ -203,22 +197,8 @@
 
     }
 
-    public string[] CheckSelectedExam()
+    public void GoToDetail(int examId)
     {
-        List<string> errors = new List<string>();
-
-        var examsWithWrongStatus = selectedExams.Where(x => x.ExamStatusId != 1).ToList();
-        foreach (var exam in examsWithWrongStatus)
-        {
-            errors.Add($"Exam {exam.ExamCode} is already assigned. Cannot Re-Assign!");
-        }
-
-        var examsWithMissingDates = selectedExams.Where(x => x.EndDate == null || x.StartDate == null).ToList();
-        foreach (var exam in examsWithMissingDates)
-        {
-            errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
-        }
-
-        return errors.ToArray();
+        NavManager.NavigateTo($"/HeadDepartment/ExamReport/{examId}");
     }
 }
