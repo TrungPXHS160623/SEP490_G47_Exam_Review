@@ -358,6 +358,7 @@ public class ExamRepository : IExamRepository
             var data = (from ex in _context.Exams
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
+                        join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
                         join cus in _context.CampusUserSubjects
                             on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
                         from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
@@ -365,10 +366,12 @@ public class ExamRepository : IExamRepository
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
+                        &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               && cus.IsLecturer == false
                         select new ExaminerExamResponse
                         {
+                            SemseterName = sem.SemesterName,
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
                             ExamDate = ex.ExamDate,
@@ -406,6 +409,7 @@ public class ExamRepository : IExamRepository
             var data = await (from ex in _context.Exams
                               join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                               join ca in _context.Campuses on ex.CampusId equals ca.CampusId
+                              join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
                               join cus in _context.CampusUserSubjects
                                   on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
                               from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
@@ -418,6 +422,7 @@ public class ExamRepository : IExamRepository
                                     && cus.IsLecturer == false
                               select new LeaderExamResponse
                               {
+                                  SemesterName = sem.SemesterName,
                                   EndDate = ex.EndDate,
                                   ExamId = ex.ExamId,
                                   StartDate = ex.StartDate,

@@ -29,6 +29,7 @@
         public int? CampusId { get; set; }
 
         public string? CampusName { get; set; }
+        public string? SemesterName { get; set; }
 
         public int? ExamStatusId { get; set; }
 

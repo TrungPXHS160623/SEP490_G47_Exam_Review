@@ -7,7 +7,7 @@
         public string? ExamCode { get; set; }
 
         public string? ExamDuration { get; set; }
-
+        public string? TermDuration { get; set; }
         public string? ExamType { get; set; }
 
         public int? SubjectId { get; set; }
@@ -29,7 +29,8 @@
         public string? LectureName { get; set; }
 
         public int? CampusId { get; set; }
-
+        public int? SemesterId { get; set; }
+        public string? SemseterName { get; set; }
         public string? CampusName { get; set; }
 
         public int? ExamStatusId { get; set; }
