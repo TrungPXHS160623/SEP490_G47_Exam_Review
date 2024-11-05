@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 
 namespace Library.Models
 {
-    public class Faculty
+    public partial class Faculty
     {
-        public int FacultyId { get; set; }
-        public string FacultyName { get; set; }
-        public string Description { get; set; }
-        public int? DeanId { get; set; } 
-        public DateTime CreateDate { get; set; } = DateTime.Now;
-        public DateTime UpdateDate { get; set; } = DateTime.Now;
+        public Faculty()
+        {
+            Subjects = new HashSet<Subject>();
+        }
 
-        // Navigation properties for relationships
-        public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
-        public virtual User Deans { get; set; }
+        public int FacultyId { get; set; }
+        public string FacultyName { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public int? DeanId { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
+
+        public virtual User? Dean { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
+
     }
 }

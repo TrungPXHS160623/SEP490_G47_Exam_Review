@@ -14,261 +14,469 @@ namespace WebApi.Repository
 			_context = context;
 		}
 
-		public byte[] GenerateExcel()
-		{
-			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //public byte[] GenerateExcel()
+        //{
+        //	ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-			using (ExcelPackage package = new ExcelPackage())
-			{
-				ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
+        //	using (ExcelPackage package = new ExcelPackage())
+        //	{
+        //		ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
 
-				// Set headers for all tables' data
-				worksheet.Cells[1, 1].Value = "STT";
-				worksheet.Cells[1, 2].Value = "Giảng viên";
-				worksheet.Cells[1, 3].Value = "Môn thi";
-				worksheet.Cells[1, 4].Value = "Đợt thi";
-				worksheet.Cells[1, 5].Value = "Hình thức thi";
-				worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
-				worksheet.Cells[1, 7].Value = "Exam code";
-				worksheet.Cells[1, 8].Value = "Cơ sở";
-				worksheet.Cells[1, 9].Value = "Tên môn";
-				worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
-				worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
-				worksheet.Cells[1, 12].Value = "Ngày sửa";
-				worksheet.Cells[1, 13].Value = "Trạng Thái";
+        //		// Set headers for all tables' data
+        //		worksheet.Cells[1, 1].Value = "STT";
+        //		worksheet.Cells[1, 2].Value = "Giảng viên";
+        //		worksheet.Cells[1, 3].Value = "Môn thi";
+        //		worksheet.Cells[1, 4].Value = "Đợt thi";
+        //		worksheet.Cells[1, 5].Value = "Hình thức thi";
+        //		worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
+        //		worksheet.Cells[1, 7].Value = "Exam code";
+        //		worksheet.Cells[1, 8].Value = "Cơ sở";
+        //		worksheet.Cells[1, 9].Value = "Tên môn";
+        //		worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
+        //		worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
+        //		worksheet.Cells[1, 12].Value = "Ngày sửa";
+        //		worksheet.Cells[1, 13].Value = "Trạng Thái";
 
-				// Fetch data from all relevant tables
-				var exams = _context.Exams
-					.Include(e => e.Campus)
-					.Include(e => e.Subject)
-					.Include(e => e.Creater)
-					.Include(e => e.ExamStatus)
-					.Include(e => e.InstructorAssignments)
-						.ThenInclude(ia => ia.AssignedUser)
-					.Include(e => e.InstructorAssignments)
-						.ThenInclude(ia => ia.Reports)
-					.ToList();
+        //		// Fetch data from all relevant tables
+        //		var exams = _context.Exams
+        //			.Include(e => e.Campus)
+        //			.Include(e => e.Subject)
+        //			.Include(e => e.Creater)
+        //			.Include(e => e.ExamStatus)
+        //			.Include(e => e.InstructorAssignments)
+        //				.ThenInclude(ia => ia.AssignedUser)
+        //			.Include(e => e.InstructorAssignments)
+        //				.ThenInclude(ia => ia.Reports)
+        //			.ToList();
 
-				// Sort the exams by whether they have a reviewer (Assigned Instructor)
-				var sortedExams = exams
-					.OrderByDescending(e => e.InstructorAssignments.Any(ia => ia.AssignedUser != null))
-					.ToList();
+        //		// Sort the exams by whether they have a reviewer (Assigned Instructor)
+        //		var sortedExams = exams
+        //			.OrderByDescending(e => e.InstructorAssignments.Any(ia => ia.AssignedUser != null))
+        //			.ToList();
 
-				int row = 2;
-				int index = 1;
+        //		int row = 2;
+        //		int index = 1;
 
-				// Fill data
-				foreach (var exam in sortedExams)
-				{
-					worksheet.Cells[row, 1].Value = index++;
-					var instructorAssignments = exam.InstructorAssignments;
+        //		// Fill data
+        //		foreach (var exam in sortedExams)
+        //		{
+        //			worksheet.Cells[row, 1].Value = index++;
+        //			var instructorAssignments = exam.InstructorAssignments;
 
-					// Create a string containing all reports
-					var allReports = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
-						.ToList();
+        //			// Create a string containing all reports
+        //			var allReports = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
+        //				.ToList();
 
-					string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
+        //			string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
 
-					// Set lecturer (assuming you want to get the first one)
-					var assignedInstructor = instructorAssignments.FirstOrDefault();
-					worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+        //			// Set lecturer (assuming you want to get the first one)
+        //			var assignedInstructor = instructorAssignments.FirstOrDefault();
+        //			worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
 
-					worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
-					worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
-					worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
-					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
-					worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
-					worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
-					worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
+        //			worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
+        //			worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
+        //			worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
+        //			worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
+        //			worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
+        //			worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
+        //			worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
 
-					// Get the details of the reports
-					var allReportContents = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => r.ReportContent)
-						.ToList();
+        //			// Get the details of the reports
+        //			var allReportContents = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => r.ReportContent)
+        //				.ToList();
 
-					string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
-					worksheet.Cells[row, 10].Value = combinedReportContents;
+        //			string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
+        //			worksheet.Cells[row, 10].Value = combinedReportContents;
 
-					var allSolutions = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => r.QuestionSolutionDetail)
-						.ToList();
+        //			var allSolutions = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => r.QuestionSolutionDetail)
+        //				.ToList();
 
-					string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
-					worksheet.Cells[row, 11].Value = combinedSolutions;
+        //			string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
+        //			worksheet.Cells[row, 11].Value = combinedSolutions;
 
-					// Set modification date only if status is "Complete"
-					if (exam.ExamStatus?.StatusContent == "Complete")
-					{
-						worksheet.Cells[row, 12].Value = exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A";
-					}
-					else
-					{
-						worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" if not complete
-					}
+        //			// Set modification date only if status is "Complete"
+        //			if (exam.ExamStatus?.StatusContent == "Complete")
+        //			{
+        //				worksheet.Cells[row, 12].Value = exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A";
+        //			}
+        //			else
+        //			{
+        //				worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" if not complete
+        //			}
 
-					// Set the status
-					worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
+        //			// Set the status
+        //			worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
 
-					// Enable text wrapping for the comments and solutions columns
-					worksheet.Cells[row, 10].Style.WrapText = true;
-					worksheet.Cells[row, 11].Style.WrapText = true;
+        //			// Enable text wrapping for the comments and solutions columns
+        //			worksheet.Cells[row, 10].Style.WrapText = true;
+        //			worksheet.Cells[row, 11].Style.WrapText = true;
 
-					// Left align the text in all columns and center vertically
-					for (int col = 1; col <= 13; col++)
-					{
-						worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-						worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-					}
+        //			// Left align the text in all columns and center vertically
+        //			for (int col = 1; col <= 13; col++)
+        //			{
+        //				worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+        //				worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+        //			}
 
-					row++;
-				}
+        //			row++;
+        //		}
 
-				// Left align the header row and center vertically
-				for (int col = 1; col <= 13; col++)
-				{
-					worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-					worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-				}
+        //		// Left align the header row and center vertically
+        //		for (int col = 1; col <= 13; col++)
+        //		{
+        //			worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+        //			worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+        //		}
 
-				worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns(); // Auto-fit all columns
+        //		worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns(); // Auto-fit all columns
 
-				// Convert the package to a byte array
-				return package.GetAsByteArray();
-			}
-		}
+        //		// Convert the package to a byte array
+        //		return package.GetAsByteArray();
+        //	}
+        //}
+        public byte[] GenerateExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
+
+                // Đặt tiêu đề
+                worksheet.Cells[1, 1].Value = "STT";
+                worksheet.Cells[1, 2].Value = "Giảng viên";
+                worksheet.Cells[1, 3].Value = "Môn thi";
+                worksheet.Cells[1, 4].Value = "Đợt thi";
+                worksheet.Cells[1, 5].Value = "Hình thức thi";
+                worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
+                worksheet.Cells[1, 7].Value = "Exam code";
+                worksheet.Cells[1, 8].Value = "Cơ sở";
+                worksheet.Cells[1, 9].Value = "Tên môn";
+                worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
+                worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
+                worksheet.Cells[1, 12].Value = "Ngày sửa";
+                worksheet.Cells[1, 13].Value = "Trạng Thái";
+
+                // Lấy dữ liệu từ bảng Exams và các bảng liên quan
+                var exams = _context.Exams
+                    .Include(e => e.Campus)
+                    .Include(e => e.Subject)
+                    .Include(e => e.Creater)
+                    .Include(e => e.ExamStatus)
+                    .Include(e => e.Reports) // Truy vấn trực tiếp các báo cáo
+                    .ToList();
+
+                int row = 2;
+                int index = 1;
+
+                // Điền dữ liệu
+                foreach (var exam in exams)
+                {
+                    worksheet.Cells[row, 1].Value = index++;
+
+                    // Lấy giảng viên (Creater)
+                    worksheet.Cells[row, 2].Value = exam.Creater?.Mail ?? "N/A";
+
+                    worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Môn thi
+                    worksheet.Cells[row, 4].Value = exam.ExamDuration; // Đợt thi
+                    worksheet.Cells[row, 5].Value = exam.ExamType; // Hình thức thi
+                    worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Ngày dự kiến test đề
+                    worksheet.Cells[row, 7].Value = exam.ExamCode; // Mã thi
+                    worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Cơ sở
+                    worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Tên môn
+
+                    // Lấy thông tin chi tiết báo cáo và phương án khắc phục từ bảng Reports
+                    var reports = exam.Reports.ToList();
+
+                    string combinedReportContents = reports.Any()
+                        ? string.Join("\n\n", reports.Select(r => $"Comment: {r.ReportContent}"))
+                        : "N/A";
+                    worksheet.Cells[row, 10].Value = combinedReportContents;
+
+                    string combinedSolutions = reports.Any()
+                        ? string.Join("\n\n", reports.Select(r => $"Solution: {r.QuestionSolutionDetail}"))
+                        : "N/A";
+                    worksheet.Cells[row, 11].Value = combinedSolutions;
+
+                    // Đặt ngày sửa chỉ nếu trạng thái là "Complete"
+                    worksheet.Cells[row, 12].Value = exam.ExamStatus?.StatusContent == "Complete"
+                        ? exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A"
+                        : "N/A"; // Đặt thành "N/A" nếu không hoàn thành
+
+                    // Đặt trạng thái
+                    worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
+
+                    // Kích hoạt ngắt dòng cho các cột báo cáo và giải pháp
+                    worksheet.Cells[row, 10].Style.WrapText = true;
+                    worksheet.Cells[row, 11].Style.WrapText = true;
+
+                    // Căn lề cho tất cả các cột
+                    for (int col = 1; col <= 13; col++)
+                    {
+                        worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                        worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    }
+
+                    row++;
+                }
+
+                // Căn lề cho hàng tiêu đề
+                for (int col = 1; col <= 13; col++)
+                {
+                    worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                }
+
+                worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns(); // Tự động điều chỉnh chiều rộng cột
+
+                // Chuyển đổi gói thành mảng byte
+                return package.GetAsByteArray();
+            }
+        }
 
 
-		public byte[] GenerateExcelByStatus(int statusId)
-		{
-			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-			using (ExcelPackage package = new ExcelPackage())
-			{
-				ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
 
-				// Set headers for all tables' data
-				worksheet.Cells[1, 1].Value = "STT";
-				worksheet.Cells[1, 2].Value = "Giảng viên";
-				worksheet.Cells[1, 3].Value = "Môn thi";
-				worksheet.Cells[1, 4].Value = "Đợt thi";
-				worksheet.Cells[1, 5].Value = "Hình thức thi";
-				worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
-				worksheet.Cells[1, 7].Value = "Exam code";
-				worksheet.Cells[1, 8].Value = "Cơ sở";
-				worksheet.Cells[1, 9].Value = "Tên môn";
-				worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
-				worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
-				worksheet.Cells[1, 12].Value = "Ngày sửa";
-				worksheet.Cells[1, 13].Value = "Trạng Thái";
+        //      public byte[] GenerateExcelByStatus(int statusId)
+        //{
+        //	ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-				// Fetch data from exams based on statusId
-				var exams = _context.Exams
-					.Include(e => e.Campus)
-					.Include(e => e.Subject)
-					.Include(e => e.Creater)
-					.Include(e => e.ExamStatus)
-					.Include(e => e.InstructorAssignments)
-						.ThenInclude(ia => ia.AssignedUser)
-					.Include(e => e.InstructorAssignments)
-						.ThenInclude(ia => ia.Reports)
-					.Where(e => e.ExamStatusId == statusId) // Lọc theo statusId
-					.ToList();
+        //	using (ExcelPackage package = new ExcelPackage())
+        //	{
+        //		ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
 
-				// Sort the exams by whether they have a reviewer (Assigned Instructor)
-				var sortedExams = exams
-					.OrderByDescending(e => e.InstructorAssignments.Any(ia => ia.AssignedUser != null))
-					.ToList();
+        //		// Set headers for all tables' data
+        //		worksheet.Cells[1, 1].Value = "STT";
+        //		worksheet.Cells[1, 2].Value = "Giảng viên";
+        //		worksheet.Cells[1, 3].Value = "Môn thi";
+        //		worksheet.Cells[1, 4].Value = "Đợt thi";
+        //		worksheet.Cells[1, 5].Value = "Hình thức thi";
+        //		worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
+        //		worksheet.Cells[1, 7].Value = "Exam code";
+        //		worksheet.Cells[1, 8].Value = "Cơ sở";
+        //		worksheet.Cells[1, 9].Value = "Tên môn";
+        //		worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
+        //		worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
+        //		worksheet.Cells[1, 12].Value = "Ngày sửa";
+        //		worksheet.Cells[1, 13].Value = "Trạng Thái";
 
-				int row = 2;
-				int index = 1;
+        //		// Fetch data from exams based on statusId
+        //		var exams = _context.Exams
+        //			.Include(e => e.Campus)
+        //			.Include(e => e.Subject)
+        //			.Include(e => e.Creater)
+        //			.Include(e => e.ExamStatus)
+        //			.Include(e => e.InstructorAssignments)
+        //				.ThenInclude(ia => ia.AssignedUser)
+        //			.Include(e => e.InstructorAssignments)
+        //				.ThenInclude(ia => ia.Reports)
+        //			.Where(e => e.ExamStatusId == statusId) // Lọc theo statusId
+        //			.ToList();
 
-				// Fill data
-				foreach (var exam in sortedExams)
-				{
-					worksheet.Cells[row, 1].Value = index++;
-					var instructorAssignments = exam.InstructorAssignments;
+        //		// Sort the exams by whether they have a reviewer (Assigned Instructor)
+        //		var sortedExams = exams
+        //			.OrderByDescending(e => e.InstructorAssignments.Any(ia => ia.AssignedUser != null))
+        //			.ToList();
 
-					// Tạo chuỗi chứa tất cả các report
-					var allReports = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
-						.ToList();
+        //		int row = 2;
+        //		int index = 1;
 
-					string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
+        //		// Fill data
+        //		foreach (var exam in sortedExams)
+        //		{
+        //			worksheet.Cells[row, 1].Value = index++;
+        //			var instructorAssignments = exam.InstructorAssignments;
 
-					// Set lecturer (assuming bạn muốn lấy người đầu tiên)
-					var assignedInstructor = instructorAssignments.FirstOrDefault();
-					worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
+        //			// Tạo chuỗi chứa tất cả các report
+        //			var allReports = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => $"Comment: {r.ReportContent}\nSolution: {r.QuestionSolutionDetail}")
+        //				.ToList();
 
-					worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
-					worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
-					worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
-					worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
-					worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
-					worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
-					worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
+        //			string combinedReport = allReports.Any() ? string.Join("\n\n", allReports) : "N/A";
 
-					// Chỉ lấy các report chứa report
-					var allReportContents = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => r.ReportContent)
-						.ToList();
+        //			// Set lecturer (assuming bạn muốn lấy người đầu tiên)
+        //			var assignedInstructor = instructorAssignments.FirstOrDefault();
+        //			worksheet.Cells[row, 2].Value = assignedInstructor?.AssignedUser?.Mail ?? "N/A"; // Lecturer
 
-					string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
-					worksheet.Cells[row, 10].Value = combinedReportContents;
+        //			worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Subject
+        //			worksheet.Cells[row, 4].Value = exam.ExamDuration; // Exam batch
+        //			worksheet.Cells[row, 5].Value = exam.ExamType; // Exam type
+        //			worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Planned test date
+        //			worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
+        //			worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Campus
+        //			worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Subject name
 
-					var allSolutions = instructorAssignments
-						.SelectMany(ia => ia.Reports)
-						.Select(r => r.QuestionSolutionDetail)
-						.ToList();
+        //			// Chỉ lấy các report chứa report
+        //			var allReportContents = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => r.ReportContent)
+        //				.ToList();
 
-					string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
-					worksheet.Cells[row, 11].Value = combinedSolutions;
+        //			string combinedReportContents = allReportContents.Any() ? string.Join("\n\n", allReportContents) : "N/A";
+        //			worksheet.Cells[row, 10].Value = combinedReportContents;
 
-					// Set modification date only if status is "Complete"
-					if (exam.ExamStatus?.StatusContent == "Complete")
-					{
-						worksheet.Cells[row, 12].Value = exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A";
-					}
-					else
-					{
-						worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" nếu không hoàn thành
-					}
+        //			var allSolutions = instructorAssignments
+        //				.SelectMany(ia => ia.Reports)
+        //				.Select(r => r.QuestionSolutionDetail)
+        //				.ToList();
 
-					// Set the status
-					worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
+        //			string combinedSolutions = allSolutions.Any() ? string.Join("\n\n", allSolutions) : "N/A";
+        //			worksheet.Cells[row, 11].Value = combinedSolutions;
 
-					// Enable text wrapping for the comments and solutions columns
-					worksheet.Cells[row, 10].Style.WrapText = true;
-					worksheet.Cells[row, 11].Style.WrapText = true;
+        //			// Set modification date only if status is "Complete"
+        //			if (exam.ExamStatus?.StatusContent == "Complete")
+        //			{
+        //				worksheet.Cells[row, 12].Value = exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A";
+        //			}
+        //			else
+        //			{
+        //				worksheet.Cells[row, 12].Value = "N/A"; // Set to "N/A" nếu không hoàn thành
+        //			}
 
-					// Left align the text in all columns and center vertically
-					for (int col = 1; col <= 13; col++)
-					{
-						worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-						worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-					}
+        //			// Set the status
+        //			worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
 
-					row++;
-				}
+        //			// Enable text wrapping for the comments and solutions columns
+        //			worksheet.Cells[row, 10].Style.WrapText = true;
+        //			worksheet.Cells[row, 11].Style.WrapText = true;
 
-				// Left align the header row and center vertically
-				for (int col = 1; col <= 13; col++)
-				{
-					worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
-					worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-				}
+        //			// Left align the text in all columns and center vertically
+        //			for (int col = 1; col <= 13; col++)
+        //			{
+        //				worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+        //				worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+        //			}
 
-				worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns();
+        //			row++;
+        //		}
 
-				// Convert the package to a byte array
-				return package.GetAsByteArray();
-			}
-		}
+        //		// Left align the header row and center vertically
+        //		for (int col = 1; col <= 13; col++)
+        //		{
+        //			worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+        //			worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+        //		}
 
-	}
+        //		worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns();
+
+        //		// Convert the package to a byte array
+        //		return package.GetAsByteArray();
+        //	}
+        //}
+        public byte[] GenerateExcelByStatus(int statusId)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
+
+                // Thiết lập tiêu đề cho các cột
+                worksheet.Cells[1, 1].Value = "STT";
+                worksheet.Cells[1, 2].Value = "Giảng viên";
+                worksheet.Cells[1, 3].Value = "Môn thi";
+                worksheet.Cells[1, 4].Value = "Đợt thi";
+                worksheet.Cells[1, 5].Value = "Hình thức thi";
+                worksheet.Cells[1, 6].Value = "Ngày dự kiến test đề";
+                worksheet.Cells[1, 7].Value = "Exam code";
+                worksheet.Cells[1, 8].Value = "Cơ sở";
+                worksheet.Cells[1, 9].Value = "Tên môn";
+                worksheet.Cells[1, 10].Value = "Chi tiết câu hỏi lỗi";
+                worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
+                worksheet.Cells[1, 12].Value = "Ngày sửa";
+                worksheet.Cells[1, 13].Value = "Trạng Thái";
+
+                // Lấy dữ liệu từ bảng Exams dựa trên statusId
+                var exams = _context.Exams
+                    .Include(e => e.Campus)
+                    .Include(e => e.Subject)
+                    .Include(e => e.Creater)
+                    .Include(e => e.ExamStatus)
+                    .Where(e => e.ExamStatusId == statusId)
+                    .OrderByDescending(e => e.Reports.Any()) // Sắp xếp theo việc có báo cáo hay không
+                    .ToList();
+
+                int row = 2;
+                int index = 1;
+
+                // Điền dữ liệu vào bảng
+                foreach (var exam in exams)
+                {
+                    worksheet.Cells[row, 1].Value = index++; // Số thứ tự
+
+                    // Lấy giảng viên tạo đề thi
+                    worksheet.Cells[row, 2].Value = exam.Creater?.Mail ?? "N/A";
+
+                    // Điền các thông tin khác về kỳ thi
+                    worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Môn thi
+                    worksheet.Cells[row, 4].Value = exam.ExamDuration; // Đợt thi
+                    worksheet.Cells[row, 5].Value = exam.ExamType; // Hình thức thi
+                    worksheet.Cells[row, 6].Value = exam.EstimatedTimeTest?.ToString("dd-MM-yyyy"); // Ngày dự kiến test đề
+                    worksheet.Cells[row, 7].Value = exam.ExamCode; // Exam code
+                    worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Cơ sở
+                    worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Tên môn
+
+                    // Lấy chi tiết câu hỏi lỗi và phương án khắc phục từ bảng Reports
+                    var reports = _context.Reports
+                        .Where(r => r.ExamId == exam.ExamId)
+                        .Select(r => new
+                        {
+                            Content = r.ReportContent,
+                            Solution = r.QuestionSolutionDetail
+                        })
+                        .ToList();
+
+                    worksheet.Cells[row, 10].Value = reports.Any()
+                        ? string.Join("\n\n", reports.Select(r => $"Comment: {r.Content}"))
+                        : "N/A";
+
+                    worksheet.Cells[row, 11].Value = reports.Any()
+                        ? string.Join("\n\n", reports.Select(r => $"Solution: {r.Solution}"))
+                        : "N/A";
+
+                    // Ngày sửa và trạng thái
+                    worksheet.Cells[row, 12].Value = (exam.ExamStatus?.StatusContent == "Complete")
+                        ? exam.ExamStatus.UpdateDate?.ToString("dd-MM-yyyy") ?? "N/A"
+                        : "N/A";
+
+                    worksheet.Cells[row, 13].Value = exam.ExamStatus?.StatusContent ?? "N/A";
+
+                    // Bật chế độ xuống dòng cho các cột có nội dung dài
+                    worksheet.Cells[row, 10].Style.WrapText = true;
+                    worksheet.Cells[row, 11].Style.WrapText = true;
+
+                    // Canh lề cho tất cả các cột
+                    for (int col = 1; col <= 13; col++)
+                    {
+                        worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                        worksheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    }
+
+                    row++;
+                }
+
+                // Canh lề cho hàng tiêu đề
+                for (int col = 1; col <= 13; col++)
+                {
+                    worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                }
+
+                worksheet.Cells[1, 1, row - 1, 13].AutoFitColumns();
+
+                // Chuyển đổi gói thành mảng byte
+                return package.GetAsByteArray();
+            }
+        }
+
+
+
+    }
 }
