@@ -47,6 +47,8 @@ namespace Library.Response
 
         public int? AssignmentUserId { get; set; }
 
+        public string? AssignmentUserName { get; set; }
+
         public DateTime? AssignmentDate { get; set; }
 
         public DateTime? EstimatedTimeTest { get; set; }

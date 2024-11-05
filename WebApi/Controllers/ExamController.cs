@@ -59,10 +59,10 @@ namespace WebApi.Controllers
             return Ok(examInfo);
         }
 
-        [HttpGet("GetLectureExamById/{examId}/{userId}")]
-        public async Task<IActionResult> GetLectureExamById(int examId, int userId)
+        [HttpGet("GetLectureExamById/{examId}")]
+        public async Task<IActionResult> GetLectureExamById(int examId)
         {
-            var examInfo = await _examRepository.GetLectureExamById(examId,userId);
+            var examInfo = await _examRepository.GetLectureExamById(examId);
             return Ok(examInfo);
         }
 

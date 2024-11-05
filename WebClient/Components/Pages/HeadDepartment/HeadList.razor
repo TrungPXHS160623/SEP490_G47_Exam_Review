@@ -31,38 +31,42 @@
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
-            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4 col-7" Clearable></MudTextField>
-            <MudSelect @bind-Value="request.StatusId"
-                       Variant="Variant.Outlined"
-                       Label="Status"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Clearable
-                       Class="me-4 col-auto">
-                @if (statusList.Count > 0)
-                {
-                    @foreach (var item in statusList)
+            <div class="col me-4">
+                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
+             </div>
+             <div class="me-4 col-2">
+                 <MudSelect @bind-Value="request.StatusId"
+                            Variant="Variant.Outlined"
+                            Label="Status"
+                            Margin="Margin.Dense"
+                            AnchorOrigin="Origin.BottomCenter"
+                            Clearable>
+                     @if (statusList.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        @foreach (var item in statusList)
+                        {
+                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        }
                     }
-                }
-           
-            </MudSelect>
-            <MudSelect @bind-Value="request.SemesterId"
-                       Variant="Variant.Outlined"
-                       Label="Semester"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Clearable
-                       Class="me-4 col-auto">
-                @if (statusList.Count > 0)
-                {
-                    @foreach (var item in semesters)
+
+                </MudSelect>
+            </div>
+            <div class="col-2 me-4">
+                <MudSelect @bind-Value="request.SemesterId"
+                           Variant="Variant.Outlined"
+                           Label="Semester"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Clearable>
+                    @if (semesters.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
+                        @foreach (var item in semesters)
+                        {
+                            <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
+                </MudSelect>
+            </div>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
         <div class="custom-box">
@@ -75,6 +79,7 @@
             <div>
                 <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
                     <HeaderContent>
+                        <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Status</MudTh>
                         <MudTh>Exam Date</MudTh>
@@ -84,28 +89,29 @@
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
+                        <MudTd>@(ExamList.IndexOf(context) + 1)</MudTd>
                         <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>
-                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
+                            <MudTd>
+                                <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
                         <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
                         <MudTd>@context.SemesterName</MudTd>
-                        <MudTd>
-                            <div class="d-flex align-items-center justify-content-around">
-                                <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
-                            </div>
-                        </MudTd>
-                    </RowTemplate>
-                    @*<PagerContent>
+                            <MudTd>
+                                <div class="d-flex align-items-center justify-content-around">
+                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Assign</MudButton>
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+                        @*<PagerContent>
                     @if (AccList.Count > 10)
                     {
                     <MudTablePager />
                     }
                     </PagerContent> *@
-                </MudTable>
-                @if (ExamList.Count == 0)
+                    </MudTable>
+                    @if (ExamList.Count == 0)
 
                 {
                     <p class="text-center fs-6 mt-4">No Data</p>
@@ -121,7 +127,6 @@
     public MainLayout Layout { get; set; }
 
     public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
-    @inject ISemesterService SemesterService
     private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
     public List<Semester> semesters = new List<Semester>();
     public List<ExamStatus> statusList = new List<ExamStatus>();
@@ -215,12 +220,12 @@
                 semesters = semesterrList.Items;
             }
             ExamList = eList.Items
-                           .Where(e => e.ExamDate.HasValue)
+                           .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3))
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)
                            .ToList();
 
             var pastOrNoDateExams = eList.Items
-                                        .Where(e => !e.ExamDate.HasValue || e.ExamDate.Value < DateTime.Now)
+                                        .Where(e => !e.ExamDate.HasValue || e.ExamDate.Value < DateTime.Now && (e.ExamStatusId == 2 || e.ExamStatusId == 3))
                                         .ToList();
 
             ExamList.AddRange(pastOrNoDateExams);

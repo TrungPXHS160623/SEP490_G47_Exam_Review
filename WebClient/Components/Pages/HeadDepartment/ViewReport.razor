@@ -31,22 +31,42 @@
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
-            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4" Clearable></MudTextField>
-            <MudSelect @bind-Value="request.StatusId"
-                       Variant="Variant.Outlined"
-                       Label="Status"
-                       Margin="Margin.Dense"
-                       AnchorOrigin="Origin.BottomCenter"
-                       Clearable
-                       Class="me-4 col-auto">
-                @if (statusList.Count > 0)
-                {
-                    @foreach (var item in statusList)
+            <div class="col me-4">
+                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
+             </div>
+             <div class="me-4 col-2">
+                 <MudSelect @bind-Value="request.StatusId"
+                            Variant="Variant.Outlined"
+                            Label="Status"
+                            Margin="Margin.Dense"
+                            AnchorOrigin="Origin.BottomCenter"
+                                          Clearable>
+                    @if (statusList.Count > 0)
                     {
-                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        @foreach (var item in statusList)
+                        {
+                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
+
+                </MudSelect>
+            </div>
+            <div class="col-2 me-4">
+                <MudSelect @bind-Value="request.SemesterId"
+                           Variant="Variant.Outlined"
+                           Label="Semester"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                                          Clearable>
+                    @if (statusList.Count > 0)
+                    {
+                        @foreach (var item in semesters)
+                        {
+                            <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </div>
 
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
@@ -60,6 +80,7 @@
             <div>
                 <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
                     <HeaderContent>
+                        <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
@@ -68,6 +89,7 @@
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
+                        <MudTd>@(ExamList.IndexOf(context) + 1)</MudTd>
                         <MudTd>@context.ExamCode</MudTd>
                         <MudTd>@context.CampusName</MudTd>
                         <MudTd>
@@ -105,6 +127,8 @@
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
     public ExamSearchRequest request = new();
+
+    public List<Semester> semesters = new List<Semester>();
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
@@ -188,13 +212,8 @@
         var eList = await this.ExamServive.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
-            ExamList = eList.Items;
+            ExamList = eList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3).ToList();
         }
-    }
-
-    private async Task AssignExam()
-    {
-
     }
 
     public void GoToDetail(int examId)

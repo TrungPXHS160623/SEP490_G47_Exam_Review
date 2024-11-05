@@ -101,13 +101,6 @@ namespace WebClient.Services
         {
             try
             {
-                //Check JWT key
-                if (Constants.JWTToken == "")
-                {
-                    return null;
-                }
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamById/{examId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<ExaminerExamResponse>>();
@@ -134,13 +127,6 @@ namespace WebClient.Services
         {
             try
             {
-                //Check JWT key
-                if (Constants.JWTToken == "")
-                {
-                    return null;
-                }
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLeaderExamById/{examId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
@@ -163,18 +149,11 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId, int userId)
+        public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId)
         {
             try
             {
-                //Check JWT key
-                if (Constants.JWTToken == "")
-                {
-                    return null;
-                }
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLectureExamById/{examId}/{userId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetLectureExamById/{examId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LectureExamResponse>>();
 
@@ -198,13 +177,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> UpdateExam(ExaminerExamResponse exam)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/UpdateExam", exam);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
@@ -223,13 +195,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> ChangeStatusExam(List<ExaminerExamResponse> exam)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/ChangeStatus", exam);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
@@ -248,13 +213,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> ChangeStatusExamById(int examId, int statusId)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Exam/ChangeStatus/{examId}", statusId);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
@@ -273,13 +231,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> CreateExam(ExamCreateRequest exam)
         {
-            //Check JWT key
-            if (Constants.JWTToken == "")
-            {
-                return null;
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/CreateExam", exam);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
