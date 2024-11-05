@@ -304,7 +304,7 @@ public class ExamRepository : IExamRepository
                             SubjectName = su.SubjectName,
                             Summary = ia.GeneralFeedback,
                             ReportList = (from rp in _context.Reports
-                                          where rp.AssignmentId == ia.AssignmentId
+                                          where rp.ExamId == ex.ExamId
                                           select new ReportResponse
                                           {
                                               ReportId = rp.ReportId,
