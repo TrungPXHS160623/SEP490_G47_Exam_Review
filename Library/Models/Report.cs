@@ -21,4 +21,4 @@ public partial class Report
     public virtual Exam? Exam { get; set; }
     public virtual ICollection<ReportFile> ReportFiles { get; set; }
 }
-}
+

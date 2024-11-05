@@ -22,7 +22,7 @@ namespace WebApi.Repository
             try
             {
                 var list = await (from rp in dbContext.Reports
-                                  where rp.AssignmentId == reportRequest.AssignmentId
+                                  where rp.ExamId == reportRequest.ExamId
                                   select rp).ToListAsync();
 
                 var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.RerportId == x.ReportId)).ToList();
@@ -44,7 +44,7 @@ namespace WebApi.Repository
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
                             CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  // Sử dụng thời gian hiện tại nếu không có CreateDate
                             UpdateDate = item.UpdateDate,  // UpdateDate có thể được cập nhật sau
-                            AssignmentId = reportRequest.AssignmentId,
+                            //AssignmentId = reportRequest.AssignmentId,
 
                         };
 
@@ -158,7 +158,6 @@ namespace WebApi.Repository
                 existingReport.QuestionNumber = reportRequest.QuestionNumber;
                 existingReport.ReportContent = reportRequest.ReportContent;
                 existingReport.QuestionSolutionDetail = reportRequest.QuestionSolutionDetail;
-                existingReport.Score = reportRequest.Score;
                 existingReport.UpdateDate = DateTime.Now;
 
                 dbContext.Reports.Update(existingReport);
@@ -180,12 +179,12 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId)
+        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int examId)
         {
             try
             {
                 //tìm kiếm report dựa theo id của phần phân công
-                var reports = await dbContext.Reports.Where(r => r.AssignmentId == assignmentId).ToListAsync();
+                var reports = await dbContext.Reports.Where(r => r.ExamId == examId).ToListAsync();
 
                 //nếu không tìm thấy report nào 
                 if (reports == null || reports.Count == 0)
@@ -219,7 +218,7 @@ namespace WebApi.Repository
                 // Tạo DTO trả về
                 var responseDto = new ReportDurationResponse
                 {
-                    AssignmentId = assignmentId,
+                    //AssignmentId = assignmentId,
                     TotalDurationHours = totalDuration,
                     ReportDurations = reportDurations
                 };

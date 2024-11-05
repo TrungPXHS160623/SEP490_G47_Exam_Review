@@ -302,7 +302,7 @@ public class ExamRepository : IExamRepository
                             SubjectId = su.SubjectId,
                             SubjectName = su.SubjectName,
                             ReportList = (from rp in _context.Reports
-                                          where rp.AssignmentId == ia.AssignmentId
+                                          where rp.ExamId == ex.ExamId
                                           select new ReportResponse
                                           {
                                               RerportId = rp.ReportId,
