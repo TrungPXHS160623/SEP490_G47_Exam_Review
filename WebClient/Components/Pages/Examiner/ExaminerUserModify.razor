@@ -9,10 +9,10 @@ else
     <h1 style="text-align: center;">Add HeadDepartment</h1>
 }
 <div class="d-flex justify-content-center">
-    <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 400px;">
+    <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 450px;">
         <FluentValidationValidator />
-        <div class="mb-4 row">
-            <label class="col-4 text-end">Email:</label>
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">Email:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -25,32 +25,33 @@ else
             </div>
         </div>
 
-        <div class="mb-4 row">
-            <label class="col-4 text-end">Role:</label>
+
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">User Name:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
-                    <MudText>@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName ?? "N/A")</MudText>
+                    <MudText>@(user.UserName)</MudText>
                 }
                 else
                 {
-                        <MudSelect @bind-Value="user.RoleId"
-                                   Text="@(roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName)"
-                                   Variant="Variant.Outlined"
-                                   Margin="Margin.Dense"
-                                   AnchorOrigin="Origin.BottomCenter">
-
-                            @if (roleList.Count > 0)
-                            {
-                                @foreach (var item in roleList)
-                                {
-                                    <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
-                                }
-                            }
-                        </MudSelect>
+                    <MudTextField @bind-Value="user.UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
                 }
-                </div>
-      
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">Phone Number:</label>
+            <div class="col-8">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.Phone)</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.Phone" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
+                }
+            </div>
         </div>
         <div class="mb-4 row">
             <label class="col-4 text-end">Subject:</label>
@@ -75,26 +76,20 @@ else
                 <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
             </div>
         </div>
-        <div class="mb-4 row">
-          
-             <label class="col-4 text-end">Active:</label>
+
+        <div class="mb-4 d-flex align-items-center">
+            <label class="col-4 text-end me-4">Active:</label>
             <div class="col-8">
-            <div>
-                <MudCheckBox @bind-Value="user.IsActive" Disabled />
-            </div>
+                <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit )" />
             </div>
         </div>
-        <div>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@(UserId != null ? (isAddOrEdit ? "Save" : "Update") : (isAddOrEdit ? "Create" : null))</MudButton>
-            <MudButton Variant="@(UserId != null && isAddOrEdit == true ? Variant.Outlined : Variant.Filled)"
-                       Color="@(UserId != null && isAddOrEdit == true ? Color.Error : Color.Default)"
-                       OnClick="Cancel" Class="ms-4">
-                @(UserId != null && isAddOrEdit == true ? "Cancel" : "Back")
-            </MudButton>
+
+        <div class="d-flex justify-content-evenly">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </div>
     </EditForm>
-    </div>
-
+</div>
 
 
  @code {
@@ -186,7 +181,10 @@ else
         {
             resp = await AccountService.ExaminerUpdateUserAsync(user);
         }
-
+        else
+        {
+            resp = await AccountService.CreateAsync(user);
+        }
         if (resp.IsSuccessful)
         {
             NavManager.NavigateTo("/Examiner/usermanagement");

@@ -1,11 +1,4 @@
-﻿using Library.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Response
+﻿namespace Library.Response
 {
     public class LectureExamResponse
     {
@@ -31,7 +24,7 @@ namespace Library.Response
 
         public string? HeadDepartmentName { get; set; }
 
-        public string? Summary { get;set; }
+        public string? Summary { get; set; }
 
         public List<ReportResponse> ReportList { get; set; } = new List<ReportResponse>();
 
@@ -54,6 +47,7 @@ namespace Library.Response
         public DateTime? EstimatedTimeTest { get; set; }
 
         public DateTime? StartDate { get; set; }
+        public DateTime? ExamDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 
