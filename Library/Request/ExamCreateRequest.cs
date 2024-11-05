@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Request
+﻿namespace Library.Request
 {
     public class ExamCreateRequest
     {
         public string? ExamCode { get; set; }
 
         public string? ExamDuration { get; set; }
-
+        public string? TermDuration { get; set; }
         public string? ExamType { get; set; }
 
         public int? SubjectId { get; set; }

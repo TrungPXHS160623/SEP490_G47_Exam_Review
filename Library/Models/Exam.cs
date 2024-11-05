@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models;
+﻿namespace Library.Models;
 
 public partial class Exam
 {
     public Exam()
     {
-        InstructorAssignments = new HashSet<InstructorAssignment>();
         Reports = new HashSet<Report>();
     }
 
@@ -38,6 +34,5 @@ public partial class Exam
     public virtual ExamStatus? ExamStatus { get; set; }
     public virtual Semester? Semester { get; set; }
     public virtual Subject? Subject { get; set; }
-    public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
     public virtual ICollection<Report> Reports { get; set; }
 }

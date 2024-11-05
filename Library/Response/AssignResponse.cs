@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Response
+﻿namespace Library.Response
 {
     public class AssignResponse
     {
@@ -27,13 +21,7 @@ namespace Library.Response
         public string? ExamStatus { get; set; } //trạng thái của phân công
 
         public DateTime? EstimatedTimeTest { get; set; } //thời gian dự kiến test
-        
+
         public DateTime? AssignmentDate { get; set; } //thời gian bắt đầu tạo phân công
-
-
-
-
-
-
     }
 }

@@ -813,8 +813,7 @@ namespace WebApi.Repository
             try
             {
                 var data = (from e in dbContext.Exams
-                            join ia in dbContext.InstructorAssignments on e.ExamId equals ia.ExamId
-                            join u in dbContext.Users on ia.AssignedUserId equals u.UserId
+                            join u in dbContext.Users on e.AssignedUserId equals u.UserId
                             where e.ExamId == examId
                             select new UserResponse
                             {

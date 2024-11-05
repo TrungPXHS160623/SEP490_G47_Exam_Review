@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models;
+﻿namespace Library.Models;
 
 public partial class User
 {
@@ -10,7 +7,6 @@ public partial class User
         CampusUserSubjects = new HashSet<CampusUserSubject>();
         Exams = new HashSet<Exam>();
         Faculties = new HashSet<Faculty>();
-        InstructorAssignments = new HashSet<InstructorAssignment>();
         UserHistories = new HashSet<UserHistory>();
     }
 
@@ -33,7 +29,6 @@ public partial class User
     public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; }
     public virtual ICollection<Exam> Exams { get; set; }
     public virtual ICollection<Faculty> Faculties { get; set; }
-    public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
     public virtual ICollection<UserHistory> UserHistories { get; set; }
 
 }

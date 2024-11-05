@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models;
+﻿namespace Library.Models;
 
 public partial class ExamStatus
 {
@@ -14,5 +11,4 @@ public partial class ExamStatus
     public DateTime? UpdateDate { get; set; }
 
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
-    public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
 }

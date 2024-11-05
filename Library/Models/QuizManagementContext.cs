@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using static System.Net.WebRequestMethods;
 
 
 namespace Library.Models;
@@ -24,7 +23,6 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<ExamStatus> ExamStatuses { get; set; }
 
-    public virtual DbSet<InstructorAssignment> InstructorAssignments { get; set; }
 
     public virtual DbSet<Menu> Menus { get; set; }
 
@@ -143,32 +141,6 @@ public partial class QuizManagementContext : DbContext
             entity.Property(e => e.StatusContent).HasMaxLength(255);
         });
 
-        modelBuilder.Entity<InstructorAssignment>(entity =>
-        {
-            entity.HasKey(e => e.AssignmentId);
-
-            entity.HasIndex(e => e.AssignStatusId, "IX_InstructorAssignments_AssignStatusId");
-
-            entity.HasIndex(e => e.AssignedUserId, "IX_InstructorAssignments_AssignedTo");
-
-            entity.HasIndex(e => e.ExamId, "IX_InstructorAssignments_ExamId");
-
-            entity.HasOne(d => d.AssignStatus)
-                .WithMany(p => p.InstructorAssignments)
-                .HasForeignKey(d => d.AssignStatusId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(d => d.AssignedUser)
-                .WithMany(p => p.InstructorAssignments)
-                .HasForeignKey(d => d.AssignedUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_InstructorAssignments_Users_AssignedTo");
-
-            entity.HasOne(d => d.Exam)
-                .WithMany(p => p.InstructorAssignments)
-                .HasForeignKey(d => d.ExamId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
 
         modelBuilder.Entity<MenuRole>(entity =>
         {
@@ -217,7 +189,7 @@ public partial class QuizManagementContext : DbContext
                 .WithMany(p => p.ReportFiles)
                 .HasForeignKey(d => d.ReportId);
         });
-     
+
         modelBuilder.Entity<Subject>(entity =>
         {
             entity.Property(e => e.SubjectCode).HasMaxLength(255);
@@ -306,7 +278,7 @@ public partial class QuizManagementContext : DbContext
             new ExamStatus { ExamStatusId = 4, StatusContent = "Erroneous", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Faultless", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-            
+
         );
 
         // Seed data for Faculty table
@@ -330,14 +302,6 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-        //Seed data for Faculty table
-        modelBuilder.Entity<Faculty>().HasData(
-            new Faculty { FacultyId = 1, FacultyName = "Faculty of Information Technology", Description = "Specializes in training related to information technology and software.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 2, FacultyName = "Faculty of Economics", Description = "Specializes in training in economics, business administration, and finance.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 3, FacultyName = "Faculty of Foreign Languages", Description = "Trains in language, culture, and international communication.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 4, FacultyName = "Faculty of Engineering", Description = "Specializes in engineering, electronics, and mechanics.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 5, FacultyName = "Faculty of Management", Description = "Trains in management, leadership, and organization.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-        );
 
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
@@ -393,18 +357,18 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<Subject>().HasData(
 
             // Seed data for software engineering major
-            new Subject { SubjectId = 1, FacultyId = 1,SubjectCode = "PRN211", SubjectName = "Basic Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 2, FacultyId = 1,SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 3, FacultyId = 1,SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 4, FacultyId = 1,SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 5, FacultyId = 1,SubjectCode = "NWC203c", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 1, FacultyId = 1, SubjectCode = "PRN211", SubjectName = "Basic Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 2, FacultyId = 1, SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 3, FacultyId = 1, SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 4, FacultyId = 1, SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 5, FacultyId = 1, SubjectCode = "NWC203c", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             // Seed data for international business major
             new Subject { SubjectId = 6, FacultyId = 2, SubjectCode = "ENM401", SubjectName = "Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 7, FacultyId = 2, SubjectCode = "ECO121", SubjectName = "Basic Macro Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 8, FacultyId = 2, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 9, FacultyId = 2, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 10, FacultyId = 2 , SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Subject { SubjectId = 10, FacultyId = 2, SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
@@ -537,39 +501,6 @@ public partial class QuizManagementContext : DbContext
 
 
         );
-
-        
-
-        // 9. Seed data for InstructorAssignment table
-        modelBuilder.Entity<InstructorAssignment>().HasData(
-
-
-
-
-
-        // Examiner => Heads of departmant
-        new InstructorAssignment { AssignmentId = 1, ExamId = 1, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 2, ExamId = 2, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 3, ExamId = 3, AssignedUserId = 12, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 4, ExamId = 11, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 5, ExamId = 12, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 6, ExamId = 13, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 7, ExamId = 14, AssignedUserId = 13, AssignmentDate = DateTime.Now, AssignStatusId = 3, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-
-
-        // Head of departmant => Lecturers
-        new InstructorAssignment { AssignmentId = 8, ExamId = 1, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 9, ExamId = 2, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 10, ExamId = 3, AssignedUserId = 7, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 11, ExamId = 11, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 12, ExamId = 12, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 13, ExamId = 13, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-        new InstructorAssignment { AssignmentId = 14, ExamId = 14, AssignedUserId = 27, AssignmentDate = DateTime.Now, AssignStatusId = 4, ExamTestDuration = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-
-
-
-        );
-
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
             new Menu { MenuId = 1, MenuLink = "/usermanagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
