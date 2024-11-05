@@ -102,32 +102,39 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasIndex(e => e.ExamStatusId, "IX_Exams_ExamStatusId");
 
-            entity.HasIndex(e => e.SubjectId, "IX_Exams_SubjectId");
-
             entity.HasIndex(e => e.SemesterId, "IX_Exams_SemesterId");
 
+            entity.HasIndex(e => e.SubjectId, "IX_Exams_SubjectId");
 
             entity.Property(e => e.ExamCode).HasMaxLength(50);
+
             entity.Property(e => e.ExamDuration).HasMaxLength(100);
+
             entity.Property(e => e.ExamType).HasMaxLength(50);
 
-            entity.HasOne(d => d.Campus).WithMany(p => p.Exams)
+            entity.HasOne(d => d.Campus)
+                .WithMany(p => p.Exams)
                 .HasForeignKey(d => d.CampusId)
                 .HasConstraintName("FK_Exams_Campuses");
 
-            entity.HasOne(d => d.Creater).WithMany(p => p.Exams)
+            entity.HasOne(d => d.Creater)
+                .WithMany(p => p.Exams)
                 .HasForeignKey(d => d.CreaterId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.ExamStatus).WithMany(p => p.Exams)
+            entity.HasOne(d => d.ExamStatus)
+                .WithMany(p => p.Exams)
                 .HasForeignKey(d => d.ExamStatusId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(d => d.Semester).WithMany(p => p.Exams)
-               .HasForeignKey(d => d.SemesterId)
-     .HasConstraintName("FK_Exams_Semesters");
+            entity.HasOne(d => d.Semester)
+                .WithMany(p => p.Exams)
+                .HasForeignKey(d => d.SemesterId)
+                .HasConstraintName("FK_Exams_Semesters");
 
-            entity.HasOne(d => d.Subject).WithMany(p => p.Exams).HasForeignKey(d => d.SubjectId);
+            entity.HasOne(d => d.Subject)
+                .WithMany(p => p.Exams)
+                .HasForeignKey(d => d.SubjectId);
         });
 
         modelBuilder.Entity<ExamStatus>(entity =>
@@ -139,24 +146,27 @@ public partial class QuizManagementContext : DbContext
         {
             entity.HasKey(e => e.AssignmentId);
 
+            entity.HasIndex(e => e.AssignStatusId, "IX_InstructorAssignments_AssignStatusId");
+
             entity.HasIndex(e => e.AssignedUserId, "IX_InstructorAssignments_AssignedTo");
 
             entity.HasIndex(e => e.ExamId, "IX_InstructorAssignments_ExamId");
 
-            entity.HasIndex(e => e.AssignStatusId, "IX_InstructorAssignments_AssignStatusId");
+            entity.HasOne(d => d.AssignStatus)
+                .WithMany(p => p.InstructorAssignments)
+                .HasForeignKey(d => d.AssignStatusId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(d => d.AssignedUser).WithMany(p => p.InstructorAssignments)
+            entity.HasOne(d => d.AssignedUser)
+                .WithMany(p => p.InstructorAssignments)
                 .HasForeignKey(d => d.AssignedUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_InstructorAssignments_Users_AssignedTo");
 
-            entity.HasOne(d => d.Exam).WithMany(p => p.InstructorAssignments)
+            entity.HasOne(d => d.Exam)
+                .WithMany(p => p.InstructorAssignments)
                 .HasForeignKey(d => d.ExamId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.ExamStatus).WithMany(p => p.Assignments)
-                .HasForeignKey(d => d.AssignStatusId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MenuRole>(entity =>
@@ -170,15 +180,42 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.MenuRoles).HasForeignKey(d => d.RoleId);
         });
 
-        modelBuilder.Entity<Report>(entity =>
+        modelBuilder.Entity<Faculty>(entity =>
         {
-            entity.HasKey(e => e.ReportId);
+            entity.HasIndex(e => e.DeanId, "IX_Faculties_DeanId");
 
-            entity.HasOne(d => d.Assignment).WithMany(p => p.Reports)
-                .HasForeignKey(d => d.AssignmentId)
-                .HasConstraintName("FK_Reports_InstructorAssignments");
+            entity.Property(e => e.Description).HasMaxLength(500);
+
+            entity.Property(e => e.FacultyName).HasMaxLength(100);
+
+            entity.HasOne(d => d.Dean)
+                .WithMany(p => p.Faculties)
+                .HasForeignKey(d => d.DeanId);
         });
 
+        modelBuilder.Entity<Report>(entity =>
+        {
+            entity.HasOne(d => d.Exam)
+                .WithMany(p => p.Reports)
+                .HasForeignKey(d => d.ExamId)
+                .HasConstraintName("FK_Reports_Exams");
+        });
+        modelBuilder.Entity<ReportFile>(entity =>
+        {
+            entity.HasKey(e => e.FileId);
+
+            entity.HasIndex(e => e.ReportId, "IX_ReportFiles_ReportId");
+
+            entity.Property(e => e.FileName).HasMaxLength(255);
+
+            entity.Property(e => e.FilePath).HasMaxLength(500);
+
+            entity.Property(e => e.FileType).HasMaxLength(100);
+
+            entity.HasOne(d => d.Report)
+                .WithMany(p => p.ReportFiles)
+                .HasForeignKey(d => d.ReportId);
+        });
         modelBuilder.Entity<Subject>(entity =>
         {
             entity.Property(e => e.SubjectCode).HasMaxLength(255);
@@ -224,7 +261,6 @@ public partial class QuizManagementContext : DbContext
 
 
 
-
         modelBuilder.Entity<UserHistory>(entity =>
         {
             entity.ToTable("UserHistory");
@@ -258,12 +294,12 @@ public partial class QuizManagementContext : DbContext
         // 2. Seed data for ExamStatus table
         modelBuilder.Entity<ExamStatus>().HasData(
             new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 2, StatusContent = "Pending", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 3, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 5, StatusContent = "Erroneous", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 6, StatusContent = "Faultless", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new ExamStatus { ExamStatusId = 2, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 3, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "Erroneous", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 5, StatusContent = "Faultless", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 6, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            
         );
 
         // 3. Seed data for UserRole table
@@ -274,10 +310,6 @@ public partial class QuizManagementContext : DbContext
             new UserRole { RoleId = 4, RoleName = "Head of Department", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new UserRole { RoleId = 5, RoleName = "Curriculum Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
-
-
-
-
 
         // 4. Seed data for User table
         modelBuilder.Entity<User>().HasData(
@@ -546,12 +578,12 @@ public partial class QuizManagementContext : DbContext
 
         // 12. Seed data for Report table
         modelBuilder.Entity<Report>().HasData(
-            new Report { ReportId = 1, AssignmentId = 8, ReportContent = "In PRN211, question 1 contains an incorrect code snippet that causes compilation errors.", QuestionSolutionDetail = "Correct the code snippet by replacing 'Console.Writeline' with 'Console.WriteLine'.", QuestionNumber = 1, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 2, AssignmentId = 9, ReportContent = "In PRN211, question 2 has an outdated logic that leads to incorrect output.", QuestionSolutionDetail = "Revise the logic to ensure it follows the proper algorithmic steps.", QuestionNumber = 2, Score = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 3, AssignmentId = 11, ReportContent = "In ENM401, question 1 fails to explain the principle of supply and demand adequately.", QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.", QuestionNumber = 3, Score = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 4, AssignmentId = 12, ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 4, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 5, AssignmentId = 13, ReportContent = "In ENM401, question 3 has an error in the calculation.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 5, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Report { ReportId = 6, AssignmentId = 14, ReportContent = "In ENM401, question 4 has an error.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 6, Score = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Report { ReportId = 1, ExamId = 1, ReportContent = "In PRN211, question 1 contains an incorrect code snippet that causes compilation errors.", QuestionSolutionDetail = "Correct the code snippet by replacing 'Console.Writeline' with 'Console.WriteLine'.", QuestionNumber = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 2, ExamId = 2, ReportContent = "In PRN211, question 2 has an outdated logic that leads to incorrect output.", QuestionSolutionDetail = "Revise the logic to ensure it follows the proper algorithmic steps.", QuestionNumber = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 3, ExamId = 3, ReportContent = "In ENM401, question 1 fails to explain the principle of supply and demand adequately.", QuestionSolutionDetail = "Provide a more detailed explanation of how supply and demand interact in a market.", QuestionNumber = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 4, ExamId = 4, ReportContent = "In ENM401, question 2 has an error in the calculation of equilibrium price.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 5, ExamId = 5, ReportContent = "In ENM401, question 3 has an error in the calculation.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Report { ReportId = 6, ExamId = 6, ReportContent = "In ENM401, question 4 has an error.", QuestionSolutionDetail = "Revise the calculation method to correctly reflect the intersection of supply and demand curves.", QuestionNumber = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
          );
 
         modelBuilder.Entity<Semester>().HasData(
