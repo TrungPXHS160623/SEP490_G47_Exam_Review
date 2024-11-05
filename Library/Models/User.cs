@@ -35,6 +35,7 @@ public partial class User
     public virtual ICollection<Faculty> Faculties { get; set; }
     public virtual ICollection<InstructorAssignment> InstructorAssignments { get; set; }
     public virtual ICollection<UserHistory> UserHistories { get; set; }
+
 }
 
 

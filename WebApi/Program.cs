@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 using WebApi.IRepository;
 using WebApi.Mapper;
 using WebApi.Repository;
+using Quartz;
+using WebApi.JobSchedule;
 
 namespace WebApi;
 
@@ -49,14 +51,26 @@ public class Program
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
             };
-
-
-        
         }).AddGoogle(o =>
         {
             o.ClientId = builder.Configuration["GoogleKeys:ClientId"]!;
             o.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"]!;
         });
+
+        //Add Quartz for auto send mail
+        builder.Services.AddQuartz(q =>
+        {
+            q.UseMicrosoftDependencyInjectionJobFactory(); 
+
+            var jobKey = new JobKey("CheckRemindAssignExam");
+            q.AddJob<CheckRemindAssignExam>(opts => opts.WithIdentity(jobKey));
+            q.AddTrigger(opts => opts
+                .ForJob(jobKey)
+                .WithIdentity("CheckRemindAssignExam-trigger")
+                .WithCronSchedule("0 0 0 * * ?")); // second minus hour dayOfMonth Month dayOfWeek
+        });
+
+        builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         // Add DI for repositories and AutoMapper
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();

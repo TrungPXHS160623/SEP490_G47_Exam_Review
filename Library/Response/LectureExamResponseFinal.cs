@@ -1,6 +1,12 @@
-﻿namespace Library.Response
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Library.Response
 {
-    public class LeaderExamResponse
+    public class LectureExamResponseFinal
     {
         public int ExamId { get; set; }
 
@@ -24,26 +30,27 @@
 
         public string? HeadDepartmentName { get; set; }
 
-        public IEnumerable<UserResponse> LectureList { get; set; } = new HashSet<UserResponse>();
+        public IList<ReportAdvancedResponse> ReportList { get; set; } = new List<ReportAdvancedResponse>();
 
         public int? CampusId { get; set; }
 
         public string? CampusName { get; set; }
-        public string? SemesterName { get; set; }
 
-        public int? ExamStatusId { get; set; }
+        public int? AssignStatusId { get; set; }
 
-        public string? ExamStatusContent { get; set; }
+        public string? AssignStatusContent { get; set; }
 
         public int? AssignmentId { get; set; }
 
+        public int? AssignmentUserId { get; set; }
+
+        public DateTime? AssignmentDate { get; set; }
+
         public DateTime? EstimatedTimeTest { get; set; }
-        public DateTime? ExamDate { get; set; }
+
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
-
-        public DateTime? CreateDate { get; set; }
 
         public DateTime? UpdateDate { get; set; }
     }

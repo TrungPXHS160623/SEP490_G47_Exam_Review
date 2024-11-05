@@ -17,5 +17,6 @@ namespace Library.Models
         public DateTime UploadDate { get; set; }
 
         public virtual Report Report { get; set; } = null!;
+
     }
 }

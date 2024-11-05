@@ -263,11 +263,11 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId)
+    public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId,int userId)
     {
         try
         {
-            var data = (from ex in _context.Exams
+            var data = await (from ex in _context.Exams
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
                         join cus in _context.CampusUserSubjects
@@ -278,7 +278,7 @@ public class ExamRepository : IExamRepository
                         join u2 in _context.Users on ex.CreaterId equals u2.UserId
                         join ia in _context.InstructorAssignments on ex.ExamId equals ia.ExamId
                         join st in _context.ExamStatuses on ia.AssignStatusId equals st.ExamStatusId
-                        where ex.ExamId == examId
+                        where ex.ExamId == examId && ia.AssignedUserId == userId
                         select new LectureExamResponse
                         {
                             CreaterId = u2.UserId,
@@ -296,22 +296,24 @@ public class ExamRepository : IExamRepository
                             AssignStatusId = st.ExamStatusId,
                             AssignStatusContent = st.StatusContent,
                             AssignmentDate = ia.AssignmentDate,
+                            AssignmentUserId = ia.AssignedUserId,
                             ExamType = ex.ExamType,
                             HeadDepartmentId = u1.UserId,
                             HeadDepartmentName = u1.Mail,
                             SubjectId = su.SubjectId,
                             SubjectName = su.SubjectName,
+                            Summary = ia.GeneralFeedback,
                             ReportList = (from rp in _context.Reports
                                           where rp.ExamId == ex.ExamId
                                           select new ReportResponse
                                           {
-                                              RerportId = rp.ReportId,
+                                              ReportId = rp.ReportId,
                                               QuestionNumber = rp.QuestionNumber,
                                               QuestionSolutionDetail = rp.QuestionSolutionDetail,
                                               ReportContent = rp.ReportContent,
                                           }).ToList(),
                             UpdateDate = ex.UpdateDate,
-                        }).FirstOrDefault();
+                        }).FirstOrDefaultAsync();
 
             return new ResultResponse<LectureExamResponse>
             {
@@ -356,6 +358,7 @@ public class ExamRepository : IExamRepository
             var data = (from ex in _context.Exams
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
+                        join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
                         join cus in _context.CampusUserSubjects
                             on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
                         from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
@@ -363,9 +366,12 @@ public class ExamRepository : IExamRepository
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
+                        &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
+                              && cus.IsLecturer == false
                         select new ExaminerExamResponse
                         {
+                            SemseterName = sem.SemesterName,
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
                             ExamDate = ex.ExamDate,
@@ -403,19 +409,20 @@ public class ExamRepository : IExamRepository
             var data = await (from ex in _context.Exams
                               join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                               join ca in _context.Campuses on ex.CampusId equals ca.CampusId
+                              join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
                               join cus in _context.CampusUserSubjects
                                   on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
                               from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
                               join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                               from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                               join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-                              join ia in _context.InstructorAssignments on ex.ExamId equals ia.ExamId into iaGroup
-                              from ia in iaGroup.DefaultIfEmpty() // LEFT JOIN
                               where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
                                     && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                                     && req.UserId == u1.UserId
+                                    && cus.IsLecturer == false
                               select new LeaderExamResponse
                               {
+                                  SemesterName = sem.SemesterName,
                                   EndDate = ex.EndDate,
                                   ExamId = ex.ExamId,
                                   StartDate = ex.StartDate,
@@ -427,7 +434,6 @@ public class ExamRepository : IExamRepository
                                   ExamStatusId = st.ExamStatusId,
                                   HeadDepartmentName = u1.Mail,
                                   HeadDepartmentId = u1.UserId,
-                                  AssignmentId = ia.AssignmentId,
                                   UpdateDate = ex.UpdateDate
                               }).ToListAsync();
 
@@ -609,10 +615,9 @@ public class ExamRepository : IExamRepository
                                 CampusName = reader.GetValue(3)?.ToString(),
                                 SubjectCode = reader.GetValue(4)?.ToString(),
                                 CreaterName = reader.GetValue(5)?.ToString(),
-                                StatusContent = reader.GetValue(6)?.ToString(),
-                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
-                                StartDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
-                                EndDate = DateTime.TryParse(reader.GetValue(9)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
+                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(6)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
+                                StartDate = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
+                                EndDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
                             };
 
                             // Kiểm tra tính hợp lệ của dữ liệu từ DTO
@@ -871,5 +876,8 @@ public class ExamRepository : IExamRepository
         return examAssignments;
     }
 
-
+    public Task<ResultResponse<LeaderExamResponse>> GetRemindExamList()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -142,7 +142,7 @@ namespace WebApi.Repository
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
-                        && (u.RoleId != 1 && u.RoleId != 2 && u.RoleId != 5 || u.RoleId == null)
+                        && (u.RoleId == 4  || u.RoleId == null)
                         && u.CampusId == campusId
                         select new UserResponse
                         {
@@ -436,33 +436,23 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetLecture(int userId, string filterQuery)
+        public async Task<ResultResponse<UserResponse>> GetLectureBySubject(int subjectId, int campusId)
         {
-
-            var campusId = (await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == userId))?.CampusId;
-
-            var data = (from u in this.dbContext.Users
-                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
-                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
-                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
-                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                        where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
-                        && (u.RoleId==3|| u.RoleId == null)
-                        && u.CampusId == campusId
-                        select new UserResponse
-                        {
-                            Email = u.Mail,
-                            CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
-                            IsActive = u.IsActive,
-                            RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
-                            UserId = u.UserId,
-                            UpdateDt = u.UpdateDate,
-                        }).ToList();
+            var data = await (from u in this.dbContext.Users
+                              join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                              where cus.CampusId == campusId
+                              && cus.SubjectId == campusId
+                              && cus.IsLecturer == true
+                              select new UserResponse
+                              {
+                                  Email = u.Mail,
+                                  UserId = u.UserId,
+                              }).ToListAsync();
 
             return new ResultResponse<UserResponse>
             {
                 IsSuccessful = true,
-                Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
+                Items = data,
             };
         }
         private bool IsValidEmail(string email)
@@ -816,6 +806,84 @@ namespace WebApi.Repository
             }
 
             return response;
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetAssignedUserByExam(int examId)
+        {
+            try
+            {
+                var data = (from e in dbContext.Exams
+                            join ia in dbContext.InstructorAssignments on e.ExamId equals ia.ExamId
+                            join u in dbContext.Users on ia.AssignedUserId equals u.UserId
+                            where e.ExamId == examId
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Email = u.Mail
+                            }).ToList();
+
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId)
+        {
+            try
+            {
+                var data = (from u in dbContext.Users
+                            where u.UserId == userId
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Email = u.Mail
+                            }).ToList();
+
+                //   var result = (from cus_truong in dbContext.CampusUserSubjects
+                //                 join cus_giangvien in dbContext.CampusUserSubjects
+                //                 on cus_truong.SubjectId equals cus_giangvien.SubjectId
+                //                 join u in dbContext.Users
+                //                 on cus_giangvien.UserId equals u.UserId
+                //                 where cus_truong.UserId == userId
+                //                       && cus_truong.IsLecturer == false
+                //                       && cus_giangvien.IsLecturer == true
+                //                 select new
+                //                 {
+                //                     u.UserId,
+                //                     u.FullName,
+                //                     u.Mail,
+                //                     u.PhoneNumber
+                //                 })
+                //.Distinct()
+                //.ToList();
+
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
         }
     }
 }

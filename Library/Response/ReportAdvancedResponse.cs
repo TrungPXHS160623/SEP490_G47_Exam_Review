@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Library.Response
 {
-    public class ReportResponse
+    public class ReportAdvancedResponse
     {
         public int? ReportId { get; set; }
 
@@ -15,7 +20,6 @@ namespace Library.Response
         public int? QuestionNumber { get; set; }
 
         public string? ReportContent { get; set; }
-        public IFormFile Files { get; set; }
 
         public string? QuestionSolutionDetail { get; set; }
 
@@ -23,5 +27,8 @@ namespace Library.Response
 
         public DateTime? UpdateDate { get; set; }
 
+        public IList<IFormFile> Files { get; set; } = new List<IFormFile>();
+
+        
     }
 }

@@ -22,5 +22,6 @@ namespace Library.Models
 
         public virtual User? Dean { get; set; }
         public virtual ICollection<Subject> Subjects { get; set; }
+
     }
 }

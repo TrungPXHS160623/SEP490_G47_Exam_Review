@@ -12,6 +12,7 @@ public partial class InstructorAssignment
     public int? AssignStatusId { get; set; }
     public string? GeneralFeedback { get; set; }
     public bool IsReady { get; set; }
+
     public TimeSpan? ExamTestDuration { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }

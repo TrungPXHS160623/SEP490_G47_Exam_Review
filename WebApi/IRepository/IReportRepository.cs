@@ -10,6 +10,10 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> AddEditReport(LectureExamResponse reportRequest, bool isSubmit);
 
+        Task<RequestResponse> UploadReportWithFiles(LectureExamResponseFinal reportRequest, bool isSubmit);
+
+        Task<RequestResponse> UploadFiles(int reportId, IList<IFormFile> files);
+
         Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
 
         Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId);
