@@ -22,7 +22,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.InstructorAssignments.Where(x => x.ExamId == req.ExamId).ToListAsync();
+                var data = await this.DBcontext.Exams.Where(x => x.ExamId == req.ExamId).ToListAsync();
 
                 var addLecture = req.LectureList.Where(x => !data.Any(y => y.AssignedUserId == x.UserId)).ToList();
 
@@ -30,17 +30,17 @@ namespace WebApi.Repository
                 {
                     foreach (var item in addLecture)
                     {
-                        var newData = new InstructorAssignment
+                        var newData = new Exam
                         {
                             AssignedUserId = item.UserId,
                             AssignmentDate = DateTime.Now,
                             ExamId = req.ExamId,
-                            AssignStatusId = 3,
+                            ExamStatusId = 3,
                             CreateDate = DateTime.Now,
                             UpdateDate = DateTime.Now
                         };
 
-                        await this.DBcontext.InstructorAssignments.AddAsync(newData);
+                        await this.DBcontext.Exams.AddAsync(newData);
                     }
                 }
 
@@ -51,7 +51,7 @@ namespace WebApi.Repository
                 {
                     foreach (var item in removeLecture)
                     {
-                        this.DBcontext.InstructorAssignments.Remove(item);
+                        this.DBcontext.Exams.Remove(item);
                     }
                 }
 
@@ -77,7 +77,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == req.AssignmentId);
+                var data = await this.DBcontext.Exams.FirstOrDefaultAsync(x => x.ExamId == req.ExamId);
 
                 if (data == null)
                 {
@@ -89,7 +89,7 @@ namespace WebApi.Repository
                 }
 
                 data.AssignmentDate = req.AssignmentDate;
-                data.AssignStatusId = 4;
+                data.ExamStatusId = 4;
 
                 await this.DBcontext.SaveChangesAsync();
 
