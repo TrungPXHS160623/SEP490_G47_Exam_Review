@@ -22,7 +22,7 @@ namespace WebApi.Repository
             try
             {
                 var list = await (from rp in dbContext.Reports
-                                  where rp.AssignmentId == reportRequest.AssignmentId
+                                  where rp.ExamId == reportRequest.ExamId
                                   select rp).ToListAsync();
 
                 var deleteRecord = list.Where(x => !reportRequest.ReportList.Any(y => y.ReportId == x.ReportId)).ToList();
@@ -44,7 +44,7 @@ namespace WebApi.Repository
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
                             CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  // Sử dụng thời gian hiện tại nếu không có CreateDate
                             UpdateDate = item.UpdateDate,  // UpdateDate có thể được cập nhật sau
-                            AssignmentId = reportRequest.AssignmentId,
+                            //AssignmentId = reportRequest.AssignmentId,
 
                         };
 
@@ -59,11 +59,11 @@ namespace WebApi.Repository
                         data.UpdateDate = DateTime.Now;  // Khi chỉnh sửa, UpdateDate được cập nhật với thời gian hiện tại
                     }
                 }
-                var assignment = await this.dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
+                var assignment = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                 assignment.GeneralFeedback = reportRequest.Summary;
                 if (isSubmit)
                 {
-                    assignment.AssignStatusId = 5;  // Đặt trạng thái là đã nộp
+                    assignment.ExamStatusId = 5;  // Đặt trạng thái là đã nộp
                     assignment.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
                 }
 
@@ -170,12 +170,12 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId)
+        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int examId)
         {
             try
             {
                 //tìm kiếm report dựa theo id của phần phân công
-                var reports = await dbContext.Reports.Where(r => r.AssignmentId == assignmentId).ToListAsync();
+                var reports = await dbContext.Reports.Where(r => r.ExamId == examId).ToListAsync();
 
                 //nếu không tìm thấy report nào 
                 if (reports == null || reports.Count == 0)
@@ -198,7 +198,7 @@ namespace WebApi.Repository
                     // Nếu chỉ có CreateDate không null, tính thời gian từ CreateDate đến thời điểm hiện tại.
                     // Nếu cả hai đều null, gán giá trị 0.
 
-                    DurationHours = r.UpdateDate.HasValue && r.CreateDate.HasValue ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours: 0,
+                    DurationHours = r.UpdateDate.HasValue && r.CreateDate.HasValue ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours : 0,
 
                     //DurationHours = r.CreateDate != null && r.UpdateDate != null ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours : r.CreateDate != null? (DateTime.Now - r.CreateDate.Value).TotalHours: 0,
                 }).ToList();
@@ -209,7 +209,7 @@ namespace WebApi.Repository
                 // Tạo DTO trả về
                 var responseDto = new ReportDurationResponse
                 {
-                    AssignmentId = assignmentId,
+                    //AssignmentId = assignmentId,
                     TotalDurationHours = totalDuration,
                     ReportDurations = reportDurations
                 };
@@ -219,9 +219,9 @@ namespace WebApi.Repository
                     IsSuccessful = true,
                     Items = new List<ReportDurationResponse> { responseDto }
                 };
-            
+
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 return new ResultResponse<ReportDurationResponse>
@@ -328,7 +328,7 @@ namespace WebApi.Repository
                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                   "application/msword",
                   "application/vnd.ms-excel",
-                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                   "image/jpeg",
                   "image/png",
                   "application/zip"
@@ -351,7 +351,7 @@ namespace WebApi.Repository
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                
+
                 foreach (var file in files)
                 {
                     /*
@@ -380,7 +380,7 @@ namespace WebApi.Repository
                     if (file.Length > MaxFileSize)
                     {
                         errors.Add($"File {file.FileName} size exceeds the maximum allowed limit of {MaxFileSize / (1024 * 1024)}MB.");
-                        continue ;
+                        continue;
                     }
                     // Kiểm tra xem tên file đã tồn tại trong HashSet chưa
                     if (existingFileNames.Contains(file.FileName))
@@ -461,7 +461,7 @@ namespace WebApi.Repository
                 response.Message = $"An error occurred: {ex.Message}";
             }
 
-            return response; 
+            return response;
         }
 
         public async Task<RequestResponse> UploadReportWithFiles(LectureExamResponseFinal reportRequest, bool isSubmit)
@@ -470,7 +470,7 @@ namespace WebApi.Repository
             {
                 // Lấy danh sách báo cáo hiện tại dựa trên AssignmentId
                 var existingReports = await dbContext.Reports
-                                                     .Where(rp => rp.AssignmentId == reportRequest.AssignmentId)
+                                                     .Where(rp => rp.ExamId == reportRequest.ExamId)
                                                      .ToListAsync();
 
                 // Xóa các báo cáo không còn trong request
@@ -492,7 +492,7 @@ namespace WebApi.Repository
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
                             CreateDate = item.CreateDate ?? DateTime.Now, // Sử dụng thời gian hiện tại nếu không có CreateDate
                             UpdateDate = DateTime.Now, // Cập nhật ngay tại đây
-                            AssignmentId = reportRequest.AssignmentId,
+                            ExamId = reportRequest.ExamId,
                         };
 
                         await dbContext.Reports.AddAsync(newReport);
@@ -534,10 +534,10 @@ namespace WebApi.Repository
                 // Cập nhật trạng thái nộp nếu isSubmit là true
                 if (isSubmit)
                 {
-                    var assignment = await dbContext.InstructorAssignments.FirstOrDefaultAsync(x => x.AssignmentId == reportRequest.AssignmentId);
+                    var assignment = await dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                     if (assignment != null)
                     {
-                        assignment.AssignStatusId = 5; // Đặt trạng thái là đã nộp
+                        assignment.ExamStatusId = 5; // Đặt trạng thái là đã nộp
                         assignment.UpdateDate = DateTime.Now; // Cập nhật thời gian submit
                     }
                 }

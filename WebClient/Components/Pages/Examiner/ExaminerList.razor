@@ -92,9 +92,9 @@
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
                         <MudTd>@context.ExamType</MudTd>
-                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemseterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
@@ -252,12 +252,6 @@
                             .Where(e => e.ExamDate.HasValue) 
                             .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue) 
                             .ToList();
-
-            var pastOrNoDateExams = eList.Items
-                                        .Where(e => !e.ExamDate.HasValue || e.ExamDate.Value < DateTime.Now)
-                                        .ToList();
-
-            ExamList.AddRange(pastOrNoDateExams);
         }
     }
 

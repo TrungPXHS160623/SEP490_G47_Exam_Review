@@ -42,10 +42,6 @@
                     <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
                 <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Creater:</label>
-                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                </div>
-                <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Head of Department:</label>
                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
                 </div>
@@ -60,18 +56,18 @@
                     <MudText>@exam.ExamType</MudText>
                 </div>
                 <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                    <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                    <label class="col-4 text-end me-3">Start Review Date:</label>
+                    <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
                 </div>
                 <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                    <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                    <label class="col-4 text-end me-3">End Review Date:</label>
+                    <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
                 </div>
                 @if (exam.AssignStatusId != 3)
                 {
                     <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudText>
+                        <label class="col-4 text-end me-3">Planning Time:</label>
+                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
                     </div>
                 }
                 else
