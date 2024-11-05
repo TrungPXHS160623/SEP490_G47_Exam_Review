@@ -186,7 +186,8 @@ namespace WebApi.Repository
                     data.SubjectCode = req.SubjectCode;
                     data.SubjectName = req.SubjectName;
                     data.IsDeleted = req.IsDeleted;
-
+                    data.FacultyId = req.FacultyId;
+                    data.Faculty.FacultyName = req.Faculty.FacultyName;
                     await this.DBcontext.SaveChangesAsync();
 
                     return new RequestResponse

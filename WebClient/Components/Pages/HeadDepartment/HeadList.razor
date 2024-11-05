@@ -1,5 +1,5 @@
 ﻿@page "/HeadDepartment/ExamList"
-<h1 style="text-align: center;">Assign Exam</h1>
+<h1 style="text-align: center;">Assign Teacher To Review</h1>
 <style>
     .mud-table-cell {
         border: none !important;
@@ -88,9 +88,9 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
-                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemesterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
@@ -219,11 +219,6 @@
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)
                            .ToList();
 
-            var pastOrNoDateExams = eList.Items
-                                        .Where(e => !e.ExamDate.HasValue || e.ExamDate.Value < DateTime.Now)
-                                        .ToList();
-
-            ExamList.AddRange(pastOrNoDateExams);
         }
         selectedExams.Clear();
     }

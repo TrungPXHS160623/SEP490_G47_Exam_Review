@@ -353,7 +353,7 @@ namespace WebClient.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync("api/GenerateExcel/export");
+                HttpResponseMessage response = await _httpClient.GetAsync("api/GenerateExcel/export-all");
                 if (response.IsSuccessStatusCode)
                 {
                     var fileBytes = await response.Content.ReadAsByteArrayAsync();

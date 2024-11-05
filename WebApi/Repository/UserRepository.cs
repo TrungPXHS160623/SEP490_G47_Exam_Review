@@ -249,6 +249,8 @@ namespace WebApi.Repository
                             RoleId = u.RoleId,
                             RoleName = r != null ? r.RoleName : null,
                             UserId = u.UserId,
+                            Phone = u.PhoneNumber,
+                            UserName = u.FullName,
                             SubjectResponses = (from s in this.dbContext.Subjects
                                                 join cus in this.dbContext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
                                                 where cus.UserId == u.UserId && cus.CampusId == u.CampusId
@@ -326,6 +328,8 @@ namespace WebApi.Repository
                 existingUser.RoleId = user.RoleId;
                 existingUser.CampusId = user.CampusId;
                 existingUser.IsActive = user.IsActive.Value;
+                existingUser.FullName = user.UserName;
+                existingUser.PhoneNumber = user.Phone;
 
                 var currentSubjectIds = this.dbContext.CampusUserSubjects
                 .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId)
