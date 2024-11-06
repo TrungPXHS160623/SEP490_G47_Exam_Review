@@ -138,7 +138,7 @@
         if (isAuthenticated)
         {
 
-            var data = await AccountService.GetAssignedUserByExam(ExamId);
+            var data = await UserService.GetAssignedUserByExam(ExamId);
 
             if (data.IsSuccessful)
             {

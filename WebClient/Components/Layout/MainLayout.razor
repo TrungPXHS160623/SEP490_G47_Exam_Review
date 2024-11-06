@@ -145,7 +145,7 @@
         var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var roleId) ? roleId : 0;
         var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-        var resp = await AccountService.GetByIdAsync(userId);
+        var resp = await UserService.GetByIdAsync(userId);
 
         if (resp.IsSuccessful)
         {
@@ -192,14 +192,14 @@
 
     private async Task<AuthenticationResponse> GetKeys()
     {
-        var response = await AccountService.GetJWT();
+        var response = await UserService.GetJWT();
 
         return response;
     }
 
     public async Task Logout()
     {
-        await AccountService.ClearJWT();
+        await UserService.ClearJWT();
         CustomAuthStateProvider.NotifyUserLogout();
         NavManager.NavigateTo("/login", true);
     }

@@ -16,13 +16,7 @@ namespace WebApi.Controllers
         {
             this.reportRepository = reportRepository;
         }
-        [HttpGet("get-reports/by-lecturerId/{id:int}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetReportsByLecturerId(int id)
-        {
-            var data = await reportRepository.GetReportsByLecturerId(id);
-            return Ok(data);
-        }
+
         [HttpPost("SaveReport/{isSubmit:bool}")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateReport([FromBody] LectureExamResponse reportRequest, bool isSubmit)
@@ -31,13 +25,6 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-        [HttpPut("Edit-Report/{id}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> EditReport(int id, [FromBody] ReportRequest reportRequest)
-        {
-            var data = await reportRepository.EditReportById(id, reportRequest);
-            return Ok(data);
-        }
         [HttpGet("GetReportDuration/{assignmentId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetReportDuration(int assignmentId)
@@ -45,6 +32,7 @@ namespace WebApi.Controllers
             var data = await reportRepository.GetReportDuration(assignmentId);
             return Ok(data);
         }
+
         [HttpPost("UploadReportWithFiles/{isSubmit:bool}")]
         [AllowAnonymous]
         public async Task<IActionResult> UploadReportWithFiles([FromForm] LectureExamResponseFinal reportRequest, bool isSubmit)

@@ -4,8 +4,12 @@ using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using WebApi.IRepository;
 
 namespace WebApi.Repository
@@ -14,11 +18,13 @@ namespace WebApi.Repository
     {
         private readonly QuizManagementContext dbContext;
         private readonly ILogHistoryRepository logRepository;
+        private readonly IConfiguration config;
 
-        public UserRepository(QuizManagementContext dbContext, ILogHistoryRepository logRepository)
+        public UserRepository(QuizManagementContext dbContext, ILogHistoryRepository logRepository, IConfiguration config)
         {
             this.dbContext = dbContext;
             this.logRepository = logRepository;
+            this.config = config;
         }
         public async Task<RequestResponse> CreateAsync(UserRequest user)
         {
@@ -886,6 +892,125 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
+        }
+
+        public string GenerateToken(User acc)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var userClaims = new[]
+            {
+                new Claim(ClaimTypes.Email, acc.Mail!),
+                new Claim(ClaimTypes.NameIdentifier, acc.UserId.ToString()),
+                new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: config["Jwt:Issuer"],
+                audience: config["Jwt:Audience"],
+                claims: userClaims,
+                expires: DateTime.Now.AddDays(2),
+                signingCredentials: credentials
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<AuthenticationResponse> GoogleLoginCallback(string code)
+        {
+            try
+            {
+                AuthenticationResponse response = new AuthenticationResponse();
+
+                var tokenResponse = await GetGoogleTokenAsync(code);
+
+                if (!string.IsNullOrEmpty(tokenResponse.AccessToken))
+                {
+                    var userInfo = await GetGoogleUserInfoAsync(tokenResponse.AccessToken);
+
+                    if (userInfo != null)
+                    {
+                        var user = await FindOrCreateUserAsync(userInfo.Email);
+
+                        if (user != null)
+                        {
+                            var token = GenerateToken(user);
+                            Constants.JWTToken = token;
+                            await logRepository.LogAsync("Login in into system");
+                            return new AuthenticationResponse
+                            {
+                                IsSuccessful = true,
+                                Token = token
+                            };
+                        }
+                    }
+                }
+                return new AuthenticationResponse
+                {
+                    IsSuccessful = false,
+                    Message = "Login with Google failed."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticationResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        private async Task<User?> FindOrCreateUserAsync(string email)
+        {
+            try
+            {
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        Mail = email,
+                    };
+                    await dbContext.Users.AddAsync(user);
+                    await dbContext.SaveChangesAsync();
+                }
+                return user;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+        private async Task<TokenResponse> GetGoogleTokenAsync(string code)
+        {
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.google.com/o/oauth2/token");
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "code", code },
+                { "client_id", config["GoogleKeys:ClientId"] },
+                { "client_secret", config["GoogleKeys:ClientSecret"] },
+                { "redirect_uri", "https://localhost:7255/api/user/googlelogincallback" },
+                { "grant_type", "authorization_code" }
+            });
+
+            request.Content = content;
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<TokenResponse>(responseContent);
+        }
+
+        private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
+        {
+            using var client = new HttpClient();
+            var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}");
+            var json = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
         }
     }
 }

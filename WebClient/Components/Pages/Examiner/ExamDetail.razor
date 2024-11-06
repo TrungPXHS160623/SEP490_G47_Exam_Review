@@ -296,7 +296,7 @@
 
     public async Task GetHead()
     {
-        var resp = await this.AccountService.GetHeadOfDepartment(exam.SubjectId.Value, exam.CampusId.Value);
+        var resp = await this.UserService.GetHeadOfDepartment(exam.SubjectId.Value, exam.CampusId.Value);
 
         if (resp.IsSuccessful)
         {

@@ -140,7 +140,7 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetUserForExaminer(UserId,searchText);
+        var response = await UserService.GetUserForExaminer(UserId,searchText);
         if (response.IsSuccessful)
         {
             users = response.Items;

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Library.Common;
 using Library.Models.Dtos;
 using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
+using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -11,21 +13,15 @@ namespace WebApi.Controllers
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
+        private readonly IConfiguration config;
 
-        public UserController(IUserRepository userRepository, IMapper mapper)
+        public UserController(IUserRepository userRepository, IMapper mapper, IConfiguration config)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this.config = config;
         }
 
-        [HttpGet("get-all")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAllUser()
-        {
-            var data = await this.userRepository.GetAllAsync();
-
-            return Ok(data);
-        }
 
         [HttpGet("GetLectureBySubject/{subjectId}/{campusId}")]
         public async Task<IActionResult> GetLecture(int subjectId,int campusId)
@@ -48,15 +44,6 @@ namespace WebApi.Controllers
         {
             var userDomainModels = await userRepository.GetUserForExaminer(userId, filterQuery);
             return Ok(userDomainModels);
-        }
-
-        [HttpGet("get-all-with-filter-and-sort")]
-        public async Task<IActionResult> GetAllUserWithFilter([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? SortBy, [FromQuery] bool? IsAscending)
-        {
-            // Truyền filterOn và filterQuery vào GetAllWithFilterAsync
-            var userDomainModels = await userRepository.GetAllWithFilterAsync(filterOn, filterQuery);
-            var userDtos = mapper.Map<List<UserDto>>(userDomainModels);
-            return Ok(userDtos);
         }
 
         [HttpGet("get-by-id/{id:int}")]
@@ -133,6 +120,54 @@ namespace WebApi.Controllers
         {
             var data = await userRepository.GetLectureListByHead(userId);
             return Ok(data);
+        }
+
+        [HttpGet("GoogleLoginCallback")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleLoginCallback(string code)
+        {
+            var response = await userRepository.GoogleLoginCallback(code);
+            if (response.IsSuccessful)
+            {
+                return Redirect($"https://localhost:7158/home");
+            }
+
+            return Redirect("https://localhost:7158/error");
+        }
+
+        [HttpGet("google-keys")]
+        [AllowAnonymous]
+        public IActionResult GetGoogleKeys()
+        {
+            var clientId = config["GoogleKeys:ClientId"];
+
+            return Ok(new
+            {
+                ClientId = clientId,
+            });
+        }
+
+        [HttpGet("GetJWT")]
+        [AllowAnonymous]
+        public IActionResult GetJWT()
+        {
+            return Ok(new AuthenticationResponse
+            {
+                IsSuccessful = true,
+                Token = Constants.JWTToken,
+            });
+        }
+
+        [HttpGet("ClearJWT")]
+        [AllowAnonymous]
+        public IActionResult ClearJWT()
+        {
+            Constants.JWTToken = string.Empty;
+
+            return Ok(new RequestResponse
+            {
+                IsSuccessful = true,
+            });
         }
     }
 }

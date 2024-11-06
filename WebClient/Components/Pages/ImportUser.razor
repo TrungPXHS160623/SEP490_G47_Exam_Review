@@ -110,7 +110,7 @@
         try
         {
             // Call the service method with the single file
-            var response = await AccountService.ImportUserFromExcel(file);
+            var response = await UserService.ImportUserFromExcel(file);
 
             if (response.IsSuccessful)
             {

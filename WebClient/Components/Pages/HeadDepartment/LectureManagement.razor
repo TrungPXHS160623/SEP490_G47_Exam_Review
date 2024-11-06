@@ -150,7 +150,7 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetLectureListByHead(UserId);
+        var response = await UserService.GetLectureListByHead(UserId);
         if (response.IsSuccessful)
         {
             users = response.Items;
@@ -190,7 +190,7 @@
             }
             else
             {
-                var response = await AccountService.DeleteAsync(UserId);
+                var response = await UserService.DeleteAsync(UserId);
                 if (response.IsSuccessful)
                 {
                     await FetchUsers();
