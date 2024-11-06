@@ -165,7 +165,13 @@
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    //statusList = sList.Items;
+                    statusList = sList.Items.Where(x => x.ExamStatusId == 2 || x.ExamStatusId == 3).ToList();
+                }
+
+                var semesterrList = await this.SemesterService.GetSemester();
+                if (semesterrList.IsSuccessful)
+                {
+                    semesters = semesterrList.Items;
                 }
 
                 if (Layout != null)
