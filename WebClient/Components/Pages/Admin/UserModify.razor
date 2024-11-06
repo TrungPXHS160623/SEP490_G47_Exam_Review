@@ -169,7 +169,7 @@ else
 
     private async Task FetchUserDetails()
     {
-        var result = await AccountService.GetByIdAsync(UserId.Value);
+        var result = await UserService.GetByIdAsync(UserId.Value);
         if (result != null)
         {
             user = result.Item;
@@ -186,11 +186,11 @@ else
         }
         else if (UserId != null && isAddOrEdit == true)
         {
-            resp = await AccountService.UpdateAsync(user);
+            resp = await UserService.UpdateAsync(user);
         }
         else
         {
-            resp = await AccountService.CreateAsync(user);
+            resp = await UserService.CreateAsync(user);
         }
 
         if (resp.IsSuccessful)

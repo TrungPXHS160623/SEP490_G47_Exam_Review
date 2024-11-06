@@ -73,34 +73,21 @@ public class Program
         builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         // Add DI for repositories and AutoMapper
-        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<IExaminerRepository, ExaminerRepository>();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
         builder.Services.AddScoped<IMenuRepository, MenuRepository>();
         builder.Services.AddScoped<ICampusRepository, CampusRepository>();
         builder.Services.AddScoped<IRoleRepository, RoleRepository>();
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
-
-        builder.Services.AddScoped<IAssignRepository, AssignRepository>();
         builder.Services.AddScoped<IReportRepository, ReportRepository>();
-
-        builder.Services.AddScoped<IExamAssignRepository, ExamAssignRepository>();
-		builder.Services.AddScoped<IEditStatusRepository, EditStatusRepository>();
         builder.Services.AddScoped<IStatusRepository, StatusRepository>();
         builder.Services.AddScoped<ISendMailRepository, SendMailRepository>();
-
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
         builder.Services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
         builder.Services.AddScoped<IReportRepository, ReportRepository>();
-
-		builder.Services.AddScoped<IEstimatedTimeRepository, EstimatedTimeRepository>();
-
 		builder.Services.AddScoped<IGenerateExcelRepository, GenerateExcelRepository>();
-		builder.Services.AddScoped<ILecturerBySubjectRepository, LecturerBySubjectRepository>();
 		builder.Services.AddScoped<ILogHistoryRepository, LogHistoryRepository>();
-
         builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
         builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
         

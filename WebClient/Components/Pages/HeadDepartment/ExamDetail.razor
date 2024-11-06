@@ -99,7 +99,7 @@
             }
         }
 
-        var result = await AccountService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
+        var result = await UserService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
         if (result != null)
         {
             LectureList = result.Items;

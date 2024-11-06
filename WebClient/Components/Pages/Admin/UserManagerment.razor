@@ -141,7 +141,7 @@
 
     private async Task FetchUsers()
     {
-        var response = await AccountService.GetUserForAdmin(searchText);
+        var response = await UserService.GetUserForAdmin(searchText);
         if (response.IsSuccessful)
         {
             users = response.Items;
@@ -181,7 +181,7 @@
             }
             else
             {
-                var response = await AccountService.DeleteAsync(UserId);
+                var response = await UserService.DeleteAsync(UserId);
                 if (response.IsSuccessful)
                 {
                     await FetchUsers();

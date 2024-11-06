@@ -61,7 +61,7 @@ namespace WebClient
             builder.Services.AddScoped<CustomAuthenticationStateProvider>();
             builder.Services.AddAuthorizationCore();
 
-            builder.Services.AddTransient<IAccountService, AccountService>();
+            builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IMenuService, MenuService>();
             builder.Services.AddTransient<ICampusService, CampusService>();
             builder.Services.AddTransient<IRoleService, RoleService>();

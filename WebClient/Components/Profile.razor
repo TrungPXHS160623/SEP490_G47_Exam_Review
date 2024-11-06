@@ -90,7 +90,7 @@
         var user = auth.User;
         var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-        var resp = await AccountService.GetByIdAsync(userId);
+        var resp = await UserService.GetByIdAsync(userId);
 
         if (resp.IsSuccessful)
         {

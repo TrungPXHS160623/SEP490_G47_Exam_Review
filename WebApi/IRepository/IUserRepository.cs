@@ -37,5 +37,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<UserResponse>> GetAssignedUserByExam(int examId);
 
+        Task<AuthenticationResponse> GoogleLoginCallback(string code);
+
     }
 }

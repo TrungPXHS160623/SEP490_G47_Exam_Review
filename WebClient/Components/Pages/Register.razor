@@ -109,7 +109,7 @@
     public async Task RegisterAccount()
     {
         _processing = true;
-        var resp = await this.AccountService.RegisterUserAsync(request);
+        var resp = await this.UserService.RegisterUserAsync(request);
         if (resp.IsSuccessful)
         {
             _processing = false;
