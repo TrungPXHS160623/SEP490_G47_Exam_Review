@@ -703,35 +703,40 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-    //exam by status
-    public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
-    {
-        // Your existing implementation
-        IQueryable<Exam> query = _context.Exams
-            .Include(e => e.Campus);
+	//exam by status
+	// exam by status
+	public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
+	{
+		IQueryable<Exam> query = _context.Exams
+			.Include(e => e.Campus)
+			.Include(e => e.Subject); // Đảm bảo bao gồm môn học
 
-        if (statusId.HasValue)
-        {
-            query = query.Where(e => e.ExamStatusId == statusId.Value);
-        }
+		if (statusId.HasValue)
+		{
+			query = query.Where(e => e.ExamStatusId == statusId.Value);
+		}
 
-        if (campusId.HasValue)
-        {
-            query = query.Where(e => e.CampusId == campusId.Value);
-        }
+		if (campusId.HasValue)
+		{
+			query = query.Where(e => e.CampusId == campusId.Value);
+		}
 
-        var results = await query.Select(e => new ExamByStatusResponse
-        {
-            ExamStatus = e.ExamStatus.StatusContent,
-            ExamCode = e.ExamCode,
-            Campus = e.Campus.CampusName,
-            Lecturer = e.Creater.Mail
-        }).ToListAsync();
+		var results = await query.Select(e => new ExamByStatusResponse
+		{
+			ExamStatus = e.ExamStatus.StatusContent,
+			ExamCode = e.ExamCode,
+			Campus = e.Campus.CampusName,			
+			Lecturer = string.Join(", ", _context.CampusUserSubjects
+				.Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId && cus.IsLecturer == true)
+				.Select(cus => cus.User.FullName))
+		}).ToListAsync();
 
-        return (results, results.Count);
-    }
+		return (results, results.Count);
+	}
 
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+
+
+	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();
     }
