@@ -1,61 +1,68 @@
-﻿@page "/HeadDepartment/lectureManagement"
+﻿@page "/HeadDepartment/LectureManagement"
 
 @inject HttpClient Http
-<h1 style="text-align: center;">User Management</h1>
+<h1 style="text-align: center;" class="mb-4">Lecturer Management</h1>
 <style>
     td {
         vertical-align: middle
     }
 </style>
 <div class="d-flex justify-content-center">
-    <div class="w-75">
+    <div class="w-75 custom-box">
+        <h5 class="text-center mb-4 mt-4">List of lecturers currently teaching the subjects you oversee.</h5>
         <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
-            <label class="me-5">User: </label>
-            <input class="form-control me-4" type="text" @bind="searchText" placeholder="Search users" />
-            <button class="btn btn-success col-auto me-4" @onclick="FetchUsers">Search</button>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddNewUser">Add New User</MudButton>
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.CloudUpload"
-                       OnClick="OpenImportDialogAsync">
-                Import User
-            </MudButton>
-        </div>
+            <div class="col me-4">
+                <MudTextField @bind-Value="searchText" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
+             </div>
+             <div class="me-4">
+                 <button class="btn btn-success me-3" @onclick="FetchUsers">Search</button>
+             </div>
+             <div class="me-4">
+                 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddNewUser">Add New Lecturer</MudButton>
+             </div>
+             <div class="me-4">
+                 <MudButton Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.CloudUpload"
+                            OnClick="OpenImportDialogAsync">
+                     Import Lecturer
+                 </MudButton>
+             </div>
+         </div>
 
-        @if (users.Count > 0)
+         @if (users.Count > 0)
         {
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered text-center">
+                <!-- Center table content -->
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Email</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
                         <th>Is Active</th>
-                        <th>Role</th>
-                        <th>Campus</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (users != null)
                     {
-                        int index = 1;
                         @foreach (var user in users)
                         {
                             <tr>
-                                <td>@index</td>
+                                <td>@(users.IndexOf(user) + 1)</td>
                                 <td>
                                     <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
                                 </td>
-                                <td>
+                                <td>@user.UserName</td>
+                                <td>@user.Tel</td>
+                                <td class="d-flex justify-content-center">
                                     <MudCheckBox @bind-Value="@user.IsActive" Disabled></MudCheckBox>
-                                </td>
-                                <td>@user.RoleName</td>
-                                <td>@user.CampusName</td>
-                                <td>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ViewUserDetail(user.UserId)"></MudIconButton>
-                                </td>
-                            </tr>
-                            index++;
+                                 </td>
+                                 <td>
+                                     <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
+                                 </td>
+                             </tr>
                         }
                     }
                 </tbody>
@@ -89,7 +96,7 @@
             var user = auth.User;
             UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(UserId, 10);
+            var response = await MenuServive.CheckAccess(UserId, 12);
 
             if (!response.IsSuccessful)
             {
@@ -103,7 +110,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader = "Lecturer Management";
                     Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }
@@ -112,10 +119,12 @@
 
 
     }
+
     private void AddNewUser()
     {
-        NavManager.NavigateTo($"/Examiner/AddUser");
+        NavManager.NavigateTo($"/HeadDepartment/AddUser");
     }
+
     private async Task OpenImportDialogAsync()
     {
         var options = new DialogOptions
@@ -129,7 +138,7 @@
 
         var parameters = new DialogParameters<ImportUser>();
 
-        var dialog = await DialogService.ShowAsync<ImportUser>("Import User", parameters, options);
+        var dialog = await DialogService.ShowAsync<ImportUser>("Import Lecturer", parameters, options);
 
         var result = await dialog.Result;
 
@@ -148,9 +157,51 @@
         }
     }
 
+    private async Task DeleteUser(int UserId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to delete this account?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Account", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var currentUserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            if (currentUserId == UserId)
+            {
+                this.Snackbar.Add("You cannot delete your current account", Severity.Warning);
+            }
+            else
+            {
+                var response = await AccountService.DeleteAsync(UserId);
+                if (response.IsSuccessful)
+                {
+                    await FetchUsers();
+                }
+            }
+        }
+    }
+
     private void ViewUserDetail(int userId)
     {
-        NavManager.NavigateTo($"/Examiner/EditUser/{userId}");
+        NavManager.NavigateTo($"/HeadDepartment/EditLecturer/{userId}");
     }
 
 }

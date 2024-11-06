@@ -160,10 +160,7 @@
 
         if (isAuthenticated)
         {
-            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-            var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
-            var resp = await ExamServive.GetLectureExamById(ExamId,userId);
+            var resp = await ExamServive.GetLectureExamById(ExamId);
 
             if (resp.IsSuccessful)
             {

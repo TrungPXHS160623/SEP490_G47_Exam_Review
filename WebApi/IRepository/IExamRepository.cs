@@ -20,7 +20,7 @@ namespace WebApi.IRepository
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
 
-        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId, int userId);
+        Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 
         Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
 

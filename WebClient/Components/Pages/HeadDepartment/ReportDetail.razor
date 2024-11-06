@@ -49,28 +49,11 @@
                     <label class="col-4 text-end me-3">Head of Department:</label>
                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
                 </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Reviewer:</label>
-                    <MudSelect T="int"
-                               Value="UserId"
-                               Variant="Variant.Outlined"
-                               Margin="Margin.Dense"
-                               AnchorOrigin="Origin.BottomCenter"
-                               ValueChanged="OnSelectedValueChanged">
-                        @if (UserList.Count > 0)
-                        {
-                            @foreach (var item in UserList)
-                            {
-                                <MudSelectItem T="int" Value="item.UserId">@item.Email</MudSelectItem>
-                            }
-                        }
-                    </MudSelect>
-                </div>
             </div>
             <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Duration:</label>
-                    <MudText>@exam.ExamDuration</MudText>
+                    <MudText>@exam.ExamDuration Minutes</MudText>
                 </div>
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Type:</label>
@@ -80,6 +63,10 @@
                     <label class="col-4 text-end me-3">Exam Estimate Date:</label>
                     <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
                 </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                        <MudText>@exam.AssignmentUserName</MudText>
+                    </div>
             </div>
         </div>
         <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
@@ -189,7 +176,7 @@
 
     public async Task GetReport()
     {
-        var resp = await ExamServive.GetLectureExamById(ExamId, UserId);
+        var resp = await ExamServive.GetLectureExamById(ExamId);
 
         if (resp.IsSuccessful)
         {

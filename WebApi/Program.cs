@@ -102,9 +102,8 @@ public class Program
 		builder.Services.AddScoped<ILogHistoryRepository, LogHistoryRepository>();
 
         builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
+        builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
         
-
-
 		var app = builder.Build();
 
 

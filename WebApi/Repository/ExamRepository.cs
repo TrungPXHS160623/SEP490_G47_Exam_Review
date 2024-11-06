@@ -214,8 +214,10 @@ public class ExamRepository : IExamRepository
                         join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join u2 in _context.Users on ex.CreaterId equals u2.UserId
+                        join u3 in _context.Users on ex.AssignedUserId equals u3.UserId into u3Group
+                        from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-                        where ex.ExamId == examId
+                        where ex.ExamId == examId && cus.IsLecturer == false
                         select new LeaderExamResponse
                         {
                             CreaterId = u2.UserId,
@@ -236,14 +238,8 @@ public class ExamRepository : IExamRepository
                             HeadDepartmentName = u1.Mail,
                             SubjectId = su.SubjectId,
                             SubjectName = su.SubjectName,
-                            LectureList = (from ia in _context.Exams
-                                           join u3 in _context.Users on ia.AssignedUserId equals u3.UserId
-                                           where ia.ExamId == ex.ExamId
-                                           select new UserResponse
-                                           {
-                                               UserId = u3.UserId,
-                                               Email = u3.Mail
-                                           }).ToList(),
+                            AssignedLectureId = u3.UserId,
+                            AssignedLectureName = u3.Mail,
                             UpdateDate = ex.UpdateDate,
                         }).FirstOrDefault();
 
@@ -263,7 +259,7 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId, int userId)
+    public async Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId)
     {
         try
         {
@@ -276,7 +272,8 @@ public class ExamRepository : IExamRepository
                               join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                               from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                               join u2 in _context.Users on ex.CreaterId equals u2.UserId
-                              where ex.ExamId == examId && ex.AssignedUserId == userId
+                              join u3 in _context.Users on ex.AssignedUserId equals u3.UserId
+                              where ex.ExamId == examId
                               select new LectureExamResponse
                               {
                                   CreaterId = u2.UserId,
@@ -293,6 +290,7 @@ public class ExamRepository : IExamRepository
                                   AssignStatusId = ex.ExamStatusId,
                                   AssignStatusContent = ex.ExamStatus.StatusContent,
                                   AssignmentDate = ex.AssignmentDate,
+                                  AssignmentUserName = u3.Mail,
                                   ExamType = ex.ExamType,
                                   HeadDepartmentId = u1.UserId,
                                   HeadDepartmentName = u1.Mail,

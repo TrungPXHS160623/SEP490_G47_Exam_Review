@@ -1,0 +1,235 @@
+﻿@page "/HeadDepartment/EditLecturer/{UserId:int}"
+@page "/HeadDepartment/AddLecturer"
+
+@if (!isAddOrEdit)
+{
+    <h1 style="text-align: center;">Update Lecturer</h1>
+}
+else
+{
+    <h1 style="text-align: center;">Add Lecturer</h1>
+}
+<div class="d-flex justify-content-center">
+    <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="custom-box w-50">
+        <FluentValidationValidator />
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">Email:</label>
+            <div class="col-auto">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.Email + "@fpt.edu.vn")</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.Email" Disabled Class="col-auto" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" For="@(() => user.Email)" />
+                }
+            </div>
+        </div>
+
+
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">User Name:</label>
+            <div class="col-auto">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.UserName)</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
+                }
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">Phone Number:</label>
+            <div class="col-auto">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(user.Phone)</MudText>
+                }
+                else
+                {
+                    <MudTextField @bind-Value="user.Phone" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
+                }
+            </div>
+        </div>
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">Faculty:</label>
+            <div class="col-auto">
+                @if (!isAddOrEdit)
+                {
+                    <MudText>@(facultyList.FirstOrDefault(x => x.FacultyId == user.FacultyId)?.FacultyName ?? "N/A")</MudText>
+                }
+                else
+                {
+                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
+                        @foreach (var item in facultyList)
+                        {
+                            <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </div>
+        </div>
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">Subject:</label>
+            <div class="@(!isAddOrEdit ? string.Empty : "col-auto")">
+                <MudSelect T="SubjectResponse"
+                           @bind-SelectedValues=@user.SubjectResponses
+                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+                           MultiSelection="true"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled=@(!isAddOrEdit)
+                           HelperText="Only display avaliable subject"
+                           Class="">
+                    @if (subjectList.Count() > 0)
+                    {
+                        @foreach (var item in subjectList)
+                        {
+                            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+                <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-center">
+            <label class="col-4 text-end pe-4">Active:</label>
+            <div class="col-8">
+                <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit )" />
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-evenly">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    [Parameter]
+    public int? UserId { get; set; }
+
+    private UserSubjectRequest user = new();
+
+
+    private List<Faculty> facultyList = new();
+
+    private List<SubjectResponse> subjectList = new();
+
+    private bool isAddOrEdit { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuServive.CheckAccess(userId, 12);
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                if (UserId != null)
+                {
+                    await FetchUserDetails();
+
+                    await GetFacultyList();
+                    
+                    await GetSubjectList();
+                }
+                else
+                {
+                    isAddOrEdit = true;
+                }
+
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+    }
+
+    private async Task FetchUserDetails()
+    {
+        var result = await AccountService.GetUserSubjectByIdAsync(UserId.Value);
+        if (result != null)
+        {
+            user = result.Item;
+        }
+    }
+
+    private async Task GetSubjectList()
+    {
+        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        if (result != null)
+        {
+            subjectList = result.Items;
+        }
+    }
+
+    private async Task GetFacultyList()
+    {
+        var result = await FacultyService.GetFaculties();
+        if (result != null)
+        {
+            facultyList = result.Items;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        RequestResponse resp = new();
+
+        if (UserId != null && isAddOrEdit == false)
+        {
+            isAddOrEdit = true;
+        }
+        else if (UserId != null && isAddOrEdit == true)
+        {
+            resp = await AccountService.ExaminerUpdateUserAsync(user);
+        }
+        else
+        {
+            resp = await AccountService.CreateAsync(user);
+        }
+        if (resp.IsSuccessful)
+        {
+            NavManager.NavigateTo("/HeadDepartment/LectureManagement");
+        }
+    }
+
+    private void Cancel()
+    {
+        if (UserId != null && isAddOrEdit == true)
+        {
+            isAddOrEdit = false;
+        }
+        else
+        {
+            NavManager.NavigateTo("/HeadDepartment/LectureManagement");
+        }
+    }
+}
+

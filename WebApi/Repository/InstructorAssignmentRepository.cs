@@ -22,37 +22,19 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.DBcontext.Exams.Where(x => x.ExamId == req.ExamId).ToListAsync();
+                var data = await this.DBcontext.Exams.Where(x => x.ExamId == req.ExamId).FirstOrDefaultAsync();
 
-                var addLecture = req.LectureList.Where(x => !data.Any(y => y.AssignedUserId == x.UserId)).ToList();
-
-                if (addLecture.Any())
+                if(data != null)
                 {
-                    foreach (var item in addLecture)
-                    {
-                        var newData = new Exam
-                        {
-                            AssignedUserId = item.UserId,
-                            AssignmentDate = DateTime.Now,
-                            ExamId = req.ExamId,
-                            ExamStatusId = 3,
-                            CreateDate = DateTime.Now,
-                            UpdateDate = DateTime.Now
-                        };
-
-                        await this.DBcontext.Exams.AddAsync(newData);
-                    }
-                }
-
-
-                var removeLecture = data.Where(x => !req.LectureList.Any(y => y.UserId == x.AssignedUserId)).ToList();
-
-                if (removeLecture.Any())
+                    data.AssignedUserId = req.AssignedLectureId;
+                    data.ExamStatusId = 3;
+                } else
                 {
-                    foreach (var item in removeLecture)
+                    return new RequestResponse
                     {
-                        this.DBcontext.Exams.Remove(item);
-                    }
+                        IsSuccessful = false,
+                        Message = "Exam not found",
+                    };
                 }
 
                 await this.DBcontext.SaveChangesAsync();
