@@ -24,7 +24,9 @@
 
         public string? HeadDepartmentName { get; set; }
 
-        public IEnumerable<UserResponse> LectureList { get; set; } = new HashSet<UserResponse>();
+        public int? AssignedLectureId { get; set; }
+
+        public string? AssignedLectureName { get; set; }
 
         public int? CampusId { get; set; }
 

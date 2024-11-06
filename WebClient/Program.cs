@@ -73,6 +73,7 @@ namespace WebClient
             builder.Services.AddTransient<ISemesterService, SemesterService>();
             builder.Services.AddTransient<IInstructorAssignmentService, InstructorAssignmentService>();
             builder.Services.AddTransient<IUserHistoryService, UserHistoryService>();
+            builder.Services.AddTransient<IFacultyService, FacultyService>();
 
             var app = builder.Build();
 

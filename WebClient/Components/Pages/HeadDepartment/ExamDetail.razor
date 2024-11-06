@@ -9,59 +9,61 @@
         color: black;
     }
 </style>
-<MudDialog>
-    <DialogContent>
-        <div class="form-group mb-4">
-            <label class="col-4 text-end me-4">Exam Code:</label>
-            <MudText>@exam.ExamCode</MudText>
-        </div>
+<EditForm Model="exam" OnValidSubmit="DialogConfirm">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <div class="form-group mb-4">
+                <label class="col-4 text-end me-4">Exam Code:</label>
+                <MudText>@exam.ExamCode</MudText>
+                </div>
 
-        <div class="form-group mb-4">
-            <label class="col-4 text-end  me-4">Subject Name:</label>
-            <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-4 text-end  me-4">Exam Creater:</label>
-            <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-        </div>
-        <div class="form-group mb-4">
-            <label class="col-4 text-end  me-4">Lecturer :</label>
-            <div>
-                <MudSelect T="UserResponse"
-                           @bind-SelectedValues=@exam.LectureList
-                           Text="@("Selected Lecture : " + exam.LectureList.Count())"
-                           MultiSelection="true"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Placeholder="Choose Lecture to Assign to this Exam"
-                           HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")">
-                    @if (LectureList.Count() > 0)
-                    {
-                        @foreach (var item in LectureList)
+                <div class="form-group mb-4">
+                    <label class="col-4 text-end  me-4">Subject Name:</label>
+                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="col-4 text-end  me-4">Exam Creater:</label>
+                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="col-4 text-end  me-4">Lecturer :</label>
+                    <div>
+                        <MudSelect @bind-Value=exam.AssignedLectureId
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   AnchorOrigin="Origin.BottomCenter"
+                                   Placeholder="Choose Lecture to Review"
+                                   HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")"
+                                   For="@(() => exam.AssignedLectureId)">
+                            @if (LectureList.Count() > 0)
                         {
-                            <MudSelectItem T="UserResponse" Disabled=@(exam.ExamStatusId != 2 && CurrentLectureList.Any(x => x.UserId == item.UserId)) Value="@item">@item.Email</MudSelectItem>
+                            @foreach (var item in LectureList)
+                            {
+                                <MudSelectItem T=int? Value="@item.UserId">@item.Email</MudSelectItem>
+                            }
                         }
-                    }
-                </MudSelect>
+                    </MudSelect>
+                </div>
             </div>
-        </div>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" OnClick=Excute Disabled="@_processing">
-            @if (_processing)
-            {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                <MudText Class="ms-2">Saving</MudText>
-            }
-            else
-            {
-                <MudText>Assign Now</MudText>
-            }
-        </MudButton>
-        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-    </DialogActions>
-</MudDialog>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer)">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Saving</MudText>
+                }
+                else
+                {
+                    <MudText>Assign Now</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
 
 
 
@@ -76,9 +78,9 @@
 
     private LeaderExamResponse exam = new LeaderExamResponse();
 
-    private IEnumerable<UserResponse> LectureList = new List<UserResponse>();
+    private List<UserResponse> LectureList = new List<UserResponse>();
 
-    private IEnumerable<UserResponse> CurrentLectureList = new List<UserResponse>();
+    public int? CurrentReviewer { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
@@ -91,7 +93,10 @@
         if (resp.IsSuccessful)
         {
             exam = resp.Item;
-            CurrentLectureList = exam.LectureList;
+            if (exam.AssignedLectureId != null)
+            {
+                CurrentReviewer = exam.AssignedLectureId;
+            }
         }
 
         var result = await AccountService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
@@ -103,20 +108,17 @@
 
     public async Task Excute()
     {
+        _processing = true;
         var resp = await AssignmentServive.AssignExamToLecture(exam);
 
         if (resp.IsSuccessful)
         {
             List<MailUtil> list = new();
-
-            foreach (var item in exam.LectureList)
-            {
-                var mail = new MailUtil
-                    {
-                        MailTo = item.Email
-                    };
-                list.Add(mail);
-            }
+            var mail = new MailUtil
+                {
+                    MailTo = LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email
+                };
+            list.Add(mail);
 
             var mailModel = new MailModel
                 {
@@ -129,14 +131,54 @@
 
             if (result.IsSuccessful)
             {
-                var x = await this.ExamServive.ChangeStatusExamById(ExamId.Value, 3);
                 MudDialog.Close(DialogResult.Ok(true));
             }
         }
+        _processing = false;
     }
 
-    private void RemoveLecturer(UserResponse lecturer)
+    private async Task DialogConfirm()
     {
+        if (exam.AssignedLectureId == CurrentReviewer)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            var options = new DialogOptions
+                {
+                    CloseOnEscapeKey = true,
+                    MaxWidth = MaxWidth.ExtraSmall,
+                    FullWidth = true,
+                    BackdropClick = false,
+                };
+            string contentMessage = string.Empty;
+
+            if (CurrentReviewer == null && exam.AssignedLectureId != null)
+            {
+                contentMessage = $"Assign this exam to lecturer {LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email} to review?";
+            }
+            else if (CurrentReviewer != null && exam.AssignedLectureId != null)
+            {
+                contentMessage = $"Are you sure want to change the reviewer from {exam.AssignedLectureName} to {LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email}";
+            }
+
+            var parameters = new DialogParameters<Dialog>
+            {
+                { x => x.Content, contentMessage},
+                { x => x.BtnTextConfirm, "Confirm" },
+                { x => x.BtnTextCancel, "Cancel" },
+            };
+
+            var dialog = await DialogService.ShowAsync<Dialog>("Assign Exam to Review", parameters, options);
+
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+            {
+                await Excute();
+            }
+        }
 
     }
 }

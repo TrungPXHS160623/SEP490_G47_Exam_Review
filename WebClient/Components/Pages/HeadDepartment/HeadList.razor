@@ -127,7 +127,6 @@
     public MainLayout Layout { get; set; }
 
     public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
-    private HashSet<LeaderExamResponse> selectedExams = new HashSet<LeaderExamResponse>();
     public List<Semester> semesters = new List<Semester>();
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -135,13 +134,12 @@
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
-        { 1, "#C0C0C0" }, // Not Assign
-        { 2, "#FFD700" }, // Pending
-        { 3, "#1E90FF" }, // Assigned
-        { 4, "#FFA500" }, // Reviewed
-        { 6, "#32CD32" }, // Faultless
-        { 7, "#228B22" }, // Complete
-        { 5, "#FF6347" }, // Erroneous
+        { 1, "#A9A9A9" }, // Unassigned
+        { 2, "#1E90FF" }, // Assigned
+        { 3, "#FFD700" }, // Reviewing
+        { 4, "#FF6347" }, // Erroneous
+        { 5, "#90EE90" }, // Faultless
+        { 6, "#008000" }, // Completed
     };
 
     protected override async Task OnInitializedAsync()
@@ -225,30 +223,5 @@
                            .ToList();
 
         }
-        selectedExams.Clear();
-    }
-
-    private async Task AssignExam()
-    {
-
-    }
-
-    public string[] CheckSelectedExam()
-    {
-        List<string> errors = new List<string>();
-
-        var examsWithWrongStatus = selectedExams.Where(x => x.ExamStatusId != 1).ToList();
-        foreach (var exam in examsWithWrongStatus)
-        {
-            errors.Add($"Exam {exam.ExamCode} is already assigned. Cannot Re-Assign!");
-        }
-
-        var examsWithMissingDates = selectedExams.Where(x => x.EndDate == null || x.StartDate == null).ToList();
-        foreach (var exam in examsWithMissingDates)
-        {
-            errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
-        }
-
-        return errors.ToArray();
     }
 }

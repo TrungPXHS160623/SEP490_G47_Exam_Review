@@ -67,13 +67,12 @@
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
-        { 1, "#C0C0C0" }, // Not Assign
-        { 2, "#FFD700" }, // Waiting to Assign
-        { 3, "#1E90FF" }, // Assigned
-        { 4, "#FFA500" }, // Reviewing
-        { 5, "#32CD32" }, // Finish Review
-        { 6, "#228B22" }, // Complete
-        { 7, "#FF6347" }, // Cancel
+        { 1, "#A9A9A9" }, // Unassigned
+        { 2, "#1E90FF" }, // Assigned
+        { 3, "#FFD700" }, // Reviewing
+        { 4, "#FF6347" }, // Erroneous
+        { 5, "#90EE90" }, // Faultless
+        { 6, "#008000" }, // Completed
     };
 
     protected override async Task OnInitializedAsync()

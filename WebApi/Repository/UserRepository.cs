@@ -249,7 +249,7 @@ namespace WebApi.Repository
                             RoleId = u.RoleId,
                             RoleName = r != null ? r.RoleName : null,
                             UserId = u.UserId,
-                            Phone = u.PhoneNumber,
+                            Phone = u.PhoneNumber,  
                             UserName = u.FullName,
                             SubjectResponses = (from s in this.dbContext.Subjects
                                                 join cus in this.dbContext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
@@ -846,32 +846,31 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = (from u in dbContext.Users
-                            where u.UserId == userId
-                            select new UserResponse
-                            {
-                                UserId = u.UserId,
-                                UserName = u.FullName,
-                                Email = u.Mail
-                            }).ToList();
+                //var data = (from u in dbContext.Users
+                //            where u.UserId == userId
+                //            select new UserResponse
+                //            {
+                //                UserId = u.UserId,
+                //                UserName = u.FullName,
+                //                Email = u.Mail
+                //            }).ToList();
 
-                //   var result = (from cus_truong in dbContext.CampusUserSubjects
-                //                 join cus_giangvien in dbContext.CampusUserSubjects
-                //                 on cus_truong.SubjectId equals cus_giangvien.SubjectId
-                //                 join u in dbContext.Users
-                //                 on cus_giangvien.UserId equals u.UserId
-                //                 where cus_truong.UserId == userId
-                //                       && cus_truong.IsLecturer == false
-                //                       && cus_giangvien.IsLecturer == true
-                //                 select new
-                //                 {
-                //                     u.UserId,
-                //                     u.FullName,
-                //                     u.Mail,
-                //                     u.PhoneNumber
-                //                 })
-                //.Distinct()
-                //.ToList();
+                var data = (from cus_head in dbContext.CampusUserSubjects
+                              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
+                              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
+                              where cus_head.UserId == userId
+                                    && cus_head.IsLecturer == false
+                                    && cus_lecturer.IsLecturer == true
+                              select new UserResponse
+                              {
+                                  UserId = u.UserId,
+                                  UserName = u.FullName,
+                                  Email = u.Mail,
+                                  Tel = u.PhoneNumber,
+                                  IsActive = u.IsActive,
+                              })
+                .Distinct()
+                .ToList();
 
                 return new ResultResponse<UserResponse>
                 {
