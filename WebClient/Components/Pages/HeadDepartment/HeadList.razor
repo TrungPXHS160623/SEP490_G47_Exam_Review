@@ -133,16 +133,16 @@
     public ExamSearchRequest request = new();
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
-{
-    { 1, "#D3D3D3" }, // Unassigned
-    { 2, "#87CEEB" }, // Assigned
-    { 3, "#FFD700" }, // Awaiting Lecturer Confirm
-    { 4, "#6495ED" }, // Reviewing
-    { 5, "#FF4500" }, // Error
-    { 6, "#32CD32" }, // OK
-    { 7, "#006400" }, // Completed
-    { 8, "#DC143C" }  // Discard
-};
+    {
+        { 1, "#D3D3D3" }, // Unassigned
+        { 2, "#87CEEB" }, // Assigned
+        { 3, "#FFD700" }, // Awaiting Lecturer Confirm
+        { 4, "#6495ED" }, // Reviewing
+        { 5, "#FF4500" }, // Error
+        { 6, "#32CD32" }, // OK
+        { 7, "#006400" }, // Completed
+        { 8, "#DC143C" }  // Discard
+    };
 
     protected override async Task OnInitializedAsync()
     {
