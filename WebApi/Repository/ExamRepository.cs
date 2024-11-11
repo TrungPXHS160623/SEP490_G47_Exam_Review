@@ -217,7 +217,9 @@ public class ExamRepository : IExamRepository
                         join u3 in _context.Users on ex.AssignedUserId equals u3.UserId into u3Group
                         from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-                        where ex.ExamId == examId && cus.IsLecturer == false
+                        where ex.ExamId == examId 
+                        //&& cus.IsLecturer == false
+
                         select new LeaderExamResponse
                         {
                             CreaterId = u2.UserId,
@@ -361,7 +363,7 @@ public class ExamRepository : IExamRepository
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
                         &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                              && cus.IsLecturer == false
+                              //&& cus.IsLecturer == false
                         select new ExaminerExamResponse
                         {
                             SemseterName = sem.SemesterName,
@@ -412,7 +414,7 @@ public class ExamRepository : IExamRepository
                               where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
                                     && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                                     && req.UserId == u1.UserId
-                                    && cus.IsLecturer == false
+                                    //&& cus.IsLecturer == false
                               select new LeaderExamResponse
                               {
                                   SemesterName = sem.SemesterName,
@@ -460,7 +462,7 @@ public class ExamRepository : IExamRepository
                               from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                               where ((req.StatusId == null && ex.ExamStatusId != 1 && ex.ExamStatusId != 2) || ex.ExamStatusId == req.StatusId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                              && cus.IsLecturer == false
+                              //&& cus.IsLecturer == false
                               select new LectureExamResponse
                               {
                                   EndDate = ex.EndDate,
@@ -727,7 +729,7 @@ public class ExamRepository : IExamRepository
 			ExamCode = e.ExamCode,
 			Campus = e.Campus.CampusName,			
 			Lecturer = string.Join(", ", _context.CampusUserSubjects
-				.Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId && cus.IsLecturer == true)
+				.Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId /*&& cus.IsLecturer == true*/)
 				.Select(cus => cus.User.FullName))
 		}).ToListAsync();
 
