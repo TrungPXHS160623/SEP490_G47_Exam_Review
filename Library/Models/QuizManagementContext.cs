@@ -44,6 +44,8 @@ public partial class QuizManagementContext : DbContext
 
     public virtual DbSet<Faculty> Faculties { get; set; }
 
+    public virtual DbSet<CampusUserFaculty> CampusUserFaculties { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -69,13 +71,8 @@ public partial class QuizManagementContext : DbContext
 
             entity.HasIndex(e => e.UserId, "IX_CampusUserSubject_UserId");
 
-            entity.HasIndex(e => e.SemesterId, "IX_CampusUserSubject_SemesterId");
-
             entity.Property(e => e.Id).HasColumnName("id");
 
-            entity.Property(e => e.IsLecturer)
-            .IsRequired()
-            .HasDefaultValue(false);
             entity.HasOne(d => d.Campus).WithMany(p => p.CampusUserSubjects)
 
                 .HasForeignKey(d => d.CampusId)
@@ -88,9 +85,35 @@ public partial class QuizManagementContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.CampusUserSubjects)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_CampusUserSubject_Users");
-            entity.HasOne(d => d.Semester).WithMany(p => p.CampusUserSubjects)
-               .HasForeignKey(d => d.SemesterId)
-               .HasConstraintName("FK_CampusUserSubject_Semesters");
+        });
+
+        modelBuilder.Entity<CampusUserFaculty>(entity =>
+        {
+            entity.ToTable("CampusUserFaculty");
+
+            // Khóa chính
+            entity.HasKey(e => e.Id);
+
+            // Indexes cho các cột liên kết
+            entity.HasIndex(e => e.CampusId, "IX_CampusUserFaculty_CampusId");
+            entity.HasIndex(e => e.UserId, "IX_CampusUserFaculty_UserId");
+            entity.HasIndex(e => e.FacultyId, "IX_CampusUserFaculty_FacultyId");
+
+            // Thiết lập khóa ngoại
+            entity.HasOne(d => d.Campus)
+                  .WithMany(p => p.CampusUserFaculties)
+                  .HasForeignKey(d => d.CampusId)
+                  .HasConstraintName("FK_CampusUserFaculty_Campuses");
+
+            entity.HasOne(d => d.User)
+                  .WithMany(p => p.CampusUserFaculties)
+                  .HasForeignKey(d => d.UserId)
+                  .HasConstraintName("FK_CampusUserFaculty_Users");
+
+            entity.HasOne(d => d.Faculty)
+                  .WithMany(p => p.CampusUserFaculties)
+                  .HasForeignKey(d => d.FacultyId)
+                  .HasConstraintName("FK_CampusUserFaculty_Faculties");
         });
 
         modelBuilder.Entity<Exam>(entity =>
@@ -155,15 +178,12 @@ public partial class QuizManagementContext : DbContext
 
         modelBuilder.Entity<Faculty>(entity =>
         {
-            entity.HasIndex(e => e.DeanId, "IX_Faculties_DeanId");
 
             entity.Property(e => e.Description).HasMaxLength(500);
 
             entity.Property(e => e.FacultyName).HasMaxLength(100);
 
-            entity.HasOne(d => d.Dean)
-                .WithMany(p => p.Faculties)
-                .HasForeignKey(d => d.DeanId);
+            
         });
 
         modelBuilder.Entity<Report>(entity =>
@@ -278,21 +298,43 @@ public partial class QuizManagementContext : DbContext
             new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Error", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "OK", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 8, StatusContent = "Rejected", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
         // Seed data for Faculty table
         modelBuilder.Entity<Faculty>().HasData(
-			new Faculty { FacultyId = 1, FacultyName = "IB", Description = "The program focuses on international business practices and global market dynamics.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 2, FacultyName = "SE", Description = "A field dedicated to the principles and practices of software development and engineering.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 3, FacultyName = "AI", Description = "This discipline focuses on artificial intelligence, machine learning, and data-driven decision-making.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 4, FacultyName = "MC", Description = "A program combining multimedia, communications, and management for the digital media industry.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }, 
-		    new Faculty { FacultyId = 5, FacultyName = "ENG", Description = "Dedicated to English language studies and cross-cultural communication.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 6, FacultyName = "JPN", Description = "Specializes in Japanese language, culture, and international relations.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 7, FacultyName = "KOR", Description = "Focuses on Korean language, culture, and regional studies.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Faculty { FacultyId = 8, FacultyName = "CHN", Description = "Provides training in Chinese language, culture, and business practices.", DeanId = null, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+			new Faculty { FacultyId = 1, FacultyName = "Artificial Intelligence", Description = "The study and creation of systems that can perform tasks requiring human-like intelligence, such as learning and problem-solving.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 2, FacultyName = "BLOC", Description = "A field focusing on core skills in business, law, operations, and communication for professional success.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 3, FacultyName = "Business Administration", Description = "The study of managing and overseeing business operations, including planning, organization, and leadership", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 4, FacultyName = "Chinese", Description = "The study of the Chinese language, culture, and communication skills.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }, 
+		    new Faculty { FacultyId = 5, FacultyName = "Computer Science", Description = "The study of computation, algorithms, programming, and the design of software and hardware systems.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 6, FacultyName = "Computing Fundamental", Description = "An introduction to core computing concepts, including basic programming, data processing, and system operations.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 7, FacultyName = "English", Description = "The study of the English language, including grammar, literature, and communication skills.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 8, FacultyName = "English Preparation Course", Description = "A course designed to enhance language skills in reading, writing, speaking, and listening, preparing students for academic or professional English proficiency.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 9, FacultyName = "Extra Classes", Description = "Additional sessions designed to provide supplementary learning in various subjects to reinforce or expand students' knowledge and skills.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 10, FacultyName = "Finance", Description = "The study of managing money, investments, financial systems, and the principles of budgeting and financial decision-making.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 11, FacultyName = "Graduate", Description = "A program or course designed for students who have completed an undergraduate degree, focusing on advanced studies and specialized knowledge in a particular field.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 12, FacultyName = "Graphic Design", Description = "The art of creating visual content to communicate messages, combining elements like typography, images, and colors to design logos, advertisements, websites, and more.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 13, FacultyName = "Information Assurance", Description = "The practice of protecting and managing information systems to ensure their confidentiality, integrity, and availability, focusing on risk management and security measures.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 14, FacultyName = "Information Technology Specialization", Description = "A focused study of advanced topics in IT, such as network management, cybersecurity, software development, and database administration.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 15, FacultyName = "Japanese", Description = "The study of the Japanese language, including its grammar, vocabulary, writing systems, and cultural aspects.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 16, FacultyName = "Korean", Description = "The study of the Korean language, including its grammar, vocabulary, writing systems (Hangul), and cultural nuances.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 17, FacultyName = "LAB", Description = "A practical learning environment where students conduct experiments, apply theoretical knowledge, and gain hands-on experience in various scientific or technical fields.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 18, FacultyName = "Little UK", Description = "A program or initiative that offers an immersive learning experience focused on British culture, language, and educational practices, often designed to enhance students' understanding of the UK.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 19, FacultyName = "Management", Description = "The study of planning, organizing, and overseeing resources and processes to achieve organizational goals efficiently and effectively.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 20, FacultyName = "Mathematics", Description = "The study of numbers, quantities, shapes, and patterns, focusing on problem-solving, logic, and abstract reasoning.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 21, FacultyName = "Multimedia Communications", Description = "The study of using various media formats—such as text, audio, video, and graphics—to communicate information effectively across different platforms and technologies.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 22, FacultyName = "On the job training", Description = "A practical learning process where employees acquire skills and knowledge by performing tasks and duties in a real work environment under the guidance of experienced colleagues or supervisors.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 23, FacultyName = "OR", Description = "The application of mathematical models, statistical analysis, and optimization techniques to solve complex decision-making problems and improve efficiency in business, logistics, and other systems.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 24, FacultyName = "Physical Training", Description = "The practice of improving physical fitness and performance through exercises, workouts, and conditioning to enhance strength, endurance, and overall health.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 25, FacultyName = "SAP", Description = "A leading enterprise resource planning (ERP) software that helps organizations manage business processes by integrating key functions like finance, supply chain, human resources, and customer relationships.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 26, FacultyName = "Soft Skill", Description = "Non-technical skills that relate to how individuals interact with others, such as communication, teamwork, problem-solving, adaptability, and leadership.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 27, FacultyName = "Software Engineering", Description = "The application of engineering principles to the design, development, testing, and maintenance of software systems, ensuring they are efficient, reliable, and scalable.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 28, FacultyName = "Start Your Business", Description = "A program or course focused on teaching the fundamentals of launching and managing a new business, including idea development, business planning, marketing, and financial management.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 29, FacultyName = "Traditional Instrument", Description = "The study and practice of playing musical instruments that are indigenous to specific cultures, often passed down through generations, such as the violin, guitar, sitar, or drums.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Faculty { FacultyId = 30, FacultyName = "Vietnamese", Description = "The study of the Vietnamese language, including its grammar, vocabulary, pronunciation, and cultural context.", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
 
@@ -343,55 +385,144 @@ public partial class QuizManagementContext : DbContext
         // 6. Seed data for Subject table
         modelBuilder.Entity<Subject>().HasData(
 
-            // Seed data for software engineering major
-            new Subject { SubjectId = 1, FacultyId = 2, SubjectCode = "PRN211", SubjectName = "Basic Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 2, FacultyId = 2, SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 3, FacultyId = 2, SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 4, FacultyId = 2, SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 5, FacultyId = 2, SubjectCode = "NWC203c", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            // Seed data for Artificial Intelligence
+            new Subject { SubjectId = 1, FacultyId = 1, SubjectCode = "ADY201m", SubjectName = "Data Science with Python & SQL", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 2, FacultyId = 1, SubjectCode = "AID301c", SubjectName = "AI in Production", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 3, FacultyId = 1, SubjectCode = "AIE301m", SubjectName = "AI for Trading", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 4, FacultyId = 1, SubjectCode = "AIG202c", SubjectName = "Artificial Intelligence", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 5, FacultyId = 1, SubjectCode = "AIH301m", SubjectName = "AI in Healthcare", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            
+            new Subject { SubjectId = 6, FacultyId = 1, SubjectCode = "AIL303m", SubjectName = "Machine Learning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 7, FacultyId = 1, SubjectCode = "AIM301m", SubjectName = "AI for Medicine", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 8, FacultyId = 1, SubjectCode = "ASR301c", SubjectName = "AI for Scientific Research", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 9, FacultyId = 1, SubjectCode = "BDI301c", SubjectName = "Big Data", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 10, FacultyId = 1, SubjectCode = "BDI302c", SubjectName = "Big Data", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 11, FacultyId = 1, SubjectCode = "CPV301", SubjectName = "Computer Vision", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 12, FacultyId = 1, SubjectCode = "DAP391m", SubjectName = "AI-DS Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 13, FacultyId = 1, SubjectCode = "DAT301m", SubjectName = "AI Development with TensorFlow", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 14, FacultyId = 1, SubjectCode = "DBM302m", SubjectName = "Data Mining", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 15, FacultyId = 1, SubjectCode = "DPL301m", SubjectName = "Deep Learing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 16, FacultyId = 1, SubjectCode = "DPL302m", SubjectName = "Deep Learning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 17, FacultyId = 1, SubjectCode = "DSR301m", SubjectName = "Applied Data Science with R", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 18, FacultyId = 1, SubjectCode = "DWP301c", SubjectName = "Web Development with Python", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 19, FacultyId = 1, SubjectCode = "NLP301c", SubjectName = "Natural Language Processing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 20, FacultyId = 1, SubjectCode = "PRP201c", SubjectName = "Python programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 21, FacultyId = 1, SubjectCode = "REL301m", SubjectName = "Reinforcement Learning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            // Seed data for international business major
-            new Subject { SubjectId = 6, FacultyId = 1, SubjectCode = "ENM401", SubjectName = "Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 7, FacultyId = 1, SubjectCode = "ECO121", SubjectName = "Basic Macro Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 8, FacultyId = 1, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 9, FacultyId = 1, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 10, FacultyId = 1, SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+
+
+            // Seed data for BLOC
+            new Subject { SubjectId = 22, FacultyId = 2, SubjectCode = "BDP306b", SubjectName = "Final Project - Blockchain Development in Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+            // Seed data for BLOC
+            new Subject { SubjectId = 23, FacultyId = 3, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 24, FacultyId = 3, SubjectCode = "ACC302", SubjectName = "Managerial Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 25, FacultyId = 3, SubjectCode = "ACC305", SubjectName = "Financial Statement Analysis", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 26, FacultyId = 3, SubjectCode = "ADS301m", SubjectName = "Google Ads và Seo", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 27, FacultyId = 3, SubjectCode = "CAA201", SubjectName = "Communications and advertising", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 28, FacultyId = 3, SubjectCode = "CIH201", SubjectName = "Contemporary issues in hotel and tourism management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 29, FacultyId = 3, SubjectCode = "DMA301m", SubjectName = "Digital Marketing Analytics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 30, FacultyId = 3, SubjectCode = "DMS301m", SubjectName = "Digital Marketing Strategy", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 31, FacultyId = 3, SubjectCode = "ECO102", SubjectName = "Business Environment", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 32, FacultyId = 3, SubjectCode = "ECO111", SubjectName = "Microeconomics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 33, FacultyId = 3, SubjectCode = "ECO201", SubjectName = "International Economics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 34, FacultyId = 3, SubjectCode = "EXE101", SubjectName = "Experiential Entrepreneurship 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 35, FacultyId = 3, SubjectCode = "EXE201", SubjectName = "Experiential Entrepreneurship 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 36, FacultyId = 3, SubjectCode = "FIM302c", SubjectName = "Financial modelling", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 37, FacultyId = 3, SubjectCode = "FIN201", SubjectName = "Monetary Economics and Global Economy", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 38, FacultyId = 3, SubjectCode = "FIN202", SubjectName = "Principles of Corporate Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 39, FacultyId = 3, SubjectCode = "FIN301", SubjectName = "Financial Markets and Institutions", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 40, FacultyId = 3, SubjectCode = "FIN303", SubjectName = "Advanced Corporate Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 41, FacultyId = 3, SubjectCode = "FIN306c", SubjectName = "Financial Reporting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 42, FacultyId = 3, SubjectCode = "FIN308", SubjectName = "International Corporate Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 43, FacultyId = 3, SubjectCode = "FIN402", SubjectName = "Derivatives", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 44, FacultyId = 3, SubjectCode = "FIN403", SubjectName = "Mergers and Acquisitions", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 45, FacultyId = 3, SubjectCode = "HRM201c", SubjectName = "Human Resource Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 46, FacultyId = 3, SubjectCode = "IBC201", SubjectName = "Cross Cultural Management and Negotiation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 47, FacultyId = 3, SubjectCode = "IBF301", SubjectName = "International Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 48, FacultyId = 3, SubjectCode = "IBI101", SubjectName = "Introduction to International business", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 49, FacultyId = 3, SubjectCode = "IBS301m", SubjectName = "International Business Strategy", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 50, FacultyId = 3, SubjectCode = "IEI301", SubjectName = "Import and Export", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 51, FacultyId = 3, SubjectCode = "IIP301", SubjectName = "International payment", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 52, FacultyId = 3, SubjectCode = "IPR102", SubjectName = "Intellectual Property Rights", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 53, FacultyId = 3, SubjectCode = "LAW102", SubjectName = "Business Law and Ethics Fundamentals", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 54, FacultyId = 3, SubjectCode = "LAW201c", SubjectName = "International Business Law", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 55, FacultyId = 3, SubjectCode = "LOG311", SubjectName = "Customs Operations", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 56, FacultyId = 3, SubjectCode = "MGT103", SubjectName = "Introduction to Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 57, FacultyId = 3, SubjectCode = "MKT101", SubjectName = "Marketing Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 58, FacultyId = 3, SubjectCode = "MKT201", SubjectName = "Consumer Behavior", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 59, FacultyId = 3, SubjectCode = "MKT202", SubjectName = "Services Marketing Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 60, FacultyId = 3, SubjectCode = "MKT205c", SubjectName = "International Marketing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 61, FacultyId = 3, SubjectCode = "MKT208c", SubjectName = "Social media marketing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 62, FacultyId = 3, SubjectCode = "MKT209m", SubjectName = "Content Marketing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 63, FacultyId = 3, SubjectCode = "MKT301", SubjectName = "Marketing Research", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 64, FacultyId = 3, SubjectCode = "MKT304", SubjectName = "Integrated Marketing Communications", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 65, FacultyId = 3, SubjectCode = "MKT309m ", SubjectName = "Omnichannel marketing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 66, FacultyId = 3, SubjectCode = "OBE102c", SubjectName = "Organizational Behavior", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 67, FacultyId = 3, SubjectCode = "RES201", SubjectName = "Food Preparation & Science", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 68, FacultyId = 3, SubjectCode = "RES213", SubjectName = "Wines, Beers, Spirits 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 69, FacultyId = 3, SubjectCode = "RES301", SubjectName = "Food and Beverage Cost Control", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 70, FacultyId = 3, SubjectCode = "RMB301", SubjectName = "Business Research Methods", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 71, FacultyId = 3, SubjectCode = "RMB302", SubjectName = "Research Methods & Quantitative Analysis", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 72, FacultyId = 3, SubjectCode = "SAL301", SubjectName = "Professional Selling", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 73, FacultyId = 3, SubjectCode = "SCM201", SubjectName = "Supply Chain Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 74, FacultyId = 3, SubjectCode = "SCM301m", SubjectName = "Procurement and Global Sourcing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 75, FacultyId = 3, SubjectCode = "SYB302c", SubjectName = "Entrepreneurship", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            
+           
+
+
+
+
+
+
+
 
         );
 
         modelBuilder.Entity<CampusUserSubject>().HasData(
 
-            //Seed data for Heads of Department of Ha Noi campus
-            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 9, SemesterId = 1 },
-            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 9, SemesterId = 1 },
-            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 9, SemesterId = 1 },
-			new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 10, SemesterId = 1 },
-			new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 10, SemesterId = 1 },
+           //Seed data for Heads of Department of Ha Noi campus
+           //new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 9 },
+           //new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 9 },
+           //new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 9 },
+		   //new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 10 },
+		   //new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 10 },
 
-			new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 11, SemesterId = 2 },
-            new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 11, SemesterId = 2 },
-            new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 11, SemesterId = 2 },
+		   //new CampusUserSubject { Id = 6, SubjectId = 6, CampusId = 1, UserId = 11 },
+           //new CampusUserSubject { Id = 7, SubjectId = 7, CampusId = 1, UserId = 11},
+           //new CampusUserSubject { Id = 8, SubjectId = 8, CampusId = 1, UserId = 1 },
             
 
             //Seed data for Lecturer of Ha Noi campus
-            new CampusUserSubject { Id = 9, SubjectId = 1, CampusId = 1, UserId = 5, IsLecturer = true, SemesterId = 1 },
-            new CampusUserSubject { Id = 10, SubjectId = 2, CampusId = 1, UserId = 5, IsLecturer = true, SemesterId = 1 },
-            new CampusUserSubject { Id = 11, SubjectId = 3, CampusId = 1, UserId = 5, IsLecturer = true, SemesterId = 1 },
-			new CampusUserSubject { Id = 12, SubjectId = 4, CampusId = 1, UserId = 6, IsLecturer = true, SemesterId = 1 },
-			new CampusUserSubject { Id = 13, SubjectId = 5, CampusId = 1, UserId = 6, IsLecturer = true, SemesterId = 1 },
+            new CampusUserSubject { Id = 9, SubjectId = 1, CampusId = 1, UserId = 5 },
+            new CampusUserSubject { Id = 10, SubjectId = 2, CampusId = 1, UserId = 5},
+            new CampusUserSubject { Id = 11, SubjectId = 3, CampusId = 1, UserId = 5 },
+			new CampusUserSubject { Id = 12, SubjectId = 4, CampusId = 1, UserId = 6 },
+			new CampusUserSubject { Id = 13, SubjectId = 5, CampusId = 1, UserId = 6},
 
-			new CampusUserSubject { Id = 14, SubjectId = 6, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 2 },
-            new CampusUserSubject { Id = 15, SubjectId = 7, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 2 },
-            new CampusUserSubject { Id = 16, SubjectId = 8, CampusId = 1, UserId = 7, IsLecturer = true, SemesterId = 2 },
+			new CampusUserSubject { Id = 14, SubjectId = 6, CampusId = 1, UserId = 7 },
+            new CampusUserSubject { Id = 15, SubjectId = 7, CampusId = 1, UserId = 7 },
+            new CampusUserSubject { Id = 16, SubjectId = 8, CampusId = 1, UserId = 7}
         
 
-            // Seed data for Heads of Department of Da Nang campus
-            new CampusUserSubject { Id = 17, SubjectId = 1, CampusId = 2, UserId = 8, SemesterId = 1 },
-            new CampusUserSubject { Id = 18, SubjectId = 2, CampusId = 2, UserId = 8, SemesterId = 1 },
-            new CampusUserSubject { Id = 19, SubjectId = 3, CampusId = 2, UserId = 8, SemesterId = 1 },
-            new CampusUserSubject { Id = 20, SubjectId = 4, CampusId = 2, UserId = 8, SemesterId = 1 },
-            new CampusUserSubject { Id = 21, SubjectId = 5, CampusId = 2, UserId = 8, SemesterId = 1 }
+            //// Seed data for Heads of Department of Da Nang campus
+            //new CampusUserSubject { Id = 17, SubjectId = 1, CampusId = 2, UserId = 8},
+            //new CampusUserSubject { Id = 18, SubjectId = 2, CampusId = 2, UserId = 8 },
+            //new CampusUserSubject { Id = 19, SubjectId = 3, CampusId = 2, UserId = 8 },
+            //new CampusUserSubject { Id = 20, SubjectId = 4, CampusId = 2, UserId = 8 },
+            //new CampusUserSubject { Id = 21, SubjectId = 5, CampusId = 2, UserId = 8 }
         );
+        modelBuilder.Entity<CampusUserFaculty>().HasData(
+        //Seed data for Heads of Department of Ha Noi campus
+        new CampusUserFaculty { Id = 1, CampusId = 1, UserId = 9 , FacultyId = 1},
+        new CampusUserFaculty { Id = 2, CampusId = 1, UserId = 9 , FacultyId = 2 },
+        new CampusUserFaculty { Id = 3, CampusId = 1, UserId = 9 , FacultyId = 3 },
+        new CampusUserFaculty { Id = 4, CampusId = 1, UserId = 10 , FacultyId = 4 },
+        new CampusUserFaculty { Id = 5, CampusId = 1, UserId = 10 , FacultyId = 5 }
+
+        );
+
 
         // 7. Seed data for Exam table
         modelBuilder.Entity<Exam>().HasData(

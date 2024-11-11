@@ -13,9 +13,9 @@ public partial class CampusUserSubject
 
     public int? UserId { get; set; }
 
-    public int? SemesterId { get; set; }
+    //public int? SemesterId { get; set; }
 
-    public bool? IsLecturer { get; set; }
+    //public bool? IsLecturer { get; set; }
 
     public virtual Campus? Campus { get; set; }
 
@@ -23,6 +23,5 @@ public partial class CampusUserSubject
 
     public virtual User? User { get; set; }
 
-    public virtual Semester? Semester { get; set; }
     
 }

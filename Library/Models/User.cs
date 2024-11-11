@@ -6,7 +6,6 @@ public partial class User
     {
         CampusUserSubjects = new HashSet<CampusUserSubject>();
         Exams = new HashSet<Exam>();
-        Faculties = new HashSet<Faculty>();
         UserHistories = new HashSet<UserHistory>();
     }
 
@@ -27,8 +26,10 @@ public partial class User
     public virtual Campus? Campus { get; set; }
     public virtual UserRole? Role { get; set; }
     public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; }
+
+    public virtual ICollection<CampusUserFaculty> CampusUserFaculties { get; set; } = new List<CampusUserFaculty>();
+
     public virtual ICollection<Exam> Exams { get; set; }
-    public virtual ICollection<Faculty> Faculties { get; set; }
     public virtual ICollection<UserHistory> UserHistories { get; set; }
 
 }

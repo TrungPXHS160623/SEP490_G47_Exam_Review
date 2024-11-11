@@ -382,7 +382,7 @@ namespace WebApi.Repository
                     UserId = user.UserId,
                     SubjectId = subjectId,
                     CampusId = user.CampusId,
-                    IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
+                    //IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
                 }).ToList();
 
                 if (newCampusUserSubjects.Any())
@@ -452,7 +452,7 @@ namespace WebApi.Repository
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where cus.CampusId == campusId
                               && cus.SubjectId == campusId
-                              && cus.IsLecturer == true
+                              //&& cus.IsLecturer == true
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -865,8 +865,8 @@ namespace WebApi.Repository
                               join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
                               join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
                               where cus_head.UserId == userId
-                                    && cus_head.IsLecturer == false
-                                    && cus_lecturer.IsLecturer == true
+                                    //&& cus_head.IsLecturer == false
+                                    //&& cus_lecturer.IsLecturer == true
                               select new UserResponse
                               {
                                   UserId = u.UserId,

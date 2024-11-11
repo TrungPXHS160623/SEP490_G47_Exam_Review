@@ -17,6 +17,9 @@ public partial class Campus
 
     public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; } = new List<CampusUserSubject>();
 
+    public virtual ICollection<CampusUserFaculty> CampusUserFaculties { get; set; } = new List<CampusUserFaculty>();
+
+
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();

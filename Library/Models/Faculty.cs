@@ -16,12 +16,13 @@ namespace Library.Models
         public int FacultyId { get; set; }
         public string FacultyName { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public int? DeanId { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
 
-        public virtual User? Dean { get; set; }
         public virtual ICollection<Subject> Subjects { get; set; }
+
+        public virtual ICollection<CampusUserFaculty> CampusUserFaculties { get; set; } = new List<CampusUserFaculty>();
+
 
     }
 }

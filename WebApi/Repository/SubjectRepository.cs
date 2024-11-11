@@ -225,10 +225,10 @@ namespace WebApi.Repository
                             where
                             (roleId == 4 && (
                                 // Điều kiện 1: Các môn mà UserId = X đang là chủ nhiệm tại campus của họ
-                                (cus != null && cus.UserId == userId && cus.IsLecturer == false && cus.CampusId == campusId)
+                                (cus != null && cus.UserId == userId /*&& cus.IsLecturer == false*/ && cus.CampusId == campusId)
                                 // Điều kiện 2: Hoặc các môn chưa có chủ nhiệm tại campus của user X
                                 || (cus == null || !this.DBcontext.CampusUserSubjects
-                                    .Any(other => other.SubjectId == s.SubjectId && other.IsLecturer == false && other.CampusId == campusId))
+                                    .Any(other => other.SubjectId == s.SubjectId /*&& other.IsLecturer == false*/ && other.CampusId == campusId))
                             ))
                             // Nếu RoleId = 3, lấy tất cả môn học
                             || roleId == 3
