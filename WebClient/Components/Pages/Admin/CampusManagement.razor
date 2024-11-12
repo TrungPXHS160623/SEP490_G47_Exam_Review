@@ -89,6 +89,14 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(50); 
+        }
+    }
+
     public async Task GetData()
     {
         var resp = await CampusServive.GetCampus();

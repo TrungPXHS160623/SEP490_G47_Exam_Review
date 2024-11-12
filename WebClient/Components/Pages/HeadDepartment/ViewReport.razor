@@ -28,19 +28,20 @@
         z-index: 99;
     }
 </style>
+<h1 style="text-align: center;">List Exam Report</h1>
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
             <div class="col me-4">
                 <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
-             </div>
-             <div class="me-4 col-2">
-                 <MudSelect @bind-Value="request.StatusId"
-                            Variant="Variant.Outlined"
-                            Label="Status"
-                            Margin="Margin.Dense"
-                            AnchorOrigin="Origin.BottomCenter"
-                                          Clearable>
+            </div>
+            <div class="me-4 col-2">
+                <MudSelect @bind-Value="request.StatusId"
+                           Variant="Variant.Outlined"
+                           Label="Status"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Clearable>
                     @if (statusList.Count > 0)
                     {
                         @foreach (var item in statusList)
@@ -57,8 +58,8 @@
                            Label="Semester"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
-                                          Clearable>
-                    @if (statusList.Count > 0)
+                           Clearable>
+                    @if (semesters.Count > 0)
                     {
                         @foreach (var item in semesters)
                         {
@@ -67,18 +68,16 @@
                     }
                 </MudSelect>
             </div>
-
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
-
         <div class="custom-box">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-between">
                 <div>
                     <h4>Report List</h4>
                 </div>
             </div>
             <div>
-                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="400px" Hover="true">
+                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
                     <HeaderContent>
                         <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
@@ -86,6 +85,7 @@
                         <MudTh>Status</MudTh>
                         <MudTh>Lecture Asigned</MudTh>
                         <MudTh>Assignment Date</MudTh>
+                        <MudTh>Semester</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -95,11 +95,12 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
-                        <MudTd>@context.HeadDepartmentName</MudTd>
+                        <MudTd>@context.AssignedLectureName</MudTd>
                         <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@context.SemesterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))">Report</MudButton>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))" Disabled="@(context.ExamStatusId == 4)">Report</MudButton>
                             </div>
                         </MudTd>
                     </RowTemplate>
@@ -167,7 +168,7 @@
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items.Where(x => x.ExamStatusId == 2 || x.ExamStatusId == 3).ToList();
+                    statusList = sList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3 ).ToList();
                 }
 
                 var semesterrList = await this.SemesterService.GetSemester();

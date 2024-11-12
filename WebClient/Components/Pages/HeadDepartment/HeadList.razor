@@ -28,6 +28,7 @@
         z-index: 99;
     }
 </style>
+
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
@@ -74,7 +75,6 @@
                 <div>
                     <h4>Exam List</h4>
                 </div>
-
             </div>
             <div>
                 <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
@@ -169,7 +169,7 @@
                 var sList = await this.StatusServive.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items;
+                    statusList = sList.Items.Where(x => x.ExamStatusId == 2 || x.ExamStatusId == 3).ToList();
                 }
 
                 if (Layout != null)

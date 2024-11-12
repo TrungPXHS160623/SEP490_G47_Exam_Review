@@ -54,7 +54,7 @@ else
                 }
             </div>
         </div>
-        <div class="mb-4 d-flex align-items-baseline">
+        @* <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end pe-4">Faculty:</label>
             <div class="col-auto">
                 @if (!isAddOrEdit)
@@ -71,29 +71,34 @@ else
                     </MudSelect>
                 }
             </div>
-        </div>
+        </div> *@
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end pe-4">Subject:</label>
-            <div class="@(!isAddOrEdit ? string.Empty : "col-auto")">
-                <MudSelect T="SubjectResponse"
-                           @bind-SelectedValues=@user.SubjectResponses
-                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
-                           MultiSelection="true"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@(!isAddOrEdit)
-                           HelperText="Only display avaliable subject"
-                           Class="">
-                    @if (subjectList.Count() > 0)
-                    {
-                        @foreach (var item in subjectList)
-                        {
-                            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
-                        }
-                    }
-                </MudSelect>
-                <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+            @* <div class="@(!isAddOrEdit ? string.Empty : "col-auto")">
+            <MudSelect T="SubjectResponse"
+            @bind-SelectedValues=@user.SubjectResponses
+            Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+            MultiSelection="true"
+            Variant="Variant.Outlined"
+            Margin="Margin.Dense"
+            AnchorOrigin="Origin.BottomCenter"
+            Disabled=@(!isAddOrEdit)
+            HelperText="Only display avaliable subject"
+            Class="">
+            @if (subjectList.Count() > 0)
+            {
+            @foreach (var item in subjectList)
+            {
+            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+            }
+            }
+            </MudSelect>
+            <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+            </div> *@
+            <div>
+                <MudTooltip Text="Displays a list of subjects the instructor is teaching">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow Ripple>Show Subject List</MudButton>
+                </MudTooltip>
             </div>
         </div>
 
@@ -151,7 +156,7 @@ else
                     await FetchUserDetails();
 
                     await GetFacultyList();
-                    
+
                     await GetSubjectList();
                 }
                 else

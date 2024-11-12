@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\HeadDepartment\SubjectList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="BootstrapBlazor" Version="8.7.2" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
@@ -30,6 +34,18 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\HeadDepartment\SubjectList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\HeadDepartment\SubjectList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Pages\HeadDepartment\SubjectList.razor" />
   </ItemGroup>
 
 </Project>

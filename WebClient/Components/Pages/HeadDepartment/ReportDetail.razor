@@ -63,10 +63,10 @@
                     <label class="col-4 text-end me-3">Exam Estimate Date:</label>
                     <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
                 </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                        <MudText>@exam.AssignmentUserName</MudText>
-                    </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@exam.AssignmentUserName</MudText>
+                </div>
             </div>
         </div>
         <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
@@ -106,14 +106,10 @@
             </div> *@
                 </div>
             }
-
-            <div class="report-content mb-4 p-4">
-                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
-            </div>
-        } else
-        {
-            <p class="text-danger">Not finish review yet</p>
         }
+        <div class="report-content mb-4 p-4">
+            <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
+        </div>
     </div>
 
 </div>
@@ -127,8 +123,6 @@
 
     public LectureExamResponse exam = new LectureExamResponse();
 
-    public List<UserResponse> UserList = new List<UserResponse>();
-
     public int UserId { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -137,14 +131,6 @@
 
         if (isAuthenticated)
         {
-
-            var data = await UserService.GetAssignedUserByExam(ExamId);
-
-            if (data.IsSuccessful)
-            {
-                UserList = data.Items;
-                UserId = UserList.FirstOrDefault()?.UserId ?? 0;
-            }
 
             await GetReport();
 

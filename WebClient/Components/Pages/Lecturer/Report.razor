@@ -129,12 +129,11 @@
             </div> *@
                     </div>
                 }
-
-                <div class="report-content mb-4 p-4">
-                    <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
-                </div>
             }
             <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
+            <div class="report-content mb-4 p-4">
+                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+            </div>
             <div class="d-flex">
                 <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => Excute(false))">Save</MudButton>
                 <MudButton StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => Excute(true))">Submit</MudButton>
