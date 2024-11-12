@@ -255,7 +255,7 @@ namespace WebApi.Repository
                             RoleId = u.RoleId,
                             RoleName = r != null ? r.RoleName : null,
                             UserId = u.UserId,
-                            Phone = u.PhoneNumber,  
+                            Phone = u.PhoneNumber,
                             UserName = u.FullName,
                             SubjectResponses = (from s in this.dbContext.Subjects
                                                 join cus in this.dbContext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
@@ -850,31 +850,25 @@ namespace WebApi.Repository
 
         public async Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId)
         {
+            var campusId = (await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == userId))?.CampusId;
+            var facutiID = (await this.dbContext.CampusUserFaculties.FirstOrDefaultAsync(x => x.UserId == userId))?.FacultyId;
             try
             {
-                //var data = (from u in dbContext.Users
-                //            where u.UserId == userId
-                //            select new UserResponse
-                //            {
-                //                UserId = u.UserId,
-                //                UserName = u.FullName,
-                //                Email = u.Mail
-                //            }).ToList();
-
                 var data = (from cus_head in dbContext.CampusUserSubjects
-                              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
-                              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
-                              where cus_head.UserId == userId
-                                    //&& cus_head.IsLecturer == false
-                                    //&& cus_lecturer.IsLecturer == true
-                              select new UserResponse
-                              {
-                                  UserId = u.UserId,
-                                  UserName = u.FullName,
-                                  Email = u.Mail,
-                                  Tel = u.PhoneNumber,
-                                  IsActive = u.IsActive,
-                              })
+                            join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
+                            join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
+                            join s in dbContext.Subjects on cus_lecturer.SubjectId equals s.SubjectId
+                            join f in dbContext.Faculties on cus_lecturer.Subject.Faculty.FacultyId equals f.FacultyId
+                            where cus_lecturer.CampusId == campusId
+                            && cus_lecturer.Subject.FacultyId == facutiID
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Email = u.Mail,
+                                Tel = u.PhoneNumber,
+                                IsActive = u.IsActive,
+                            })
                 .Distinct()
                 .ToList();
 

@@ -19,5 +19,13 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+        [HttpGet("GetFacutiByUserId/{UserID}")]
+        public async Task<IActionResult> GetFacutiByUserId(int UserID)
+        {
+            var data = await this._facultyRepository.GetFacutiByUserId(UserID);
+
+            return Ok(data);
+        }
+
     }
 }
