@@ -54,26 +54,26 @@ else
             </div>
         </div>
         <div class="mb-4 row">
-            <label class="col-4 text-end">Subject:</label>
+            <label class="col-4 text-end">Department:</label>
             <div class="col-8">
-                <MudSelect T="SubjectResponse"
-                           @bind-SelectedValues=@user.SubjectResponses
-                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+                <MudSelect T="FacutyResponse"
+                           @bind-SelectedValues=@user.FacutyResponse
+                           Text="@("Number of Subject : " + user.FacutyResponse.Count())"
                            MultiSelection="true"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
                            ReadOnly=@(!isAddOrEdit)
                            HelperText="Only display avaliable subject">
-                    @if (subjectList.Count() > 0)
+                    @if (facutyResponses.Count() > 0)
                     {
-                        @foreach (var item in subjectList)
+                        @foreach (var item in facutyResponses)
                         {
-                            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                            <MudSelectItem T="FacutyResponse" Value="@item">@($"[{item.FacultyName}] ")</MudSelectItem>
                         }
                     }
                 </MudSelect>
-                <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+                <span class="mt-2 text-nowrap">@(string.Join(", ", user.FacutyResponse.Select(x => $"[{x.FacultyName}]")))</span>
             </div>
         </div>
 
@@ -100,10 +100,8 @@ else
     public int? UserId { get; set; }
 
     private UserSubjectRequest user = new();
-
     private List<UserRole> roleList = new();
-
-    private List<SubjectResponse> subjectList = new();
+    private List<FacutyResponse> facutyResponses = new();
 
     private bool isAddOrEdit { get; set; } = false;
 
@@ -128,8 +126,7 @@ else
                 if (UserId != null)
                 {
                     await FetchUserDetails();
-
-                    await GetSubjectList();
+                    await GetFacutyList();
 
                 }
                 else
@@ -153,19 +150,19 @@ else
 
     private async Task FetchUserDetails()
     {
-        var result = await UserService.GetUserSubjectByIdAsync(UserId.Value);
+        var result = await UserService.GetUserFacutyByIdAsync(UserId.Value);
         if (result != null)
         {
             user = result.Item;
         }
     }
 
-    private async Task GetSubjectList()
+    private async Task GetFacutyList()
     {
-        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        var result = await FacultyService.GetFacutyByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
         if (result != null)
         {
-            subjectList = result.Items;
+            facutyResponses = result.Items;
         }
     }
 

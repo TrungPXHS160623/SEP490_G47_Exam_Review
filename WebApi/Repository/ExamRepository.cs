@@ -217,7 +217,7 @@ public class ExamRepository : IExamRepository
                         join u3 in _context.Users on ex.AssignedUserId equals u3.UserId into u3Group
                         from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-                        where ex.ExamId == examId 
+                        where ex.ExamId == examId
                         //&& cus.IsLecturer == false
 
                         select new LeaderExamResponse
@@ -354,8 +354,8 @@ public class ExamRepository : IExamRepository
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
                         join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
-                        join cus in _context.CampusUserSubjects
-                            on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
+                        join cus in _context.CampusUserFaculties
+                            on new { su.FacultyId, ex.CampusId } equals new { cus.FacultyId, cus.CampusId } into cusGroup
                         from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
                         join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
@@ -363,7 +363,6 @@ public class ExamRepository : IExamRepository
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
                         &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                              //&& cus.IsLecturer == false
                         select new ExaminerExamResponse
                         {
                             SemseterName = sem.SemesterName,
@@ -414,7 +413,7 @@ public class ExamRepository : IExamRepository
                               where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
                                     && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                                     && req.UserId == u1.UserId
-                                    //&& cus.IsLecturer == false
+                              //&& cus.IsLecturer == false
                               select new LeaderExamResponse
                               {
                                   SemesterName = sem.SemesterName,
@@ -705,40 +704,40 @@ public class ExamRepository : IExamRepository
         return response;
     }
 
-	//exam by status
-	// exam by status
-	public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
-	{
-		IQueryable<Exam> query = _context.Exams
-			.Include(e => e.Campus)
-			.Include(e => e.Subject); // Đảm bảo bao gồm môn học
+    //exam by status
+    // exam by status
+    public async Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null)
+    {
+        IQueryable<Exam> query = _context.Exams
+            .Include(e => e.Campus)
+            .Include(e => e.Subject); // Đảm bảo bao gồm môn học
 
-		if (statusId.HasValue)
-		{
-			query = query.Where(e => e.ExamStatusId == statusId.Value);
-		}
+        if (statusId.HasValue)
+        {
+            query = query.Where(e => e.ExamStatusId == statusId.Value);
+        }
 
-		if (campusId.HasValue)
-		{
-			query = query.Where(e => e.CampusId == campusId.Value);
-		}
+        if (campusId.HasValue)
+        {
+            query = query.Where(e => e.CampusId == campusId.Value);
+        }
 
-		var results = await query.Select(e => new ExamByStatusResponse
-		{
-			ExamStatus = e.ExamStatus.StatusContent,
-			ExamCode = e.ExamCode,
-			Campus = e.Campus.CampusName,			
-			Lecturer = string.Join(", ", _context.CampusUserSubjects
-				.Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId /*&& cus.IsLecturer == true*/)
-				.Select(cus => cus.User.FullName))
-		}).ToListAsync();
+        var results = await query.Select(e => new ExamByStatusResponse
+        {
+            ExamStatus = e.ExamStatus.StatusContent,
+            ExamCode = e.ExamCode,
+            Campus = e.Campus.CampusName,
+            Lecturer = string.Join(", ", _context.CampusUserSubjects
+                .Where(cus => cus.SubjectId == e.SubjectId && cus.CampusId == e.CampusId /*&& cus.IsLecturer == true*/)
+                .Select(cus => cus.User.FullName))
+        }).ToListAsync();
 
-		return (results, results.Count);
-	}
+        return (results, results.Count);
+    }
 
 
 
-	public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
+    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
     {
         throw new NotImplementedException();
     }

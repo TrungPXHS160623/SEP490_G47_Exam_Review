@@ -55,15 +55,14 @@ else
             </div>
         </div>
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end pe-4">Faculty:</label>
-            <div class="col-auto">
+            <label class="col-4 text-end pe-4">Faculty:</label> <div class="col-auto">
                 @if (!isAddOrEdit)
                 {
                     <MudText>@(facultyList.FirstOrDefault(x => x.FacultyId == user.FacultyId)?.FacultyName ?? "N/A")</MudText>
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
+                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Class="col-auto" @onchange="OnFacultyChange">
                         @foreach (var item in facultyList)
                         {
                             <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
@@ -71,29 +70,15 @@ else
                     </MudSelect>
                 }
             </div>
-        </div>
-        <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end pe-4">Subject:</label>
-            <div class="@(!isAddOrEdit ? string.Empty : "col-auto")">
-                <MudSelect T="SubjectResponse"
-                           @bind-SelectedValues=@user.SubjectResponses
-                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
-                           MultiSelection="true"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@(!isAddOrEdit)
-                           HelperText="Only display avaliable subject"
-                           Class="">
-                    @if (subjectList.Count() > 0)
-                    {
-                        @foreach (var item in subjectList)
+        </div> <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end pe-4">Subject:</label> <div class="@(!isAddOrEdit ? string.Empty : "col-auto")">
+                <MudSelect T="SubjectResponse" @bind-SelectedValues=@user.SubjectResponses Text="@("Number of Subject : " + user.SubjectResponses.Count())" MultiSelection="true" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Disabled=@(!isAddOrEdit) HelperText="Only display available subject" Class="">
+                    @if (filteredSubjectList.Count() > 0)
+                    { @foreach (var item in filteredSubjectList)
                         {
-                            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
-                        }
-                    }
-                </MudSelect>
-                <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+                            <MudSelectItem T="Subject" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                        }                  }
+                </MudSelect> <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
             </div>
         </div>
 
@@ -124,9 +109,22 @@ else
 
     private List<Faculty> facultyList = new();
 
-    private List<SubjectResponse> subjectList = new();
+    private List<Subject> subjectList = new();
 
     private bool isAddOrEdit { get; set; } = false;
+    private List<Subject> filteredSubjectList = new List<Subject>();
+    private void OnFacultyChange(ChangeEventArgs e)
+    {
+        var selectedFacultyId = (int?)e.Value;
+        if (selectedFacultyId.HasValue)
+        {
+            filteredSubjectList = subjectList.Where(x => x.FacultyId == selectedFacultyId.Value).ToList();
+        }
+        else
+        {
+            filteredSubjectList = new List<Subject>();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -151,7 +149,7 @@ else
                     await FetchUserDetails();
 
                     await GetFacultyList();
-                    
+
                     await GetSubjectList();
                 }
                 else
@@ -182,7 +180,7 @@ else
 
     private async Task GetSubjectList()
     {
-        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        var result = await SubjectServive.GetSubjects();
         if (result != null)
         {
             subjectList = result.Items;
@@ -191,7 +189,7 @@ else
 
     private async Task GetFacultyList()
     {
-        var result = await FacultyService.GetFaculties();
+        var result = await FacultyService.GetFacutiesByUserID(UserId);
         if (result != null)
         {
             facultyList = result.Items;

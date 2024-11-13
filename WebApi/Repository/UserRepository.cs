@@ -255,17 +255,17 @@ namespace WebApi.Repository
                             RoleId = u.RoleId,
                             RoleName = r != null ? r.RoleName : null,
                             UserId = u.UserId,
-                            Phone = u.PhoneNumber,  
+                            Phone = u.PhoneNumber,
                             UserName = u.FullName,
-                            SubjectResponses = (from s in this.dbContext.Subjects
-                                                join cus in this.dbContext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
-                                                where cus.UserId == u.UserId && cus.CampusId == u.CampusId
-                                                select new SubjectResponse
-                                                {
-                                                    SubjectId = s.SubjectId,
-                                                    SubjectCode = s.SubjectCode,
-                                                    SubjectName = s.SubjectName,
-                                                }).ToList()
+                            FacutyResponse = (from s in this.dbContext.Faculties
+                                              join cus in this.dbContext.CampusUserFaculties on s.FacultyId equals cus.FacultyId
+                                              where cus.UserId == u.UserId && cus.CampusId == u.CampusId
+                                              select new FacutyResponse
+                                              {
+                                                  FacultyId = s.FacultyId,
+                                                  FacultyName = s.FacultyName,
+                                                  Description = s.Description,
+                                              }).ToList()
                         }).FirstOrDefault();
 
             return new ResultResponse<UserSubjectRequest>
@@ -274,6 +274,43 @@ namespace WebApi.Repository
                 Item = data,
             };
         }
+        public async Task<ResultResponse<UserSubjectRequest>> GetUserFacutyByIdAsync(int id)
+        {
+            var data = (from u in this.dbContext.Users
+                        join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
+                        from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
+                        join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
+                        from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        where u.UserId == id
+                        select new UserSubjectRequest
+                        {
+                            Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
+                            CampusId = u.CampusId,
+                            CampusName = c != null ? c.CampusName : null,
+                            IsActive = u.IsActive,
+                            RoleId = u.RoleId,
+                            RoleName = r != null ? r.RoleName : null,
+                            UserId = u.UserId,
+                            Phone = u.PhoneNumber,
+                            UserName = u.FullName,
+                            FacutyResponse = (from s in this.dbContext.Faculties
+                                              join cus in this.dbContext.CampusUserFaculties on s.FacultyId equals cus.FacultyId
+                                              where cus.UserId == u.UserId && cus.CampusId == u.CampusId
+                                              select new FacutyResponse
+                                              {
+                                                  FacultyId = s.FacultyId,
+                                                  FacultyName = s.FacultyName,
+                                                  Description = s.Description,
+                                              }).ToList()
+                        }).FirstOrDefault();
+
+            return new ResultResponse<UserSubjectRequest>
+            {
+                IsSuccessful = true,
+                Item = data,
+            };
+        }
+
 
         public async Task<RequestResponse> UpdateAsync(UserRequest user)
         {
@@ -337,57 +374,57 @@ namespace WebApi.Repository
                 existingUser.FullName = user.UserName;
                 existingUser.PhoneNumber = user.Phone;
 
-                var currentSubjectIds = this.dbContext.CampusUserSubjects
+                var currentFacuti = this.dbContext.CampusUserFaculties
                 .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId)
-                 .Select(cus => cus.SubjectId)
+                 .Select(cus => cus.FacultyId)
                 .ToList();
 
                 // Lọc các SubjectId mới, loại bỏ null
-                var validNewSubjectIds = user.SubjectResponses.Select(id => id.SubjectId).ToList();
+                var validNewFacutyIds = user.FacutyResponse.Select(id => id.FacultyId).ToList();
 
                 // Tìm các SubjectId cần thêm
-                List<int> subjectsToAdd = new List<int>();
-                foreach (var subjectId in validNewSubjectIds)
+                List<int> facutiesToAdd = new List<int>();
+                foreach (var FacultyId in validNewFacutyIds)
                 {
-                    if (!currentSubjectIds.Contains(subjectId))
+                    if (!currentFacuti.Contains(FacultyId))
                     {
-                        subjectsToAdd.Add(subjectId); // Thêm vào danh sách cần thêm nếu không có trong currentSubjectIds
+                        facutiesToAdd.Add(FacultyId); // Thêm vào danh sách cần thêm nếu không có trong currentSubjectIds
                     }
                 }
 
                 // Tìm các SubjectId cần xóa
-                List<int> subjectsToRemove = new List<int>();
-                foreach (var subjectId in currentSubjectIds)
+                List<int> facutiesToRemove = new List<int>();
+                foreach (var FacultyId in currentFacuti)
                 {
-                    if (!validNewSubjectIds.Contains(subjectId.Value))
+                    if (!validNewFacutyIds.Contains(FacultyId.Value))
                     {
-                        subjectsToRemove.Add(subjectId.Value); // Thêm vào danh sách cần xóa nếu không có trong newSubjectIds
+                        facutiesToRemove.Add(FacultyId.Value); // Thêm vào danh sách cần xóa nếu không có trong newSubjectIds
                     }
                 }
 
                 // Xóa các môn học đã bị loại bỏ khỏi CampusUserSubjects
-                var campusUserSubjectsToRemove = this.dbContext.CampusUserSubjects
-                    .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId && subjectsToRemove.Contains(cus.SubjectId.Value))
+                var campusUserFacutiesToRemove = this.dbContext.CampusUserFaculties
+                    .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId && facutiesToRemove.Contains(cus.FacultyId.Value))
                     .ToList();
 
-                if (campusUserSubjectsToRemove.Any())
+                if (campusUserFacutiesToRemove.Any())
                 {
-                    this.dbContext.CampusUserSubjects.RemoveRange(campusUserSubjectsToRemove);
+                    this.dbContext.CampusUserFaculties.RemoveRange(campusUserFacutiesToRemove);
                     this.dbContext.SaveChanges(); // Lưu thay đổi
                 }
 
                 // Thêm các môn học mới vào CampusUserSubjects
-                var newCampusUserSubjects = subjectsToAdd.Select(subjectId => new CampusUserSubject
+                var newCampusUserFacutiess = facutiesToAdd.Select(facutyID => new CampusUserFaculty
                 {
                     UserId = user.UserId,
-                    SubjectId = subjectId,
+                    FacultyId = facutyID,
                     CampusId = user.CampusId,
                     //IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
                 }).ToList();
 
-                if (newCampusUserSubjects.Any())
+                if (newCampusUserFacutiess.Any())
                 {
-                    this.dbContext.CampusUserSubjects.AddRange(newCampusUserSubjects);
+                    this.dbContext.CampusUserFaculties.AddRange(newCampusUserFacutiess);
                     this.dbContext.SaveChanges(); // Lưu thay đổi
                 }
 
@@ -850,31 +887,25 @@ namespace WebApi.Repository
 
         public async Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId)
         {
+            var campusId = (await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == userId))?.CampusId;
+            var facutiID = (await this.dbContext.CampusUserFaculties.FirstOrDefaultAsync(x => x.UserId == userId))?.FacultyId;
             try
             {
-                //var data = (from u in dbContext.Users
-                //            where u.UserId == userId
-                //            select new UserResponse
-                //            {
-                //                UserId = u.UserId,
-                //                UserName = u.FullName,
-                //                Email = u.Mail
-                //            }).ToList();
-
                 var data = (from cus_head in dbContext.CampusUserSubjects
-                              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
-                              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
-                              where cus_head.UserId == userId
-                                    //&& cus_head.IsLecturer == false
-                                    //&& cus_lecturer.IsLecturer == true
-                              select new UserResponse
-                              {
-                                  UserId = u.UserId,
-                                  UserName = u.FullName,
-                                  Email = u.Mail,
-                                  Tel = u.PhoneNumber,
-                                  IsActive = u.IsActive,
-                              })
+                            join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
+                            join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
+                            join s in dbContext.Subjects on cus_lecturer.SubjectId equals s.SubjectId
+                            join f in dbContext.Faculties on cus_lecturer.Subject.Faculty.FacultyId equals f.FacultyId
+                            where cus_lecturer.CampusId == campusId
+                            && cus_lecturer.Subject.FacultyId == facutiID
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Email = u.Mail,
+                                Tel = u.PhoneNumber,
+                                IsActive = u.IsActive,
+                            })
                 .Distinct()
                 .ToList();
 
