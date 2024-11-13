@@ -97,7 +97,7 @@ else
             </div> *@
             <div>
                 <MudTooltip Text="Displays a list of subjects the instructor is teaching">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow Ripple>Show Subject List</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow Ripple OnClick="OpenSubjectListDialogAsync">Show Subject List</MudButton>
                 </MudTooltip>
             </div>
         </div>
@@ -143,7 +143,7 @@ else
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 12);
+            var response = await MenuService.CheckAccess(userId, 12);
 
             if (!response.IsSuccessful)
             {
@@ -168,8 +168,8 @@ else
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "User Management";
-                    Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
+                    Layout.SubHeader = "Lecturer Management";
+                    Layout.SubHeader1 = UserId != null ? "Edit Lecturer" : "Add Lecturer";
                     Layout.RefreshLayout();
                 }
             }
@@ -187,7 +187,7 @@ else
 
     private async Task GetSubjectList()
     {
-        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        var result = await SubjectService.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
         if (result != null)
         {
             subjectList = result.Items;
@@ -234,6 +234,32 @@ else
         else
         {
             NavManager.NavigateTo("/HeadDepartment/LectureManagement");
+        }
+    }
+
+    private async Task OpenSubjectListDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<SubjectList>
+        {
+            {x => x.UserId,UserId}
+        };
+
+        var dialog = await DialogService.ShowAsync<SubjectList>("Lecturer Teaching Subject List", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            
         }
     }
 }

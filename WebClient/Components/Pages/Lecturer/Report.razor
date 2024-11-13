@@ -159,7 +159,7 @@
 
         if (isAuthenticated)
         {
-            var resp = await ExamServive.GetLectureExamById(ExamId);
+            var resp = await ExamService.GetLectureExamById(ExamId);
 
             if (resp.IsSuccessful)
             {
@@ -195,7 +195,7 @@
 
     public async Task Excute(bool isSubmit)
     {
-        var resp = await this.ReportServive.AddEditReport(exam, isSubmit);
+        var resp = await this.ReportService.AddEditReport(exam, isSubmit);
 
         if (resp.IsSuccessful)
         {
@@ -218,7 +218,7 @@
                         MailList = mailList
                     };
 
-                var sendMail = await this.MailServive.SendMail(mailModel);
+                var sendMail = await this.MailService.SendMail(mailModel);
 
             }
 
@@ -228,7 +228,7 @@
 
     public async Task SaveAssignDate()
     {
-        var resp = await this.AssignmentServive.SetAssignDate(exam);
+        var resp = await this.AssignmentService.SetAssignDate(exam);
 
         if (resp.IsSuccessful)
         {
@@ -249,7 +249,7 @@
                     MailList = mailList
                 };
 
-            var sendMail = await this.MailServive.SendMail(mailModel);
+            var sendMail = await this.MailService.SendMail(mailModel);
 
             NavManager.NavigateTo("/Lecture/ExamList");
         }

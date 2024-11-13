@@ -294,7 +294,7 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<ExamStatus>().HasData(
             new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 2, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting Lecturer Confirm", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Error", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "OK", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -529,7 +529,7 @@ public partial class QuizManagementContext : DbContext
 
             // Ha Noi's Examiners create exams
             // Seed data for software engineering major
-            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "90'", TermDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 4, ExamDate = new DateTime(2024, 10, 20), EstimatedTimeTest = new DateTime(2024, 9, 20), StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2024, 9, 30), AssignedUserId = 3, AssignmentDate = new DateTime(2024, 8, 25), GeneralFeedback = "This exam covers the material from Block 10.", IsReady = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Exam { ExamId = 1, ExamCode = "PRN211_Q1_10_123456", ExamDuration = "90'", TermDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 10, 20), EstimatedTimeTest = new DateTime(2024, 9, 20), StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2024, 9, 30), AssignedUserId = 3, AssignmentDate = new DateTime(2024, 8, 25), GeneralFeedback = "This exam covers the material from Block 10.", IsReady = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Exam { ExamId = 2, ExamCode = "PRN211_Q2_5_654321", ExamDuration = "60'", TermDuration = "Block 5 (5 weeks)", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 4, ExamDate = new DateTime(2024, 10, 20), EstimatedTimeTest = new DateTime(2024, 9, 20), StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2024, 9, 30), AssignedUserId = 3, AssignmentDate = new DateTime(2024, 8, 25), GeneralFeedback = "This exam covers the material from Block 10.", IsReady = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
             new Exam { ExamId = 3, ExamCode = "PRN221_Q1_10_789012", ExamDuration = "90'", TermDuration = "Block 10 (10 weeks)", ExamType = "Multiple Choice", SubjectId = 2, CreaterId = 2, CampusId = 1, SemesterId = 1, ExamStatusId = 5, ExamDate = new DateTime(2024, 10, 20), EstimatedTimeTest = new DateTime(2024, 9, 21), StartDate = new DateTime(2024, 9, 1), EndDate = new DateTime(2024, 9, 30), AssignedUserId = 3, AssignmentDate = new DateTime(2024, 8, 25), GeneralFeedback = "OK.", IsReady = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -572,11 +572,11 @@ public partial class QuizManagementContext : DbContext
             new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Exam Assign", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "List Asigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 7, MenuLink = "/HeadDepartment/ExamStatus", MenuName = "Exam Status", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 7, MenuLink = "/HeadDepartment/ExamStatus", MenuName = "Exam Status(UnderContrucst)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 10, MenuLink = "/Examiner/usermanagement", MenuName = "Head Department Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 8, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 11, MenuLink ="/Examiner/Create", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 12, MenuLink = "/HeadDepartment/lectureManagement", MenuName = "Lecture Management(UnderContrucst)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 12, MenuLink = "/HeadDepartment/lectureManagement", MenuName = "Lecture Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 13, MenuLink = "/Examiner/Statistical", MenuName = "Statistical", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 14, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }

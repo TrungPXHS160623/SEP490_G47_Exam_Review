@@ -56,7 +56,7 @@
     {
         if (SubjectId != 0)
         {
-            var resp = await this.SubjectServive.GetSubjectById(SubjectId.Value);
+            var resp = await this.SubjectService.GetSubjectById(SubjectId.Value);
             await Task.Delay(100);
 
             if (resp.IsSuccessful)
@@ -70,7 +70,7 @@
     {
         if (SubjectId != 0)
         {
-            var resp = await this.SubjectServive.UpdateSubject(subject);
+            var resp = await this.SubjectService.UpdateSubject(subject);
 
             if (resp.IsSuccessful)
             {
@@ -79,7 +79,7 @@
         }
         else
         {
-            var resp = await this.SubjectServive.AddSubject(subject);
+            var resp = await this.SubjectService.AddSubject(subject);
 
             if (resp.IsSuccessful)
             {

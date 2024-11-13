@@ -117,7 +117,7 @@ else
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 10);
+            var response = await MenuService.CheckAccess(userId, 10);
 
             if (!response.IsSuccessful)
             {
@@ -162,7 +162,7 @@ else
 
     private async Task GetSubjectList()
     {
-        var result = await SubjectServive.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        var result = await SubjectService.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
         if (result != null)
         {
             subjectList = result.Items;
@@ -193,7 +193,7 @@ else
 
     private async Task GetRoles()
     {
-        var result = await RoleServive.GetRolesForExaminer();
+        var result = await RoleService.GetRolesForExaminer();
         if (result != null)
         {
             roleList = result.Items;

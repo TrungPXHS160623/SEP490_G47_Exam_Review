@@ -155,7 +155,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 6);
+            var response = await MenuService.CheckAccess(userId, 6);
 
             if (!response.IsSuccessful)
             {
@@ -165,10 +165,10 @@
             {
                 await GetData();
 
-                var sList = await this.StatusServive.GetStatus();
+                var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3 ).ToList();
+                    statusList = sList.Items.Where(x => x.ExamStatusId != 1 && x.ExamStatusId != 2 && x.ExamStatusId != 3).ToList();
                 }
 
                 var semesterrList = await this.SemesterService.GetSemester();
@@ -217,7 +217,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetLeaderExamList(request);
+        var eList = await this.ExamService.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3).ToList();

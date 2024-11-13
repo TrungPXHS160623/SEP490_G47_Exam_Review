@@ -981,7 +981,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email) && x.IsActive);
                 return user;
             }
             catch (Exception ex)

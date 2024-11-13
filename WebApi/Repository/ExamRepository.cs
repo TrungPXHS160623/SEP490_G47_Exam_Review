@@ -451,6 +451,7 @@ public class ExamRepository : IExamRepository
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
                               join cuf in _context.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
                               where cuf.UserId == req.UserId
+                              && e.ExamStatusId != 1
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))

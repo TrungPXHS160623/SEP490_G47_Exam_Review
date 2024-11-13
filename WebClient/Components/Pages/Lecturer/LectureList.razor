@@ -129,7 +129,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 5);
+            var response = await MenuService.CheckAccess(userId, 5);
 
             if (!response.IsSuccessful)
             {
@@ -139,7 +139,7 @@
             {
                 await GetData();
 
-                var sList = await this.StatusServive.GetStatus();
+                var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
                     statusList = sList.Items;
@@ -158,7 +158,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetLectureExamList(request);
+        var eList = await this.ExamService.GetLectureExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items;

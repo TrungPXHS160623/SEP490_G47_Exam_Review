@@ -48,5 +48,30 @@ namespace WebApi.Repository
                 };
             }
         }
+
+        public async Task<ResultResponse<Faculty>> GetHeadFaculties(int userId)
+        {
+            try
+            {
+                var data = await (from fa in this.DBcontext.Faculties
+                                  join cuf in this.DBcontext.CampusUserFaculties on fa.FacultyId equals cuf.FacultyId
+                                  where cuf.UserId == userId
+                                  select fa).ToListAsync();
+
+                return new ResultResponse<Faculty>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<Faculty>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
     }
 }

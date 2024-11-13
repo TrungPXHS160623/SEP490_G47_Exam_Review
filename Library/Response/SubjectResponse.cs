@@ -10,6 +10,8 @@ namespace Library.Response
 
         public string? SubjectName { get; set; }
 
+        public string? Faculty { get; set; }
+
         public DateTime? CreateDate { get; set; }
 
         public override bool Equals(object obj)
