@@ -11,7 +11,7 @@ namespace WebClient.IServices
 
         Task<RequestResponse> RegisterUserAsync(UserRegisterRequest request);
 
-        Task<ResultResponse<UserResponse>> GetLectureListBySubject(int subjectId,int campusId);
+        Task<ResultResponse<UserResponse>> GetLectureListBySubject(int subjectId, int campusId);
         Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId);
 
         Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId);
@@ -27,6 +27,7 @@ namespace WebClient.IServices
         Task<ResultResponse<UserRequest>> GetByIdAsync(int id);
 
         Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id);
+        Task<ResultResponse<UserSubjectRequest>> GetUserFacutyByIdAsync(int id);
 
         Task<RequestResponse> UpdateAsync(UserRequest user);
 

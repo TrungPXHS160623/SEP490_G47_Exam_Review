@@ -63,7 +63,7 @@ else
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
+                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" AnchorOrigin="Origin.BottomCenter" Class="col-auto" @onchange="OnFacultyChange">
                         @foreach (var item in facultyList)
                         {
                             <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
@@ -129,9 +129,22 @@ else
 
     private List<Faculty> facultyList = new();
 
-    private List<SubjectResponse> subjectList = new();
+    private List<Subject> subjectList = new();
 
     private bool isAddOrEdit { get; set; } = false;
+    private List<Subject> filteredSubjectList = new List<Subject>();
+    private void OnFacultyChange(ChangeEventArgs e)
+    {
+        var selectedFacultyId = (int?)e.Value;
+        if (selectedFacultyId.HasValue)
+        {
+            filteredSubjectList = subjectList.Where(x => x.FacultyId == selectedFacultyId.Value).ToList();
+        }
+        else
+        {
+            filteredSubjectList = new List<Subject>();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,10 +167,6 @@ else
                 if (UserId != null)
                 {
                     await FetchUserDetails();
-
-                    await GetFacultyList();
-
-                    await GetSubjectList();
                 }
                 else
                 {
@@ -182,24 +191,6 @@ else
         if (result != null)
         {
             user = result.Item;
-        }
-    }
-
-    private async Task GetSubjectList()
-    {
-        var result = await SubjectService.GetSubjectByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
-        if (result != null)
-        {
-            subjectList = result.Items;
-        }
-    }
-
-    private async Task GetFacultyList()
-    {
-        var result = await FacultyService.GetFaculties();
-        if (result != null)
-        {
-            facultyList = result.Items;
         }
     }
 
