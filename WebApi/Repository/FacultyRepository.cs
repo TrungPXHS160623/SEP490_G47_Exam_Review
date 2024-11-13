@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
@@ -15,6 +16,59 @@ namespace WebApi.Repository
         {
             this.DBcontext = DBcontext;
             this.logRepository = logRepository;
+        }
+
+        public async Task<RequestResponse> CreateFacutyAsync(FacutyRequest request)
+        {
+            try
+            {
+                // Kiểm tra xem các trường yêu cầu có hợp lệ không
+                if (string.IsNullOrEmpty(request.FacultyName))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Semester name cannot be empty!"
+                    };
+                }
+
+                // Kiểm tra xem học kỳ đã tồn tại hay chưa
+                var existingSemester = await DBcontext.Semesters
+                    .FirstOrDefaultAsync(s => s.SemesterName == request.FacultyName);
+                if (existingSemester != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Semester with this name already exists!"
+                    };
+                }
+                // Tạo đối tượng học kỳ mới
+                var newFacuty = new Faculty
+                {
+                    FacultyName = request.FacultyName,
+                    Description = request.Description,
+                    CreateDate = DateTime.Now,
+                };
+
+                // Lưu học kỳ mới vào cơ sở dữ liệu
+                await DBcontext.Faculties.AddAsync(newFacuty);
+                await DBcontext.SaveChangesAsync();
+
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Semester created successfully!"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
         }
 
         public async Task<ResultResponse<Faculty>> GetFaculties()
@@ -76,6 +130,45 @@ namespace WebApi.Repository
                 {
                     IsSuccessful = false,
                     Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<FacutyResponse>> GetFacutyByIdAsync(int FacutyID)
+        {
+            try
+            {
+                var facuty = await DBcontext.Faculties.FirstOrDefaultAsync(x => x.FacultyId == FacutyID);
+
+                if (facuty == null)
+                {
+                    return new ResultResponse<FacutyResponse>
+                    {
+                        IsSuccessful = false,
+                        Message = "Semester not found."
+                    };
+                }
+
+                var facutyResponse = new FacutyResponse
+                {
+                    FacultyId = facuty.FacultyId,
+                    FacultyName= facuty.FacultyName,
+                    Description = facuty.Description,
+                };
+
+                return new ResultResponse<FacutyResponse>
+                {
+                    IsSuccessful = true,
+                    Item = facutyResponse
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new ResultResponse<FacutyResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
                 };
             }
         }
@@ -160,6 +253,11 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
+        }
+
+        public Task<RequestResponse> UpdateFacutyAsync(int facutyID, FacutyRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
