@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models
+﻿namespace Library.Models
 {
     public class CampusUserFaculty
     {
         public int Id { get; set; }
-        public int CampusId { get; set; }
-        public int UserId { get; set; }
-        public int FacultyId { get; set; }
+        public int? CampusId { get; set; }
+        public int? UserId { get; set; }
+        public int? FacultyId { get; set; }
 
         public DateTime CreateDate { get; set; } = DateTime.Now;
         public DateTime? UpdateDate { get; set; }

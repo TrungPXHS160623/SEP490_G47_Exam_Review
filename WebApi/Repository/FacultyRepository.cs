@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -72,6 +73,43 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
                 return new ResultResponse<Faculty>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId)
+        {
+            try
+            {
+                var data = (from s in this.DBcontext.Faculties
+                            join cuf in this.DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId into facutyJoin
+                            from cuf in facutyJoin.DefaultIfEmpty()
+                            where
+                            (roleId == 4 && (
+                                (cuf != null && cuf.UserId == userId  && cuf.CampusId == campusId)
+                                || (cuf == null || !this.DBcontext.CampusUserFaculties
+                                    .Any(other => other.FacultyId == s.FacultyId  && other.CampusId == campusId))
+                            ))
+                            || roleId == 3
+                            select new FacutyResponse
+                            {
+                                FacultyId = s.FacultyId,
+                                FacultyName = s.FacultyName,
+                                Description = s.Description
+                            }).Distinct().ToList();
+
+                return new ResultResponse<FacutyResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<FacutyResponse>
                 {
                     IsSuccessful = false,
                     Message = ex.Message,

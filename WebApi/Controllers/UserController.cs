@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Library.Common;
-using Library.Models.Dtos;
 using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
-using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -24,9 +22,9 @@ namespace WebApi.Controllers
 
 
         [HttpGet("GetLectureBySubject/{subjectId}/{campusId}")]
-        public async Task<IActionResult> GetLecture(int subjectId,int campusId)
+        public async Task<IActionResult> GetLecture(int subjectId, int campusId)
         {
-            var data = await this.userRepository.GetLectureBySubject(subjectId,campusId);
+            var data = await this.userRepository.GetLectureBySubject(subjectId, campusId);
 
             return Ok(data);
         }
@@ -59,6 +57,15 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetUserSubjectByIdAsync(int id)
         {
             var data = await this.userRepository.GetUserSubjectByIdAsync(id);
+
+            return Ok(data);
+        }
+
+        [HttpGet("GetUserFacutyById/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserFacutyById(int id)
+        {
+            var data = await this.userRepository.GetUserFacutyByIdAsync(id);
 
             return Ok(data);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -22,10 +23,17 @@ namespace WebApi.Controllers
         [HttpGet("GetFacutiByUserId/{UserID}")]
         public async Task<IActionResult> GetFacutiByUserId(int UserID)
         {
-            var data = await this._facultyRepository.GetFacutiByUserId(UserID);
+            var data = await this._facultyRepository.GetFacutiesByUserID(UserID);
 
             return Ok(data);
         }
+        [HttpGet("GetFacutyByRole/{roleId}/{userId}/{campusId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFacutyByRole(int roleId, int userId, int campusId)
+        {
+            var data = await this._facultyRepository.GetFacutyByRole(roleId, userId, campusId);
 
+            return Ok(data);
+        }
     }
 }

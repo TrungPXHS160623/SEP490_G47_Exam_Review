@@ -11,7 +11,7 @@
         public string? ExamType { get; set; }
 
         public int? SubjectId { get; set; }
-
+        public int? FacutyID { get; set; }
         public string? SubjectCode { get; set; }
 
         public string? SubjectName { get; set; }

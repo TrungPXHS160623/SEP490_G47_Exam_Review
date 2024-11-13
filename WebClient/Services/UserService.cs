@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
@@ -88,7 +87,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetLectureListBySubject(int subjectId,int campusId)
+        public async Task<ResultResponse<UserResponse>> GetLectureListBySubject(int subjectId, int campusId)
         {
             try
             {
@@ -445,6 +444,31 @@ namespace WebClient.Services
             {
                 snackbar.Add(ex.Message, Severity.Error);
                 return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserSubjectRequest>> GetUserFacutyByIdAsync(int id)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserFacutyById/{id}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserSubjectRequest>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserSubjectRequest>
                 {
                     IsSuccessful = false,
                 };
