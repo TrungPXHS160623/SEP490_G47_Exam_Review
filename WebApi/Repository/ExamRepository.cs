@@ -311,6 +311,16 @@ public class ExamRepository : IExamRepository
                                   UpdateDate = ex.UpdateDate,
                               }).FirstOrDefaultAsync();
 
+
+            var resutl = (from rp in _context.Reports
+                          where rp.ExamId == data.ExamId
+                          select new ReportResponse
+                          {
+                              ReportId = rp.ReportId,
+                              QuestionNumber = rp.QuestionNumber,
+                              QuestionSolutionDetail = rp.QuestionSolutionDetail,
+                              ReportContent = rp.ReportContent,
+                          }).ToList();
             return new ResultResponse<LectureExamResponse>
             {
                 IsSuccessful = true,
@@ -400,35 +410,65 @@ public class ExamRepository : IExamRepository
     {
         try
         {
-            var data = await (from ex in _context.Exams
-                              join su in _context.Subjects on ex.SubjectId equals su.SubjectId
-                              join ca in _context.Campuses on ex.CampusId equals ca.CampusId
-                              join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
-                              join cus in _context.CampusUserSubjects
-                                  on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
-                              from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
-                              join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
-                              from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
-                              join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-                              where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
-                                    && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                                    && req.UserId == u1.UserId
-                              //&& cus.IsLecturer == false
+            //var data = await (from ex in _context.Exams
+            //                  join su in _context.Subjects on ex.SubjectId equals su.SubjectId
+            //                  join ca in _context.Campuses on ex.CampusId equals ca.CampusId
+            //                  join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
+            //                  join cus in _context.CampusUserSubjects
+            //                      on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
+            //                  from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
+            //                  join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
+            //                  from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
+            //                  join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
+            //                  where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
+            //                        && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
+            //                        && req.UserId == u1.UserId
+            //                        //&& cus.IsLecturer == false
+            //                  select new LeaderExamResponse
+            //                  {
+            //                      SemesterName = sem.SemesterName,
+            //                      EndDate = ex.EndDate,
+            //                      ExamId = ex.ExamId,
+            //                      StartDate = ex.StartDate,
+            //                      ExamDate = ex.ExamDate,
+            //                      ExamCode = ex.ExamCode,
+            //                      CampusName = ca.CampusName,
+            //                      EstimatedTimeTest = ex.EstimatedTimeTest,
+            //                      ExamStatusContent = st.StatusContent,
+            //                      ExamStatusId = st.ExamStatusId,
+            //                      HeadDepartmentName = u1.Mail,
+            //                      HeadDepartmentId = u1.UserId,
+            //                      UpdateDate = ex.UpdateDate
+            //                  }).ToListAsync();
+
+            var data = await (from e in _context.Exams
+                              join u1 in _context.Users on e.AssignedUserId equals u1.UserId into u1Join
+                              from u1 in u1Join.DefaultIfEmpty()
+                              join sj in _context.Subjects on e.SubjectId equals sj.SubjectId
+                              join c in _context.Campuses on e.CampusId equals c.CampusId
+                              join s in _context.Semesters on e.SemesterId equals s.SemesterId
+                              join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
+                              join cuf in _context.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
+                              where cuf.UserId == req.UserId
+                              && e.ExamStatusId != 1
+                              && (req.StatusId == null || e.ExamStatusId == req.StatusId)
+                              && (req.SemesterId == null || s.SemesterId == req.SemesterId)
+                              && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               select new LeaderExamResponse
                               {
-                                  SemesterName = sem.SemesterName,
-                                  EndDate = ex.EndDate,
-                                  ExamId = ex.ExamId,
-                                  StartDate = ex.StartDate,
-                                  ExamDate = ex.ExamDate,
-                                  ExamCode = ex.ExamCode,
-                                  CampusName = ca.CampusName,
-                                  EstimatedTimeTest = ex.EstimatedTimeTest,
-                                  ExamStatusContent = st.StatusContent,
-                                  ExamStatusId = st.ExamStatusId,
-                                  HeadDepartmentName = u1.Mail,
-                                  HeadDepartmentId = u1.UserId,
-                                  UpdateDate = ex.UpdateDate
+                                  SemesterName = s.SemesterName,
+                                  EndDate = e.EndDate,
+                                  ExamId = e.ExamId,
+                                  StartDate = e.StartDate,
+                                  ExamDate = e.ExamDate,
+                                  ExamCode = e.ExamCode,
+                                  CampusName = c.CampusName,
+                                  EstimatedTimeTest = e.EstimatedTimeTest,
+                                  ExamStatusContent = es.StatusContent,
+                                  ExamStatusId = es.ExamStatusId,
+                                  AssignedLectureId = u1.UserId,
+                                  AssignedLectureName = u1.Mail,
+                                  UpdateDate = e.UpdateDate
                               }).ToListAsync();
 
             return new ResultResponse<LeaderExamResponse>

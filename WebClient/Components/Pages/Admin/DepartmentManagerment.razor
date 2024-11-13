@@ -64,7 +64,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 8);
+            var response = await MenuService.CheckAccess(userId, 8);
 
             if (!response.IsSuccessful)
             {
@@ -137,7 +137,6 @@
                 MaxWidth = MaxWidth.Small,
                 FullWidth = true,
                 BackdropClick = false,
-
             };
 
         var parameters = new DialogParameters<SemesterModify>

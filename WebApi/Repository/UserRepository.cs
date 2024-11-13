@@ -6,6 +6,7 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -148,7 +149,7 @@ namespace WebApi.Repository
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
-                        && (u.RoleId == 4  || u.RoleId == null)
+                        && (u.RoleId == 4 || u.RoleId == null)
                         && u.CampusId == campusId
                         select new UserResponse
                         {
@@ -891,13 +892,29 @@ namespace WebApi.Repository
             var facutiID = (await this.dbContext.CampusUserFaculties.FirstOrDefaultAsync(x => x.UserId == userId))?.FacultyId;
             try
             {
-                var data = (from cus_head in dbContext.CampusUserSubjects
-                            join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
-                            join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
-                            join s in dbContext.Subjects on cus_lecturer.SubjectId equals s.SubjectId
-                            join f in dbContext.Faculties on cus_lecturer.Subject.Faculty.FacultyId equals f.FacultyId
-                            where cus_lecturer.CampusId == campusId
-                            && cus_lecturer.Subject.FacultyId == facutiID
+                //var data = (from cus_head in dbContext.CampusUserSubjects
+                //              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
+                //              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
+                //              where cus_head.UserId == userId
+                //                    //&& cus_head.IsLecturer == false
+                //                    //&& cus_lecturer.IsLecturer == true
+                //              select new UserResponse
+                //              {
+                //                  UserId = u.UserId,
+                //                  UserName = u.FullName,
+                //                  Email = u.Mail,
+                //                  Tel = u.PhoneNumber,
+                //                  IsActive = u.IsActive,
+                //              })
+                //.Distinct()
+                //.ToList();
+
+                var data = (from u in dbContext.Users
+                            join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                            join sj in dbContext.Subjects on cus.SubjectId equals sj.SubjectId
+                            join cuf in dbContext.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
+                            where cus.CampusId == cuf.CampusId
+                            && cuf.UserId == userId
                             select new UserResponse
                             {
                                 UserId = u.UserId,
@@ -906,8 +923,8 @@ namespace WebApi.Repository
                                 Tel = u.PhoneNumber,
                                 IsActive = u.IsActive,
                             })
-                .Distinct()
-                .ToList();
+                            .Distinct()
+                            .ToList();
 
                 return new ResultResponse<UserResponse>
                 {
@@ -961,7 +978,7 @@ namespace WebApi.Repository
 
                     if (userInfo != null)
                     {
-                        var user = await FindOrCreateUserAsync(userInfo.Email);
+                        var user = await FindUserAsync(userInfo.Email);
 
                         if (user != null)
                         {
@@ -972,6 +989,13 @@ namespace WebApi.Repository
                             {
                                 IsSuccessful = true,
                                 Token = token
+                            };
+                        } else
+                        {
+                            return new AuthenticationResponse
+                            {
+                                IsSuccessful = false,
+                                Message = "Your account does not exist in the system"
                             };
                         }
                     }
@@ -992,20 +1016,11 @@ namespace WebApi.Repository
             }
         }
 
-        private async Task<User?> FindOrCreateUserAsync(string email)
+        private async Task<User?> FindUserAsync(string email)
         {
             try
             {
-                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email));
-                if (user == null)
-                {
-                    user = new User
-                    {
-                        Mail = email,
-                    };
-                    await dbContext.Users.AddAsync(user);
-                    await dbContext.SaveChangesAsync();
-                }
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email) && x.IsActive);
                 return user;
             }
             catch (Exception ex)

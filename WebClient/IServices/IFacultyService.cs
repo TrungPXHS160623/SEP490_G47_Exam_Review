@@ -7,6 +7,7 @@ namespace WebClient.IServices
     public interface IFacultyService
     {
         Task<ResultResponse<Faculty>> GetFaculties();
+        Task<ResultResponse<Faculty>> GetHeadFaculties(int userId);
         Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId);
         Task<ResultResponse<Faculty>> GetFacutyByID(int campusId);

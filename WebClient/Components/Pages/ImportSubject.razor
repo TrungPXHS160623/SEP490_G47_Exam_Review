@@ -108,7 +108,7 @@
         try
         {
             // Call the service method with the single file
-            var response = await SubjectServive.ImportSubjectFromExcel(file);
+            var response = await SubjectService.ImportSubjectFromExcel(file);
 
             if (response.IsSuccessful)
             {

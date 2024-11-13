@@ -50,6 +50,29 @@ namespace WebClient.Services
             return requestResponse;
         }
 
+        public async Task<ResultResponse<Faculty>> GetHeadFaculties(int userId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Faculty/GetHeadFaculties/{userId}");
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Faculty>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<Faculty>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
         public async Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId)
         {
             try

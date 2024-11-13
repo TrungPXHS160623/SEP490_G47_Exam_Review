@@ -133,13 +133,20 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLoginCallback(string code)
         {
+            //if (!string.IsNullOrEmpty(error))
+            //{
+            //    if(error.Equals("access_denied"))
+            //    return Redirect($"https://localhost:7158/login");
+            //}
+
             var response = await userRepository.GoogleLoginCallback(code);
             if (response.IsSuccessful)
             {
                 return Redirect($"https://localhost:7158/home");
             }
 
-            return Redirect("https://localhost:7158/error");
+            var errorMsg = Uri.EscapeDataString(response.Message); // URL encode the error message
+            return Redirect($"https://localhost:7158/login?errorMsg={errorMsg}");
         }
 
         [HttpGet("google-keys")]

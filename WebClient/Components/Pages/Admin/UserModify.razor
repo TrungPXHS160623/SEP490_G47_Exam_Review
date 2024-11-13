@@ -131,7 +131,7 @@ else
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 1);
+            var response = await MenuService.CheckAccess(userId, 1);
 
             if (!response.IsSuccessful)
             {
@@ -203,7 +203,7 @@ else
 
     private async Task GetCampus()
     {
-        var result = await CampusServive.GetCampus();
+        var result = await CampusService.GetCampus();
         if (result != null)
         {
             camList = result.Items;
@@ -212,7 +212,7 @@ else
 
     private async Task GetRoles()
     {
-        var result = await RoleServive.GetRolesForAdmin();
+        var result = await RoleService.GetRolesForAdmin();
         if (result != null)
         {
             roleList = result.Items;

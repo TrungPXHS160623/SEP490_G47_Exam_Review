@@ -8,6 +8,8 @@ namespace WebApi.IRepository
     public interface IFacultyRepository
     {
         Task<ResultResponse<Faculty>> GetFaculties();
+
+        Task<ResultResponse<Faculty>> GetHeadFaculties(int userId);
         Task<RequestResponse> UpdateFaculties(Faculty req);
         Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId);

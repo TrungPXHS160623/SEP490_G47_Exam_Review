@@ -64,9 +64,6 @@
     </MudDialog>
 </EditForm>
 
-
-
-
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
@@ -88,7 +85,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var resp = await this.ExamServive.GetLeaderExamById(ExamId.Value);
+        var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
 
         if (resp.IsSuccessful)
         {
@@ -109,7 +106,7 @@
     public async Task Excute()
     {
         _processing = true;
-        var resp = await AssignmentServive.AssignExamToLecture(exam);
+        var resp = await AssignmentService.AssignExamToLecture(exam);
 
         if (resp.IsSuccessful)
         {
@@ -127,7 +124,7 @@
                     Subject = "Assign đề thi cho giảng vien"
                 };
 
-            var result = await this.MailServive.SendMail(mailModel);
+            var result = await this.MailService.SendMail(mailModel);
 
             if (result.IsSuccessful)
             {

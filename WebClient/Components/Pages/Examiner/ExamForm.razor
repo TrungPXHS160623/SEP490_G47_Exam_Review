@@ -162,7 +162,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 3);
+            var response = await MenuService.CheckAccess(userId, 3);
 
             if (!response.IsSuccessful)
             {
@@ -170,10 +170,10 @@
             }
             else
             {
-                var resp = await SubjectServive.GetSubjects();
+                var resp = await SubjectService.GetSubjects();
                 if (resp.IsSuccessful) subList = resp.Items;
 
-                var result = await CampusServive.GetCampus();
+                var result = await CampusService.GetCampus();
                 if (result.IsSuccessful) camList = result.Items;
 
                 if (Layout != null)
@@ -197,7 +197,7 @@
             var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
             exam.CreaterId = userId;
 
-            var resp = await ExamServive.CreateExam(exam);
+            var resp = await ExamService.CreateExam(exam);
             if (resp.IsSuccessful) Navigation.NavigateTo("/Examiner/ExamList");
         }
 
