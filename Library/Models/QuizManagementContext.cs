@@ -295,7 +295,7 @@ public partial class QuizManagementContext : DbContext
             new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 2, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting Lecturer Confirm", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "Planned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Error", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "OK", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -673,7 +673,6 @@ public partial class QuizManagementContext : DbContext
              new Subject { SubjectId = 248, FacultyId = 20, SubjectCode = "MAS291", SubjectName = "Statistics and Probability", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
              // Seed data for Multimedia Communications
-             new Subject { SubjectId = 248, FacultyId = 21, SubjectCode = "BCJ201c", SubjectName = "Branding: The Creative Journey", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
              new Subject { SubjectId = 249, FacultyId = 21, SubjectCode = "BDI201", SubjectName = "Brand identity design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
              new Subject { SubjectId = 250, FacultyId = 21, SubjectCode = "BRA301", SubjectName = "Brand Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
              new Subject { SubjectId = 251, FacultyId = 21, SubjectCode = "CCM301", SubjectName = "Crisis Communications Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -695,6 +694,7 @@ public partial class QuizManagementContext : DbContext
              new Subject { SubjectId = 267, FacultyId = 21, SubjectCode = "VDP301", SubjectName = "Search Engine Optimization", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
              new Subject { SubjectId = 268, FacultyId = 21, SubjectCode = "SEO201c", SubjectName = "Video Production", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
              new Subject { SubjectId = 269, FacultyId = 21, SubjectCode = "WMC201", SubjectName = "Media Writing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 336, FacultyId = 21, SubjectCode = "BCJ201c", SubjectName = "Branding: The Creative Journey", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
              // Seed data for On the job training
              new Subject { SubjectId = 271, FacultyId = 22, SubjectCode = "OJB202", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
