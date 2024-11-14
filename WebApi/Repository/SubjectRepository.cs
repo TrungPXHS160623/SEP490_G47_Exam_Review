@@ -5,18 +5,23 @@ using Library.Request;
 using Library.Response;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Security.Claims;
 using WebApi.IRepository;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Repository
 {
     public class SubjectRepository : ISubjectRepository
     {
         private readonly QuizManagementContext DBcontext;
+        private readonly ILogHistoryRepository logRepository;
 
-        public SubjectRepository(QuizManagementContext DBcontext)
+        public SubjectRepository(QuizManagementContext DBcontext, ILogHistoryRepository logRepository)
         {
             this.DBcontext = DBcontext;
+            this.logRepository = logRepository;
         }
 
         public async Task<RequestResponse> AddSubject(Subject req)
@@ -32,6 +37,8 @@ namespace WebApi.Repository
                     await this.DBcontext.Subjects.AddAsync(req);
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Add subject [{req.SubjectCode}] {req.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -69,6 +76,8 @@ namespace WebApi.Repository
                     this.DBcontext.Subjects.Remove(data);
 
                     await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Delete subject [{data.SubjectCode}] {data.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -190,6 +199,8 @@ namespace WebApi.Repository
                     data.Faculty.FacultyName = req.Faculty.FacultyName;
                     await this.DBcontext.SaveChangesAsync();
 
+                    await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
+
                     return new RequestResponse
                     {
                         IsSuccessful = true,
@@ -225,7 +236,7 @@ namespace WebApi.Repository
                             where
                             (roleId == 4 && (
                                 // Điều kiện 1: Các môn mà UserId = X đang là chủ nhiệm tại campus của họ
-                                (cus != null && cus.UserId == userId /*&& cus.IsLecturer == false*/ && cus.CampusId == campusId)
+                                (cus != null && cus.UserId == userId && cus.CampusId == campusId)
                                 // Điều kiện 2: Hoặc các môn chưa có chủ nhiệm tại campus của user X
                                 || (cus == null || !this.DBcontext.CampusUserSubjects
                                     .Any(other => other.SubjectId == s.SubjectId /*&& other.IsLecturer == false*/ && other.CampusId == campusId))
@@ -447,6 +458,127 @@ namespace WebApi.Repository
             }
 
             return response;
+        }
+
+        public async Task<ResultResponse<SubjectResponse>> GetSubjectList(SubjectRequest req)
+        {
+            try
+            {
+                var data = await (from sj in DBcontext.Subjects
+                                  join f in DBcontext.Faculties on sj.FacultyId equals f.FacultyId
+                                  where (req.SubjectCode.IsNullOrEmpty() || sj.SubjectCode.ToLower().Contains(req.SubjectCode.ToLower()))
+                                  && (sj.FacultyId == req.FacultyId)
+                                  select new SubjectResponse
+                                  {
+                                      SubjectId = sj.SubjectId,
+                                      SubjectCode = sj.SubjectCode,
+                                      SubjectName = sj.SubjectName,
+                                      Faculty = f.FacultyName
+                                  }).ToListAsync();
+
+                return new ResultResponse<SubjectResponse>
+                {
+                    IsSuccessful = data != null ? true : false,
+                    Message = data != null ? string.Empty : "Cannot found subject",
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<SubjectResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<SubjectResponse>> GetLectureSubjectList(int userId)
+        {
+            try
+            {
+                var data = await (from sj in DBcontext.Subjects
+                                  join f in DBcontext.Faculties on sj.FacultyId equals f.FacultyId
+                                  join cus in DBcontext.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
+                                  where cus.UserId == userId
+                                  select new SubjectResponse
+                                  {
+                                      SubjectId = sj.SubjectId,
+                                      SubjectCode = sj.SubjectCode,
+                                      SubjectName = sj.SubjectName,
+                                      Faculty = f.FacultyName
+                                  }).ToListAsync();
+
+                return new ResultResponse<SubjectResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<SubjectResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req)
+        {
+            try
+            {
+                var existData = await this.DBcontext.CampusUserSubjects.Where(x => x.UserId == userId).Select(x => x.SubjectId).ToListAsync();
+
+                var newData = req.Select(x => x.SubjectId).ToList();
+
+                var user = await this.DBcontext.Users.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+
+                var toRemove = existData.Where(subjectId => !newData.Any(newId => newId == subjectId)).ToList();
+
+                var toAdd = newData.Where(subjectId => !existData.Any(existingId => existingId == subjectId)).ToList();
+
+                if (toRemove.Any())
+                {
+                    var dataToRemove = await this.DBcontext.CampusUserSubjects.Where(x => x.UserId == userId && toRemove.Contains(x.SubjectId)).ToListAsync();
+
+                    DBcontext.CampusUserSubjects.RemoveRange(dataToRemove);
+                }
+
+                if (toAdd.Any())
+                {
+
+                    foreach (var item in toAdd)
+                    {
+                        var data = new CampusUserSubject
+                        {
+                            SubjectId = item,
+                            UserId = userId,
+                            CampusId = user.CampusId
+                        };
+
+                        await DBcontext.CampusUserSubjects.AddAsync(data);
+                    }
+                }
+                await this.DBcontext.SaveChangesAsync();
+
+                await logRepository.LogAsync($"Change teaching subject of lecture {user.Mail}");
+
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Save Successfully!",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
         }
     }
 }

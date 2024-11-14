@@ -206,7 +206,7 @@
     {
         if (ExamId != 0)
         {
-            var resp = await this.ExamServive.GetExamById(ExamId.Value);
+            var resp = await this.ExamService.GetExamById(ExamId.Value);
 
             if (resp.IsSuccessful)
             {
@@ -215,7 +215,7 @@
         }
         else
         {
-            var resp = await this.SubjectServive.GetSubjects();
+            var resp = await this.SubjectService.GetSubjects();
 
             if (resp.IsSuccessful)
             {
@@ -223,7 +223,7 @@
             }
         }
 
-        var result = await CampusServive.GetCampus();
+        var result = await CampusService.GetCampus();
         if (result != null)
         {
             camList = result.Items;
@@ -240,7 +240,7 @@
         {
             if (ExamId != 0)
             {
-                var resp = await this.ExamServive.UpdateExam(exam);
+                var resp = await this.ExamService.UpdateExam(exam);
 
                 if (resp.IsSuccessful)
                 {
@@ -269,7 +269,7 @@
                             SubjectId = exam.SubjectId,
                         };
 
-                    var resp = await this.ExamServive.CreateExam(req);
+                    var resp = await this.ExamService.CreateExam(req);
 
                     if (resp.IsSuccessful)
                     {

@@ -1,6 +1,4 @@
-﻿using Library.Models;
-
-namespace Library.Response
+﻿namespace Library.Response
 {
     public class SubjectResponse
     {
@@ -8,7 +6,10 @@ namespace Library.Response
 
         public string? SubjectCode { get; set; }
 
+        public int FacutiID { get; set; }
         public string? SubjectName { get; set; }
+
+        public string? Faculty { get; set; }
 
         public DateTime? CreateDate { get; set; }
 

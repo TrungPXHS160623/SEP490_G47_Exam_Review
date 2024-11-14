@@ -27,16 +27,13 @@ namespace WebClient
 
             builder.Services.AddScoped<SpinnerService>();
             builder.Services.AddScoped<SpinnerHandler>();
-            builder.Services.AddScoped<AuthorizationHandler>();
 
             builder.Services.AddScoped(s =>
             {
                 SpinnerHandler spinHandler = s.GetRequiredService<SpinnerHandler>();
-                AuthorizationHandler authorHandler = s.GetRequiredService<AuthorizationHandler>();
-                authorHandler.InnerHandler = spinHandler;
                 spinHandler.InnerHandler = new HttpClientHandler();
                 NavigationManager navManager = s.GetRequiredService<NavigationManager>();
-                return new HttpClient(authorHandler)
+                return new HttpClient(spinHandler)
                 {
                     BaseAddress = new Uri("https://localhost:7255/"),
                 };

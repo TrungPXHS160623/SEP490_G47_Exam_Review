@@ -77,7 +77,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 9);
+            var response = await MenuService.CheckAccess(userId, 9);
 
             if (!response.IsSuccessful)
             {
@@ -124,7 +124,7 @@
 
     public async Task GetData()
     {
-        var resp = await SubjectServive.GetSubjects();
+        var resp = await SubjectService.GetSubjects();
 
         if (resp.IsSuccessful)
         {
@@ -156,7 +156,7 @@
         if (!result.Canceled)
         {
 
-            var response = await SubjectServive.DeleteSubject(subjectId);
+            var response = await SubjectService.DeleteSubject(subjectId);
             if (response.IsSuccessful)
             {
                 await GetData();

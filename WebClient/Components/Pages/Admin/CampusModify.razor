@@ -55,7 +55,7 @@
     {
         if (CampusId != 0)
         {
-            var resp = await this.CampusServive.GetCampusById(CampusId.Value);
+            var resp = await this.CampusService.GetCampusById(CampusId.Value);
 
             if (resp.IsSuccessful)
             {
@@ -68,7 +68,7 @@
     {
         if (CampusId != 0)
         {
-            var resp = await this.CampusServive.UpdateCampus(campus);
+            var resp = await this.CampusService.UpdateCampus(campus);
 
             if (resp.IsSuccessful)
             {
@@ -77,7 +77,7 @@
         }
         else
         {
-            var resp = await this.CampusServive.AddCampus(campus);
+            var resp = await this.CampusService.AddCampus(campus);
 
             if (resp.IsSuccessful)
             {

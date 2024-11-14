@@ -17,6 +17,8 @@ namespace Library.Response
         public string? ReportContent { get; set; }
         public IFormFile? Files { get; set; }
 
+        public List<string> ImageList { get; set; } = new List<string>();
+
         public string? QuestionSolutionDetail { get; set; }
 
         public DateTime? CreateDate { get; set; }

@@ -108,7 +108,7 @@
         try
         {
             // Call the service method with the single file
-            var response = await ExamServive.ImportExamsFromExcel(file);
+            var response = await ExamService.ImportExamsFromExcel(file);
 
             if (response.IsSuccessful)
             {

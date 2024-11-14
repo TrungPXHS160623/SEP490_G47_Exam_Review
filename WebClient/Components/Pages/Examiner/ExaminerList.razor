@@ -157,7 +157,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuServive.CheckAccess(userId, 3);
+            var response = await MenuService.CheckAccess(userId, 3);
 
             if (!response.IsSuccessful)
             {
@@ -171,7 +171,7 @@
                 {
                     semesters = semesterrList.Items;
                 }
-                var sList = await this.StatusServive.GetStatus();
+                var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
                     statusList = sList.Items;
@@ -246,7 +246,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetExamList(request);
+        var eList = await this.ExamService.GetExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items
@@ -286,11 +286,11 @@
                         Subject = "Assign đề thi cho chủ nhiệm bộ môn"
                     };
 
-                var resp = await this.ExamServive.ChangeStatusExam(assignList.ToList());
+                var resp = await this.ExamService.ChangeStatusExam(assignList.ToList());
 
                 if (resp.IsSuccessful)
                 {
-                    var result = await this.MailServive.SendMail(mailModel);
+                    var result = await this.MailService.SendMail(mailModel);
                     await GetData();
                 }
             }
@@ -330,7 +330,7 @@
     }
     private async Task ExportAllExams()
     {
-        var response = await this.ExamServive.ExportAllExams();
+        var response = await this.ExamService.ExportAllExams();
 
         if (response != null && response.IsSuccessful)
         {

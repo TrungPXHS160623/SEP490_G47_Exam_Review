@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using Microsoft.AspNetCore.WebUtilities
 @inject IConfiguration config
 @inject HttpClient Http
 <PageTitle>Login</PageTitle>
@@ -74,6 +75,13 @@
         if (isAuthenticated)
         {
             NavManager.NavigateTo("/home");
+        }
+
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("errorMsg", out var errorMsg))
+        {
+            // Show the error message in a snackbar
+            Snackbar.Add(errorMsg, Severity.Error);
         }
     }
 

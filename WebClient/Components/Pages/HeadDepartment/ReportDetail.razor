@@ -1,33 +1,5 @@
 ﻿@page "/HeadDepartment/ExamReport/{ExamId:int}"
 
-<style>
-    .image-placeholder {
-        width: 200px;
-        height: 200px;
-        background-color: #f7f7f7;
-        border: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #888;
-    }
-
-        .image-placeholder img {
-            max-width: 200px;
-            max-height: 200px;
-        }
-
-    .split-row {
-        display: flex;
-        align-items: baseline;
-    }
-
-    .report-content {
-        border-radius: 10px;
-        border: 1px solid #d9d8d8;
-        box-shadow: 0px 6px 10px -7px #7777;
-    }
-</style>
 <div class="container">
     <div class="custom-box mb-5">
         <h2>Exam Detail</h2>
@@ -42,19 +14,15 @@
                     <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
                 <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Creater:</label>
-                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                </div>
-                <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Head of Department:</label>
                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
                 </div>
-            </div>
-            <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Duration:</label>
                     <MudText>@exam.ExamDuration Minutes</MudText>
                 </div>
+            </div>
+            <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Type:</label>
                     <MudText>@exam.ExamType</MudText>
@@ -63,10 +31,10 @@
                     <label class="col-4 text-end me-3">Exam Estimate Date:</label>
                     <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
                 </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                        <MudText>@exam.AssignmentUserName</MudText>
-                    </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@exam.AssignmentUserName</MudText>
+                </div>
             </div>
         </div>
         <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
@@ -106,13 +74,16 @@
             </div> *@
                 </div>
             }
-
-            <div class="report-content mb-4 p-4">
-                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
-            </div>
-        } else
+        }
+        <div class="report-content mb-4 p-4">
+            <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
+        </div>
+        @if (exam.AssignStatusId != 7 && exam.AssignStatusId != 8)
         {
-            <p class="text-danger">Not finish review yet</p>
+            <div>
+                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => ConfirmationDialog(exam.ExamId,true))">Approved</MudButton>
+                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => ConfirmationDialog(exam.ExamId,false))">Rejected</MudButton>
+            </div>
         }
     </div>
 
@@ -127,8 +98,6 @@
 
     public LectureExamResponse exam = new LectureExamResponse();
 
-    public List<UserResponse> UserList = new List<UserResponse>();
-
     public int UserId { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -137,14 +106,6 @@
 
         if (isAuthenticated)
         {
-
-            var data = await UserService.GetAssignedUserByExam(ExamId);
-
-            if (data.IsSuccessful)
-            {
-                UserList = data.Items;
-                UserId = UserList.FirstOrDefault()?.UserId ?? 0;
-            }
 
             await GetReport();
 
@@ -176,7 +137,7 @@
 
     public async Task GetReport()
     {
-        var resp = await ExamServive.GetLectureExamById(ExamId);
+        var resp = await ExamService.GetLectureExamById(ExamId);
 
         if (resp.IsSuccessful)
         {
@@ -191,5 +152,39 @@
         await GetReport();
 
         this.StateHasChanged();
+    }
+
+    private async Task ConfirmationDialog(int examId, bool isOk)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        string msg = isOk ? "Are you sure this exam is ready to use? This cannot be changed after confirmation." : "Are you sure this exam cannot be fixed and will be removed? This cannot be changed after confirmation.";
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, msg },
+            { x => x.BtnTextConfirm, "Confirm" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Confirmation Exam", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var resp = await this.ExamService.ChangeStatusExamById(examId, isOk ? 7 : 8);
+
+            if (resp.IsSuccessful)
+            {
+                NavManager.NavigateTo("/HeadDepartment/Report");
+            }
+        }
     }
 }
