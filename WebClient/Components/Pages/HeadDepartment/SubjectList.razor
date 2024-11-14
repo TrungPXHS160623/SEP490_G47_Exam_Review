@@ -1,0 +1,178 @@
+﻿<style>
+    .form-group {
+        display: flex;
+        align-items: baseline;
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+</style>
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex align-items-baseline mb-4 mt-4">
+            <div class="col me-4">
+                <MudTextField @bind-Value="request.SubjectCode" Label="Subject Code" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
+             </div>
+             <div class="me-4">
+                 <MudSelect @bind-Value="request.FacultyId"
+                            Variant="Variant.Outlined"
+                            Label="Department"
+                            Margin="Margin.Dense"
+                            AnchorOrigin="Origin.BottomCenter"
+                            HelperText="Show only the Department you are in charge of">
+                    @if (faList.Count > 0)
+                    {
+                        @foreach (var item in faList)
+                        {
+                            <MudSelectItem T="int?" Value="item.FacultyId">@item.FacultyName</MudSelectItem>
+                        }
+                    }
+
+                </MudSelect>
+            </div>
+            <div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetSubjectList">Search</MudButton>
+            </div>
+        </div>
+        <div>
+            <MudTable T=SubjectResponse Items="subList" SelectedItems="selectedSubjects" FixedHeader="true" Height="380px" Hover="true" MultiSelection SelectedItemsChanged="OnSelectedItemsChanged">
+                <HeaderContent>
+                    <MudTh>No</MudTh>
+                    <MudTh>Subject Code</MudTh>
+                    <MudTh>Subject Name</MudTh>
+                    <MudTh>Faculty</MudTh>
+                </HeaderContent>
+                <RowTemplate Context="item">
+                    <MudTd>@(subList.IndexOf(item) + 1)</MudTd>
+                    <MudTd>@item.SubjectCode</MudTd>
+                    <MudTd>@item.SubjectName</MudTd>
+                    <MudTd>@item.Faculty</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@(@_processing)" OnClick="DialogConfirm">
+                @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Saving</MudText>
+            }
+            else
+            {
+                <MudText>Save</MudText>
+            }
+        </MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? UserId { get; set; }
+
+    private bool _processing = false;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    public List<SubjectResponse> subList = new();
+
+    private HashSet<SubjectResponse> selectedSubjects = new HashSet<SubjectResponse>();
+    private HashSet<SubjectResponse> currentSubjets = new HashSet<SubjectResponse>();
+
+    public SubjectRequest request = new SubjectRequest();
+
+    public List<Faculty> faList = new List<Faculty>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+        var fList = await this.FacultyService.GetHeadFaculties(userId);
+
+        if (fList.IsSuccessful)
+        {
+            faList = fList.Items;
+            if (faList.Count != 0)
+            {
+                request.FacultyId = faList.FirstOrDefault().FacultyId;
+            }
+        }
+
+        var sList = await this.SubjectService.GetLectureSubject(UserId.Value);
+
+        await GetSubjectList();
+
+        if (sList.IsSuccessful)
+        {
+            selectedSubjects = sList.Items.ToHashSet();
+            currentSubjets = selectedSubjects;
+        }
+    }
+
+    public async Task GetSubjectList()
+    {
+        var data = await this.SubjectService.GetSubjectsList(request);
+
+        if (data.IsSuccessful)
+        {
+            subList = data.Items;
+        }
+
+        selectedSubjects = currentSubjets;
+
+    }
+
+    private async Task DialogConfirm()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to update subject of this Lecturer?" },
+            { x => x.BtnTextConfirm, "Update" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Update Teach Subject", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
+            var response = await SubjectService.LecturerSubjectModify(UserId.Value, selectedSubjects);
+            if (response.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+
+    }
+
+    private void OnSelectedItemsChanged(HashSet<SubjectResponse> value)
+    {
+        currentSubjets = value;
+
+        selectedSubjects = currentSubjets;
+    }
+
+}
+
+
+

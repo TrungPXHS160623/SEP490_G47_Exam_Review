@@ -28,6 +28,7 @@
         z-index: 99;
     }
 </style>
+
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
@@ -74,7 +75,6 @@
                 <div>
                     <h4>Exam List</h4>
                 </div>
-
             </div>
             <div>
                 <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
@@ -133,16 +133,16 @@
     public ExamSearchRequest request = new();
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
-{
-    { 1, "#D3D3D3" }, // Unassigned
-    { 2, "#87CEEB" }, // Assigned
-    { 3, "#FFD700" }, // Awaiting Lecturer Confirm
-    { 4, "#6495ED" }, // Reviewing
-    { 5, "#FF4500" }, // Error
-    { 6, "#32CD32" }, // OK
-    { 7, "#006400" }, // Completed
-    { 8, "#DC143C" }  // Discard
-};
+    {
+        { 1, "#D3D3D3" }, // Unassigned
+        { 2, "#87CEEB" }, // Assigned
+        { 3, "#FFD700" }, // Awaiting Lecturer Confirm
+        { 4, "#6495ED" }, // Reviewing
+        { 5, "#FF4500" }, // Error
+        { 6, "#32CD32" }, // OK
+        { 7, "#006400" }, // Completed
+        { 8, "#DC143C" }  // Discard
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -156,7 +156,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuServive.CheckAccess(userId, 4);
+            var response = await MenuService.CheckAccess(userId, 4);
 
             if (!response.IsSuccessful)
             {
@@ -166,10 +166,10 @@
             {
                 await GetData();
 
-                var sList = await this.StatusServive.GetStatus();
+                var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items;
+                    statusList = sList.Items.Where(x => x.ExamStatusId == 2 || x.ExamStatusId == 3).ToList();
                 }
 
                 if (Layout != null)
@@ -211,7 +211,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamServive.GetLeaderExamList(request);
+        var eList = await this.ExamService.GetLeaderExamList(request);
         if (eList.IsSuccessful)
         {
             var semesterrList = await this.SemesterService.GetSemester();

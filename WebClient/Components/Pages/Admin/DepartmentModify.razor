@@ -1,7 +1,7 @@
 ﻿<style>
     .form-group {
         display: flex;
-        align-items: center
+        align-items: center;
     }
 
     .mud-input.mud-disabled {
@@ -9,16 +9,13 @@
         color: black;
     }
 </style>
-<EditForm Model="subject" OnValidSubmit="Excute">
+
+<EditForm Model="facuty" OnValidSubmit="Execute">
     <FluentValidationValidator />
     <MudDialog>
         <DialogContent>
-            <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code" Class="mb-4" For="@(() => subject.SubjectCode)"></MudTextField>
-            <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name" Class="mb-4" For="@(() => subject.SubjectName)"></MudTextField>
-            @if (SubjectId != 0)
-            {
-                <MudCheckBox @bind-Value=subject.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
-            }
+            <MudTextField @bind-Value=facuty.FacultyName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => facuty.FacultyName)"></MudTextField>
+            <MudTextField @bind-Value=facuty.Description Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => facuty.Description)"></MudTextField>
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
@@ -29,7 +26,7 @@
                 }
                 else
                 {
-                    <MudText>@(SubjectId == 0 ? "Add" : "Save")</MudText>
+                    <MudText>@(FacutyID == 0 ? "Add" : "Save")</MudText>
                 }
             </MudButton>
             <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
@@ -37,16 +34,14 @@
     </MudDialog>
 </EditForm>
 
-
-
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
-
+    @inject ISemesterService SemesterService
     [Parameter]
-    public int? SubjectId { get; set; }
+    public int? FacutyID { get; set; }
 
-    Subject subject = new Subject();
+    Faculty facuty = new Faculty();
 
     private bool _processing = false;
 
@@ -54,23 +49,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (SubjectId != 0)
+        if (FacutyID != 0)
         {
-            var resp = await this.SubjectService.GetSubjectById(SubjectId.Value);
-            await Task.Delay(100);
+            var resp = await this.FacultyService.GetFacutyByID(FacutyID.Value);
 
             if (resp.IsSuccessful)
             {
-                subject = resp.Item;
+                facuty = resp.Item;
             }
         }
     }
 
-    public async Task Excute()
+    public async Task Execute()
     {
-        if (SubjectId != 0)
+        _processing = true;
+
+        if (FacutyID != 0)
         {
-            var resp = await this.SubjectService.UpdateSubject(subject);
+            var resp = await this.FacultyService.UpdateFacuty(facuty);
 
             if (resp.IsSuccessful)
             {
@@ -79,15 +75,14 @@
         }
         else
         {
-            var resp = await this.SubjectService.AddSubject(subject);
+            var resp = await this.FacultyService.AddFacuty(facuty);
 
             if (resp.IsSuccessful)
             {
                 MudDialog.Close(DialogResult.Ok(true));
             }
         }
+
+        _processing = false;
     }
-
-
-
 }
