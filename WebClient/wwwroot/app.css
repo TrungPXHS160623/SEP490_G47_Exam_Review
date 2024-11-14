@@ -74,8 +74,7 @@ body {
 
 .img-preview img {
     width: auto;
-    height: 100%;
-    max-height: 150px;
+    height: 150px;
     box-shadow: 0px 6px 10px -7px #7777;
 }
 
@@ -83,6 +82,7 @@ body {
     position: relative;
     display: inline-block;
     cursor: pointer;
+    border:1px solid rgba(0,0,0,0.1);
 }
 
 .close-btn {

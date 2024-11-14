@@ -98,7 +98,7 @@
                                 <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
                             </div>
                         </div>
-                        <div class="mb-4 d-flex align-items-baseline">
+                        <div class="mb-4 d-flex align-items-baseline row">
                             @if (item.ImageList.Count > 0)
                             {
                                 foreach (var image in item.ImageList)
