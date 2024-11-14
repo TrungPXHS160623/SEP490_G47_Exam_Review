@@ -1,32 +1,7 @@
 ﻿@page "/Lecture/ExamReport/{ExamId:int}"
 
 <style>
-    .image-placeholder {
-        width: 200px;
-        height: 200px;
-        background-color: #f7f7f7;
-        border: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #888;
-    }
-
-        .image-placeholder img {
-            max-width: 200px;
-            max-height: 200px;
-        }
-
-    .split-row {
-        display: flex;
-        align-items: baseline;
-    }
-
-    .report-content {
-        border-radius: 10px;
-        border: 1px solid #d9d8d8;
-        box-shadow: 0px 6px 10px -7px #7777;
-    }
+    
 </style>
 <div class="container">
     <div class="custom-box mb-5">
@@ -45,12 +20,12 @@
                     <label class="col-4 text-end me-3">Head of Department:</label>
                     <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
                 </div>
-            </div>
-            <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Duration:</label>
                     <MudText>@exam.ExamDuration</MudText>
                 </div>
+            </div>
+            <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Type:</label>
                     <MudText>@exam.ExamType</MudText>
@@ -106,38 +81,74 @@
                     <div class="report-content mb-4 p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="col-2">
-                                <MudTextField @bind-Value=item.QuestionNumber Label="Question Number" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                                <MudTextField @bind-Value=item.QuestionNumber Label="Question Number" Variant="Variant.Outlined" Margin="Margin.Dense" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
                             </div>
-                            <div class="col-auto">
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveReportRecord(item))" Color="Color.Error" Variant="Variant.Filled"></MudIconButton>
-                            </div>
+                            @if (exam.AssignStatusId == 4)
+                            {
+                                <div class="col-auto">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveReportRecord(item))" Color="Color.Error" Variant="Variant.Filled"></MudIconButton>
+                                </div>
+                            }
                         </div>
                         <div class="d-flex justify-content-between align-items-baseline mb-4">
                             <div style="width:49%">
-                                <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6"></MudTextField>
+                                <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
                             </div>
                             <div style="width:49%">
-                                <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6"></MudTextField>
+                                <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
                             </div>
                         </div>
-                        @* <div class="mb-4">
-            <div class="image-placeholder">
-            <span>Image</span>
-            </div>
-            <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
-            <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
-            </div> *@
+                        <div class="mb-4 d-flex align-items-baseline row">
+                            @if (item.ImageList.Count > 0)
+                            {
+                                foreach (var image in item.ImageList)
+                                {
+                                    <div class="img-preview">
+                                        <div class="close-btn">
+                                            <MudFab StartIcon="@Icons.Material.Filled.Close" Color="Color.Default" Size="Size.Small"></MudFab>
+                                        </div>
+                                        <img src="@image" />
+                                    </div>
+                                }
+                            }
+                            @if (exam.AssignStatusId == 4)
+                            {
+                                @* <MudButton StartIcon="@Icons.Material.Filled.Image" Color="Color.Default" Variant="Variant.Filled">Add Image</MudButton> *@
+                                <div style="width:fit-content;cursor:pointer">
+                                    <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="@((file)=> UploadFiles2(file,item))" MaximumFileCount="100">
+                                        <ActivatorContent>
+                                            <MudPaper Height="150px"
+                                                      Width="250px"
+                                                      Outlined="true"
+                                                      Class="@_dragClass">
+                                                <div>
+                                                    <MudText Typo="Typo.h6">
+                                                        Drag and drop files here or click
+                                                    </MudText>
+                                                </div>
+                                            </MudPaper>
+                                        </ActivatorContent>
+                                    </MudFileUpload>
+                                </div>
+                            }
+                        </div>
                     </div>
                 }
             }
-            <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
+            @if (exam.AssignStatusId == 4)
+            {
+                <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
+            }
             <div class="report-content mb-4 p-4">
-                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4"></MudTextField>
+                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
             </div>
-            <div class="d-flex">
-                <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => Excute(false))">Save</MudButton>
-                <MudButton StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => Excute(true))">Submit</MudButton>
-            </div>
+            @if (exam.AssignStatusId == 4)
+            {
+                <div class="d-flex">
+                    <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Default" Variant="Variant.Outlined" OnClick="@(() => Excute(false))">Save</MudButton>
+                    <MudButton StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => Excute(true))">Submit</MudButton>
+                </div>
+            }
         </div>
     }
 </div>
@@ -153,6 +164,9 @@
 
     string text = string.Empty;
 
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex justify-content-center align-items-center text-center";
+    private string _dragClass = DefaultDragClass;
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -165,7 +179,7 @@
             {
                 exam = resp.Item;
 
-                if (exam.ReportList.Count == 0)
+                if (exam.ReportList.Count == 0 && exam.AssignStatusId == 4)
                 {
                     exam.ReportList.Add(new ReportResponse());
                 }
@@ -277,4 +291,29 @@
                                                value.Value.Hours, value.Value.Minutes, 0);
         }
     }
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+
+    private async Task UploadFiles2(IBrowserFile file, ReportResponse item)
+    {
+        try
+        {
+            if (file != null)
+            {
+                using MemoryStream ms = new();
+                var resized = await file.RequestImageFileAsync(file.ContentType, int.MaxValue, int.MaxValue);
+                using Stream fileStream = resized.OpenReadStream();
+                await fileStream.CopyToAsync(ms);
+
+
+                item.ImageList.Add($"data:{file.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
+            }
+        }
+        catch(Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+
+    }
 }
+
