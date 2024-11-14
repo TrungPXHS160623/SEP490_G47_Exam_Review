@@ -1,33 +1,5 @@
 ﻿@page "/HeadDepartment/ExamReport/{ExamId:int}"
 
-<style>
-    .image-placeholder {
-        width: 200px;
-        height: 200px;
-        background-color: #f7f7f7;
-        border: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #888;
-    }
-
-        .image-placeholder img {
-            max-width: 200px;
-            max-height: 200px;
-        }
-
-    .split-row {
-        display: flex;
-        align-items: baseline;
-    }
-
-    .report-content {
-        border-radius: 10px;
-        border: 1px solid #d9d8d8;
-        box-shadow: 0px 6px 10px -7px #7777;
-    }
-</style>
 <div class="container">
     <div class="custom-box mb-5">
         <h2>Exam Detail</h2>
@@ -36,50 +8,46 @@
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Subject Name:</label>
-                        <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Creater:</label>
-                        <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Head of Department:</label>
-                        <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-                    </div>
                 </div>
-                <div class="col-6">
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Duration:</label>
-                        <MudText>@exam.ExamDuration Minutes</MudText>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Subject Name:</label>
+                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Head of Department:</label>
+                    <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Duration:</label>
+                    <MudText>@exam.ExamDuration Minutes</MudText>
+                </div>
+            </div>
+            <div class="col-6">
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Type:</label>
                     <MudText>@exam.ExamType</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
-                    </div>
-                    <div class="split-row mb-4">
-                        <label class="col-4 text-end me-3">Exam Estimate Date:</label>
-                        <MudText>@exam.AssignmentUserName</MudText>
-                    </div>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
+                </div>
+                <div class="split-row mb-4">
+                    <label class="col-4 text-end me-3">Exam Estimate Date:</label>
+                    <MudText>@exam.AssignmentUserName</MudText>
                 </div>
             </div>
-            <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
-
         </div>
+        <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
 
-        <div class="custom-box">
-            <h2 class="mb-4">Exam Report Detail</h2>
-            <div class="split-row mb-4">
-                <label class="me-3">Exam Conclusion:</label>
-                <MudText >@exam.AssignStatusContent</MudText>
-            </div>
-            @if (exam.ReportList.Count > 0)
+    </div>
+
+    <div class="custom-box">
+        <h2 class="mb-4">Exam Report Detail</h2>
+        <div class="split-row mb-4">
+            <label class="me-3">Exam Conclusion:</label>
+            <MudText>@exam.AssignStatusContent</MudText>
+        </div>
+        @if (exam.ReportList.Count > 0)
         {
             @foreach (var item in exam.ReportList)
             {
@@ -87,30 +55,30 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="col-2">
                             <MudTextField @bind-Value=item.QuestionNumber Label="Question Number" Variant="Variant.Outlined" Margin="Margin.Dense" ReadOnly></MudTextField>
-                         </div>
-                     </div>
-                     <div class="d-flex justify-content-between align-items-baseline mb-4">
-                         <div style="width:49%">
-                             <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
-                         </div>
-                         <div style="width:49%">
-                             <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
-                         </div>
-                     </div>
-                     @* <div class="mb-4">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline mb-4">
+                        <div style="width:49%">
+                            <MudTextField @bind-Value=item.ReportContent Label="Issued" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
+                        </div>
+                        <div style="width:49%">
+                            <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
+                        </div>
+                    </div>
+                    @* <div class="mb-4">
             <div class="image-placeholder">
             <span>Image</span>
             </div>
             <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
             <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
             </div> *@
-                 </div>
+                </div>
             }
         }
         <div class="report-content mb-4 p-4">
             <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
-         </div>
-         @if (exam.AssignStatusId != 7 && exam.AssignStatusId != 8)
+        </div>
+        @if (exam.AssignStatusId != 7 && exam.AssignStatusId != 8)
         {
             <div>
                 <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => ConfirmationDialog(exam.ExamId,true))">Approved</MudButton>

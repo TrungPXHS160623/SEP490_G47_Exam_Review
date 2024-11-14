@@ -60,3 +60,56 @@ body {
     background-color: white;
     padding: 20px;
 }
+
+.split-row {
+    display: flex;
+    align-items: baseline;
+}
+
+.report-content {
+    border-radius: 10px;
+    border: 1px solid #d9d8d8;
+    box-shadow: 0px 6px 10px -7px #7777;
+}
+
+.img-preview img {
+    width: auto;
+    height: 100%;
+    max-height: 150px;
+    box-shadow: 0px 6px 10px -7px #7777;
+}
+
+.img-preview {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-preview:hover .close-btn {
+    display: flex;
+}
+
+/* Fade-in effect */
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.no-scroll {
+    overflow: hidden;
+}
