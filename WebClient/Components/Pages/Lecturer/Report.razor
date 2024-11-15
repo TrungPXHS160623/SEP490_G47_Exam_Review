@@ -1,7 +1,7 @@
 ﻿@page "/Lecture/ExamReport/{ExamId:int}"
 
 <style>
-    
+
 </style>
 <div class="container">
     <div class="custom-box mb-5">
@@ -98,24 +98,33 @@
                                 <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="6" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
                             </div>
                         </div>
-                        <div class="mb-4 d-flex align-items-baseline row">
+                        <div class="mb-4 d-flex align-items-center flex-wrap">
                             @if (item.ImageList.Count > 0)
                             {
                                 foreach (var image in item.ImageList)
                                 {
-                                    <div class="img-preview">
+                                    <div class="img-preview col-auto mb-2 me-2">
                                         <div class="close-btn">
-                                            <MudFab StartIcon="@Icons.Material.Filled.Close" Color="Color.Default" Size="Size.Small"></MudFab>
+                                            <MudFab StartIcon="@Icons.Material.Filled.Close" Color="Color.Dark" IconSize="Size.Small" Size="Size.Small" OnClick="(()=>RemoveImage(item.ImageList,item.ImageList.IndexOf(image)))"></MudFab>
                                         </div>
-                                        <img src="@image" />
+                                        <img src="@image" @onclick="() => OpenImageDialog(image)" />
                                     </div>
                                 }
                             }
                             @if (exam.AssignStatusId == 4)
                             {
                                 @* <MudButton StartIcon="@Icons.Material.Filled.Image" Color="Color.Default" Variant="Variant.Filled">Add Image</MudButton> *@
-                                <div style="width:fit-content;cursor:pointer">
-                                    <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="@((file)=> UploadFiles2(file,item))" MaximumFileCount="100">
+                                <div class="img-preview border-0 col-auto mb-2" style="width:fit-content;cursor:pointer">
+                                    <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                                                   Accept=".png, .jpg"
+                                                   FilesChanged="@((file)=> UploadFiles2(file,item))"
+                                                   MaximumFileCount="100"
+                                                   @ondrop="@ClearDragClass"
+                                                   @ondragenter="@SetDragClass"
+                                                   @ondragleave="@ClearDragClass"
+                                                   @ondragend="@ClearDragClass"
+                                                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                                                   InputStyle="opacity:0">
                                         <ActivatorContent>
                                             <MudPaper Height="150px"
                                                       Width="250px"
@@ -123,7 +132,7 @@
                                                       Class="@_dragClass">
                                                 <div>
                                                     <MudText Typo="Typo.h6">
-                                                        Drag and drop files here or click
+                                                        Click here to upload images
                                                     </MudText>
                                                 </div>
                                             </MudPaper>
@@ -152,6 +161,7 @@
         </div>
     }
 </div>
+
 
 @code {
     [CascadingParameter]
@@ -294,26 +304,63 @@
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
 
-    private async Task UploadFiles2(IBrowserFile file, ReportResponse item)
+    private async Task UploadFiles2(IReadOnlyList<IBrowserFile> file, ReportResponse item)
     {
         try
         {
-            if (file != null)
+            foreach (var data in file)
             {
-                using MemoryStream ms = new();
-                var resized = await file.RequestImageFileAsync(file.ContentType, int.MaxValue, int.MaxValue);
-                using Stream fileStream = resized.OpenReadStream();
-                await fileStream.CopyToAsync(ms);
+                if (data != null)
+                {
+                    // using MemoryStream ms = new();
+                    // var resized = await data.RequestImageFileAsync(data.ContentType, int.MaxValue, int.MaxValue);
+                    // using Stream fileStream = resized.OpenReadStream();
+                    // await fileStream.CopyToAsync(ms);
 
+                    // item.ImageList.Add($"data:{data.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
 
-                item.ImageList.Add($"data:{file.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
+                    using (Stream fileStream = data.OpenReadStream(maxAllowedSize: long.MaxValue))
+                    {
+                        using MemoryStream ms = new();
+                        await fileStream.CopyToAsync(ms);
+
+                        item.ImageList.Add($"data:{data.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
+                    }
+                }
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Snackbar.Add(e.Message, Severity.Error);
         }
+    }
 
+    public void RemoveImage(List<string> list, int indexOf)
+    {
+        list.RemoveAt(indexOf);
+    }
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+
+    private async Task OpenImageDialog(string image)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.ExtraExtraLarge,
+                BackdropClick = true,
+            };
+
+        var parameters = new DialogParameters<ImageDialog>
+        {
+            { x => x.selectedImage, image },
+        };
+
+        var dialog = await DialogService.ShowAsync<ImageDialog>(string.Empty, parameters, options);
     }
 }
 

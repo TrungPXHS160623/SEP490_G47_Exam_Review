@@ -83,6 +83,8 @@ body {
     display: inline-block;
     cursor: pointer;
     border:1px solid rgba(0,0,0,0.1);
+    border-radius:10px;
+    overflow:hidden;
 }
 
 .close-btn {

@@ -1,0 +1,19 @@
+﻿<MudDialog Class="blur dialog-background">
+    <DialogContent>
+        <img src="@selectedImage" style="width: 100%; height: auto;" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string? selectedImage { get; set; }
+
+
+    private void Close() => MudDialog.Cancel();
+}
