@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
@@ -29,21 +28,15 @@ namespace WebApi.IRepository
         Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
-
-        //phần tui làm
-        Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv();
-
-        Task<ResultResponse<ExamExportResponse>> ExportExamsToExcel();
-
-        Task<RequestResponse> ImportExamsFromCsv(List<ExamImportRequest> examImportDtos);
-
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
 
-        Task<ResultResponse<CampusSubjectExamCodeResponse>> GetExamByCampusAndSubject(int campusId, int subjectId );
+        Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int campusId);
+        Task<ResultResponse<CampusReportResponse>> GetCampusReport();
+        Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int campusId, int facutyId);
 
-		Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
+        Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 
-		Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId);
+        Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId);
 
-	}
+    }
 }
