@@ -156,8 +156,8 @@ public class ExamRepository : IExamRepository
             var data = (from ex in _context.Exams
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
-                        join cus in _context.CampusUserSubjects
-                            on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
+                        join cus in _context.CampusUserFaculties
+                            on new { ex.CampusId } equals new { cus.CampusId } into cusGroup
                         from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
                         join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
@@ -419,36 +419,6 @@ public class ExamRepository : IExamRepository
     {
         try
         {
-            //var data = await (from ex in _context.Exams
-            //                  join su in _context.Subjects on ex.SubjectId equals su.SubjectId
-            //                  join ca in _context.Campuses on ex.CampusId equals ca.CampusId
-            //                  join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
-            //                  join cus in _context.CampusUserSubjects
-            //                      on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
-            //                  from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
-            //                  join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
-            //                  from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
-            //                  join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
-            //                  where ((req.StatusId == null && ex.ExamStatusId != 1) || ex.ExamStatusId == req.StatusId)
-            //                        && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-            //                        && req.UserId == u1.UserId
-            //                        //&& cus.IsLecturer == false
-            //                  select new LeaderExamResponse
-            //                  {
-            //                      SemesterName = sem.SemesterName,
-            //                      EndDate = ex.EndDate,
-            //                      ExamId = ex.ExamId,
-            //                      StartDate = ex.StartDate,
-            //                      ExamDate = ex.ExamDate,
-            //                      ExamCode = ex.ExamCode,
-            //                      CampusName = ca.CampusName,
-            //                      EstimatedTimeTest = ex.EstimatedTimeTest,
-            //                      ExamStatusContent = st.StatusContent,
-            //                      ExamStatusId = st.ExamStatusId,
-            //                      HeadDepartmentName = u1.Mail,
-            //                      HeadDepartmentId = u1.UserId,
-            //                      UpdateDate = ex.UpdateDate
-            //                  }).ToListAsync();
 
             var data = await (from e in _context.Exams
                               join u1 in _context.Users on e.AssignedUserId equals u1.UserId into u1Join

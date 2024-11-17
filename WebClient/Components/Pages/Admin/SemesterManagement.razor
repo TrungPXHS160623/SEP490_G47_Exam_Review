@@ -33,7 +33,7 @@
                         {
                             <tr>
                                 <td>@semester.SemesterId</td>
-                                <td>@semester.SemesterName</td>
+                                <td class="text-start">@semester.SemesterName</td>
                                 <td>@semester.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@semester.EndDate.ToString("dd/MM/yyyy")</td>
 
@@ -84,7 +84,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Campus Management";
+                    Layout.SubHeader = "Semester Management";
                     Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }

@@ -2,9 +2,11 @@
     .form-group {
         display: flex;
         align-items: center;
-        justify-content: space-between
+        justify-content: flex-start; 
     }
-
+        .form-group label {
+            margin-right: 8px;
+        }
     .mud-input.mud-disabled {
         background-color: rgba(0, 0, 0, 0.1);
         color: black;
@@ -15,20 +17,20 @@
     <MudDialog>
         <DialogContent>
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Exam Code:</label>
-                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" For="@(()=> exam.ExamCode)" />
+                <label class="col-4 text-start">Exam Code:</label>
+                <MudTextField  @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" For="@(()=> exam.ExamCode)" />
             </div>
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end">Subject Name:</label>
-                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                    <label class="col-4 text-start" style="display: inline-block; margin-right: 8px;">Subject Name:</label>
+                    <MudText Margin="Margin.Dense" style="display: inline-block;">@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
             }
             else
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end">Subject Name:</label>
+                    <label class="col-4 text-start">Subject Name:</label>
                     <MudSelect T="int?"
                                Value="exam.SubjectId"
                                Variant="Variant.Outlined"
@@ -37,6 +39,7 @@
                                Disabled=@IsView
                                ValueChanged="SubjectChanged"
                                Placeholder="Choose Subject"
+                               Style="min-width: 150px; max-width: 250px;"
                                For="@(()=> exam.SubjectId)">
                         @if (subList.Count > 0)
                         {
@@ -51,23 +54,23 @@
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end">Exam Creater:</label>
-                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                    <label class="col-4 text-start">Exam Creater:</label>
+                    <MudText class="text-start">@(exam.CreaterName ?? "N/A")</MudText>
                 </div>
             }
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Head of Department:</label>
-                <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                <label class="col-4 text-start">Head of Department:</label>
+                <MudText class="text-start">@(exam.HeadDepartmentName ?? "N/A")</MudText>
             </div>
             @if (ExamId != 0)
             {
-                <div class="form-group mb-4">
-                    <label class="col-4 text-end">Status:</label>
-                    <MudText>@exam.ExamStatusContent</MudText>
+                <div class="form-group mb-4 text-start ">
+                    <label class="col-4 text-start">Status:</label>
+                    <MudText class="text-start">@exam.ExamStatusContent</MudText>
                 </div>
             }
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Campus:</label>
+                <label class="col-4 text-start">Campus:</label>
                 <MudSelect T="int?"
                            Value="exam.CampusId"
                            Variant="Variant.Outlined"
@@ -76,6 +79,7 @@
                            Disabled=@IsView
                            ValueChanged="CampusChanged"
                            Placeholder="Choose Campus"
+                           Style="min-width: 150px; max-width: 250px;"
                            For="@(()=> exam.CampusId)">
                     @if (camList.Count > 0)
                     {
@@ -87,26 +91,28 @@
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Exam Duration:</label>
+                <label class="col-4 text-start">Exam Duration:</label>
                 <MudSelect @bind-Value="exam.ExamDuration"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
                            Disabled=@IsView
                            Placeholder="Choose Exam Duration"
+                           Style="min-width: 150px; max-width: 250px;"
                            For="@(()=> exam.ExamDuration)">
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Exam Type:</label>
+                <label class="col-4 text-start">Exam Type:</label>
                 <MudSelect @bind-Value="exam.ExamType"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
                            Disabled=@IsView
                            Placeholder="Choose Exam Type"
+                           Style="min-width: 150px; max-width: 250px;"
                            For="@(()=> exam.ExamType)">
                     <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
@@ -116,17 +122,17 @@
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Start Date:</label>
+                <label class="col-4 text-start">Start Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
-                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-end">End Date:</label>
+                <label class="col-4 text-start">End Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
-                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.EndDate)" />
             </div>
         </DialogContent>

@@ -2,7 +2,7 @@
 @page "/Admin/AddUser"
 @if (!isAddOrEdit)
 {
-    <h1 style="text-align: center;">Update User</h1>
+    <h1 style="text-align: center;">Edit User</h1>
 }
 else
 {
@@ -11,7 +11,7 @@ else
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4 custom-box" style="width: 450px;">
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end me-4">Email:</label>
+            <label class="col-4 text-start me-4">Email:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -25,7 +25,7 @@ else
         </div>
 
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end me-4">User Name:</label>
+            <label class="col-4 text-start me-4">User Name:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -39,7 +39,7 @@ else
         </div>
 
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end me-4">Phone Number:</label>
+            <label class="col-4 text-start me-4">Phone Number:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -53,7 +53,7 @@ else
         </div>
 
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end me-4">Role:</label>
+            <label class="col-4 text-start me-4">Role:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -72,7 +72,7 @@ else
         </div>
 
         <div class="mb-4 d-flex align-items-baseline">
-            <label class="col-4 text-end me-4">Campus:</label>
+            <label class="col-4 text-start me-4">Campus:</label>
             <div class="col-8">
                 @if (!isAddOrEdit)
                 {
@@ -91,7 +91,7 @@ else
         </div>
 
         <div class="mb-4 d-flex align-items-center">
-            <label class="col-4 text-end me-4">Active:</label>
+            <label class="col-4 text-start me-4">Active:</label>
             <div class="col-8">
                 <MudCheckBox @bind-Value="user.IsActive" Disabled="@(!isAddOrEdit || IsCurrentId)" />
             </div>
