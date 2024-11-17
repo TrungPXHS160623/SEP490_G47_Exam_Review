@@ -38,6 +38,7 @@ namespace WebApi.Repository
                         //Khi tạo mới báo cáo (chưa ấn nút submit):
                         var newRecord = new Report
                         {
+                            ExamId = reportRequest.ExamId,
                             QuestionNumber = item.QuestionNumber,
                             ReportContent = item.ReportContent,
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
@@ -55,36 +56,38 @@ namespace WebApi.Repository
                         data.UpdateDate = DateTime.Now; 
                     }
 
-                    var imageList = await (from rf in dbContext.ReportFiles
-                                           where rf.ReportId == item.ReportId
-                                           select rf).ToListAsync();
-
-                    var deleteImage = imageList.Where(x => !item.ImageList.Any(y => y.FileId == x.FileId)).ToList();
-
-                    if (deleteImage.Any())
+                    if(item.ImageList.Count > 0)
                     {
-                        this.dbContext.ReportFiles.RemoveRange(deleteImage);
-                    }
+                        var imageList = await (from rf in dbContext.ReportFiles
+                                               where rf.ReportId == item.ReportId
+                                               select rf).ToListAsync();
 
-                    var addImage = item.ImageList.Where(x => !imageList.Any(y => y.FileId == x.FileId)).ToList();
+                        var deleteImage = imageList.Where(x => !item.ImageList.Any(y => y.FileId == x.FileId)).ToList();
 
-                    if(addImage.Any())
-                    {
-                        foreach(var image in addImage)
+                        if (deleteImage.Any())
                         {
-                            var i = new ReportFile
-                            {
-                                ReportId = item.ReportId.Value,
-                                FilePath = image.FileData,
-                            };
-
-                            await this.dbContext.AddAsync(i);
+                            this.dbContext.ReportFiles.RemoveRange(deleteImage);
                         }
+
+                        var addImage = item.ImageList.Where(x => !imageList.Any(y => y.FileId == x.FileId)).ToList();
+
+                        if (addImage.Any())
+                        {
+                            foreach (var image in addImage)
+                            {
+                                var i = new ReportFile
+                                {
+                                    ReportId = item.ReportId.Value,
+                                    FilePath = image.FileData,
+                                };
+
+                                await this.dbContext.AddAsync(i);
+                            }
+                        }
+
                     }
 
-                    
                 }
-
                 
 
                 var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
