@@ -6,6 +6,8 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
+using static Library.Response.CampusReportResponse;
+using static Library.Response.CampusSubjectExamResponse;
 
 public class ExamRepository : IExamRepository
 {
@@ -575,12 +577,6 @@ public class ExamRepository : IExamRepository
             };
         }
     }
-    public async Task<RequestResponse> ImportExamsFromCsv(List<ExamImportRequest> examImportDtos)
-    {
-        throw new NotImplementedException();
-    }
-
-
     public async Task<RequestResponse> ImportExamsFromExcel(IFormFile file)
     {
         var response = new RequestResponse();
@@ -775,94 +771,69 @@ public class ExamRepository : IExamRepository
         return (results, results.Count);
     }
 
-
-
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToExcel()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ResultResponse<CampusSubjectExamCodeResponse>> GetExamByCampusAndSubject(int campusId, int subjectId)
+    public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID)
     {
         try
         {
+            var user = await _context.Users
+            .Where(u => u.UserId == userID)
+            .FirstOrDefaultAsync();
             var exams = await _context.Exams
-            .AsNoTracking() // Tăng hiệu suất nếu không cần cập nhật đối tượng
-            .Where(e => e.CampusId == campusId && e.SubjectId == subjectId)
-            .Include(e => e.Campus)
-            .Include(e => e.Subject)
-            .ToListAsync();
-
+                .AsNoTracking()
+                .Where(e => e.CampusId == user.CampusId)
+                .Include(e => e.Campus)
+                .Include(e => e.Subject)
+                .ThenInclude(e => e.Faculty)
+                .ToListAsync();
 
             // Kiểm tra xem có bài thi nào được tìm thấy hay không
             if (!exams.Any())
             {
-                return new ResultResponse<CampusSubjectExamCodeResponse>
+                return new ResultResponse<CampusSubjectExamResponse>
                 {
                     IsSuccessful = false,
                     Message = "No exams found for the provided campus and subject."
                 };
             }
 
-            // Chuyển đổi dữ liệu từ Exam sang CampusSubjectExamCodeResponse
+            // Đếm tổng số bài thi
+            var examCodeCount = exams.Count();
 
-            /////cách 1:
-            //// Tính số lượng mã đề cho từng tổ hợp môn và cơ sở
-            //var examCodeCount = exams.Count();
+            // Đếm bài thi OK và bài thi có lỗi
+            var ExamOk = exams.Where(e => e.ExamStatusId == 6).Count();
+            var ExamError = exams.Where(e => e.ExamStatusId == 5).Count();
 
-            //// Tạo danh sách các mã đề
-            //var examCodes = exams.Select(e => new CampusSubjectExamCodeResponse
-            //{
-            //    ExamCode = e.ExamCode,
-            //    SubjectName = e.Subject != null ? e.Subject.SubjectCode : "No Subject Name",
-            //    CampusName = e.Campus != null ? e.Campus.CampusName : "No Campus Name"
-            //}).ToList();
-            ////kiểu return của cách 1
-            //return new ResultResponse<CampusSubjectExamResponse>
-            //{
-            //    IsSuccessful = true,
-            //    Items = new List<CampusSubjectExamResponse>  
-            //    {
-            //        new CampusSubjectExamResponse
-            //        {
-            //            ExamCodes = examCodes,
-            //            ExamCodeCount = examCodeCount
-            //        }
-            //    }
-            //};
+            // Lấy thông tin mã đề và thống kê theo khoa
+            var Department = exams
+                .GroupBy(e => e.Subject.Faculty.FacultyName)
+                .Select(g => new CampusSubjectExamCodeResponse
+                {
+                    departmentName = g.Key,
+                    totalExams = g.Count(),
+                    ErrorCode = g.Count(e => e.ExamStatusId == 5),
+                    OKCode = g.Count(e => e.ExamStatusId == 6)
+                }).ToList();
 
-            //cách 2:
-            var response = exams
-           .GroupBy(e => new { e.CampusId, e.SubjectId }) // Nhóm theo CampusId và SubjectId
-           .Select(g =>
-           {
-               var firstExam = g.FirstOrDefault(); // Lưu trữ phần tử đầu tiên
-               return new CampusSubjectExamCodeResponse
-               {
-                   ExamCode = string.Join(", ", g.Select(e => e.ExamCode)),  // Gộp tất cả mã đề
-                   SubjectName = firstExam != null && firstExam.Subject != null ? firstExam.Subject.SubjectCode : "No Subject Name",  // Kiểm tra null cho tên môn học
-                   CampusName = firstExam != null && firstExam.Campus != null ? firstExam.Campus.CampusName : "No Campus Name",   // Kiểm tra null cho tên cơ sở
-                   ExamCodeCount = g.Count()  // Đếm số lượng bài thi trong nhóm
-               };
-           })
-           .ToList();
-            //kiểu return của cách 2
-            return new ResultResponse<CampusSubjectExamCodeResponse>
+            return new ResultResponse<CampusSubjectExamResponse>
             {
                 IsSuccessful = true,
-                Items = response
+                Items = new List<CampusSubjectExamResponse>
+                {
+                    new CampusSubjectExamResponse
+                    {
+                        CampusName = exams.FirstOrDefault()?.Campus.CampusName, // Lấy tên campus từ bài thi đầu tiên
+                        ExamCodeCount = examCodeCount,
+                        ErrorCode = ExamError,
+                        OKCode = ExamOk,
+                        Departments = Department
+                    }
+                }
             };
-
         }
         catch (Exception ex)
         {
-            // Log hoặc xử lý lỗi
-            return new ResultResponse<CampusSubjectExamCodeResponse>
+            // Log lỗi (nếu cần thiết)
+            return new ResultResponse<CampusSubjectExamResponse>
             {
                 IsSuccessful = false,
                 Message = "An error occurred while fetching the exams. Please try again later."
@@ -870,7 +841,66 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    // Tìm Môn theo kì và name
+    public async Task<ResultResponse<CampusReportResponse>> GetCampusReport()
+    {
+        try
+        {
+            var exams = await _context.Exams
+                .AsNoTracking()
+                .Include(e => e.Campus)
+                .Include(e => e.Subject)
+                .ThenInclude(e => e.Faculty)
+                .ToListAsync();
+
+            if (!exams.Any())
+            {
+                return new ResultResponse<CampusReportResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "No exams found for the provided campus and subject."
+                };
+            }
+
+            var examCodeCount = exams.Count();
+
+            var ExamOk = exams.Where(e => e.ExamStatusId == 6).Count();
+            var ExamError = exams.Where(e => e.ExamStatusId == 5).Count();
+
+            var campusReports = exams
+                .GroupBy(e => e.Campus.CampusName)
+                .Select(g => new CampusReport
+                {
+                    CampusName = g.Key,
+                    totalExams = g.Count(),
+                    ErrorCode = g.Count(e => e.ExamStatusId == 5),
+                    OKCode = g.Count(e => e.ExamStatusId == 6)
+                }).ToList();
+
+            return new ResultResponse<CampusReportResponse>
+            {
+                IsSuccessful = true,
+                Items = new List<CampusReportResponse>
+                {
+                    new CampusReportResponse
+                    {
+                        ExamCodeCount = examCodeCount,
+                        ErrorCode = ExamError,
+                        OKCode = ExamOk,
+                        Campus = campusReports
+                    }
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            // Log lỗi (nếu cần thiết)
+            return new ResultResponse<CampusReportResponse>
+            {
+                IsSuccessful = false,
+                Message = "An error occurred while fetching the exams. Please try again later."
+            };
+        }
+    }
     public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
     {
         // Retrieve the full name of the user first
@@ -885,7 +915,6 @@ public class ExamRepository : IExamRepository
             return new List<ExamBySemesterResponse>();
         }
 
-        // muốn hiển thị tìm kiếm được cả InstructorAssignment cho lecturer thì bỏ if.
         if (user.RoleId != 4)
         {
             return new List<ExamBySemesterResponse>();
@@ -910,5 +939,89 @@ public class ExamRepository : IExamRepository
     public Task<ResultResponse<LeaderExamResponse>> GetRemindExamList()
     {
         throw new NotImplementedException();
+    }
+
+
+
+    public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int userID)
+    {
+        try
+        {
+            var user = await _context.Users
+           .Where(u => u.UserId == userID)
+           .FirstOrDefaultAsync();
+            var exams = await _context.Exams
+                .AsNoTracking()
+                .Include(e => e.Campus)
+                .Include(e => e.Subject)
+                .ThenInclude(e => e.Faculty)
+                .Include(e => e.Reports)
+                .Include(e => e.ExamStatus) // Bao gồm cả trạng thái bài thi
+                .Where(e => e.CampusId ==user.CampusId)
+                .ToListAsync();
+
+            if (!exams.Any())
+            {
+                return new ResultResponse<DepartmentReportResponse>
+                {
+                    IsSuccessful = false,
+                    Message = "No exams found for the provided campus and subject."
+                };
+            }
+
+            var examCodeCount = exams.Count();
+            var examOk = exams.Count(e => e.ExamStatusId == 6);
+            var examError = exams.Count(e => e.ExamStatusId == 5);
+
+            // Tạo danh sách báo cáo chi tiết theo ExamCode
+            var departmentDetails = exams
+                .GroupBy(e => e.ExamCode)
+                .Select(g => new DepartmentReportResponse.DepartmentReport
+                {
+                    ExamCode = g.Key,
+                    Status = g.FirstOrDefault()?.ExamStatus?.StatusContent ?? " ",
+                    issues = g
+                            .Where(e => e.ExamStatusId == 5)
+                           .SelectMany(e => e.Reports.Select(r => r.ReportContent ?? "No Issues Reported"))
+                          .ToList()
+                })
+                                    .ToList()
+                        .Select(report =>
+                                    {
+                                        if (!report.issues.Any())
+                                        {
+                                            report.issues.Add("No Issues");
+                                        }
+                                        return report;
+                                    })
+                                    .ToList();
+
+
+            return new ResultResponse<DepartmentReportResponse>
+            {
+                IsSuccessful = true,
+                Items = new List<DepartmentReportResponse>
+            {
+                new DepartmentReportResponse
+                {
+                    CampusName = exams.FirstOrDefault()?.Campus?.CampusName ?? "Unknown Campus",
+                    DepartmentName = exams.FirstOrDefault()?.Subject?.Faculty?.FacultyName ?? "Unknown Department",
+                    ExamCodeCount = examCodeCount,
+                    ErrorCode = examError,
+                    OKCode = examOk,
+                    DepartmentDetail = departmentDetails
+                }
+            }
+            };
+        }
+        catch (Exception ex)
+        {
+            // Log lỗi (nếu cần thiết)
+            return new ResultResponse<DepartmentReportResponse>
+            {
+                IsSuccessful = false,
+                Message = "An error occurred while fetching the exams. Please try again later."
+            };
+        }
     }
 }

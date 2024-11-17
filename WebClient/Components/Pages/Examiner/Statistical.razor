@@ -1,5 +1,217 @@
 ﻿@page "/Examiner/Statistical"
-Under Construction
-@code {
+<h1 style="text-align: center;">Exam List</h1>
+<style>
+    .mud-table-cell {
+        border: none !important;
+        text-align: center;
+    }
 
+    .mud-table-head .mud-table-row .mud-table-cell {
+        border-bottom: 1px solid grey !important;
+        font-size: 1.2rem;
+    }
+
+    .mud-table {
+        box-shadow: none !important;
+    }
+
+    .mud-table-root {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .mud-table-head .mud-table-row {
+        box-shadow: 0 5px 10px #e1e5ee;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 99;
+    }
+</style>
+
+<div class="d-flex justify-content-center">
+    <div class="mt-4">
+        <div class="custom-box">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h4>Report</h4>
+                </div>
+            </div>
+            <MudSelect Variant="Variant.Outlined" Label="Select Report" Dense="true" Margin="Margin.Dense" T="int" @bind-Value="SelectedReport">
+                <MudSelectItem T="int" Value="1">All Campus</MudSelectItem>
+                <MudSelectItem T="int" Value="2">Campus</MudSelectItem>
+                <MudSelectItem T="int" Value="3">By Subject</MudSelectItem>
+            </MudSelect>
+               @switch (SelectedReport)
+    {
+        case 1:
+            <MudTable T="CampusReportResponse.CampusReport" Items="CampusReport.Campus" FixedHeader="true" Height="380px" Hover="true">
+                <HeaderContent>
+                    <MudTh>Campus Name</MudTh>
+                    <MudTh>Total Exam</MudTh>
+                    <MudTh>Error Code</MudTh>
+                    <MudTh>OK Code</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Campus Name">@context.CampusName</MudTd>
+                    <MudTd DataLabel="Total Exam">@context.totalExams</MudTd>
+                            <MudTd DataLabel="Error Code">@context.ErrorCode</MudTd>
+                            <MudTd DataLabel="OK Code">@context.OKCode</MudTd>
+                </RowTemplate>
+                <FooterContent>
+                    <MudTd><strong>Total</strong></MudTd>
+                    <MudTd>@CampusReport?.Campus?.Sum(c => c.totalExams ?? 0)</MudTd>
+                    <MudTd>@CampusReport?.Campus?.Sum(c => c.ErrorCode)</MudTd>
+                    <MudTd>@CampusReport?.Campus?.Sum(c => c.OKCode)</MudTd>
+                </FooterContent>
+            </MudTable>
+
+
+            @if (CampusReport?.Campus.Count == 0)
+            {
+                <p class="text-center fs-6 mt-4">No Data</p>
+            }
+            break;
+                case 2:
+                    <MudTable T="CampusSubjectExamResponse.CampusSubjectExamCodeResponse" Items="CampusDepartmentReport.Departments" FixedHeader="true" Height="380px" Hover="true">
+                        <HeaderContent>
+                            <MudTh>Deparment</MudTh>
+                            <MudTh>Total Exam</MudTh>
+                            <MudTh>Error Code</MudTh>
+                            <MudTh>OK Code</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Campus Name">@context.departmentName</MudTd>
+                            <MudTd DataLabel="Total Exam">@context.totalExams</MudTd>
+                            <MudTd DataLabel="Eror Code">@context.ErrorCode</MudTd>
+                            <MudTd DataLabel="OK Code">@context.OKCode</MudTd>
+                        </RowTemplate>
+                        <FooterContent>
+                            <MudTd><strong>Total</strong></MudTd>
+                            <MudTd>@CampusDepartmentReport?.Departments?.Sum(c => c.totalExams ?? 0)</MudTd>
+                            <MudTd>@CampusDepartmentReport?.Departments?.Sum(c => c.ErrorCode)</MudTd>
+                            <MudTd>@CampusDepartmentReport?.Departments?.Sum(c => c.OKCode)</MudTd>
+                        </FooterContent>
+                    </MudTable>
+                    @if (CampusReport?.Campus.Count == 0)
+                    {
+                        <p class="text-center fs-6 mt-4">No Data</p>
+                    }
+                    break;
+                case 3:
+                    <MudTable T="DepartmentReportResponse.DepartmentReport" Items="DepartmentReport.DepartmentDetail" FixedHeader="true" Height="380px" Hover="true">
+                        <HeaderContent>
+                            <MudTh>Department</MudTh>
+                            <MudTh>Exam Code</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>issues</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Campus Name">@DepartmentReport?.DepartmentName</MudTd>
+                            <MudTd DataLabel="Campus Name">@context.ExamCode</MudTd>
+                            <MudTd DataLabel="Total Exam">@context.Status</MudTd>
+                            <MudTd DataLabel="Issues">
+                                <ul>
+                                    @foreach (var issue in context.issues)
+                                    {
+                                        <li>@issue</li>
+                                    }
+                                </ul>
+                            </MudTd>
+                        </RowTemplate>
+                        <FooterContent>
+                            <MudTd><strong>Total</strong></MudTd>
+                            <MudTd>@DepartmentReport?.ErrorCode</MudTd>
+                            <MudTd>@DepartmentReport?.OKCode</MudTd>
+                            <MudTd>@DepartmentReport?.ExamCodeCount</MudTd>
+                        </FooterContent>
+                    </MudTable>
+                    @if (CampusReport?.Campus.Count == 0)
+                    {
+                        <p class="text-center fs-6 mt-4">No Data</p>
+                    }
+                    break;
+    }
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public int SelectedReport { get; set; } = 1; // Default to the first report
+    public MainLayout Layout { get; set; }
+    public CampusReportResponse CampusReport { get; set; } = new CampusReportResponse();
+    public CampusSubjectExamResponse CampusDepartmentReport { get; set; } = new CampusSubjectExamResponse();
+    public DepartmentReportResponse DepartmentReport { get; set; } = new DepartmentReportResponse();
+    private bool IsLoading = true;
+    [Inject] IStatiticsService StatiticsService { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            var response = await MenuService.CheckAccess(userId, 13);
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                await GetData(userId);
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Exam Assign List";
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+    }
+
+    private void SetLayoutHeader()
+    {
+        if (Layout != null)
+        {
+            Layout.Header = "Home";
+            Layout.HeaderLink = "/Home";
+            Layout.SubHeader = "Exam Assign List";
+            Layout.RefreshLayout();
+        }
+    }
+
+    private async Task GetData(int userId)
+    {
+        IsLoading = true;
+        try
+        {
+            var eList = await StatiticsService.GetCampusReport();
+            if (eList.IsSuccessful)
+            {
+                CampusReport = eList.Items.FirstOrDefault();
+            }
+            var aList = await StatiticsService.GetExamByCampusAndSubject(userId);
+            if (aList.IsSuccessful)
+            {
+                CampusDepartmentReport = aList.Items.FirstOrDefault();
+            }
+            var xList = await StatiticsService.GetDepartmentReport(userId);
+            if (xList.IsSuccessful)
+            {
+                DepartmentReport = xList.Items.FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 }
