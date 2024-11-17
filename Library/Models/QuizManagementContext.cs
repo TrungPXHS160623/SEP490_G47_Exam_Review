@@ -294,8 +294,8 @@ public partial class QuizManagementContext : DbContext
         modelBuilder.Entity<ExamStatus>().HasData(
             new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 2, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "Reviewing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting Lecturer Confirm", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Error", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "OK", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -414,7 +414,7 @@ public partial class QuizManagementContext : DbContext
             // Seed data for BLOC
             new Subject { SubjectId = 22, FacultyId = 2, SubjectCode = "BDP306b", SubjectName = "Final Project - Blockchain Development in Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
 
-            // Seed data for BLOC
+            // Seed data for Business Administration
             new Subject { SubjectId = 23, FacultyId = 3, SubjectCode = "ACC101", SubjectName = "Principles of Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 24, FacultyId = 3, SubjectCode = "ACC302", SubjectName = "Managerial Accounting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 25, FacultyId = 3, SubjectCode = "ACC305", SubjectName = "Financial Statement Analysis", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -467,16 +467,314 @@ public partial class QuizManagementContext : DbContext
             new Subject { SubjectId = 72, FacultyId = 3, SubjectCode = "SAL301", SubjectName = "Professional Selling", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 73, FacultyId = 3, SubjectCode = "SCM201", SubjectName = "Supply Chain Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Subject { SubjectId = 74, FacultyId = 3, SubjectCode = "SCM301m", SubjectName = "Procurement and Global Sourcing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Subject { SubjectId = 75, FacultyId = 3, SubjectCode = "SYB302c", SubjectName = "Entrepreneurship", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Subject { SubjectId = 75, FacultyId = 3, SubjectCode = "SYB302c", SubjectName = "Entrepreneurship", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+            // Seed data for Computing Fundamental
+            new Subject { SubjectId = 76, FacultyId = 6, SubjectCode = "CSD201", SubjectName = "Data Structures and Algorithms", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 77, FacultyId = 6, SubjectCode = "CSD201-EX", SubjectName = "Data Structures and Algorithms", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 78, FacultyId = 6, SubjectCode = "CSD203", SubjectName = "Data Structures and Algorithm with Python", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 79, FacultyId = 6, SubjectCode = "DBI202", SubjectName = "Introduction to Databases", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 80, FacultyId = 6, SubjectCode = "DBI202-EX", SubjectName = "Introduction to Databases", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 81, FacultyId = 6, SubjectCode = "FER202", SubjectName = "Front-End web development with React", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 82, FacultyId = 6, SubjectCode = "JFE301", SubjectName = "Japanese IT Fundamentals", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 83, FacultyId = 6, SubjectCode = "OSG202", SubjectName = "Operating Systems", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 84, FacultyId = 6, SubjectCode = "PFP191", SubjectName = "Programming Fundamentals with Python", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 85, FacultyId = 6, SubjectCode = "PRE201c", SubjectName = "Excel Skills for Business", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 86, FacultyId = 6, SubjectCode = "PRF192", SubjectName = "Programming Fundamentals", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 87, FacultyId = 6, SubjectCode = "PRF192-EX", SubjectName = "Programming Fundamentals", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 88, FacultyId = 6, SubjectCode = "PRJ301", SubjectName = "Java Web Application Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 89, FacultyId = 6, SubjectCode = "PRJ301-EX", SubjectName = "Java Web Application Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 90, FacultyId = 6, SubjectCode = "PRJ302", SubjectName = "Java Web Application Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 91, FacultyId = 6, SubjectCode = "PRN212", SubjectName = "Basis Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 92, FacultyId = 6, SubjectCode = "PRN221", SubjectName = "Advanced Cross-Platform Application Programming With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 93, FacultyId = 6, SubjectCode = "PRN231", SubjectName = "Building Cross-Platform Back-End Application With .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 94, FacultyId = 6, SubjectCode = "PRN292c", SubjectName = "C# và .NET", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 95, FacultyId = 6, SubjectCode = "PRO192", SubjectName = "Object-Oriented Programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 96, FacultyId = 6, SubjectCode = "PRO192-EX", SubjectName = "Object-Oriented Programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 97, FacultyId = 6, SubjectCode = "PRO192c", SubjectName = "Object Oriented Programming with Java", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 98, FacultyId = 6, SubjectCode = "PRU212", SubjectName = "C# Programming and Unity", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 99, FacultyId = 6, SubjectCode = "SDN302", SubjectName = "Server-Side development with NodeJS, Express, and MongoDB", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 100, FacultyId = 6, SubjectCode = "WDP301", SubjectName = "Web Development Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 101, FacultyId = 6, SubjectCode = "WED201c", SubjectName = "Web Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+            // Seed data for English
+            new Subject { SubjectId = 102, FacultyId = 7, SubjectCode = "CHN113", SubjectName = "Elementary Chinese 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 103, FacultyId = 7, SubjectCode = "CHN113-EX", SubjectName = "Elementary Chinese 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 104, FacultyId = 7, SubjectCode = "CHN123", SubjectName = "Elementary Chinese 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 105, FacultyId = 7, SubjectCode = "CHN123-EX", SubjectName = "Elementary Chinese 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 106, FacultyId = 7, SubjectCode = "CHN132c", SubjectName = "Elementary Chinese 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 107, FacultyId = 7, SubjectCode = "CMC201c", SubjectName = "Creative Writing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 108, FacultyId = 7, SubjectCode = "EAW212", SubjectName = "Academic English Writing 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 109, FacultyId = 7, SubjectCode = "EAW222", SubjectName = "Academic English Writing 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 110, FacultyId = 7, SubjectCode = "EBC301c", SubjectName = "Business English Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 111, FacultyId = 7, SubjectCode = "ECN101", SubjectName = "Integrated Chinese 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 112, FacultyId = 7, SubjectCode = "ECN221", SubjectName = "Integrated Chinese 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 113, FacultyId = 7, SubjectCode = "ECR202", SubjectName = "Critical Reading in English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 114, FacultyId = 7, SubjectCode = "ELI301", SubjectName = "Translation 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 115, FacultyId = 7, SubjectCode = "ELI401", SubjectName = "Translation 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 116, FacultyId = 7, SubjectCode = "ELR301", SubjectName = "Research Methods", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 117, FacultyId = 7, SubjectCode = "ELS401c", SubjectName = "Academic Listening and Speaking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 118, FacultyId = 7, SubjectCode = "ENB301", SubjectName = "Business Writing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 119, FacultyId = 7, SubjectCode = "ENG303", SubjectName = "Advanced English Grammar", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 120, FacultyId = 7, SubjectCode = "ENM211c", SubjectName = "Business English Communication 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 121, FacultyId = 7, SubjectCode = "ENM301", SubjectName = "Intermediate Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 122, FacultyId = 7, SubjectCode = "ENM302", SubjectName = "Business English– Level 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 123, FacultyId = 7, SubjectCode = "ENM401", SubjectName = "Upper Intermediate Business English", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 124, FacultyId = 7, SubjectCode = "ENP102", SubjectName = "English phonetics and phonology in use", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 125, FacultyId = 7, SubjectCode = "ENW492c", SubjectName = "Writing Research Papers", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 126, FacultyId = 7, SubjectCode = "EPE301c", SubjectName = "Professional Ethics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 127, FacultyId = 7, SubjectCode = "ERW412", SubjectName = "English Read-Think-Write 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 128, FacultyId = 7, SubjectCode = "LIT301", SubjectName = "British and American Literature", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 129, FacultyId = 7, SubjectCode = "LTG202", SubjectName = "Introduction to linguistics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 130, FacultyId = 7, SubjectCode = "SEM101", SubjectName = "Semantics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 131, FacultyId = 7, SubjectCode = "SSC302c", SubjectName = "Advanced Presentation skills", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+            // Seed data for English Preparation Course
+            new Subject { SubjectId = 132, FacultyId = 8, SubjectCode = "ENT104", SubjectName = "English 2 (Top Notch 1)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 133, FacultyId = 8, SubjectCode = "ENT203", SubjectName = "English 3 (Top Notch 2)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 134, FacultyId = 8, SubjectCode = "TRS401", SubjectName = "English 4 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 135, FacultyId = 8, SubjectCode = "TRS501", SubjectName = "English 5 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 136, FacultyId = 8, SubjectCode = "TRS601", SubjectName = "English 6 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 137, FacultyId = 8, SubjectCode = "TRS601-CULI-TL", SubjectName = "English 6 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 138, FacultyId = 8, SubjectCode = "TRS601-KBU-TL", SubjectName = "English 6 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 139, FacultyId = 8, SubjectCode = "TRS601-TAR UMT-ML", SubjectName = "English 6 (University success)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+
+            // Seed data for Extra Classes
+            new Subject { SubjectId = 140, FacultyId = 9, SubjectCode = "EXE101g", SubjectName = "Group Experiential Entrepreneurship 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 141, FacultyId = 9, SubjectCode = "EXE201g", SubjectName = "Experiential Entrepreneurship 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+            // Seed data for Graduate
+            new Subject { SubjectId = 142, FacultyId = 11, SubjectCode = "AIP490", SubjectName = "AI Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 143, FacultyId = 11, SubjectCode = "AIP491", SubjectName = "AI Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 144, FacultyId = 11, SubjectCode = "ELT492", SubjectName = "Graduation Thesis - English studies", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 145, FacultyId = 11, SubjectCode = "GDP491", SubjectName = "Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 146, FacultyId = 11, SubjectCode = "GDP492", SubjectName = "Capstone Project Graphic Design - Animation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 147, FacultyId = 11, SubjectCode = "GDP493", SubjectName = "Capstone Project Graphic Design - Interaction Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 148, FacultyId = 11, SubjectCode = "GDP494", SubjectName = "Capstone Project Graphic Design - Communication Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 149, FacultyId = 11, SubjectCode = "GRA497", SubjectName = "Capstone Project - Multimedia and Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 150, FacultyId = 11, SubjectCode = "GRF491", SubjectName = "Graduation Thesis - Finance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 151, FacultyId = 11, SubjectCode = "GRI491", SubjectName = "Graduation Thesis - International Business", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 152, FacultyId = 11, SubjectCode = "GRM491", SubjectName = "Graduation Thesis - Marketing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 153, FacultyId = 11, SubjectCode = "GRP490", SubjectName = "Graduation thesis (Business plan)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 154, FacultyId = 11, SubjectCode = "IAP491", SubjectName = "IA Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 155, FacultyId = 11, SubjectCode = "IOP490", SubjectName = "IoT Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 156, FacultyId = 11, SubjectCode = "JGP491", SubjectName = "Graduation Project - Japanese Studies", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 157, FacultyId = 11, SubjectCode = "SAP490", SubjectName = "SAP Interdisciplinary Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 158, FacultyId = 11, SubjectCode = "SEP490", SubjectName = "SE Capstone Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+            // Seed data for Graphic Design
+
+            new Subject { SubjectId = 159, FacultyId = 12, SubjectCode = "ADB201", SubjectName = "Book Design & Printing Technology", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 160, FacultyId = 12, SubjectCode = "ADE301", SubjectName = "Visual Communication Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 161, FacultyId = 12, SubjectCode = "ADH301", SubjectName = "Mobility Applications Design 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 162, FacultyId = 12, SubjectCode = "ADI201", SubjectName = "Brand Identity Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 163, FacultyId = 12, SubjectCode = "ADP301", SubjectName = "Packaging design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 164, FacultyId = 12, SubjectCode = "ADT401", SubjectName = "Mobility Applications Design 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 165, FacultyId = 12, SubjectCode = "AET102", SubjectName = "Aesthetic", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 166, FacultyId = 12, SubjectCode = "AFA201", SubjectName = "Human Anatomy for Artis", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 167, FacultyId = 12, SubjectCode = "AGD301", SubjectName = "Information Graphic Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 168, FacultyId = 12, SubjectCode = "AMR401", SubjectName = "3D Modeling & Rigging", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 169, FacultyId = 12, SubjectCode = "ANA401", SubjectName = "3D Character Animation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 170, FacultyId = 12, SubjectCode = "ANB401", SubjectName = "Background Painting for Animation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 171, FacultyId = 12, SubjectCode = "ANC301", SubjectName = "Character Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 172, FacultyId = 12, SubjectCode = "ANO301c", SubjectName = "Visual development for digital design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 173, FacultyId = 12, SubjectCode = "ANS201", SubjectName = "Idea & Script Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 174, FacultyId = 12, SubjectCode = "ANS301", SubjectName = "Storyboarding", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 175, FacultyId = 12, SubjectCode = "ANT401", SubjectName = "Traditional Animation Principles", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 176, FacultyId = 12, SubjectCode = "CAD201", SubjectName = "Water Color", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 178, FacultyId = 12, SubjectCode = "DID301", SubjectName = "Data visualization & Infographic design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 179, FacultyId = 12, SubjectCode = "DRD204", SubjectName = "Drawing - Speed drawing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 180, FacultyId = 12, SubjectCode = "DRP101", SubjectName = "Drawing - Plaster Statue, Portrait", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 181, FacultyId = 12, SubjectCode = "DRS102", SubjectName = "Drawing - Form, Still-life", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 182, FacultyId = 12, SubjectCode = "DTG102", SubjectName = "Visual Design Tools", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 183, FacultyId = 12, SubjectCode = "DTG302", SubjectName = "Visual Effects - Principles of Compositing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 184, FacultyId = 12, SubjectCode = "DTG303", SubjectName = "Principles of Animation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 185, FacultyId = 12, SubjectCode = "GDF201", SubjectName = "Fundamental of Graphic Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 186, FacultyId = 12, SubjectCode = "HOA102", SubjectName = "Art History", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 187, FacultyId = 12, SubjectCode = "PFD201", SubjectName = "Photography for Designer", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 188, FacultyId = 12, SubjectCode = "PST202", SubjectName = "Perspective", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 189, FacultyId = 12, SubjectCode = "TPG203", SubjectName = "Basic typography & Layout", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 190, FacultyId = 12, SubjectCode = "TPG302", SubjectName = "Typography & E-publication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 191, FacultyId = 12, SubjectCode = "VCM202", SubjectName = "Visual Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 192, FacultyId = 12, SubjectCode = "VNC104", SubjectName = "Vietnamese Culture", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 193, FacultyId = 12, SubjectCode = "WDL202", SubjectName = "Web layout design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 194, FacultyId = 12, SubjectCode = "WDU202c", SubjectName = "UI/UX Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Subject { SubjectId = 195, FacultyId = 12, SubjectCode = "WIR201", SubjectName = "Interaction design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+
+             // Seed data for Graphic Design
+             new Subject { SubjectId = 196, FacultyId = 13, SubjectCode = "CES202", SubjectName = "System Support and Trouble Shooting", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 197, FacultyId = 13, SubjectCode = "CRY303c", SubjectName = "Applied Cryptography", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 198, FacultyId = 13, SubjectCode = "DBS401", SubjectName = "Database Security", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 199, FacultyId = 13, SubjectCode = "FRS301", SubjectName = "Digital Forensics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 200, FacultyId = 13, SubjectCode = "FRS401c", SubjectName = "Network Forensics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 201, FacultyId = 13, SubjectCode = "HOD401", SubjectName = "Ethical Hacking and Offensive Security", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 202, FacultyId = 13, SubjectCode = "IAA202", SubjectName = "Risk Management in Information Systems", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 203, FacultyId = 13, SubjectCode = "IAM302", SubjectName = "Malware Analysis and Reverse Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 204, FacultyId = 13, SubjectCode = "IAO201c", SubjectName = "Introduction to Information Assurance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 205, FacultyId = 13, SubjectCode = "IAP301", SubjectName = "Policy Development in Information Assurance", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 206, FacultyId = 13, SubjectCode = "IAR401c", SubjectName = "Incident Response", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 207, FacultyId = 13, SubjectCode = "IAW301", SubjectName = "Web security", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 208, FacultyId = 13, SubjectCode = "NWC204", SubjectName = "Computer Networking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 209, FacultyId = 13, SubjectCode = "OSP201", SubjectName = "Open Source Platform and Network Administration", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Information Technology Specialization
+             new Subject { SubjectId = 210, FacultyId = 14, SubjectCode = "CEA201", SubjectName = "Computer Organization and Architecture", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 211, FacultyId = 14, SubjectCode = "DGT301", SubjectName = "Digital Signal Processing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 212, FacultyId = 14, SubjectCode = "EDT202c", SubjectName = "Emerging Digital Technologies", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 213, FacultyId = 14, SubjectCode = "ESP301m", SubjectName = "Microcontroller & embedded system programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 214, FacultyId = 14, SubjectCode = "IOP391", SubjectName = "IoT application development project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 215, FacultyId = 14, SubjectCode = "IOT102", SubjectName = "Internet of things", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 216, FacultyId = 14, SubjectCode = "ISC301", SubjectName = "e-Commerce", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 217, FacultyId = 14, SubjectCode = "PRC392c", SubjectName = "Cloud Computing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 218, FacultyId = 14, SubjectCode = "SST301", SubjectName = "Sensor Technology", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Japanese
+             new Subject { SubjectId = 219, FacultyId = 15, SubjectCode = "JIJ301", SubjectName = "Basic issues of Japanese lexicology & phonetics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 220, FacultyId = 15, SubjectCode = "JIS401", SubjectName = "Japanese in Software", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 221, FacultyId = 15, SubjectCode = "JIT401", SubjectName = "Information Technology Japanese", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 222, FacultyId = 15, SubjectCode = "JJL301", SubjectName = "Japanese Literature", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 223, FacultyId = 15, SubjectCode = "JPD113", SubjectName = "Elementary Japanese 1-A1.1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 224, FacultyId = 15, SubjectCode = "JPD113-EX", SubjectName = "Japanese 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 225, FacultyId = 15, SubjectCode = "JPD123", SubjectName = "Elementary Japanese 1-A1.2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 226, FacultyId = 15, SubjectCode = "JPD133", SubjectName = "Elementary Japanese 1-A1/A2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 227, FacultyId = 15, SubjectCode = "JPD316", SubjectName = "Intermediate Japanese 1-B1/B2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 228, FacultyId = 15, SubjectCode = "JPD326", SubjectName = "Japanese Intermediate 2-B2.1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 229, FacultyId = 15, SubjectCode = "JSI201", SubjectName = "Information System", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Korean
+             new Subject { SubjectId = 230, FacultyId = 16, SubjectCode = "KLE301", SubjectName = "Korean Literature", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 231, FacultyId = 16, SubjectCode = "KLI311", SubjectName = "Interpretation 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 232, FacultyId = 16, SubjectCode = "KLT311", SubjectName = "Translation 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 233, FacultyId = 16, SubjectCode = "KOR311", SubjectName = "Intermediate Korean Language 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 234, FacultyId = 16, SubjectCode = "KOR321", SubjectName = "Intermediate Korean Language 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 235, FacultyId = 16, SubjectCode = "KOR411", SubjectName = "Intermediate Korean Language 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 236, FacultyId = 16, SubjectCode = "KRC301", SubjectName = "Korean Culture", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 237, FacultyId = 16, SubjectCode = "KRL312", SubjectName = "Intermediate Korean 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 238, FacultyId = 16, SubjectCode = "KRL322", SubjectName = "Intermediate Korean 4", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 239, FacultyId = 16, SubjectCode = "KRP301", SubjectName = "Korean Phonetics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Little UK
+             new Subject { SubjectId = 240, FacultyId = 18, SubjectCode = "LUK1", SubjectName = "LUK Global 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 241, FacultyId = 18, SubjectCode = "LUK5", SubjectName = "LUK Global 5", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Mathematics
+             new Subject { SubjectId = 242, FacultyId = 20, SubjectCode = "MAD101", SubjectName = "Discrete mathematics", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 243, FacultyId = 20, SubjectCode = "MAE101", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 244, FacultyId = 20, SubjectCode = "MAE101-EX", SubjectName = "Mathematics for Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 245, FacultyId = 20, SubjectCode = "MAI391", SubjectName = "Mathematics for Machine Learning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 246, FacultyId = 20, SubjectCode = "MAS202", SubjectName = "Applied Statistics for Business", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 247, FacultyId = 20, SubjectCode = "MAS202-EX", SubjectName = "Applied Statistics for Business", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 248, FacultyId = 20, SubjectCode = "MAS291", SubjectName = "Statistics and Probability", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Multimedia Communications
+             new Subject { SubjectId = 249, FacultyId = 21, SubjectCode = "BDI201", SubjectName = "Brand identity design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 250, FacultyId = 21, SubjectCode = "BRA301", SubjectName = "Brand Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 251, FacultyId = 21, SubjectCode = "CCM301", SubjectName = "Crisis Communications Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 252, FacultyId = 21, SubjectCode = "CCO201", SubjectName = "Corporate Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 253, FacultyId = 21, SubjectCode = "CSP201m", SubjectName = "Content Strategy for Professionals", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 254, FacultyId = 21, SubjectCode = "DTG111", SubjectName = "Visual Design Tools 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 255, FacultyId = 21, SubjectCode = "EVN201", SubjectName = "Event planning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 256, FacultyId = 21, SubjectCode = "IFT201c", SubjectName = "Innovation and Future thinking", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 257, FacultyId = 21, SubjectCode = "IMC301c", SubjectName = "Intergrated Marketing Communication in Digital World", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 258, FacultyId = 21, SubjectCode = "MCO201m", SubjectName = "Transmedia Storytelling", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 259, FacultyId = 21, SubjectCode = "MED201", SubjectName = "New Media Technology", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 260, FacultyId = 21, SubjectCode = "MEP301", SubjectName = "Multimedia Production Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 261, FacultyId = 21, SubjectCode = "MSM201c", SubjectName = "Meta social media marketing Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 262, FacultyId = 21, SubjectCode = "PRE301", SubjectName = "Public Relations principles and strategies", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 263, FacultyId = 21, SubjectCode = "RMC301m", SubjectName = "Research methods in Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 264, FacultyId = 21, SubjectCode = "SDP201", SubjectName = "Sound Production", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 265, FacultyId = 21, SubjectCode = "SEO201c", SubjectName = "Search Engine Optimization", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 266, FacultyId = 21, SubjectCode = "VDE301", SubjectName = "Digital Video Editing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 267, FacultyId = 21, SubjectCode = "VDP301", SubjectName = "Search Engine Optimization", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 268, FacultyId = 21, SubjectCode = "SEO201c", SubjectName = "Video Production", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 269, FacultyId = 21, SubjectCode = "WMC201", SubjectName = "Media Writing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 336, FacultyId = 21, SubjectCode = "BCJ201c", SubjectName = "Branding: The Creative Journey", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for On the job training
+             new Subject { SubjectId = 271, FacultyId = 22, SubjectCode = "OJB202", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 272, FacultyId = 22, SubjectCode = "OJE202", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 273, FacultyId = 22, SubjectCode = "OJP202", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 274, FacultyId = 22, SubjectCode = "OJS201", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 275, FacultyId = 22, SubjectCode = "OJT202", SubjectName = "On-the-job training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for OR
+             new Subject { SubjectId = 276, FacultyId = 23, SubjectCode = "GDQP", SubjectName = "Military training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 277, FacultyId = 23, SubjectCode = "ORT101", SubjectName = "Orientation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 278, FacultyId = 23, SubjectCode = "ORT102", SubjectName = "Orientation IT", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 279, FacultyId = 23, SubjectCode = "ORT103", SubjectName = "Orientation Examination", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 280, FacultyId = 23, SubjectCode = "ORT108", SubjectName = "Orientation", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Physical Training
+             new Subject { SubjectId = 281, FacultyId = 24, SubjectCode = "COV111", SubjectName = "Chess 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 282, FacultyId = 24, SubjectCode = "COV121", SubjectName = "Chess 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 283, FacultyId = 24, SubjectCode = "COV131", SubjectName = "Chess 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 284, FacultyId = 24, SubjectCode = "GDQP", SubjectName = "Military training", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 285, FacultyId = 24, SubjectCode = "OTP101", SubjectName = "Orientation and General Training Program", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 286, FacultyId = 24, SubjectCode = "VOV-EX", SubjectName = "Vovinam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 287, FacultyId = 24, SubjectCode = "VOV114", SubjectName = "Vovinam 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 288, FacultyId = 24, SubjectCode = "VOV124", SubjectName = "Vovinam 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 289, FacultyId = 24, SubjectCode = "VOV134", SubjectName = "Vovinam 3", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+             // Seed data for Soft Skill
+             new Subject { SubjectId = 290, FacultyId = 26, SubjectCode = "HCM202", SubjectName = "Ho Chi Minh Ideology", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 291, FacultyId = 26, SubjectCode = "MLN111", SubjectName = "Philosophy of Marxism – Leninism", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 292, FacultyId = 26, SubjectCode = "MLN122", SubjectName = "Political economics of Marxism – Leninism", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 293, FacultyId = 26, SubjectCode = "MLN131", SubjectName = "Scientific socialism", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 294, FacultyId = 26, SubjectCode = "MMP201", SubjectName = "Media Psychology", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 295, FacultyId = 26, SubjectCode = "SSB201", SubjectName = "Advanced Business Communication", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 296, FacultyId = 26, SubjectCode = "SSG104", SubjectName = "Communication and In-Group Working Skills", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 297, FacultyId = 26, SubjectCode = "SSG104-EX", SubjectName = "Communication and In-Group Working Skills", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 298, FacultyId = 26, SubjectCode = "SSL101c", SubjectName = "Academic Skills for University Success", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 299, FacultyId = 26, SubjectCode = "VNR202", SubjectName = "History of Việt Nam Communist Party", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+
+             // Seed data for Software Engineering
+             new Subject { SubjectId = 300, FacultyId = 27, SubjectCode = "CSI106", SubjectName = "Introduction to Computer Science", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 301, FacultyId = 27, SubjectCode = "DTA301", SubjectName = "Data Analysis", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 302, FacultyId = 27, SubjectCode = "HSF301", SubjectName = "Hibernate and Spring framework", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 303, FacultyId = 27, SubjectCode = "ISM302", SubjectName = "Enterprise Resource Planning", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 304, FacultyId = 27, SubjectCode = "ISP392", SubjectName = "Information System Programming Project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 305, FacultyId = 27, SubjectCode = "ITA203c", SubjectName = "Management information systems", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 306, FacultyId = 27, SubjectCode = "ITA301", SubjectName = "Information System Analysis and Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 307, FacultyId = 27, SubjectCode = "ITB302c", SubjectName = "Business Intelligence (BI)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 308, FacultyId = 27, SubjectCode = "ITE302c", SubjectName = "Ethics in IT", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 309, FacultyId = 27, SubjectCode = "ITE303c", SubjectName = "Ethics in IT", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 310, FacultyId = 27, SubjectCode = "KMS301", SubjectName = "Knowledge management system", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 311, FacultyId = 27, SubjectCode = "LAB211", SubjectName = "OOP with Java Lab", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 312, FacultyId = 27, SubjectCode = "LAB211-EX", SubjectName = "OOP with Java Lab", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 313, FacultyId = 27, SubjectCode = "LAB221c", SubjectName = "Desktop Java lab", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 314, FacultyId = 27, SubjectCode = "MMA301", SubjectName = "Multiplatform Mobile App Development", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 315, FacultyId = 27, SubjectCode = "PMG201c", SubjectName = "Project management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 316, FacultyId = 27, SubjectCode = "PRM392", SubjectName = "Mobile Programming", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 317, FacultyId = 27, SubjectCode = "SAP311", SubjectName = "SAP General 1", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 318, FacultyId = 27, SubjectCode = "SAP321", SubjectName = "SAP General 2", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 319, FacultyId = 27, SubjectCode = "SAP341", SubjectName = "SAP Application Development with ABAP", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 320, FacultyId = 27, SubjectCode = "SWD392", SubjectName = "SW Architecture and Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 321, FacultyId = 27, SubjectCode = "SWE201c", SubjectName = "Introduction to Software Engineering", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 322, FacultyId = 27, SubjectCode = "SWP391", SubjectName = "Application development project", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 323, FacultyId = 27, SubjectCode = "SWR302", SubjectName = "Software Requirement", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 324, FacultyId = 27, SubjectCode = "SWT301", SubjectName = "Software Testing", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 325, FacultyId = 27, SubjectCode = "WDU203c", SubjectName = "UI/UX Design", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+
+             // Seed data for Software Engineering
+             new Subject { SubjectId = 326, FacultyId = 29, SubjectCode = "DBA103", SubjectName = "Traditional musical instrument - Dan Bau", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 327, FacultyId = 29, SubjectCode = "DNG103", SubjectName = "Traditional musical instrument - Dan Nguyet", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 328, FacultyId = 29, SubjectCode = "DNH103", SubjectName = "Traditional musical instrument - Dan Nhi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 329, FacultyId = 29, SubjectCode = "DSA103", SubjectName = "Traditional musical instrument - Sao Truc", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 330, FacultyId = 29, SubjectCode = "DTB103", SubjectName = "Traditional musical instrument - Dan Ty Ba", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 331, FacultyId = 29, SubjectCode = "DTR103", SubjectName = "Traditional musical instrument - Dan Tranh", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 332, FacultyId = 29, SubjectCode = "TRG101", SubjectName = "Traditional musical instrument - Trong", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 333, FacultyId = 29, SubjectCode = "TRG103", SubjectName = "Traditional musical instrument - Trong", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 334, FacultyId = 29, SubjectCode = "ÐBA101", SubjectName = "Traditional musical instrument - Dan Bau", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+             new Subject { SubjectId = 335, FacultyId = 29, SubjectCode = "ÐNH101", SubjectName = "Traditional musical instrument - Dan Nhi", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
             
-           
-
-
-
-
-
-
-
 
         );
 
