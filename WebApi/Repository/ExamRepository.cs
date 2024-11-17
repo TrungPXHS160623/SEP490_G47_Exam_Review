@@ -7,6 +7,7 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 using static Library.Response.CampusReportResponse;
+using static Library.Response.CampusSubjectExamResponse;
 
 public class ExamRepository : IExamRepository
 {
@@ -576,12 +577,6 @@ public class ExamRepository : IExamRepository
             };
         }
     }
-    public async Task<RequestResponse> ImportExamsFromCsv(List<ExamImportRequest> examImportDtos)
-    {
-        throw new NotImplementedException();
-    }
-
-
     public async Task<RequestResponse> ImportExamsFromExcel(IFormFile file)
     {
         var response = new RequestResponse();
@@ -776,25 +771,16 @@ public class ExamRepository : IExamRepository
         return (results, results.Count);
     }
 
-
-
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToCsv()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<ResultResponse<ExamExportResponse>> ExportExamsToExcel()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int campusId)
+    public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID)
     {
         try
         {
+            var user = await _context.Users
+            .Where(u => u.UserId == userID)
+            .FirstOrDefaultAsync();
             var exams = await _context.Exams
                 .AsNoTracking()
-                .Where(e => e.CampusId == campusId)
+                .Where(e => e.CampusId == user.CampusId)
                 .Include(e => e.Campus)
                 .Include(e => e.Subject)
                 .ThenInclude(e => e.Faculty)
@@ -853,49 +839,6 @@ public class ExamRepository : IExamRepository
                 Message = "An error occurred while fetching the exams. Please try again later."
             };
         }
-    }
-
-
-    // Tìm Môn theo kì và name
-    public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
-    {
-        // Retrieve the full name of the user first
-        var user = await _context.Users
-            .Where(u => u.UserId == userId)
-            .Select(u => new { u.FullName, u.RoleId })
-            .FirstOrDefaultAsync();
-
-        if (user == null)
-        {
-
-            return new List<ExamBySemesterResponse>();
-        }
-
-        // muốn hiển thị tìm kiếm được cả InstructorAssignment cho lecturer thì bỏ if.
-        if (user.RoleId != 4)
-        {
-            return new List<ExamBySemesterResponse>();
-        }
-
-        var examAssignments = await _context.Exams
-            .Include(e => e.Semester)
-            .Include(e => e.Subject)
-       .Where(e => e.SemesterId == semesterId && e.AssignedUserId == userId)
-            .Select(e => new ExamBySemesterResponse
-            {
-                ExamCode = e.ExamCode,
-                SubjectName = e.Subject.SubjectName,
-                FullName = user.FullName,
-                SemesterName = e.Semester.SemesterName
-            })
-            .ToListAsync();
-
-        return examAssignments;
-    }
-
-    public Task<ResultResponse<LeaderExamResponse>> GetRemindExamList()
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<ResultResponse<CampusReportResponse>> GetCampusReport()
@@ -958,11 +901,55 @@ public class ExamRepository : IExamRepository
             };
         }
     }
+    public async Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId)
+    {
+        // Retrieve the full name of the user first
+        var user = await _context.Users
+            .Where(u => u.UserId == userId)
+            .Select(u => new { u.FullName, u.RoleId })
+            .FirstOrDefaultAsync();
 
-    public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int campusId, int facutyId)
+        if (user == null)
+        {
+
+            return new List<ExamBySemesterResponse>();
+        }
+
+        if (user.RoleId != 4)
+        {
+            return new List<ExamBySemesterResponse>();
+        }
+
+        var examAssignments = await _context.Exams
+            .Include(e => e.Semester)
+            .Include(e => e.Subject)
+       .Where(e => e.SemesterId == semesterId && e.AssignedUserId == userId)
+            .Select(e => new ExamBySemesterResponse
+            {
+                ExamCode = e.ExamCode,
+                SubjectName = e.Subject.SubjectName,
+                FullName = user.FullName,
+                SemesterName = e.Semester.SemesterName
+            })
+            .ToListAsync();
+
+        return examAssignments;
+    }
+
+    public Task<ResultResponse<LeaderExamResponse>> GetRemindExamList()
+    {
+        throw new NotImplementedException();
+    }
+
+
+
+    public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int userID)
     {
         try
         {
+            var user = await _context.Users
+           .Where(u => u.UserId == userID)
+           .FirstOrDefaultAsync();
             var exams = await _context.Exams
                 .AsNoTracking()
                 .Include(e => e.Campus)
@@ -970,7 +957,7 @@ public class ExamRepository : IExamRepository
                 .ThenInclude(e => e.Faculty)
                 .Include(e => e.Reports)
                 .Include(e => e.ExamStatus) // Bao gồm cả trạng thái bài thi
-                .Where(e => e.CampusId == campusId && e.Subject.Faculty.FacultyId == facutyId)
+                .Where(e => e.CampusId ==user.CampusId)
                 .ToListAsync();
 
             if (!exams.Any())
@@ -994,10 +981,21 @@ public class ExamRepository : IExamRepository
                     ExamCode = g.Key,
                     Status = g.FirstOrDefault()?.ExamStatus?.StatusContent ?? " ",
                     issues = g
-                     .Where(e => e.ExamStatusId == 5) // Chỉ lấy lỗi
-                     .SelectMany(e => e.Reports.Select(r => r.ReportContent ?? "No Issues Reported"))
-                     .ToList() // Chọn lỗi đầu tiên nếu có
-                }).ToList();
+                            .Where(e => e.ExamStatusId == 5)
+                           .SelectMany(e => e.Reports.Select(r => r.ReportContent ?? "No Issues Reported"))
+                          .ToList()
+                })
+                                    .ToList()
+                        .Select(report =>
+                                    {
+                                        if (!report.issues.Any())
+                                        {
+                                            report.issues.Add("No Issues");
+                                        }
+                                        return report;
+                                    })
+                                    .ToList();
+
 
             return new ResultResponse<DepartmentReportResponse>
             {

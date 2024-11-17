@@ -30,9 +30,9 @@ namespace WebApi.IRepository
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
 
-        Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int campusId);
+        Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID);
         Task<ResultResponse<CampusReportResponse>> GetCampusReport();
-        Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int campusId, int facutyId);
+        Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int userID);
 
         Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 

@@ -1,8 +1,7 @@
 ﻿namespace Library.Response
 {
 
-    //cách 1
-    // Lớp này sẽ chứa thông tin tổng hợp cho phản hồi
+
     public class CampusSubjectExamResponse
     {
         public string? CampusName { get; set; }
@@ -10,14 +9,15 @@
         public int ErrorCode { get; set; }
         public int OKCode { get; set; }
         public List<CampusSubjectExamCodeResponse> Departments { get; set; } = new List<CampusSubjectExamCodeResponse>();
+        public class CampusSubjectExamCodeResponse
+        {
+            public string? departmentName { get; set; }
+            public int? totalExams { get; set; }
+            public int ErrorCode { get; set; }
+            public int OKCode { get; set; }
+        }
     }
 
-    public class CampusSubjectExamCodeResponse
-    {
-        public string? departmentName { get; set; }
-        public int? totalExams { get; set; }
-        public int ErrorCode { get; set; }
-        public int OKCode { get; set; }
-    }
+
 
 }
