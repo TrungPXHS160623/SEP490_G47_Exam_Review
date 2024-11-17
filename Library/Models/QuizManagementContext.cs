@@ -201,7 +201,7 @@ public partial class QuizManagementContext : DbContext
 
             entity.Property(e => e.FileName).HasMaxLength(255);
 
-            entity.Property(e => e.FilePath).HasMaxLength(500);
+            entity.Property(e => e.FilePath).HasColumnType("nvarchar(MAX)");
 
             entity.Property(e => e.FileType).HasMaxLength(100);
 

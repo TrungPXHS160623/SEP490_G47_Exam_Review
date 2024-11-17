@@ -17,7 +17,7 @@ namespace Library.Response
         public string? ReportContent { get; set; }
         public IFormFile? Files { get; set; }
 
-        public List<string> ImageList { get; set; } = new List<string>();
+        public List<FileReponse> ImageList { get; set; } = new List<FileReponse>();
 
         public string? QuestionSolutionDetail { get; set; }
 

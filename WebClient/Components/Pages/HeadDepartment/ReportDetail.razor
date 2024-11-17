@@ -65,13 +65,17 @@
                             <MudTextField @bind-Value=item.QuestionSolutionDetail Label="Solution" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
                         </div>
                     </div>
-                    @* <div class="mb-4">
-            <div class="image-placeholder">
-            <span>Image</span>
-            </div>
-            <input class="form-control mt-3" type="file" id="imageUpload" accept="image/png, image/jpeg">
-            <small class="text-muted">PNG, JPG (recommended size: 200x200px)</small>
-            </div> *@
+                     <div class="mb-4 d-flex align-items-center flex-wrap">
+                         @if (item.ImageList.Count > 0)
+                        {
+                            foreach (var image in item.ImageList)
+                            {
+                                <div class="img-preview col-auto mb-2 me-2">
+                                    <img src="@image.FileData" @onclick="() => OpenImageDialog(image.FileData)" />
+                                </div>
+                            }
+                        }
+                     </div>
                 </div>
             }
         }
@@ -186,5 +190,23 @@
                 NavManager.NavigateTo("/HeadDepartment/Report");
             }
         }
+
+    }
+
+    private async Task OpenImageDialog(string image)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.ExtraExtraLarge,
+                BackdropClick = true,
+            };
+
+        var parameters = new DialogParameters<ImageDialog>
+        {
+            { x => x.selectedImage, image },
+        };
+
+        var dialog = await DialogService.ShowAsync<ImageDialog>(string.Empty, parameters, options);
     }
 }

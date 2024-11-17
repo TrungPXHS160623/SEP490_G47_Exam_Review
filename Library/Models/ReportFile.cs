@@ -10,9 +10,9 @@ namespace Library.Models
     {
         public int FileId { get; set; }
         public int ReportId { get; set; }
-        public string FileName { get; set; } = null!;
-        public string FilePath { get; set; } = null!;
-        public string FileType { get; set; } = null!;
+        public string? FileName { get; set; }
+        public string? FilePath { get; set; }
+        public string? FileType { get; set; }
         public long? FileSize { get; set; }
         public DateTime UploadDate { get; set; }
 
