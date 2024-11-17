@@ -307,6 +307,13 @@ public class ExamRepository : IExamRepository
                                                     QuestionNumber = rp.QuestionNumber,
                                                     QuestionSolutionDetail = rp.QuestionSolutionDetail,
                                                     ReportContent = rp.ReportContent,
+                                                    ImageList = (from rf in _context.ReportFiles
+                                                                 where rf.ReportId == rp.ReportId
+                                                                 select new FileReponse
+                                                                 {
+                                                                     FileId = rf.FileId,
+                                                                     FileData = rf.FilePath,
+                                                                 }).ToList()
                                                 }).ToList(),
                                   UpdateDate = ex.UpdateDate,
                               }).FirstOrDefaultAsync();

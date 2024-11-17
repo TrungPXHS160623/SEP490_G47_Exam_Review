@@ -11,34 +11,34 @@
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Exam Code:</label>
                     <MudText>@exam.ExamCode</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Subject Name:</label>
+                        <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Head of Department:</label>
+                        <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Exam Duration:</label>
+                        <MudText>@exam.ExamDuration</MudText>
+                    </div>
                 </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Subject Name:</label>
-                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Head of Department:</label>
-                    <MudText>@(exam.HeadDepartmentName ?? "N/A")</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Duration:</label>
-                    <MudText>@exam.ExamDuration</MudText>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Exam Type:</label>
-                    <MudText>@exam.ExamType</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">Start Review Date:</label>
-                    <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
-                </div>
-                <div class="split-row mb-4">
-                    <label class="col-4 text-end me-3">End Review Date:</label>
-                    <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
-                </div>
-                @if (exam.AssignStatusId != 3)
+                <div class="col-6">
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Exam Type:</label>
+                        <MudText>@exam.ExamType</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">Start Review Date:</label>
+                        <MudText>@(exam.StartDate.HasValue ? exam.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
+                    </div>
+                    <div class="split-row mb-4">
+                        <label class="col-4 text-end me-3">End Review Date:</label>
+                        <MudText>@(exam.EndDate.HasValue ? exam.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
+                    </div>
+                    @if (exam.AssignStatusId != 3)
                 {
                     <div class="split-row mb-4">
                         <label class="col-4 text-end me-3">Planning Time:</label>
@@ -55,12 +55,12 @@
                                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
                                                @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                                Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft" />
-                            </div>
-                            <div class="col-5">
-                                <MudTimePicker AmPm="true" Time=exam.AssignmentDate?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
-                            </div>
-                        </div>
-                    </div>
+                             </div>
+                             <div class="col-5">
+                                 <MudTimePicker AmPm="true" Time=exam.AssignmentDate?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
+                             </div>
+                         </div>
+                     </div>
                 }
             </div>
         </div>
@@ -104,10 +104,13 @@
                                 foreach (var image in item.ImageList)
                                 {
                                     <div class="img-preview col-auto mb-2 me-2">
-                                        <div class="close-btn">
-                                            <MudFab StartIcon="@Icons.Material.Filled.Close" Color="Color.Dark" IconSize="Size.Small" Size="Size.Small" OnClick="(()=>RemoveImage(item.ImageList,item.ImageList.IndexOf(image)))"></MudFab>
-                                        </div>
-                                        <img src="@image" @onclick="() => OpenImageDialog(image)" />
+                                        @if (exam.AssignStatusId == 4)
+                                        {
+                                            <div class="close-btn">
+                                                <MudFab StartIcon="@Icons.Material.Filled.Close" Color="Color.Dark" IconSize="Size.Small" Size="Size.Small" OnClick="(()=>RemoveImage(item.ImageList,image))"></MudFab>
+                                            </div>
+                                        }
+                                        <img src="@image.FileData" @onclick="() => OpenImageDialog(image.FileData)" />
                                     </div>
                                 }
                             }
@@ -118,6 +121,7 @@
                                     <MudFileUpload T="IReadOnlyList<IBrowserFile>"
                                                    Accept=".png, .jpg"
                                                    FilesChanged="@((file)=> UploadFiles2(file,item))"
+                                                   Fi
                                                    MaximumFileCount="100"
                                                    @ondrop="@ClearDragClass"
                                                    @ondragenter="@SetDragClass"
@@ -197,10 +201,9 @@
 
             if (Layout != null)
             {
-                Layout.Header = "Home";
-                Layout.HeaderLink = "/Home";
-                Layout.SubHeader = "Exam Assgined List";
-                Layout.SubHeader1 = "Exam Report Detail";
+                Layout.Header = "Exam Assgined List";
+                Layout.HeaderLink = "/Lecture/ExamList";
+                Layout.SubHeader = "Exam Report Detail";
                 Layout.RefreshLayout();
             }
 
@@ -312,19 +315,16 @@
             {
                 if (data != null)
                 {
-                    // using MemoryStream ms = new();
-                    // var resized = await data.RequestImageFileAsync(data.ContentType, int.MaxValue, int.MaxValue);
-                    // using Stream fileStream = resized.OpenReadStream();
-                    // await fileStream.CopyToAsync(ms);
-
-                    // item.ImageList.Add($"data:{data.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
 
                     using (Stream fileStream = data.OpenReadStream(maxAllowedSize: long.MaxValue))
                     {
                         using MemoryStream ms = new();
                         await fileStream.CopyToAsync(ms);
 
-                        item.ImageList.Add($"data:{data.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}");
+                        item.ImageList.Add(new FileReponse
+                            {
+                                FileData = $"data:{data.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}"
+                            });
                     }
                 }
             }
@@ -335,9 +335,9 @@
         }
     }
 
-    public void RemoveImage(List<string> list, int indexOf)
+    public void RemoveImage(List<FileReponse> list, FileReponse item)
     {
-        list.RemoveAt(indexOf);
+        list.Remove(item);
     }
 
     private void SetDragClass()
