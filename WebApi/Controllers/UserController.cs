@@ -191,5 +191,21 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
+        [HttpGet("GetUserByMail/{mail}/{headId}")]
+        public async Task<IActionResult> GetUserByMail(string mail, int headId)
+        {
+            var data = await this.userRepository.GetUserByMail(mail, headId);
+
+            return Ok(data);
+        }
+
+        [HttpPost("AddUserToSubject")]
+        public async Task<IActionResult> AddUserToSubject([FromBody] AddLecturerSubjectRequest req)
+        {
+            var data = await this.userRepository.AddUserToSubject(req);
+
+            return Ok(data);
+        }
     }
 }

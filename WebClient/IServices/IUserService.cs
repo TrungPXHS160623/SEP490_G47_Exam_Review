@@ -41,5 +41,9 @@ namespace WebClient.IServices
 
         Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId);
 
+        Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId);
+
+        Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req);
+
     }
 }

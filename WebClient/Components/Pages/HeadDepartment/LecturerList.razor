@@ -1,6 +1,9 @@
 ﻿<MudDialog>
     <DialogContent>
         <div>
+            <MudButton Color="Color.Tertiary" OnClick="AddLecturer" Class="btn btn-block" Variant="Variant.Filled">Add Lecturer</MudButton>
+        </div>
+        <div>
             <MudTable Items="UserList" FixedHeader="true" Height="380px" Hover="true">
                 <HeaderContent>
                     <MudTh>No</MudTh>
@@ -54,5 +57,28 @@
         }
     }
 
+    public async Task AddLecturer()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
 
+            };
+
+        var parameters = new DialogParameters<AddLecturerDialog>
+        {
+            {x => x.SubjectId,SubjectId}
+        };
+
+        var dialog = await DialogService.ShowAsync<AddLecturerDialog>($"Add Lecturer", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+        }
+    }
 }

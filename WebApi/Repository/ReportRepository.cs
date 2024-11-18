@@ -32,11 +32,12 @@ namespace WebApi.Repository
                 foreach (var item in reportRequest.ReportList)
                 {
                     var data = await this.dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.ReportId);
+                    var newRecord = new Report();
 
                     if (data == null)
                     {
                         //Khi tạo mới báo cáo (chưa ấn nút submit):
-                        var newRecord = new Report
+                        newRecord = new Report
                         {
                             ExamId = reportRequest.ExamId,
                             QuestionNumber = item.QuestionNumber,
@@ -47,6 +48,8 @@ namespace WebApi.Repository
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
+                        await this.dbContext.SaveChangesAsync();
+
                     }
                     else
                     {
@@ -77,18 +80,17 @@ namespace WebApi.Repository
                             {
                                 var i = new ReportFile
                                 {
-                                    ReportId = item.ReportId.Value,
+                                    ReportId = item.ReportId ?? newRecord.ReportId,
                                     FilePath = image.FileData,
                                 };
 
-                                await this.dbContext.AddAsync(i);
+                                await this.dbContext.ReportFiles.AddAsync(i);
                             }
                         }
 
                     }
 
                 }
-                
 
                 var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                 exam.GeneralFeedback = reportRequest.Summary;
