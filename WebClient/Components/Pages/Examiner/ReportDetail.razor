@@ -1,4 +1,4 @@
-﻿@page "/HeadDepartment/ExamReport/{ExamId:int}"
+﻿@page "/Examiner/ReviewReport/{ExamId:int}"
 
 <div class="container">
     <div class="custom-box mb-5">
@@ -136,7 +136,7 @@
 
     public void GoBack()
     {
-        NavManager.NavigateTo("/HeadDepartment/Report");
+        NavManager.NavigateTo("/Examiner/ReviewReport");
     }
 
     public async Task GetReport()

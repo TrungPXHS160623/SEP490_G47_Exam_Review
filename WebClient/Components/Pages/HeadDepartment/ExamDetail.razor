@@ -14,20 +14,20 @@
     <MudDialog>
         <DialogContent>
             <div class="form-group mb-4">
-                <label class="col-4 text-end me-4">Exam Code:</label>
+                <label class="col-4 text-start me-4">Exam Code:</label>
                 <MudText>@exam.ExamCode</MudText>
                 </div>
 
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end  me-4">Subject Name:</label>
+                    <label class="col-4 text-start  me-4">Subject Name:</label>
                     <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end  me-4">Exam Creater:</label>
+                    <label class="col-4 text-start  me-4">Exam Creater:</label>
                     <MudText>@(exam.CreaterName ?? "N/A")</MudText>
                 </div>
                 <div class="form-group mb-4">
-                    <label class="col-4 text-end  me-4">Lecturer :</label>
+                <label class="col-4 text-start  me-4">Lecturer :</label>
                     <div>
                         <MudSelect @bind-Value=exam.AssignedLectureId
                                    Variant="Variant.Outlined"

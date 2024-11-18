@@ -1,4 +1,4 @@
-﻿@page "/HeadDepartment/Report"
+﻿@page "/Examiner/ReviewReport"
 
 <style>
     .mud-table-cell {
@@ -28,7 +28,7 @@
         z-index: 99;
     }
 </style>
-<h1 style="text-align: center;">Exam Report</h1>
+<h1 style="text-align: center;">Review Report</h1>
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
@@ -77,13 +77,12 @@
                 </div>
             </div>
             <div>
-                <MudTable T=LeaderExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
+                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
                     <HeaderContent>
                         <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
-                        <MudTh>Lecture Asigned</MudTh>
                         <MudTh>Assignment Date</MudTh>
                         <MudTh>Semester</MudTh>
                         <MudTh></MudTh>
@@ -95,9 +94,8 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
-                        <MudTd>@context.AssignedLectureName</MudTd>
-                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
-                        <MudTd>@context.SemesterName</MudTd>
+                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@context.SemseterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))" Disabled="@(context.ExamStatusId == 4)">Report</MudButton>
@@ -117,7 +115,7 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
+    public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
 
@@ -149,7 +147,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuService.CheckAccess(userId, 6);
+            var response = await MenuService.CheckAccess(userId, 15);
 
             if (!response.IsSuccessful)
             {
@@ -175,7 +173,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Report";
+                    Layout.SubHeader = "Review Report";
                     Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }
@@ -211,7 +209,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamService.GetLeaderExamList(request);
+        var eList = await this.ExamService.GetExamList(request);
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3  && x.ExamStatusId != 1  && x.ExamStatusId != 4).ToList();
@@ -220,6 +218,6 @@
 
     public void GoToDetail(int examId)
     {
-        NavManager.NavigateTo($"/HeadDepartment/ExamReport/{examId}");
+        NavManager.NavigateTo($"/Examiner/ReviewReport/{examId}");
     }
 }

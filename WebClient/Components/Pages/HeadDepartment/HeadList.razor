@@ -176,7 +176,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Assign List";
+                    Layout.SubHeader = "Assign Teacher To Review";
                     Layout.RefreshLayout();
                 }
             }
@@ -220,7 +220,7 @@
                 semesters = semesterrList.Items;
             }
             ExamList = eList.Items
-                           .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3))
+                           .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3 || e.ExamStatusId == 4))
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)
                            .ToList();
 

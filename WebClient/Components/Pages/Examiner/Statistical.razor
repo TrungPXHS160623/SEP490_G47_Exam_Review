@@ -1,5 +1,5 @@
-﻿@page "/Examiner/Statistical"
-<h1 style="text-align: center;">Exam List</h1>
+﻿@page "/Examiner/OverallReport"
+<h1 style="text-align: center;">Overall Report</h1>
 <style>
     .mud-table-cell {
         border: none !important;
@@ -166,21 +166,10 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Assign List";
+                    Layout.SubHeader = "Overall Report";
                     Layout.RefreshLayout();
                 }
             }
-        }
-    }
-
-    private void SetLayoutHeader()
-    {
-        if (Layout != null)
-        {
-            Layout.Header = "Home";
-            Layout.HeaderLink = "/Home";
-            Layout.SubHeader = "Exam Assign List";
-            Layout.RefreshLayout();
         }
     }
 
