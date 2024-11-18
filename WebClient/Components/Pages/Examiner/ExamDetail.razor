@@ -5,32 +5,32 @@
         justify-content: flex-start; 
     }
         .form-group label {
-            margin-right: 8px;
+            margin-right: 20px;
         }
     .mud-input.mud-disabled {
         background-color: rgba(0, 0, 0, 0.1);
         color: black;
     }
 </style>
-<EditForm @ref=_refForm Model="exam" OnValidSubmit="Excute">
+<EditForm @ref=_refForm Model="exam" OnValidSubmit="Excute" >
     <FluentValidationValidator/>
     <MudDialog>
         <DialogContent>
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Exam Code:</label>
-                <MudTextField  @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" For="@(()=> exam.ExamCode)" />
+                <label class="col-4 text-end">Exam Code:</label>
+                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 150px; max-width: 250px;" For="@(()=> exam.ExamCode)" />
             </div>
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-start" style="display: inline-block; margin-right: 8px;">Subject Name:</label>
+                    <label class="col-4 text-end" style="display: inline-block; margin-right: 8px;">Subject Name:</label>
                     <MudText Margin="Margin.Dense" style="display: inline-block;">@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
                 </div>
             }
             else
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-start">Subject Name:</label>
+                    <label class="col-4 text-end">Subject Name:</label>
                     <MudSelect T="int?"
                                Value="exam.SubjectId"
                                Variant="Variant.Outlined"
@@ -54,23 +54,23 @@
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4">
-                    <label class="col-4 text-start">Exam Creater:</label>
+                    <label class="col-4 text-end">Exam Creater:</label>
                     <MudText class="text-start">@(exam.CreaterName ?? "N/A")</MudText>
                 </div>
             }
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Head of Department:</label>
-                <MudText class="text-start">@(exam.HeadDepartmentName ?? "N/A")</MudText>
+                <label class="col-4 text-end">Head of Department:</label>
+                <MudText class=" col-8 text-start">@(exam.HeadDepartmentName ?? "N/A")</MudText>
             </div>
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4 text-start ">
-                    <label class="col-4 text-start">Status:</label>
+                    <label class="col-4 text-end">Status:</label>
                     <MudText class="text-start">@exam.ExamStatusContent</MudText>
                 </div>
             }
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Campus:</label>
+                <label class="col-4 text-end">Campus:</label>
                 <MudSelect T="int?"
                            Value="exam.CampusId"
                            Variant="Variant.Outlined"
@@ -91,7 +91,7 @@
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Exam Duration:</label>
+                <label class="col-4 text-end">Exam Duration:</label>
                 <MudSelect @bind-Value="exam.ExamDuration"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
@@ -105,7 +105,7 @@
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Exam Type:</label>
+                <label class="col-4 text-end">Exam Type:</label>
                 <MudSelect @bind-Value="exam.ExamType"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
@@ -122,14 +122,14 @@
                 </MudSelect>
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-start">Start Date:</label>
+                <label class="col-4 text-end">Start Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
             </div>
             <div class="form-group mb-4">
-                <label class="col-4 text-start">End Date:</label>
+                <label class="col-4 text-end">End Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
@@ -137,7 +137,7 @@
             </div>
         </DialogContent>
         <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" Disabled="@_processing">
                 @if (_processing)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -148,7 +148,7 @@
                     <MudText>@(IsView ? "Edit" : "Save")</MudText>
                 }
             </MudButton>
-            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-4 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
         </DialogActions>
     </MudDialog>
 </EditForm>
