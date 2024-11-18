@@ -580,5 +580,45 @@ namespace WebApi.Repository
                 };
             }
         }
+
+        public async Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubjectList(int userId)
+        {
+            try
+            {
+                HeadSubjectRepsonse data = new HeadSubjectRepsonse();
+
+                var sList = await (from s in DBcontext.Subjects
+                                   join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                   join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
+                                   where cuf.UserId == userId
+                                   select new SubjectResponse
+                                   {
+                                       SubjectId = s.SubjectId,
+                                       SubjectCode = s.SubjectCode,
+                                       SubjectName = s.SubjectName,
+                                       Faculty = f.FacultyName
+                                   }).ToListAsync();
+
+                if (sList.Count > 0)
+                {
+                    data.SubjectsList = sList;
+                    data.Department = sList.FirstOrDefault().Faculty;
+                }
+
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = true,
+                    Item = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
     }
 }

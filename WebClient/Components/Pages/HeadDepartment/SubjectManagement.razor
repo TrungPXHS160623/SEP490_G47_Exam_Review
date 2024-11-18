@@ -1,0 +1,115 @@
+﻿@page "/HeadDepartment/SubjectList"
+<h1 style="text-align: center;">List Asigned</h1>
+
+<div class="d-flex justify-content-center">
+    <div class="mt-4">
+        <div class="custom-box">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h4>Department : @Response.Department</h4>
+                </div>
+            </div>
+            <div>
+                <MudTable Items="Response.SubjectsList" FixedHeader="true" Height="@(Response.SubjectsList.Count == 0 ? null : "400px")" Hover="true">
+                    <HeaderContent>
+                        <MudTh>#</MudTh>
+                        <MudTh>Subject Code</MudTh>
+                        <MudTh>Subject Name</MudTh>
+                        <MudTh>Lecturer List</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@((Response.SubjectsList.IndexOf(@context) + 1))</MudTd>
+                        <MudTd>@context.SubjectCode</MudTd>
+                        <MudTd>@context.SubjectName</MudTd>
+                        <MudTd>
+                            <div class="d-flex align-items-center justify-content-around">
+                                <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => ShowLecturerList(context.SubjectId,context.SubjectCode))">Show</MudButton>
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+                @if (Response.SubjectsList.Count == 0)
+                {
+                    <p class="text-center  fs-6 mt-4">No Data</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    public HeadSubjectRepsonse Response = new();
+
+    private int UserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
+
+        if (isAuthenticated)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            var response = await MenuService.CheckAccess(UserId, 5);
+
+            await GetSubject();
+
+            if (!response.IsSuccessful)
+            {
+                NavManager.NavigateTo("/404");
+            }
+            else
+            {
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "Subject List";
+                    Layout.RefreshLayout();
+                }
+            }
+        }
+    }
+
+    public async Task ShowLecturerList(int subjectId,string subjectCode)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<LecturerList>
+        {
+            {x => x.SubjectId,subjectId}
+        };
+
+        var dialog = await DialogService.ShowAsync<LecturerList>($"List of lecturer teaching {subjectCode}", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
+        }
+    }
+
+    public async Task GetSubject()
+    {
+        var response = await SubjectService.GetHeadSubject(UserId);
+        if (response.IsSuccessful)
+        {
+            Response = response.Item;
+        }
+    }
+
+}

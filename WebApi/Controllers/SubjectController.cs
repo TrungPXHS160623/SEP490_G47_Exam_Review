@@ -33,6 +33,14 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
+        [HttpGet("GetHeadSubject/{userId}")]
+        public async Task<IActionResult> GetHeadSubject(int userId)
+        {
+            var data = await this._subjectRepository.GetHeadSubjectList(userId);
+
+            return Ok(data);
+        }
+
         [HttpGet("GetLectureSubject/{userId}")]
         public async Task<IActionResult> GetLectureSubject(int userId)
         {

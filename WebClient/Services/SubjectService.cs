@@ -203,6 +203,31 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubject(int userId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Subject/GetHeadSubject/{userId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<HeadSubjectRepsonse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
         public async Task<RequestResponse> ImportSubjectFromExcel(IBrowserFile files)
         {
             if (string.IsNullOrWhiteSpace(Constants.JWTToken))

@@ -12,6 +12,7 @@ namespace WebApi.IRepository
         Task<ResultResponse<SubjectResponse>> GetSubjectList(SubjectRequest req);
 
         Task<ResultResponse<SubjectResponse>> GetLectureSubjectList(int userId);
+        Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubjectList(int userId);
 
         Task<ResultResponse<Subject>> GetSubjectById(int subjectId);
         Task<RequestResponse> AddSubject(Subject req);

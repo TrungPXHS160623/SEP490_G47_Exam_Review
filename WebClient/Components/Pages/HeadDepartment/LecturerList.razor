@@ -1,0 +1,58 @@
+﻿<MudDialog>
+    <DialogContent>
+        <div>
+            <MudTable Items="UserList" FixedHeader="true" Height="380px" Hover="true">
+                <HeaderContent>
+                    <MudTh>No</MudTh>
+                    <MudTh>Mail</MudTh>
+                    <MudTh>Full Name</MudTh>
+                    <MudTh>Mail Fe</MudTh>
+                    <MudTh>Phone Number</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate Context="item">
+                    <MudTd>@(UserList.IndexOf(item) + 1)</MudTd>
+                    <MudTd>@item.Email</MudTd>
+                    <MudTd>@item.UserName</MudTd>
+                    <MudTd>@item.FeEmail</MudTd>
+                    <MudTd>@item.Tel</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int SubjectId { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    public List<UserResponse> UserList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetLecturer();
+
+    }
+
+    public async Task GetLecturer()
+    {
+        var resp = await this.UserService.GetUserBySubject(SubjectId);
+
+        if (resp.IsSuccessful)
+        {
+            UserList = resp.Items;
+        }
+    }
+
+
+}

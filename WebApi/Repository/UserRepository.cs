@@ -892,23 +892,6 @@ namespace WebApi.Repository
             var facutiID = (await this.dbContext.CampusUserFaculties.FirstOrDefaultAsync(x => x.UserId == userId))?.FacultyId;
             try
             {
-                //var data = (from cus_head in dbContext.CampusUserSubjects
-                //              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
-                //              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
-                //              where cus_head.UserId == userId
-                //                    //&& cus_head.IsLecturer == false
-                //                    //&& cus_lecturer.IsLecturer == true
-                //              select new UserResponse
-                //              {
-                //                  UserId = u.UserId,
-                //                  UserName = u.FullName,
-                //                  Email = u.Mail,
-                //                  Tel = u.PhoneNumber,
-                //                  IsActive = u.IsActive,
-                //              })
-                //.Distinct()
-                //.ToList();
-
                 var data = (from u in dbContext.Users
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join sj in dbContext.Subjects on cus.SubjectId equals sj.SubjectId
@@ -1057,6 +1040,39 @@ namespace WebApi.Repository
             var json = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid)
+        {
+            try
+            {
+                var data = (from u in dbContext.Users
+                            join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                            join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
+                            where s.SubjectId == subjectid
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Tel = u.PhoneNumber,
+                                Email = u.Mail,
+                                FeEmail = u.EmailFe,
+                            }).ToList();
+
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
         }
     }
 }
