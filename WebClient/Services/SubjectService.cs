@@ -330,5 +330,34 @@ namespace WebClient.Services
                 };
             }
         }
+
+        public async Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Subject/AddSubjectToDepartment", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
     }
 }

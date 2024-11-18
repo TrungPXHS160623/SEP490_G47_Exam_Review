@@ -106,5 +106,13 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
+        [HttpPost("AddSubjectToDepartment")]
+        public async Task<IActionResult> AddSubjectToDepartment(SubjectDepartmentRequest req)
+        {
+            var data = await this._subjectRepository.AddSubjectToDepartment(req);
+
+            return Ok(data);
+        }
     }
 }

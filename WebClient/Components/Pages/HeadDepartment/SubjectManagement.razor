@@ -1,12 +1,15 @@
 ﻿@page "/HeadDepartment/SubjectList"
-<h1 style="text-align: center;">List Asigned</h1>
+<h1 style="text-align: center;">Subject List</h1>
 
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="custom-box">
-            <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
-                    <h4>Department : @Response.Department</h4>
+                    <h4>Department : @Response.DepartmentName</h4>
+                </div>
+                <div>
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Variant="Variant.Filled" OnClick="AddSubject">Add Subject</MudButton>
                 </div>
             </div>
             <div>
@@ -56,7 +59,7 @@
             var user = auth.User;
             UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(UserId, 5);
+            var response = await MenuService.CheckAccess(UserId, 15);
 
             await GetSubject();
 
@@ -99,7 +102,37 @@
 
         if (!result.Canceled)
         {
+        }
+    }
 
+    public async Task AddSubject()
+    {
+        var req = new SubjectDepartmentRequest
+            {
+                DepartmentId = Response.DepartmentId.Value,
+                SubjectId = 0
+            };
+
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<AddSubjectDialog>
+        {
+            {x => x.SubjectList,Response.AddSubjectsList},
+            {x => x.request,req}
+        };
+
+        var dialog = await DialogService.ShowAsync<AddSubjectDialog>($"Add Subject to your Department", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetSubject();
         }
     }
 

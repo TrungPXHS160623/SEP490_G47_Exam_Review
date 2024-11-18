@@ -878,7 +878,8 @@ public partial class QuizManagementContext : DbContext
             new Menu { MenuId = 13, MenuLink = "/Examiner/OverallReport", MenuName = "Overall Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 14, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 15, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new Menu { MenuId = 15, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 16, MenuLink = "/HeadDepartment/SubjectList", MenuName = "Subject List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
 
         );
 
@@ -898,7 +899,8 @@ public partial class QuizManagementContext : DbContext
             new MenuRole { RoleId = 2, MenuId = 11, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 2, MenuId = 13, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 12, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 3, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new MenuRole { RoleId = 3, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 4, MenuId = 16, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 12. Seed data for Report table

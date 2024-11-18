@@ -8,8 +8,11 @@ namespace Library.Response
 {
     public class HeadSubjectRepsonse
     {
-        public string? Department { get;set; }
+        public int? DepartmentId { get;set; }
+
+        public string? DepartmentName { get;set; }
 
         public List<SubjectResponse> SubjectsList { get; set; } = new List<SubjectResponse>();
+        public List<SubjectResponse> AddSubjectsList { get; set; } = new List<SubjectResponse>();
     }
 }

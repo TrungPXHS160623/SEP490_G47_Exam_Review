@@ -20,5 +20,7 @@ namespace WebClient.IServices
         Task<RequestResponse> ImportSubjectFromExcel(IBrowserFile files);
 
         Task<RequestResponse> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req);
+
+        Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req);
     }
 }

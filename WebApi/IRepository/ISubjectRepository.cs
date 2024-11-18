@@ -20,6 +20,8 @@ namespace WebApi.IRepository
         Task<RequestResponse> UpdateSubject(Subject req);
         Task<RequestResponse> DeleteSubject(int subjectId);
 
+        Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req);
+
         Task<RequestResponse> LecturerSubjectModify(int userId,HashSet<SubjectResponse> req);
 
         Task<ResultResponse<SubjectResponse>> GetSubjectByRole(int roleId, int userId,int campusId);
