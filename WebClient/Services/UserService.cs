@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
@@ -469,6 +470,31 @@ namespace WebClient.Services
             {
                 snackbar.Add(ex.Message, Severity.Error);
                 return new ResultResponse<UserSubjectRequest>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserResponse>
                 {
                     IsSuccessful = false,
                 };

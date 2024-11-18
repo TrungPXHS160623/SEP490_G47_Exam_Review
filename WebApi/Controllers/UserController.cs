@@ -183,5 +183,13 @@ namespace WebApi.Controllers
                 IsSuccessful = true,
             });
         }
+
+        [HttpGet("GetUserBySubject/{subjectId}")]
+        public async Task<IActionResult> GetUserBySubject(int subjectid)
+        {
+            var data = await this.userRepository.GetUserBySubject(subjectid);
+
+            return Ok(data);
+        }
     }
 }

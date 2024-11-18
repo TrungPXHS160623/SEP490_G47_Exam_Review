@@ -40,5 +40,7 @@ namespace WebApi.IRepository
 
         Task<AuthenticationResponse> GoogleLoginCallback(string code);
 
+        Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid);
+
     }
 }
