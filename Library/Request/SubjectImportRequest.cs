@@ -11,5 +11,10 @@ namespace Library.Request
         public string SubjectCode { get; set; } = string.Empty;
 
         public string SubjectName { get; set; } = string.Empty;
+
+        public string FacultyName { get; set; } = string.Empty;
+
+        // Thêm thuộc tính FacultyId để lưu FacultyId sau khi tìm kiếm
+        public int? FacultyId { get; set; }
     }
 }

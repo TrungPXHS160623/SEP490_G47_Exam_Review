@@ -367,8 +367,9 @@ namespace WebApi.Repository
 
                                 var subjectImportRequest = new SubjectImportRequest
                                 {
-                                    SubjectCode = reader.GetValue(0)?.ToString(),
-                                    SubjectName = reader.GetValue(1)?.ToString(),
+                                    SubjectCode = reader.GetValue(1)?.ToString(),
+                                    SubjectName = reader.GetValue(2)?.ToString(),
+                                    FacultyName = reader.GetValue(3)?.ToString(),
                                 };
 
                                 var errorMessages = new List<string>();
@@ -381,6 +382,12 @@ namespace WebApi.Repository
 
                                 // Validate SubjectName
                                 if (string.IsNullOrEmpty(subjectImportRequest.SubjectName) || subjectImportRequest.SubjectName.Length > 100)
+                                {
+                                    errorMessages.Add("SubjectName must not exceed 100 characters.");
+                                }
+
+                                // Validate FacultyName
+                                if (string.IsNullOrEmpty(subjectImportRequest.FacultyName) || subjectImportRequest.FacultyName.Length > 100)
                                 {
                                     errorMessages.Add("SubjectName must not exceed 100 characters.");
                                 }
@@ -411,12 +418,27 @@ namespace WebApi.Repository
                                     errors.Add($"Error with SubjectCode '{subjectImportRequest.SubjectCode}': {string.Join(", ", errorMessages)}");
                                     continue;
                                 }
+                                // Tìm FacultyId từ FacultyName
+                                var faculty = await DBcontext.Faculties
+                                    .FirstOrDefaultAsync(f => f.FacultyName == subjectImportRequest.FacultyName);
+
+                                if (faculty == null)
+                                {
+                                    // Nếu không tìm thấy, thêm lỗi
+                                    errorMessages.Add($"Faculty '{subjectImportRequest.FacultyName}' not found.");
+                                }
+                                else
+                                {
+                                    // Nếu tìm thấy, gán FacultyId vào Subject
+                                    subjectImportRequest.FacultyId = faculty.FacultyId;
+                                }
 
                                 // Tạo Subject nếu không có lỗi
                                 var subject = new Subject
                                 {
                                     SubjectCode = subjectImportRequest.SubjectCode,
                                     SubjectName = subjectImportRequest.SubjectName,
+                                    FacultyId = subjectImportRequest.FacultyId.Value,
                                     IsDeleted = false,
                                     CreateDate = DateTime.Now,
                                 };
