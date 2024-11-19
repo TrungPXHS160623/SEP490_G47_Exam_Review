@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         <div>
-            <MudButton Color="Color.Tertiary" OnClick="AddLecturer" Class="btn btn-block" Variant="Variant.Filled">Add Lecturer</MudButton>
+            <MudButton Color="Color.Tertiary" OnClick="@(() => ModifyLecturer(0))" Class="btn btn-block" Variant="Variant.Filled">Add Lecturer</MudButton>
         </div>
         <div>
             <MudTable Items="UserList" FixedHeader="true" Height="380px" Hover="true">
@@ -19,6 +19,10 @@
                     <MudTd>@item.UserName</MudTd>
                     <MudTd>@item.FeEmail</MudTd>
                     <MudTd>@item.Tel</MudTd>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ModifyLecturer(item.UserId)"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => RemoveLecturer(item.UserId)"></MudIconButton>
+                    </MudTd>
                 </RowTemplate>
             </MudTable>
         </div>
@@ -57,7 +61,7 @@
         }
     }
 
-    public async Task AddLecturer()
+    public async Task ModifyLecturer(int userId)
     {
         var options = new DialogOptions
             {
@@ -79,6 +83,34 @@
 
         if (!result.Canceled)
         {
+            await GetLecturer();
+        }
+    }
+
+    public async Task RemoveLecturer(int userId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to remove this lecturer from this subject?" },
+            { x => x.BtnTextConfirm, "Remove" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Remove lecturer", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
         }
     }
 }

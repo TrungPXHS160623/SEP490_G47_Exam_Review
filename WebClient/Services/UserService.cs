@@ -530,7 +530,7 @@ namespace WebClient.Services
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/User/AddLecturerSubjectRequest", req);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/User/AddUserToSubject", req);
 
                 // Reading the response content
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();

@@ -31,8 +31,10 @@ namespace WebClient.Common
             }
 
             //await Task.Delay(100000); // artificial delay for testing
-            await Task.Delay(50);
+            await Task.Delay(500);
             var response = await base.SendAsync(request, cancellationToken);
+            await Task.Delay(500);
+
             this.spinnerService.Hide();
 
             return response;
