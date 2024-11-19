@@ -32,7 +32,7 @@
     </DialogActions>
 </MudDialog>
 
-@code {
+    @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
 
@@ -74,7 +74,8 @@
 
         var parameters = new DialogParameters<AddLecturerDialog>
         {
-            {x => x.SubjectId,SubjectId}
+            {x => x.SubjectId,SubjectId},
+            {x => x.LecturerId,userId},
         };
 
         var dialog = await DialogService.ShowAsync<AddLecturerDialog>($"Add Lecturer", parameters, options);
@@ -110,7 +111,12 @@
 
         if (!result.Canceled)
         {
+            var resp = await this.UserService.RemoveLecture(userId, SubjectId);
 
+            if (resp.IsSuccessful)
+            {
+                await GetLecturer();
+            }
         }
     }
 }
