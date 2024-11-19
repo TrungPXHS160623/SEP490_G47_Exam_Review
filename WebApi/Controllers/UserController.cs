@@ -207,5 +207,21 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
+        [HttpPut("EditLecturer")]
+        public async Task<IActionResult> EditLecturer([FromBody] AddLecturerSubjectRequest req)
+        {
+            var data = await this.userRepository.EditLecturer(req);
+
+            return Ok(data);
+        }
+
+        [HttpDelete("RemoveLecture/{userId}/{subjectId}")]
+        public async Task<IActionResult> RemoveLecture(int userId, int subjectId)
+        {
+            var data = await this.userRepository.RemoveLecture(userId, subjectId);
+
+            return Ok(data);
+        }
     }
 }
