@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace Library.Request
 {
-    public  class ExamImportRequest
+    public class ExamImportRequest
     {
-        public string ExamCode { get; set; } 
-        public string ExamDuration { get; set; } 
-        public string ExamType { get; set; }
-        public string CampusName { get; set; }
-        public string SubjectCode { get; set; } 
-        public string CreaterName { get; set; } 
-        public string? StatusContent { get; set; }
-        public DateTime? EstimatedTimeTest { get; set; } 
-        public DateTime? StartDate { get; set; } 
-        public DateTime? EndDate { get; set; } 
+        public string ExamCode { get; set; } //mã đề thi
+        public string TermDuration { get; set; } //đợt thi
+        public string ExamType { get; set; } //hình thức thi
+        public string CampusName { get; set; } // tên cơ sở
+        public string SubjectCode { get; set; } //tên môn
+        public string CreaterName { get; set; } //người tạo
+        public string ExamDuration { get; set; }  //thời lượng thi
+        public DateTime? StartDate { get; set; } //thời gian bát đầu thực hiện test đề 
+        public DateTime? EndDate { get; set; } //thời gian kết thúc thực hiện test đề 
+        public string SemesterName { get; set; } //tên kì
+        public DateTime? ExamDate { get; set; } // ngày đề được public để thi 
     }
 }
