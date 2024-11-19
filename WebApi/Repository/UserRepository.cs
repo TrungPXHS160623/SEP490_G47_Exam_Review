@@ -490,7 +490,7 @@ namespace WebApi.Repository
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where u.CampusId == campusId
-                              && cus.SubjectId == campusId
+                              && cus.SubjectId == subjectId
                               select new UserResponse
                               {
                                   Email = u.Mail,
