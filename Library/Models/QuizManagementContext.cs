@@ -295,7 +295,7 @@ public partial class QuizManagementContext : DbContext
             new ExamStatus { ExamStatusId = 1, StatusContent = "Unassigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 2, StatusContent = "Assigned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 3, StatusContent = "Awaiting Lecturer Confirm", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new ExamStatus { ExamStatusId = 4, StatusContent = "", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new ExamStatus { ExamStatusId = 4, StatusContent = "Planned", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 5, StatusContent = "Error", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 6, StatusContent = "OK", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new ExamStatus { ExamStatusId = 7, StatusContent = "Completed", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },

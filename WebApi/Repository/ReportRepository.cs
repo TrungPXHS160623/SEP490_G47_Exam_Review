@@ -43,8 +43,8 @@ namespace WebApi.Repository
                             QuestionNumber = item.QuestionNumber,
                             ReportContent = item.ReportContent,
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
-                            CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  
-                            UpdateDate = item.UpdateDate, 
+                            CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,
+                            UpdateDate = item.UpdateDate,
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
@@ -56,10 +56,10 @@ namespace WebApi.Repository
                         data.QuestionNumber = item.QuestionNumber;
                         data.ReportContent = item.ReportContent;
                         data.QuestionSolutionDetail = item.QuestionSolutionDetail;
-                        data.UpdateDate = DateTime.Now; 
+                        data.UpdateDate = DateTime.Now;
                     }
 
-                    if(item.ImageList.Count > 0)
+                    if (item.ImageList.Count > 0)
                     {
                         var imageList = await (from rf in dbContext.ReportFiles
                                                where rf.ReportId == item.ReportId
@@ -81,6 +81,7 @@ namespace WebApi.Repository
                                 var i = new ReportFile
                                 {
                                     ReportId = item.ReportId ?? newRecord.ReportId,
+
                                     FilePath = image.FileData,
                                 };
 
@@ -91,6 +92,7 @@ namespace WebApi.Repository
                     }
 
                 }
+
 
                 var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                 exam.GeneralFeedback = reportRequest.Summary;
