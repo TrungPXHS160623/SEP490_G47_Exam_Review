@@ -1229,6 +1229,7 @@ namespace WebApi.Repository
                         {
                             var token = GenerateToken(user);
                             Constants.JWTToken = token;
+                            Constants.CampusId = user.CampusId.Value;
                             await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
@@ -1313,6 +1314,7 @@ namespace WebApi.Repository
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
                             where s.SubjectId == subjectid
+                            && u.CampusId == Constants.CampusId
                             select new UserResponse
                             {
                                 UserId = u.UserId,
