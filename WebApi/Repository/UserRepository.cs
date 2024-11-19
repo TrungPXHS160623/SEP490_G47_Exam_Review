@@ -488,9 +488,8 @@ namespace WebApi.Repository
         {
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
-                              where cus.CampusId == campusId
+                              where u.CampusId == campusId
                               && cus.SubjectId == campusId
-                              //&& cus.IsLecturer == true
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -1351,7 +1350,7 @@ namespace WebApi.Repository
                         UserId = x.UserId,
                         Mail = x.Mail.Replace("@fpt.edu.vn",string.Empty),
                         FullName = x.FullName,
-                        MailFe = x.EmailFe.Replace("@fpt.edu.vn", string.Empty),
+                        MailFe = x.EmailFe.Replace("@fe.edu.vn", string.Empty),
                         PhoneNumber = x.PhoneNumber,
                         IsExist = true,
                     })
@@ -1380,8 +1379,20 @@ namespace WebApi.Repository
                 RequestResponse response = new RequestResponse();
                 var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.HeadId);
 
+
                 if (req.IsExist)
                 {
+                    var existData = await this.dbContext.CampusUserSubjects.FirstOrDefaultAsync(x => x.UserId == req.UserId && x.SubjectId == req.SubjectId);
+
+                    if (existData != null)
+                    {
+                        return new RequestResponse
+                        {
+                            IsSuccessful = false,
+                            Message = "This lecturer already teaching this subject"
+                        };
+                    }
+
                     var newData = new CampusUserSubject
                     {
                         UserId = req.UserId,
@@ -1396,16 +1407,17 @@ namespace WebApi.Repository
                     {
                         CampusId = u.CampusId,
                         PhoneNumber = req.PhoneNumber,
-                        EmailFe = req.MailFe,
+                        EmailFe = req.MailFe+"@fe.edu.vn",
                         RoleId = 3,
                         FullName = req.FullName,
-                        Mail = req.Mail,
+                        Mail = req.Mail+"@fpt.edu.vn",
                         CreateDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
                         IsActive = true,
                     };
 
                     await this.dbContext.Users.AddAsync(newUser);
+                    await this.dbContext.SaveChangesAsync();
 
                     var newData = new CampusUserSubject
                     {
@@ -1417,6 +1429,8 @@ namespace WebApi.Repository
                     await this.dbContext.CampusUserSubjects.AddAsync(newData);
                 }
 
+                await this.dbContext.SaveChangesAsync();
+
                 response.IsSuccessful = true;
                 response.Message = "Add lecturer successfully";
 
@@ -1426,6 +1440,7 @@ namespace WebApi.Repository
             {
                 return new RequestResponse
                 {
+                    IsSuccessful = false,
                     Message = ex.Message
                 };
             }

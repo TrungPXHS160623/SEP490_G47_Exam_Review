@@ -16,7 +16,7 @@
             <div class="mb-4 d-flex align-items-baseline">
                  <label class="col-4 text-end me-4">Email:</label>
                  <div class="me-4">
-                     <MudTextField @bind-Value="user.MailFe" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fpt.edu.vn")" For="@(() => user.MailFe)" Disabled="user.IsExist"/>
+                     <MudTextField @bind-Value="user.MailFe" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@("@fe.edu.vn")" For="@(() => user.MailFe)" Disabled="user.IsExist"/>
                 </div>
             </div>
             <div class="mb-4 d-flex align-items-baseline">
@@ -71,8 +71,14 @@
     private async Task AddUser()
     {
         _processing = true;
+        user.HeadId = UserId;
+        user.SubjectId = SubjectId;
+        var resp = await this.UserService.AddUserToSubject(user);
 
-
+        if (resp.IsSuccessful)
+        {
+            Submit();
+        }
 
         _processing = false;
     }
