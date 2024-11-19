@@ -391,7 +391,7 @@ namespace WebApi.Repository
                                 {
                                     errorMessages.Add("SubjectName must not exceed 100 characters.");
                                 }
-
+                                
                                 // Tạo khóa duy nhất cho mỗi môn học
                                 string uniqueKey = subjectImportRequest.SubjectCode;
                                 // Kiểm tra xem môn học đã tồn tại trong HashSet chưa
@@ -427,18 +427,14 @@ namespace WebApi.Repository
                                     // Nếu không tìm thấy, thêm lỗi
                                     errorMessages.Add($"Faculty '{subjectImportRequest.FacultyName}' not found.");
                                 }
-                                else
-                                {
-                                    // Nếu tìm thấy, gán FacultyId vào Subject
-                                    subjectImportRequest.FacultyId = faculty.FacultyId;
-                                }
+                                
 
                                 // Tạo Subject nếu không có lỗi
                                 var subject = new Subject
                                 {
                                     SubjectCode = subjectImportRequest.SubjectCode,
                                     SubjectName = subjectImportRequest.SubjectName,
-                                    FacultyId = subjectImportRequest.FacultyId.Value,
+                                    FacultyId = faculty.FacultyId,
                                     IsDeleted = false,
                                     CreateDate = DateTime.Now,
                                 };

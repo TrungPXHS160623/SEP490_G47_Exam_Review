@@ -612,15 +612,17 @@ public class ExamRepository : IExamRepository
                             // Sử dụng DTO để lưu dữ liệu từ Excel
                             var examImportRequest = new ExamImportRequest
                             {
-                                ExamCode = reader.GetValue(0)?.ToString(),
-                                ExamDuration = reader.GetValue(1)?.ToString(),
-                                ExamType = reader.GetValue(2)?.ToString(),
-                                CampusName = reader.GetValue(3)?.ToString(),
-                                SubjectCode = reader.GetValue(4)?.ToString(),
-                                CreaterName = reader.GetValue(5)?.ToString(),
-                                EstimatedTimeTest = DateTime.TryParse(reader.GetValue(6)?.ToString(), out DateTime estimatedTime) ? estimatedTime : (DateTime?)null,
-                                StartDate = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
-                                EndDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null
+                                ExamCode = reader.GetValue(1)?.ToString(),
+                                TermDuration = reader.GetValue(2)?.ToString(),
+                                ExamType = reader.GetValue(3)?.ToString(),
+                                CampusName = reader.GetValue(4)?.ToString(),
+                                SubjectCode = reader.GetValue(5)?.ToString(),
+                                CreaterName = reader.GetValue(6)?.ToString(),
+                                ExamDuration = reader.GetValue(7)?.ToString(),
+                                StartDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
+                                EndDate = DateTime.TryParse(reader.GetValue(9)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null,
+                                SemesterName = reader.GetValue(10)?.ToString(),
+                                ExamDate = DateTime.TryParse(reader.GetValue(11)?.ToString(), out DateTime examDate) ? examDate : (DateTime?)null,
                             };
 
                             // Kiểm tra tính hợp lệ của dữ liệu từ DTO
@@ -635,9 +637,19 @@ public class ExamRepository : IExamRepository
                             if (string.IsNullOrEmpty(examImportRequest.ExamType))
                                 errorMessages.Add("ExamType không được để trống.");
 
+                            if (string.IsNullOrEmpty(examImportRequest.TermDuration))
+                                errorMessages.Add("TermDuration không được để trống.");
+
+                            if (string.IsNullOrEmpty(examImportRequest.SemesterName))
+                                errorMessages.Add("SemesterName không được để trống.");
+
+
+
+                            var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterName == examImportRequest.SemesterName);
                             var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
                             var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
                             var creator = await _context.Users.FirstOrDefaultAsync(u => u.Mail == examImportRequest.CreaterName);
+
 
                             if (campus == null)
                                 errorMessages.Add($"Campus với tên là  {examImportRequest.CampusName} không tồn tại.");
@@ -645,6 +657,19 @@ public class ExamRepository : IExamRepository
                                 errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
                             if (creator == null)
                                 errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
+                            if(semester == null)
+                            {
+                                errorMessages.Add($"Semester với tên là  {examImportRequest.SemesterName} không tồn tại.");
+                            }
+
+                            if (examImportRequest.StartDate > examImportRequest.EndDate)
+                                errorMessages.Add("EndDate phải lớn hơn hoặc bằng StartDate.");
+
+                            if (examImportRequest.ExamDate.HasValue && examImportRequest.EndDate.HasValue &&
+                            examImportRequest.EndDate >= examImportRequest.ExamDate)
+                            {
+                                errorMessages.Add("EndDate của việc test đề phải trước ngày thi (ExamDate).");
+                            }
                             //tạo khoá duy nhất cho mỗi exam
                             string uniquekey = examImportRequest.ExamCode;
                             if (existingExamSet.Contains(uniquekey))
@@ -667,15 +692,16 @@ public class ExamRepository : IExamRepository
                             var exam = new Exam
                             {
                                 ExamCode = examImportRequest.ExamCode,
-                                ExamDuration = examImportRequest.ExamDuration,
+                                TermDuration = examImportRequest.TermDuration,
                                 ExamType = examImportRequest.ExamType,
                                 CampusId = campus.CampusId,
                                 SubjectId = subject.SubjectId,
                                 CreaterId = creator.UserId,
-                                ExamStatusId = null,
-                                EstimatedTimeTest = examImportRequest.EstimatedTimeTest,
+                                ExamDuration = examImportRequest.ExamDuration,
                                 StartDate = examImportRequest.StartDate,
-                                EndDate = examImportRequest.EndDate
+                                EndDate = examImportRequest.EndDate,
+                                SemesterId = semester.SemesterId,
+                                ExamDate = examImportRequest.ExamDate,
                             };
 
                             examsToAdd.Add(exam);

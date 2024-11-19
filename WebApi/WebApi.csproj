@@ -50,6 +50,7 @@
     <Folder Include="Uploads\Exams\" />
     <Folder Include="Uploads\Reports\" />
     <Folder Include="Uploads\Subjects\" />
+    <Folder Include="Uploads\Users\" />
   </ItemGroup>
 
 </Project>

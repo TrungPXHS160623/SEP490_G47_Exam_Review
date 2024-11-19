@@ -14,7 +14,5 @@ namespace Library.Request
 
         public string FacultyName { get; set; } = string.Empty;
 
-        // Thêm thuộc tính FacultyId để lưu FacultyId sau khi tìm kiếm
-        public int? FacultyId { get; set; }
     }
 }
