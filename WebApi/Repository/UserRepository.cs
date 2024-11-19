@@ -6,7 +6,6 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -489,7 +488,7 @@ namespace WebApi.Repository
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where u.CampusId == campusId
-                              && cus.SubjectId == campusId
+                              && cus.SubjectId == subjectId
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -711,7 +710,7 @@ namespace WebApi.Repository
             {
                 Id = userId,
                 RoleId = currentUserRoleId,
-                Email = myUser.Mail,  
+                Email = myUser.Mail,
                 FirstName = myUser.FullName,
                 CampusId = currentUserCampusId
             };
@@ -904,7 +903,7 @@ namespace WebApi.Repository
                                 };
 
                                 // Kiểm tra xem vai trò mục tiêu có hợp lệ không
-                                if (targetRoleName == null) 
+                                if (targetRoleName == null)
                                 {
                                     return new RequestResponse
                                     {
@@ -1052,7 +1051,7 @@ namespace WebApi.Repository
                                     {
                                         // Với quyền Admin, chỉ lưu user vào hệ thống mà không cần xử lý FacultyOrSubjectInCharge
                                         await dbContext.SaveChangesAsync();
-                                     
+
                                     }
                                     else
                                     {
@@ -1348,7 +1347,7 @@ namespace WebApi.Repository
                     .Select(x => new AddLecturerSubjectRequest
                     {
                         UserId = x.UserId,
-                        Mail = x.Mail.Replace("@fpt.edu.vn",string.Empty),
+                        Mail = x.Mail.Replace("@fpt.edu.vn", string.Empty),
                         FullName = x.FullName,
                         MailFe = x.EmailFe.Replace("@fe.edu.vn", string.Empty),
                         PhoneNumber = x.PhoneNumber,
@@ -1400,8 +1399,9 @@ namespace WebApi.Repository
                         CampusId = u.CampusId,
                     };
 
-                    await this.dbContext.CampusUserSubjects.AddAsync(newData);  
-                } else
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);
+                }
+                else
                 {
                     var newUser = new User
                     {
