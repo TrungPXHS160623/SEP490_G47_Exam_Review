@@ -33,6 +33,14 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
+        [HttpGet("GetHeadSubject/{userId}")]
+        public async Task<IActionResult> GetHeadSubject(int userId)
+        {
+            var data = await this._subjectRepository.GetHeadSubjectList(userId);
+
+            return Ok(data);
+        }
+
         [HttpGet("GetLectureSubject/{userId}")]
         public async Task<IActionResult> GetLectureSubject(int userId)
         {
@@ -95,6 +103,14 @@ namespace WebApi.Controllers
         public async Task<IActionResult> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req)
         {
             var data = await this._subjectRepository.LecturerSubjectModify(userId,req);
+
+            return Ok(data);
+        }
+
+        [HttpPost("AddSubjectToDepartment")]
+        public async Task<IActionResult> AddSubjectToDepartment(SubjectDepartmentRequest req)
+        {
+            var data = await this._subjectRepository.AddSubjectToDepartment(req);
 
             return Ok(data);
         }

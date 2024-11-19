@@ -1,33 +1,5 @@
 ﻿@page "/HeadDepartment/ExamList"
 <h1 style="text-align: center;">Assign Teacher To Review</h1>
-<style>
-    .mud-table-cell {
-        border: none !important;
-        text-align: center;
-    }
-
-    .mud-table-head .mud-table-row .mud-table-cell {
-        border-bottom: 1px solid grey !important;
-        font-size: 1.2rem;
-    }
-
-    .mud-table {
-        box-shadow: none !important;
-    }
-
-    .mud-table-root {
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-    }
-
-    .mud-table-head .mud-table-row {
-        box-shadow: 0 5px 10px #e1e5ee;
-        position: sticky;
-        top: 0;
-        background-color: white;
-        z-index: 99;
-    }
-</style>
 
 <div class="d-flex justify-content-center">
     <div class="mt-4">
@@ -176,7 +148,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Exam Assign List";
+                    Layout.SubHeader = "Assign Teacher To Review";
                     Layout.RefreshLayout();
                 }
             }
@@ -220,7 +192,7 @@
                 semesters = semesterrList.Items;
             }
             ExamList = eList.Items
-                           .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3))
+                           .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3 || e.ExamStatusId == 4))
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)
                            .ToList();
 

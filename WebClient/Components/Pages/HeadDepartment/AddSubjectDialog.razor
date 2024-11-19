@@ -1,0 +1,88 @@
+﻿<EditForm Model="request" OnValidSubmit="AddSubject">
+    <MudDialog>
+        <DialogContent>
+            <div class="mt-4 mb-4">
+                <MudAutocomplete T="int"
+                                 @bind-Value="request.SubjectId"
+                                 SearchFunc="Search"
+                                 Variant="Variant.Outlined"
+                                 Label="Subject Code"
+                                 ToStringFunc="@((int id) => SubjectToString(id))"
+                                 Margin="Margin.Dense"
+                                 AnchorOrigin="Origin.BottomCenter"
+                                 CoerceText="true"
+                                 MaxItems="int.MaxValue"
+                                 HelperText="List of subject not in your department"
+                                 Dense />
+            </div>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Processing</MudText>
+                }
+                else
+                {
+                    <MudText>Add</MudText>
+                }
+            </MudButton>
+            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Close</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public List<SubjectResponse> SubjectList { get; set; } = new List<SubjectResponse>();
+
+    [Parameter]
+    public SubjectDepartmentRequest request { get; set; } = new();
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private bool _processing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private Task<IEnumerable<int>> Search(string value,CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Task.FromResult(SubjectList.Select(x => x.SubjectId).AsEnumerable());
+
+        return Task.FromResult(
+                    SubjectList.Where(x => ($"[{x.SubjectCode}] {x.SubjectName}")
+                    .Contains(value, StringComparison.InvariantCultureIgnoreCase))
+                .Select(x => x.SubjectId)
+                );
+    }
+
+    private string SubjectToString(int id)
+    {
+        var subject = SubjectList.FirstOrDefault(x => x.SubjectId == id);
+        return subject != null ? $"[{subject.SubjectCode}] {subject.SubjectName}" : string.Empty;
+    }
+
+    private async Task AddSubject()
+    {
+        _processing = true;
+
+        var resp = await this.SubjectService.AddSubjectToDepartment(request);
+
+        if (resp.IsSuccessful)
+        {
+            Submit();
+        }
+
+        _processing = false;
+    }
+}

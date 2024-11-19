@@ -488,9 +488,8 @@ namespace WebApi.Repository
         {
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
-                              where cus.CampusId == campusId
+                              where u.CampusId == campusId
                               && cus.SubjectId == campusId
-                              //&& cus.IsLecturer == true
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -1154,23 +1153,6 @@ namespace WebApi.Repository
             var facutiID = (await this.dbContext.CampusUserFaculties.FirstOrDefaultAsync(x => x.UserId == userId))?.FacultyId;
             try
             {
-                //var data = (from cus_head in dbContext.CampusUserSubjects
-                //              join cus_lecturer in dbContext.CampusUserSubjects on cus_head.SubjectId equals cus_lecturer.SubjectId
-                //              join u in dbContext.Users on cus_lecturer.UserId equals u.UserId
-                //              where cus_head.UserId == userId
-                //                    //&& cus_head.IsLecturer == false
-                //                    //&& cus_lecturer.IsLecturer == true
-                //              select new UserResponse
-                //              {
-                //                  UserId = u.UserId,
-                //                  UserName = u.FullName,
-                //                  Email = u.Mail,
-                //                  Tel = u.PhoneNumber,
-                //                  IsActive = u.IsActive,
-                //              })
-                //.Distinct()
-                //.ToList();
-
                 var data = (from u in dbContext.Users
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join sj in dbContext.Subjects on cus.SubjectId equals sj.SubjectId
@@ -1252,7 +1234,8 @@ namespace WebApi.Repository
                                 IsSuccessful = true,
                                 Token = token
                             };
-                        } else
+                        }
+                        else
                         {
                             return new AuthenticationResponse
                             {
@@ -1319,6 +1302,148 @@ namespace WebApi.Repository
             var json = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid)
+        {
+            try
+            {
+                var data = (from u in dbContext.Users
+                            join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
+                            join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
+                            where s.SubjectId == subjectid
+                            select new UserResponse
+                            {
+                                UserId = u.UserId,
+                                UserName = u.FullName,
+                                Tel = u.PhoneNumber,
+                                Email = u.Mail,
+                                FeEmail = u.EmailFe,
+                            }).ToList();
+
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = true,
+                    Items = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId)
+        {
+            try
+            {
+                var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == headId);
+
+                var data = await this.dbContext.Users
+                    .Where(x => x.Mail.ToLower() == mail.ToLower())
+                    .Select(x => new AddLecturerSubjectRequest
+                    {
+                        UserId = x.UserId,
+                        Mail = x.Mail.Replace("@fpt.edu.vn",string.Empty),
+                        FullName = x.FullName,
+                        MailFe = x.EmailFe.Replace("@fe.edu.vn", string.Empty),
+                        PhoneNumber = x.PhoneNumber,
+                        IsExist = true,
+                    })
+                    .FirstOrDefaultAsync();
+
+                return new ResultResponse<AddLecturerSubjectRequest>
+                {
+                    IsSuccessful = data != null,
+                    Item = data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<AddLecturerSubjectRequest>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+                var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.HeadId);
+
+
+                if (req.IsExist)
+                {
+                    var existData = await this.dbContext.CampusUserSubjects.FirstOrDefaultAsync(x => x.UserId == req.UserId && x.SubjectId == req.SubjectId);
+
+                    if (existData != null)
+                    {
+                        return new RequestResponse
+                        {
+                            IsSuccessful = false,
+                            Message = "This lecturer already teaching this subject"
+                        };
+                    }
+
+                    var newData = new CampusUserSubject
+                    {
+                        UserId = req.UserId,
+                        SubjectId = req.SubjectId,
+                        CampusId = u.CampusId,
+                    };
+
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);  
+                } else
+                {
+                    var newUser = new User
+                    {
+                        CampusId = u.CampusId,
+                        PhoneNumber = req.PhoneNumber,
+                        EmailFe = req.MailFe+"@fe.edu.vn",
+                        RoleId = 3,
+                        FullName = req.FullName,
+                        Mail = req.Mail+"@fpt.edu.vn",
+                        CreateDate = DateTime.Now,
+                        UpdateDate = DateTime.Now,
+                        IsActive = true,
+                    };
+
+                    await this.dbContext.Users.AddAsync(newUser);
+                    await this.dbContext.SaveChangesAsync();
+
+                    var newData = new CampusUserSubject
+                    {
+                        UserId = newUser.UserId,
+                        SubjectId = req.SubjectId,
+                        CampusId = newUser.CampusId,
+                    };
+
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);
+                }
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Add lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

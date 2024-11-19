@@ -11,6 +11,7 @@ namespace WebClient.IServices
         Task<ResultResponse<Subject>> GetSubjects();
         Task<ResultResponse<SubjectResponse>> GetSubjectsList(SubjectRequest req);
         Task<ResultResponse<SubjectResponse>> GetLectureSubject(int userId);
+        Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubject(int userId);
         Task<ResultResponse<Subject>> GetSubjectById(int subjectId);
         Task<RequestResponse> AddSubject(Subject req);
         Task<RequestResponse> UpdateSubject(Subject req);
@@ -19,5 +20,7 @@ namespace WebClient.IServices
         Task<RequestResponse> ImportSubjectFromExcel(IBrowserFile files);
 
         Task<RequestResponse> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req);
+
+        Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req);
     }
 }

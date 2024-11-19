@@ -203,6 +203,31 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubject(int userId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Subject/GetHeadSubject/{userId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<HeadSubjectRepsonse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
         public async Task<RequestResponse> ImportSubjectFromExcel(IBrowserFile files)
         {
             if (string.IsNullOrWhiteSpace(Constants.JWTToken))
@@ -282,6 +307,35 @@ namespace WebClient.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Subject/LecturerSubjectModify/{userId}", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Subject/AddSubjectToDepartment", req);
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 

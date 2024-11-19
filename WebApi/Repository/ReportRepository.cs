@@ -29,42 +29,77 @@ namespace WebApi.Repository
 
                 this.dbContext.Reports.RemoveRange(deleteRecord);
 
-
                 foreach (var item in reportRequest.ReportList)
                 {
                     var data = await this.dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.ReportId);
+                    var newRecord = new Report();
 
                     if (data == null)
                     {
                         //Khi tạo mới báo cáo (chưa ấn nút submit):
-                        var newRecord = new Report
+                        newRecord = new Report
                         {
+                            ExamId = reportRequest.ExamId,
                             QuestionNumber = item.QuestionNumber,
                             ReportContent = item.ReportContent,
                             QuestionSolutionDetail = item.QuestionSolutionDetail,
-                            CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,  // Sử dụng thời gian hiện tại nếu không có CreateDate
-                            UpdateDate = item.UpdateDate,  // UpdateDate có thể được cập nhật sau
-                            //AssignmentId = reportRequest.AssignmentId,
-
+                            CreateDate = item.CreateDate != null ? item.CreateDate : DateTime.Now,
+                            UpdateDate = item.UpdateDate,
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
+                        await this.dbContext.SaveChangesAsync();
+
                     }
                     else
                     {
-                        //Khi chỉnh sửa báo cáo(nhưng chưa ấn submit):
                         data.QuestionNumber = item.QuestionNumber;
                         data.ReportContent = item.ReportContent;
                         data.QuestionSolutionDetail = item.QuestionSolutionDetail;
-                        data.UpdateDate = DateTime.Now;  // Khi chỉnh sửa, UpdateDate được cập nhật với thời gian hiện tại
+                        data.UpdateDate = DateTime.Now;
                     }
+
+                    if (item.ImageList.Count > 0)
+                    {
+                        var imageList = await (from rf in dbContext.ReportFiles
+                                               where rf.ReportId == item.ReportId
+                                               select rf).ToListAsync();
+
+                        var deleteImage = imageList.Where(x => !item.ImageList.Any(y => y.FileId == x.FileId)).ToList();
+
+                        if (deleteImage.Any())
+                        {
+                            this.dbContext.ReportFiles.RemoveRange(deleteImage);
+                        }
+
+                        var addImage = item.ImageList.Where(x => !imageList.Any(y => y.FileId == x.FileId)).ToList();
+
+                        if (addImage.Any())
+                        {
+                            foreach (var image in addImage)
+                            {
+                                var i = new ReportFile
+                                {
+                                    ReportId = item.ReportId ?? newRecord.ReportId,
+
+                                    FilePath = image.FileData,
+                                };
+
+                                await this.dbContext.ReportFiles.AddAsync(i);
+                            }
+                        }
+
+                    }
+
                 }
-                var assignment = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
-                assignment.GeneralFeedback = reportRequest.Summary;
+
+
+                var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
+                exam.GeneralFeedback = reportRequest.Summary;
                 if (isSubmit)
                 {
-                    assignment.ExamStatusId = 5;  // Đặt trạng thái là đã nộp
-                    assignment.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
+                    exam.ExamStatusId = 5;  // Đặt trạng thái là đã nộp
+                    exam.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
                 }
 
 

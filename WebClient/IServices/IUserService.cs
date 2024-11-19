@@ -37,8 +37,13 @@ namespace WebClient.IServices
 
         Task<RequestResponse> CreateAsync(UserRequest user);
         Task<RequestResponse> ImportUserFromExcel(IBrowserFile files);
-
         Task<ResultResponse<UserResponse>> GetAssignedUserByExam(int examId);
+
+        Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId);
+
+        Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId);
+
+        Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req);
 
     }
 }

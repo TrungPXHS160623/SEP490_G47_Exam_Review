@@ -156,7 +156,7 @@
             {x => x.CampusId,campusId}
         };
 
-        var dialog = await DialogService.ShowAsync<CampusModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
+        var dialog = await DialogService.ShowAsync<CampusModify>(campusId == 0 ? "Create new Campus" : "Update Campus", parameters, options);
 
         var result = await dialog.Result;
 

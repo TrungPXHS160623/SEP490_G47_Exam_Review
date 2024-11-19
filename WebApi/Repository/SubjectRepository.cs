@@ -598,5 +598,114 @@ namespace WebApi.Repository
                 };
             }
         }
+
+        public async Task<ResultResponse<HeadSubjectRepsonse>> GetHeadSubjectList(int userId)
+        {
+            try
+            {
+                HeadSubjectRepsonse data = new HeadSubjectRepsonse();
+
+                var sList = await (from s in DBcontext.Subjects
+                                   join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                   join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
+                                   where cuf.UserId == userId
+                                   orderby s.UpdateDate descending
+                                   select new SubjectResponse
+                                   {
+                                       SubjectId = s.SubjectId,
+                                       SubjectCode = s.SubjectCode,
+                                       SubjectName = s.SubjectName,
+                                       Faculty = f.FacultyName,
+                                       FacultyId = f.FacultyId
+                                   }).ToListAsync();
+
+
+                var sList2 = await (from s in DBcontext.Subjects
+                                    join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                    join cuf in DBcontext.CampusUserFaculties
+                                        on s.FacultyId equals cuf.FacultyId into cufGroup
+                                    from cuf in cufGroup.DefaultIfEmpty() // Left join
+                                    where cuf == null || cuf.UserId != userId
+                                    select new SubjectResponse
+                                    {
+                                        SubjectId = s.SubjectId,
+                                        SubjectCode = s.SubjectCode,
+                                        SubjectName = s.SubjectName,
+                                        Faculty = f.FacultyName,
+                                        FacultyId = f.FacultyId
+                                    }).ToListAsync();
+
+                data.AddSubjectsList = sList2;
+
+                if (sList.Count > 0)
+                {
+                    data.SubjectsList = sList;
+                    data.DepartmentName = sList.FirstOrDefault().Faculty;
+                    data.DepartmentId = sList.FirstOrDefault().FacultyId;
+                }
+
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = true,
+                    Item = data,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<HeadSubjectRepsonse>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> AddSubjectToDepartment(SubjectDepartmentRequest req)
+        {
+            try
+            {
+                var subject = await (from s in DBcontext.Subjects
+                                   join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                   join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
+                                   where s.SubjectId == req.SubjectId && cuf.FacultyId == req.DepartmentId
+                                   select s).FirstOrDefaultAsync();
+
+                if(subject == null)
+                {
+                    var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x=> x.SubjectId == req.SubjectId);
+
+                    data.FacultyId = req.DepartmentId;
+                    data.UpdateDate = DateTime.Now;
+                    await this.DBcontext.SaveChangesAsync();
+
+                    return new RequestResponse
+                    {
+                        IsSuccessful = true,
+                        Message = $"Add Subject {data.SubjectCode} to your department successfully"
+                    };
+                } else
+                {
+                    var user = await (from u in DBcontext.Users
+                                join cuf in DBcontext.CampusUserFaculties on u.UserId equals cuf.UserId
+                                join f in DBcontext.Faculties on cuf.FacultyId equals f.FacultyId
+                                join s in DBcontext.Subjects on f.FacultyId equals s.FacultyId
+                                select u).FirstOrDefaultAsync();
+
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = $"This subject has been managed by {user.EmailFe}"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
     }
 }

@@ -101,13 +101,27 @@ namespace WebApi.Controllers
             return Ok(something);
         }
         [AllowAnonymous]
-        [HttpGet("GetExamByCampusAndSubject/{campusid}/{subjectid}")]
-        public async Task<IActionResult> GetExamByCampusAndSubject(int campusid, int subjectid)
+        [HttpGet("GetExamByCampusAndSubject/{userID}")]
+        public async Task<IActionResult> GetExamByCampusAndSubject(int userID)
         {
-            var exams = await _examRepository.GetExamByCampusAndSubject(campusid, subjectid);
+            var exams = await _examRepository.GetExamByCampusAndSubject(userID);
             return Ok(exams);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetCampusReport")]
+        public async Task<IActionResult> GetCampusReport()
+        {
+            var exams = await _examRepository.GetCampusReport();
+            return Ok(exams);
+        }
+        [AllowAnonymous]
+        [HttpGet("GetDepartmentReport/{userID}")]
+        public async Task<IActionResult> GetDepartmentReport(int userID)
+        {
+            var exams = await _examRepository.GetDepartmentReport(userID);
+            return Ok(exams);
+        }
         // exam by status
         [AllowAnonymous]
         [HttpGet("GetExambyStatus")]

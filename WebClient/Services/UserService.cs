@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
@@ -472,6 +473,83 @@ namespace WebClient.Services
                 {
                     IsSuccessful = false,
                 };
+            }
+        }
+
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<UserResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserByMail/{mail}/{headId}");
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<AddLecturerSubjectRequest>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new ResultResponse<AddLecturerSubjectRequest>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/User/AddUserToSubject", req);
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false };
             }
         }
     }
