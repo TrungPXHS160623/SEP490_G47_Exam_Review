@@ -33,7 +33,7 @@ else
                 }
                 else
                 {
-                    <MudTextField @bind-Value="user.UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)"/>
+                    <MudTextField @bind-Value="user.UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.UserName)" />
                 }
             </div>
         </div>
@@ -47,7 +47,7 @@ else
                 }
                 else
                 {
-                    <MudTextField @bind-Value="user.Phone" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Email)" />
+                    <MudTextField @bind-Value="user.Phone" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.Phone)" />
                 }
             </div>
         </div>

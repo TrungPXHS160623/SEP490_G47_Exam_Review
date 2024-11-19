@@ -625,17 +625,19 @@ namespace WebApi.Repository
 
 
                 var sList2 = await (from s in DBcontext.Subjects
-                                   join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
-                                   join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
-                                   where cuf.UserId != userId
+                                    join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                    join cuf in DBcontext.CampusUserFaculties
+                                        on s.FacultyId equals cuf.FacultyId into cufGroup
+                                    from cuf in cufGroup.DefaultIfEmpty() // Left join
+                                    where cuf == null || cuf.UserId != userId
                                     select new SubjectResponse
-                                   {
-                                       SubjectId = s.SubjectId,
-                                       SubjectCode = s.SubjectCode,
-                                       SubjectName = s.SubjectName,
-                                       Faculty = f.FacultyName,
-                                       FacultyId = f.FacultyId
-                                   }).ToListAsync();
+                                    {
+                                        SubjectId = s.SubjectId,
+                                        SubjectCode = s.SubjectCode,
+                                        SubjectName = s.SubjectName,
+                                        Faculty = f.FacultyName,
+                                        FacultyId = f.FacultyId
+                                    }).ToListAsync();
 
                 data.AddSubjectsList = sList2;
 

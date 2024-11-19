@@ -33,6 +33,7 @@ namespace WebApi.Repository
                 {
                     var data = await this.dbContext.Reports.FirstOrDefaultAsync(x => x.ReportId == item.ReportId);
                     var newRecord = new Report();
+
                     if (data == null)
                     {
                         //Khi tạo mới báo cáo (chưa ấn nút submit):
@@ -47,6 +48,8 @@ namespace WebApi.Repository
                         };
 
                         await this.dbContext.Reports.AddAsync(newRecord);
+                        await this.dbContext.SaveChangesAsync();
+
                     }
                     else
                     {
@@ -77,11 +80,12 @@ namespace WebApi.Repository
                             {
                                 var i = new ReportFile
                                 {
-                                    ReportId = item.ReportId??newRecord.ReportId,
+                                    ReportId = item.ReportId ?? newRecord.ReportId,
+
                                     FilePath = image.FileData,
                                 };
 
-                                await this.dbContext.AddAsync(i);
+                                await this.dbContext.ReportFiles.AddAsync(i);
                             }
                         }
 

@@ -1235,7 +1235,8 @@ namespace WebApi.Repository
                                 IsSuccessful = true,
                                 Token = token
                             };
-                        } else
+                        }
+                        else
                         {
                             return new AuthenticationResponse
                             {
@@ -1333,6 +1334,99 @@ namespace WebApi.Repository
                 {
                     IsSuccessful = false,
                     Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId)
+        {
+            try
+            {
+                var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == headId);
+
+                var data = await this.dbContext.Users
+                    .Where(x => x.Mail.ToLower() == mail.ToLower())
+                    .Select(x => new AddLecturerSubjectRequest
+                    {
+                        UserId = x.UserId,
+                        Mail = x.Mail.Replace("@fpt.edu.vn",string.Empty),
+                        FullName = x.FullName,
+                        MailFe = x.EmailFe.Replace("@fpt.edu.vn", string.Empty),
+                        PhoneNumber = x.PhoneNumber,
+                        IsExist = true,
+                    })
+                    .FirstOrDefaultAsync();
+
+                return new ResultResponse<AddLecturerSubjectRequest>
+                {
+                    IsSuccessful = data != null,
+                    Item = data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultResponse<AddLecturerSubjectRequest>
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+                var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.HeadId);
+
+                if (req.IsExist)
+                {
+                    var newData = new CampusUserSubject
+                    {
+                        UserId = req.UserId,
+                        SubjectId = req.SubjectId,
+                        CampusId = u.CampusId,
+                    };
+
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);  
+                } else
+                {
+                    var newUser = new User
+                    {
+                        CampusId = u.CampusId,
+                        PhoneNumber = req.PhoneNumber,
+                        EmailFe = req.MailFe,
+                        RoleId = 3,
+                        FullName = req.FullName,
+                        Mail = req.Mail,
+                        CreateDate = DateTime.Now,
+                        UpdateDate = DateTime.Now,
+                        IsActive = true,
+                    };
+
+                    await this.dbContext.Users.AddAsync(newUser);
+
+                    var newData = new CampusUserSubject
+                    {
+                        UserId = newUser.UserId,
+                        SubjectId = req.SubjectId,
+                        CampusId = newUser.CampusId,
+                    };
+
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);
+                }
+
+                response.IsSuccessful = true;
+                response.Message = "Add lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    Message = ex.Message
                 };
             }
         }
