@@ -108,6 +108,8 @@
     public List<Semester> semesters = new List<Semester>();
     public ExamSearchRequest request = new();
 
+    private string Mail { get; set; } = string.Empty;
+
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
         { 1, "#D3D3D3" }, // Unassigned
@@ -129,6 +131,7 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             var response = await MenuService.CheckAccess(userId, 3);
 
@@ -254,9 +257,16 @@
 
                 var mailModel = new MailModel
                     {
-                        Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
+ 
                         MailList = list,
-                        Subject = "Assign đề thi cho chủ nhiệm bộ môn"
+                        Subject = "Notification on Exam Review and Assignment",
+                        Body = $@"
+                            <p><b>Dear {{0}},</b></p>
+                            <p>We would like to inform you that the exam have been forwarded to you. The Heads of Departments will proceed with assigning lecturer to conduct the reviewing and evaluation of these exams.</p>
+                            <p>Please visit the website <a href='https://localhost:7158'>https://localhost:7158</a> for more details or to transfer to lecturer.</p>
+                            <p>Thank you for your support!</p>
+                            <p><b>Examination Department</b><br>
+                            <b>From:</b> {Mail}</p>"
                     };
 
                 var resp = await this.ExamService.ChangeStatusExam(assignList.ToList());

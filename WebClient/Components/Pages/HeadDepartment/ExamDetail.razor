@@ -83,8 +83,14 @@
 
     private void Cancel() => MudDialog.Cancel();
 
+    private string Mail { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
         var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
 
         if (resp.IsSuccessful)
@@ -119,9 +125,14 @@
 
             var mailModel = new MailModel
                 {
-                    Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
                     MailList = list,
-                    Subject = "Assign đề thi cho giảng vien"
+                    Subject = "Assign đề thi cho giảng vien",
+                    Body = $@"
+                            <p><b>Dear {{0}},</b></p>
+                            <p>You have been assigned to review an exam. Please visit the website <a href='https://localhost:7158'>https://localhost:7158</a> to confirm your review date and submit the report there.</p>
+                            <p>Thank you for your cooperation.</p>
+                            <p><b>Head of Department</b><br>
+                            <b>From:</b> {Mail}</p>",
                 };
 
             var result = await this.MailService.SendMail(mailModel);
