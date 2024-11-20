@@ -223,6 +223,7 @@ namespace WebApi.Repository
                         select new UserRequest
                         {
                             Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
+                            MailFe = u.EmailFe.Replace("@fe.edu.vn", string.Empty),
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
                             CampusId = u.CampusId,                        // Keep the CampusId from the Users table
@@ -489,7 +490,7 @@ namespace WebApi.Repository
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where u.CampusId == campusId
-                              && cus.SubjectId == campusId
+                              && cus.SubjectId == subjectId
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -1228,6 +1229,7 @@ namespace WebApi.Repository
                         {
                             var token = GenerateToken(user);
                             Constants.JWTToken = token;
+                            Constants.CampusId = user.CampusId.Value;
                             await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
@@ -1312,6 +1314,7 @@ namespace WebApi.Repository
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
                             where s.SubjectId == subjectid
+                            && u.CampusId == Constants.CampusId
                             select new UserResponse
                             {
                                 UserId = u.UserId,
@@ -1433,6 +1436,81 @@ namespace WebApi.Repository
 
                 response.IsSuccessful = true;
                 response.Message = "Add lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+
+                var user = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.UserId);
+
+                if(user == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Lecturer not found"
+                    };
+                }
+
+                user.Mail = req.Mail;
+                user.EmailFe = req.MailFe;
+                user.PhoneNumber = req.PhoneNumber;
+                user.FullName = req.FullName;
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Update lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<RequestResponse> RemoveLecture(int userId, int subjectId)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+
+                var data = await this.dbContext.CampusUserSubjects.FirstOrDefaultAsync(x => x.UserId == userId && x.SubjectId == subjectId);
+
+                if(data == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Something wrong!"
+                    };
+                }
+
+                this.dbContext.CampusUserSubjects.Remove(data);
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Remove lecturer successfully";
 
                 return response;
             }
