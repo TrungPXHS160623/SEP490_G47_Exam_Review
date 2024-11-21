@@ -14,7 +14,7 @@ namespace WebApi.Controllers
         {
             _examRepository = examRepository;
         }
-
+        [AllowAnonymous]
         [HttpGet("info")]
         public async Task<IActionResult> GetExamInfo()
         {
