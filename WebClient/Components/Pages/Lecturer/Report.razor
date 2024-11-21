@@ -246,7 +246,8 @@
                         <p>We would like to inform you that the review for exam code <b>{exam.ExamCode}</b> has been completed by the lecturer.</p>
                         <p>For more details, please visit the website at <a href='https://localhost:7158'>https://localhost:7158</a>.</p>
                         <p>Thank you for your support!</p>
-                        <b>From:</b> {email}</p>",
+                        <p><b>From:</b> {email}</p><br>
+                        <p><b>Exam Review System</b></p><br>",
 
                     };
 
@@ -281,8 +282,8 @@
                     <p>We would like to inform you that Lecturer {email} has selected a time to conduct the review for exam code <b>{exam.ExamCode}</b>. The review is scheduled to take place at <b>mm:HH</b> on <b>dd/MM/yyyy</b>.</p>
                     <p>For more details, please visit the website at <a href='https://localhost:7158'>https://localhost:7158</a>.</p>
                     <p>Thank you for your support!</p>
-                    <b>From:</b> {email}</p><br>
-                    <p><b>Exam Review System</b><br>"
+                    <p><b>From:</b> {email}</p><br>
+                    <p><b>Exam Review System</b></p><br>",
                 };
 
             var sendMail = await this.MailService.SendMail(mailModel);
