@@ -43,14 +43,14 @@ namespace WebApi.Repository
 
                     foreach (var item in mail.MailList)
                     {
-                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, mail.Subject, mail.Body))
+                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, mail.Subject, string.Format(mail.Body,item.MailTo)))
                         {
                             message.IsBodyHtml = true;
                             message.BodyEncoding = Encoding.UTF8;
                             message.SubjectEncoding = Encoding.UTF8;
                             message.ReplyToList.Add(new MailAddress(emailSettings.Username));
                             message.Sender = new MailAddress(emailSettings.Username);
-
+                            message.IsBodyHtml = true;
                             if (!string.IsNullOrEmpty(item.BccTo))
                             {
                                 message.Bcc.Add(new MailAddress(item.BccTo));

@@ -85,6 +85,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        
+
         var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
 
         if (resp.IsSuccessful)
@@ -110,6 +112,10 @@
 
         if (resp.IsSuccessful)
         {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var sender = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
             List<MailUtil> list = new();
             var mail = new MailUtil
                 {
@@ -119,9 +125,14 @@
 
             var mailModel = new MailModel
                 {
-                    Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
                     MailList = list,
-                    Subject = "Assign đề thi cho giảng vien"
+                    Subject = "Exam Review Assignment",
+                    Body = $@"
+                            <p><b>Dear {{0}},</b></p>
+                            <p>You have been assigned to review an exam. Please visit the website <a href='https://localhost:7158'>https://localhost:7158</a> to confirm your review date and submit the report there.</p>
+                            <p>Thank you for your cooperation.</p>
+                            <p><b>From:</b> {sender}</p><br>
+                            <p><b>Exam Review System</b></p><br>",
                 };
 
             var result = await this.MailService.SendMail(mailModel);
