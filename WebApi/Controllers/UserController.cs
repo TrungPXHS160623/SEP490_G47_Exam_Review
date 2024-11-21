@@ -20,7 +20,7 @@ namespace WebApi.Controllers
             this.config = config;
         }
 
-
+        [AllowAnonymous]
         [HttpGet("GetLectureBySubject/{subjectId}/{campusId}")]
         public async Task<IActionResult> GetLecture(int subjectId, int campusId)
         {
@@ -29,21 +29,21 @@ namespace WebApi.Controllers
             return Ok(data);
         }
 
-
+        [AllowAnonymous]
         [HttpGet("GetUserForAdmin/{filterQuery?}")]
         public async Task<IActionResult> GetAllUserWithFilter(string filterQuery = null)
         {
             var userDomainModels = await userRepository.GetUserForAdmin(filterQuery);
             return Ok(userDomainModels);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetUserForExaminer/{userId}/{filterQuery?}")]
         public async Task<IActionResult> GetUserForExaminer(int userId, string filterQuery = null)
         {
             var userDomainModels = await userRepository.GetUserForExaminer(userId, filterQuery);
             return Ok(userDomainModels);
         }
-
+        [AllowAnonymous]
         [HttpGet("get-by-id/{id:int}")]
         public async Task<IActionResult> GetUserById([FromRoute] int id)
         {
@@ -51,18 +51,18 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
-        [HttpGet("GetUserSubjectById/{id:int}")]
         [AllowAnonymous]
+        [HttpGet("GetUserSubjectById/{id:int}")]
+
         public async Task<IActionResult> GetUserSubjectByIdAsync(int id)
         {
             var data = await this.userRepository.GetUserSubjectByIdAsync(id);
 
             return Ok(data);
         }
-
-        [HttpGet("GetUserFacutyById/{id:int}")]
         [AllowAnonymous]
+        [HttpGet("GetUserFacutyById/{id:int}")]
+
         public async Task<IActionResult> GetUserFacutyById(int id)
         {
             var data = await this.userRepository.GetUserFacutyByIdAsync(id);
@@ -71,34 +71,35 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("Create")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateUser([FromBody] UserRequest user)
         {
             var data = await userRepository.CreateAsync(user);
 
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUser(UserRequest updateUserRequestDto)
         {
             var updatedUser = await userRepository.UpdateAsync(updateUserRequestDto);
             return Ok(updatedUser);
         }
-
+        [AllowAnonymous]
         [HttpPut("ExaminerUpdateUser")]
         public async Task<IActionResult> ExaminerUpdateUserAsync(UserSubjectRequest updateUserRequestDto)
         {
             var updatedUser = await userRepository.ExaminerUpdateUserAsync(updateUserRequestDto);
             return Ok(updatedUser);
         }
-
+        [AllowAnonymous]
         [HttpDelete("Delete/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleteUser = await userRepository.DeleteAsync(id);
             return Ok(deleteUser);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetHead/{subjectId}/{campusId}")]
         public async Task<IActionResult> GetHead(int subjectId, int campusId)
         {
@@ -114,23 +115,22 @@ namespace WebApi.Controllers
             var something = await userRepository.ImportUsersFromExcel(file, currentUser);
             return Ok(something);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetAssignedUser/{examId}")]
         public async Task<IActionResult> GetHead(int examId)
         {
             var data = await userRepository.GetAssignedUserByExam(examId);
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetLectureListByHead/{userId}")]
         public async Task<IActionResult> GetLectureListByHead(int userId)
         {
             var data = await userRepository.GetLectureListByHead(userId);
             return Ok(data);
         }
-
-        [HttpGet("GoogleLoginCallback")]
         [AllowAnonymous]
+        [HttpGet("GoogleLoginCallback")]
         public async Task<IActionResult> GoogleLoginCallback(string code)
         {
             //if (!string.IsNullOrEmpty(error))
@@ -183,7 +183,7 @@ namespace WebApi.Controllers
                 IsSuccessful = true,
             });
         }
-
+        [AllowAnonymous]
         [HttpGet("GetUserBySubject/{subjectId}")]
         public async Task<IActionResult> GetUserBySubject(int subjectid)
         {
@@ -191,7 +191,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetUserByMail/{mail}/{headId}")]
         public async Task<IActionResult> GetUserByMail(string mail, int headId)
         {
@@ -199,7 +199,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpPost("AddUserToSubject")]
         public async Task<IActionResult> AddUserToSubject([FromBody] AddLecturerSubjectRequest req)
         {
@@ -207,7 +207,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpPut("EditLecturer")]
         public async Task<IActionResult> EditLecturer([FromBody] AddLecturerSubjectRequest req)
         {
@@ -215,7 +215,7 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
-
+        [AllowAnonymous]
         [HttpDelete("RemoveLecture/{userId}/{subjectId}")]
         public async Task<IActionResult> RemoveLecture(int userId, int subjectId)
         {
