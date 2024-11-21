@@ -107,13 +107,15 @@
 
         var clientId = await GetKeys();
         // Điều hướng người dùng đến trang đăng nhập Google
-        var redirectUrl = $"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId.ClientId}&redirect_uri=https://localhost:7255/api/user/googlelogincallback&response_type=code&scope=openid%20profile%20email";
+        var redirectUrl = $@"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId.ClientId}&redirect_uri={config["BaseUri"]}api/user/googlelogincallback&response_type=code&scope=openid%20profile%20email";
         NavManager.NavigateTo(redirectUrl, true);
     }
 
     private async Task<GoogleKeys> GetKeys()
     {
-        var response = await Http.GetFromJsonAsync<GoogleKeys>("https://localhost:7255/api/User/google-keys");
+
+        var text = config["BaseUri"];
+        var response = await Http.GetFromJsonAsync<GoogleKeys>($"{config["BaseUri"]}api/User/google-keys");
 
         return response;
     }
