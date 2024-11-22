@@ -92,7 +92,7 @@ public class Program
 
         var app = builder.Build();
 
-
+        app.UseCors("AllowLocalhost");
         // Configure the HTTP request pipeline
         if (app.Environment.IsDevelopment())
         {

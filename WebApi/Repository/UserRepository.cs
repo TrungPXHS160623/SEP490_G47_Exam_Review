@@ -1246,6 +1246,12 @@ namespace WebApi.Repository
                             };
                         }
                     }
+                } else {
+                    return new AuthenticationResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "No Access token."
+                    };
                 }
                 return new AuthenticationResponse
                 {
