@@ -1305,7 +1305,7 @@ namespace WebApi.Repository
         private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
         {
             using var client = new HttpClient();
-            var response = await client.GetAsync($"https://oauth2.googleapis.com/token?access_token={accessToken}");
+            var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}");
             var json = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
