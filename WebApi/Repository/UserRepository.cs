@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using WebApi.IRepository;
@@ -1286,7 +1285,7 @@ namespace WebApi.Repository
         private async Task<TokenResponse> GetGoogleTokenAsync(string code)
         {
             using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://oauth2.googleapis.com/token");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.google.com/o/oauth2/token");
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "code", code },
@@ -1297,14 +1296,8 @@ namespace WebApi.Repository
             });
 
             request.Content = content;
-
             var response = await client.SendAsync(request);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Failed to exchange code for token: {response.StatusCode} - {responseContent}");
-            }
 
             return JsonConvert.DeserializeObject<TokenResponse>(responseContent);
         }
@@ -1312,16 +1305,9 @@ namespace WebApi.Repository
         private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
         {
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await client.GetAsync("https://www.googleapis.com/oauth2/v2/userinfo");
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Failed to get user info: {response.StatusCode} - {error}");
-            }
-
+            var response = await client.GetAsync($"https://oauth2.googleapis.com/token?access_token={accessToken}");
             var json = await response.Content.ReadAsStringAsync();
+
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
         }
 
