@@ -90,14 +90,6 @@ public class Program
         builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
         builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowLocalhost",
-                builder => builder.WithOrigins("https://localhost:7158")
-                                  .AllowAnyMethod()
-                                  .AllowAnyHeader());
-        });
-
         var app = builder.Build();
 
 
