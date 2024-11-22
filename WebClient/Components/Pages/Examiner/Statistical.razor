@@ -138,8 +138,8 @@
 
 @code {
     [CascadingParameter]
-    public int SelectedReport { get; set; } = 1; // Default to the first report
     public MainLayout Layout { get; set; }
+    public int SelectedReport { get; set; } = 1; // Default to the first report
     public CampusReportResponse CampusReport { get; set; } = new CampusReportResponse();
     public CampusSubjectExamResponse CampusDepartmentReport { get; set; } = new CampusSubjectExamResponse();
     public DepartmentReportResponse DepartmentReport { get; set; } = new DepartmentReportResponse();

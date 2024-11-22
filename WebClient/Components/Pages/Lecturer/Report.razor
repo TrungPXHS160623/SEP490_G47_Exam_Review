@@ -232,7 +232,6 @@
                 var user = auth.User;
                 var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
 
-
                 var mailList = new List<MailUtil>
                 {
                     new MailUtil{MailTo = exam.HeadDepartmentName}
@@ -240,13 +239,19 @@
 
                 var mailModel = new MailModel
                     {
-                        Body = $"Giảng Viên {email.Replace("@fpt.edu.vn", string.Empty)} đã hoàn thành report test với mã đề là {exam.ExamCode}",
-                        Subject = $"Hoàn thành Report môn {exam.SubjectName}",
-                        MailList = mailList
+                        Subject = $"Exam Review Completed",
+                        MailList = mailList,
+                        Body = $@"
+                        <p><b>Dear {{0}},</b></p>
+                        <p>We would like to inform you that the review for exam code <b>{exam.ExamCode}</b> has been completed by the lecturer.</p>
+                        <p>For more details, please visit the website at <a href='https://localhost:7158'>https://localhost:7158</a>.</p>
+                        <p>Thank you for your support!</p>
+                        <p><b>From:</b> {email}</p><br>
+                        <p><b>Exam Review System</b></p><br>",
+
                     };
 
                 var sendMail = await this.MailService.SendMail(mailModel);
-
             }
 
             NavManager.NavigateTo("/Lecture/ExamList");
@@ -263,7 +268,6 @@
             var user = auth.User;
             var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
 
-
             var mailList = new List<MailUtil>
                 {
                     new MailUtil{MailTo = exam.CreaterName}
@@ -271,9 +275,15 @@
 
             var mailModel = new MailModel
                 {
-                    Body = $"Giảng Viên {email.Replace("@fpr.edu.vn", string.Empty)} đã chọn ngày để thực hiện test với mã đề là {exam.ExamCode} vào ngày {exam.AssignmentDate?.ToString("dd/MM/yyyy")}",
-                    Subject = $"Xác nhận ngày test môn {exam.SubjectName}",
-                    MailList = mailList
+                    Subject = $"Exam Review Schedule - Code {exam.ExamCode}",
+                    MailList = mailList,
+                    Body = $@"
+                    <p><b>Dear {{0}},</b></p>
+                    <p>We would like to inform you that Lecturer {email} has selected a time to conduct the review for exam code <b>{exam.ExamCode}</b>. The review is scheduled to take place at <b>mm:HH</b> on <b>dd/MM/yyyy</b>.</p>
+                    <p>For more details, please visit the website at <a href='https://localhost:7158'>https://localhost:7158</a>.</p>
+                    <p>Thank you for your support!</p>
+                    <p><b>From:</b> {email}</p><br>
+                    <p><b>Exam Review System</b></p><br>",
                 };
 
             var sendMail = await this.MailService.SendMail(mailModel);

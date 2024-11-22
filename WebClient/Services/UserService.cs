@@ -552,5 +552,59 @@ namespace WebClient.Services
                 return new RequestResponse { IsSuccessful = false };
             }
         }
+
+        public async Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/User/EditLecturer", req);
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false };
+            }
+        }
+
+        public async Task<RequestResponse> RemoveLecture(int userId,int subjectId)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.DeleteAsync($"api/User/RemoveLecture/{userId}/{subjectId}");
+
+                // Reading the response content
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false };
+            }
+        }
     }
 }

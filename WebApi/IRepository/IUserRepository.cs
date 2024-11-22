@@ -45,6 +45,8 @@ namespace WebApi.IRepository
         Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail,int headId);
 
         Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req);
+        Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req);
+        Task<RequestResponse> RemoveLecture(int userId, int subjectId);
 
     }
 }

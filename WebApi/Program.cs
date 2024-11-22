@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
-using System.Text.Json.Serialization;
 using WebApi.IRepository;
+using WebApi.JobSchedule;
 using WebApi.Mapper;
 using WebApi.Repository;
-using Quartz;
-using WebApi.JobSchedule;
 
 namespace WebApi;
 
@@ -60,7 +59,7 @@ public class Program
         //Add Quartz for auto send mail
         builder.Services.AddQuartz(q =>
         {
-            q.UseMicrosoftDependencyInjectionJobFactory(); 
+            q.UseMicrosoftDependencyInjectionJobFactory();
 
             var jobKey = new JobKey("CheckRemindAssignExam");
             q.AddJob<CheckRemindAssignExam>(opts => opts.WithIdentity(jobKey));
@@ -86,21 +85,22 @@ public class Program
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
         builder.Services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
         builder.Services.AddScoped<IReportRepository, ReportRepository>();
-		builder.Services.AddScoped<IGenerateExcelRepository, GenerateExcelRepository>();
-		builder.Services.AddScoped<ILogHistoryRepository, LogHistoryRepository>();
+        builder.Services.AddScoped<IGenerateExcelRepository, GenerateExcelRepository>();
+        builder.Services.AddScoped<ILogHistoryRepository, LogHistoryRepository>();
         builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
         builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
-        
-		var app = builder.Build();
 
+        var app = builder.Build();
 
+        app.UseCors("AllowLocalhost");
         // Configure the HTTP request pipeline
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        app.UseSwagger();
+        app.UseSwaggerUI();
         // Enable HTTPS redirection
         app.UseHttpsRedirection();
 

@@ -6,9 +6,9 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using WebApi.IRepository;
@@ -223,6 +223,7 @@ namespace WebApi.Repository
                         select new UserRequest
                         {
                             Email = u.Mail.Replace("@fpt.edu.vn", string.Empty),
+                            MailFe = u.EmailFe.Replace("@fe.edu.vn", string.Empty),
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
                             CampusId = u.CampusId,                        // Keep the CampusId from the Users table
@@ -489,7 +490,7 @@ namespace WebApi.Repository
             var data = await (from u in this.dbContext.Users
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where u.CampusId == campusId
-                              && cus.SubjectId == campusId
+                              && cus.SubjectId == subjectId
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -711,7 +712,7 @@ namespace WebApi.Repository
             {
                 Id = userId,
                 RoleId = currentUserRoleId,
-                Email = myUser.Mail,  
+                Email = myUser.Mail,
                 FirstName = myUser.FullName,
                 CampusId = currentUserCampusId
             };
@@ -904,7 +905,7 @@ namespace WebApi.Repository
                                 };
 
                                 // Kiểm tra xem vai trò mục tiêu có hợp lệ không
-                                if (targetRoleName == null) 
+                                if (targetRoleName == null)
                                 {
                                     return new RequestResponse
                                     {
@@ -1052,7 +1053,7 @@ namespace WebApi.Repository
                                     {
                                         // Với quyền Admin, chỉ lưu user vào hệ thống mà không cần xử lý FacultyOrSubjectInCharge
                                         await dbContext.SaveChangesAsync();
-                                     
+
                                     }
                                     else
                                     {
@@ -1228,6 +1229,7 @@ namespace WebApi.Repository
                         {
                             var token = GenerateToken(user);
                             Constants.JWTToken = token;
+                            Constants.CampusId = user.CampusId.Value;
                             await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
@@ -1244,6 +1246,12 @@ namespace WebApi.Repository
                             };
                         }
                     }
+                } else {
+                    return new AuthenticationResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "No Access token."
+                    };
                 }
                 return new AuthenticationResponse
                 {
@@ -1278,13 +1286,13 @@ namespace WebApi.Repository
         private async Task<TokenResponse> GetGoogleTokenAsync(string code)
         {
             using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.google.com/o/oauth2/token");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://oauth2.googleapis.com/token");
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "code", code },
                 { "client_id", config["GoogleKeys:ClientId"] },
                 { "client_secret", config["GoogleKeys:ClientSecret"] },
-                { "redirect_uri", "https://localhost:7255/api/user/googlelogincallback" },
+                { "redirect_uri", $"{config["BaseUri"]}api/user/googlelogincallback" },
                 { "grant_type", "authorization_code" }
             });
 
@@ -1298,7 +1306,15 @@ namespace WebApi.Repository
         private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string accessToken)
         {
             using var client = new HttpClient();
-            var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await client.GetAsync("https://www.googleapis.com/oauth2/v2/userinfo");
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Cant not get user info");
+            }
+
             var json = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
@@ -1312,6 +1328,7 @@ namespace WebApi.Repository
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
                             where s.SubjectId == subjectid
+                            && u.CampusId == Constants.CampusId
                             select new UserResponse
                             {
                                 UserId = u.UserId,
@@ -1348,7 +1365,7 @@ namespace WebApi.Repository
                     .Select(x => new AddLecturerSubjectRequest
                     {
                         UserId = x.UserId,
-                        Mail = x.Mail.Replace("@fpt.edu.vn",string.Empty),
+                        Mail = x.Mail.Replace("@fpt.edu.vn", string.Empty),
                         FullName = x.FullName,
                         MailFe = x.EmailFe.Replace("@fe.edu.vn", string.Empty),
                         PhoneNumber = x.PhoneNumber,
@@ -1400,8 +1417,9 @@ namespace WebApi.Repository
                         CampusId = u.CampusId,
                     };
 
-                    await this.dbContext.CampusUserSubjects.AddAsync(newData);  
-                } else
+                    await this.dbContext.CampusUserSubjects.AddAsync(newData);
+                }
+                else
                 {
                     var newUser = new User
                     {
@@ -1433,6 +1451,81 @@ namespace WebApi.Repository
 
                 response.IsSuccessful = true;
                 response.Message = "Add lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+
+                var user = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.UserId);
+
+                if(user == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Lecturer not found"
+                    };
+                }
+
+                user.Mail = req.Mail;
+                user.EmailFe = req.MailFe;
+                user.PhoneNumber = req.PhoneNumber;
+                user.FullName = req.FullName;
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Update lecturer successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<RequestResponse> RemoveLecture(int userId, int subjectId)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+
+                var data = await this.dbContext.CampusUserSubjects.FirstOrDefaultAsync(x => x.UserId == userId && x.SubjectId == subjectId);
+
+                if(data == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Something wrong!"
+                    };
+                }
+
+                this.dbContext.CampusUserSubjects.Remove(data);
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Remove lecturer successfully";
 
                 return response;
             }

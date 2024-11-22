@@ -470,30 +470,34 @@ public class ExamRepository : IExamRepository
     {
         try
         {
-            var data = await (from ex in _context.Exams
-                              join su in _context.Subjects on ex.SubjectId equals su.SubjectId
-                              join ca in _context.Campuses on ex.CampusId equals ca.CampusId
-                              join cus in _context.CampusUserSubjects
-                                  on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
-                              from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
-                              join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
-                              from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
-                              where ((req.StatusId == null && ex.ExamStatusId != 1 && ex.ExamStatusId != 2) || ex.ExamStatusId == req.StatusId)
-                              && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                              //&& cus.IsLecturer == false
+
+            var data = await (from e in _context.Exams
+                              join sj in _context.Subjects on e.SubjectId equals sj.SubjectId
+                              join f in _context.Faculties on sj.FacultyId equals f.FacultyId
+                              join cuf in _context.CampusUserFaculties on f.FacultyId equals cuf.FacultyId
+                              join u in _context.Users on cuf.UserId equals u.UserId
+                              join c in _context.Campuses on e.CampusId equals c.CampusId
+                              join s in _context.Semesters on e.SemesterId equals s.SemesterId
+                              join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
+                              join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
+                              where cus.UserId == req.UserId
+                              && e.ExamStatusId != 1 && e.ExamStatusId != 2
+                              && (req.StatusId == null || e.ExamStatusId == req.StatusId)
+                              && (req.SemesterId == null || s.SemesterId == req.SemesterId)
+                              && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               select new LectureExamResponse
                               {
-                                  EndDate = ex.EndDate,
-                                  ExamId = ex.ExamId,
-                                  StartDate = ex.StartDate,
-                                  ExamCode = ex.ExamCode,
-                                  CampusName = ca.CampusName,
-                                  EstimatedTimeTest = ex.EstimatedTimeTest,
-                                  AssignStatusContent = ex.ExamStatus.StatusContent,
-                                  AssignStatusId = ex.ExamStatusId,
-                                  HeadDepartmentName = u1.Mail,
-                                  HeadDepartmentId = u1.UserId,
-                                  UpdateDate = ex.UpdateDate
+                                  EndDate = e.EndDate,
+                                  ExamId = e.ExamId,
+                                  StartDate = e.StartDate,
+                                  ExamCode = e.ExamCode,
+                                  CampusName = c.CampusName,
+                                  EstimatedTimeTest = e.EstimatedTimeTest,
+                                  AssignStatusContent = e.ExamStatus.StatusContent,
+                                  AssignStatusId = e.ExamStatusId,
+                                  HeadDepartmentName = u.Mail,
+                                  HeadDepartmentId = u.UserId,
+                                  UpdateDate = e.UpdateDate
                               }).ToListAsync();
 
             return new ResultResponse<LectureExamResponse>
@@ -657,7 +661,7 @@ public class ExamRepository : IExamRepository
                                 errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
                             if (creator == null)
                                 errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
-                            if(semester == null)
+                            if (semester == null)
                             {
                                 errorMessages.Add($"Semester với tên là  {examImportRequest.SemesterName} không tồn tại.");
                             }

@@ -86,7 +86,7 @@ namespace WebApi.Controllers
             var examInfo = await _examRepository.ChangeStatusExamById(examId, statusId);
             return Ok(examInfo);
         }
-
+        [AllowAnonymous]
         [HttpPost("CreateExam")]
         public async Task<IActionResult> CreateExam(ExamCreateRequest req)
         {

@@ -22,8 +22,7 @@ namespace WebClient
 
             builder.Services.AddHttpClient();
 
-            builder.Services.AddScoped(opt => new HttpClient { BaseAddress = new Uri("https://localhost:7255/") });
-
+            builder.Services.AddScoped(opt => new HttpClient { BaseAddress = new Uri(builder.Configuration["BaseUri"]) });
 
             builder.Services.AddScoped<SpinnerService>();
             builder.Services.AddScoped<SpinnerHandler>();
@@ -35,7 +34,7 @@ namespace WebClient
                 NavigationManager navManager = s.GetRequiredService<NavigationManager>();
                 return new HttpClient(spinHandler)
                 {
-                    BaseAddress = new Uri("https://localhost:7255/"),
+                    BaseAddress = new Uri(builder.Configuration["BaseUri"]),
                 };
             });
 

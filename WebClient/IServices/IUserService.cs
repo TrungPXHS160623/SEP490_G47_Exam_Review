@@ -45,5 +45,7 @@ namespace WebClient.IServices
 
         Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req);
 
+        Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req);
+        Task<RequestResponse> RemoveLecture(int userId, int subjectId);
     }
 }
