@@ -1245,6 +1245,12 @@ namespace WebApi.Repository
                             };
                         }
                     }
+                } else {
+                    return new AuthenticationResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "No Access token."
+                    };
                 }
                 return new AuthenticationResponse
                 {
@@ -1285,7 +1291,7 @@ namespace WebApi.Repository
                 { "code", code },
                 { "client_id", config["GoogleKeys:ClientId"] },
                 { "client_secret", config["GoogleKeys:ClientSecret"] },
-                { "redirect_uri", "https://localhost:7255/api/user/googlelogincallback" },
+                { "redirect_uri", $"{Uri.EscapeDataString(config["BaseUri"])}api/user/googlelogincallback" },
                 { "grant_type", "authorization_code" }
             });
 
