@@ -76,7 +76,8 @@ namespace WebClient.Authentication
                 {
                     new(ClaimTypes.Email, claims.Email),
                     new(ClaimTypes.NameIdentifier, claims.Id.ToString()),
-                    new(ClaimTypes.Role, claims.RoleId.ToString())
+                    new(ClaimTypes.Role, claims.RoleId.ToString()),
+                    new("CampusId", claims.CampusId.ToString()),
                 }, "JwtAuth"));
         }
 
@@ -89,7 +90,8 @@ namespace WebClient.Authentication
             {
                 Email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty,
                 Id = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0,
-                RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role) ? role : 0
+                RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role) ? role : 0,
+                CampusId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var campus) ? role : 0,
             };
         }
 

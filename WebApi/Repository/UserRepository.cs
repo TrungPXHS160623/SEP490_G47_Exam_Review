@@ -1229,8 +1229,6 @@ namespace WebApi.Repository
                         if (user != null)
                         {
                             var token = GenerateToken(user);
-                            Constants.JWTToken = token;
-                            Constants.CampusId = user.CampusId.Value;
                             await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
@@ -1254,6 +1252,7 @@ namespace WebApi.Repository
                         Message = "No Access token."
                     };
                 }
+
                 return new AuthenticationResponse
                 {
                     IsSuccessful = false,
