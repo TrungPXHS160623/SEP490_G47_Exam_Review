@@ -20,20 +20,6 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> ClearJWT()
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/User/ClearJWT");
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
-
-            if (!requestResponse.IsSuccessful)
-            {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
-
-            return requestResponse;
-        }
-
         public async Task<RequestResponse> CreateAsync(UserRequest user)
         {
             try
@@ -237,20 +223,6 @@ namespace WebClient.Services
                     IsSuccessful = false,
                 };
             }
-        }
-
-        public async Task<AuthenticationResponse> GetJWT()
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetJWT");
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
-
-            if (!requestResponse.IsSuccessful)
-            {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
-
-            return requestResponse;
         }
 
         public async Task<AuthenticationResponse> LoginUserAsync(UserRequest request)
