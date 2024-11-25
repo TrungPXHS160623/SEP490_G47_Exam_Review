@@ -30,22 +30,22 @@
 
   
         <!-- Exam Duration -->
-        <div class="mb-4 row">
+        <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Duration:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam TermDuration" Required RequiredError="This field is required.">
-                    <MudSelectItem T="string" Value="@("60")">60</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("90")">90</MudSelectItem>
+                           Placeholder="Choose Exam TermDuration" For="@(() => exam.ExamDuration)">
+                    <MudSelectItem T="string" Value="@("60")">60 Mins</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("90")">90 Mins</MudSelectItem>
                 </MudSelect>
             </div>
         </div>
         <!-- Exam Term Duration -->
-        <div class="mb-4 row">
+         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam TermDuration:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.TermDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam TermDuration" Required RequiredError="This field is required.">
+                            Placeholder="Choose Exam TermDuration" For="@(() => exam.TermDuration)">
 
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
@@ -58,7 +58,7 @@
             <label class="col-4 text-end">Exam Type:</label>
             <div class="col-8">
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam Type" Required RequiredError="This field is required.">
+                            Placeholder="Choose Exam Type" For="@(() => exam.ExamType)">
                     <MudSelectItem T="string" Value="@("Other")">Other</MudSelectItem>
 
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Start Date -->
-        <div class="mb-4 row">
+         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Start Review Date:</label>
 
             <div class="col-8">
@@ -82,7 +82,7 @@
         </div>
 
         <!-- End Date -->
-        <div class="mb-4 row">
+         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">End Review Date:</label>
 
             <div class="col-8">

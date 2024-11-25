@@ -21,6 +21,10 @@ namespace WebClient.Validation
                 .NotEmpty().WithMessage("Select exam duration!")
                 .NotNull().WithMessage("Select exam duration!");
 
+            this.RuleFor(v => v.TermDuration)
+                .NotEmpty().WithMessage("Select exam term!")
+                .NotNull().WithMessage("Select exam term!");
+
             this.RuleFor(v => v.ExamType)
                 .NotEmpty().WithMessage("Select exam type!")
                 .NotNull().WithMessage("Select exam type!");

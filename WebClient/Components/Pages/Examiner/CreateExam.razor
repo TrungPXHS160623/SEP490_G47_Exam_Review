@@ -57,14 +57,6 @@
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
 
-    public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
-
-    private HashSet<ExaminerExamResponse> selectedExams = new HashSet<ExaminerExamResponse>();
-
-    public List<ExamStatus> statusList = new List<ExamStatus>();
-
-    public ExamSearchRequest request = new();
-
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
         { 1, "#D3D3D3" }, // Unassigned
@@ -95,14 +87,6 @@
             }
             else
             {
-                await GetData();
-
-                var sList = await this.StatusService.GetStatus();
-                if (sList.IsSuccessful)
-                {
-                    statusList = sList.Items;
-                }
-
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
@@ -138,7 +122,6 @@
 
         if (!result.Canceled)
         {
-            await GetData();
         }
     }
 
@@ -148,86 +131,7 @@
         _files.Add(file);
     }
 
-    private async Task GetData()
-    {
-        var eList = await this.ExamService.GetExamList(request);
-        if (eList.IsSuccessful)
-        {
-            ExamList = eList.Items;
-        }
-        selectedExams.Clear();
-    }
-
-    private async Task AssignExam()
-    {
-        if (selectedExams.Count > 0)
-        {
-            var msg = CheckSelectedExam();
-
-            if (msg.Length == 0)
-            {
-                var mailList = selectedExams.GroupBy(x => x.HeadDepartmentName).Select(x => x.Key).ToList();
-
-                List<MailUtil> list = new();
-
-                foreach (var item in mailList)
-                {
-                    var mail = new MailUtil
-                        {
-                            MailTo = item
-                        };
-                    list.Add(mail);
-                }
-
-                var mailModel = new MailModel
-                    {
-                        Body = "Đề thi đã được khảo thí chuyển cho các chủ nhiệm bộ môn. Chủ nhiệm bộ môn thực hiện việc assign cho các giảng viên để thực hiện test đề thi",
-                        MailList = list,
-                        Subject = "Assign đề thi cho chủ nhiệm bộ môn"
-                    };
-
-                var resp = await this.ExamService.ChangeStatusExam(selectedExams.ToList());
-
-                if (resp.IsSuccessful)
-                {
-                    var result = await this.MailService.SendMail(mailModel);
-                    await GetData();
-                }
-            }
-            else
-            {
-                foreach (var item in msg)
-                {
-                    Snackbar.Add(item, Severity.Warning);
-                }
-            }
-        }
-    }
-
-    public string[] CheckSelectedExam()
-    {
-        List<string> errors = new List<string>();
-
-        var examsWithWrongStatus = selectedExams.Where(x => x.ExamStatusId != 1).ToList();
-        foreach (var exam in examsWithWrongStatus)
-        {
-            errors.Add($"Exam {exam.ExamCode} is already assigned. Cannot Re-Assign!");
-        }
-
-        var examsWithMissingDates = selectedExams.Where(x => x.EndDate == null || x.StartDate == null).ToList();
-        foreach (var exam in examsWithMissingDates)
-        {
-            errors.Add($"Exam {exam.ExamCode} has Start Date or End Date not chosen yet.");
-        }
-
-        var examsWithMissingHead = selectedExams.Where(x => x.HeadDepartmentId == null).ToList();
-        foreach (var exam in examsWithMissingHead)
-        {
-            errors.Add($"Exam {exam.ExamCode} has no subject leader yet.");
-        }
-
-        return errors.ToArray();
-    }
+   
     private async Task ExportAllExams()
     {
         var response = await this.ExamService.ExportAllExams();
