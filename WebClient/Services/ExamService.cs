@@ -248,13 +248,6 @@ namespace WebClient.Services
         }
         public async Task<RequestResponse> ImportExamsFromExcel(IBrowserFile files)
         {
-            if (string.IsNullOrWhiteSpace(Constants.JWTToken))
-            {
-                snackbar.Add("Authorization token is missing.", Severity.Error);
-                return new RequestResponse { IsSuccessful = false, Message = "Missing Authorization Token" };
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
             try
             {
@@ -296,13 +289,6 @@ namespace WebClient.Services
 
             try
             {
-                if (string.IsNullOrEmpty(Constants.JWTToken))
-                {
-                    return null;
-                }
-
-                _httpClient.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
                 HttpResponseMessage response = await _httpClient.GetAsync("api/GenerateExcel/export-all");
                 if (response.IsSuccessStatusCode)

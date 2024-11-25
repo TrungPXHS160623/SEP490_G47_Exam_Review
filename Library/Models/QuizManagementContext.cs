@@ -1083,9 +1083,9 @@ public partial class QuizManagementContext : DbContext
             new MenuRole { RoleId = 4, MenuId = 15, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
-        // 12. Seed data for Report table
-        modelBuilder.Entity<Report>().HasData(
-         );
+        //// 12. Seed data for Report table
+        //modelBuilder.Entity<Report>().HasData(
+        // );
 
 
         modelBuilder.Entity<Semester>().HasData(

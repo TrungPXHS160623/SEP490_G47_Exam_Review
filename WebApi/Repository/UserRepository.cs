@@ -1320,7 +1320,7 @@ namespace WebApi.Repository
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid)
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid,int campusId)
         {
             try
             {
@@ -1328,7 +1328,7 @@ namespace WebApi.Repository
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
                             where s.SubjectId == subjectid
-                            && u.CampusId == Constants.CampusId
+                            && u.CampusId == campusId
                             select new UserResponse
                             {
                                 UserId = u.UserId,

@@ -20,20 +20,6 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> ClearJWT()
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/User/ClearJWT");
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
-
-            if (!requestResponse.IsSuccessful)
-            {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
-
-            return requestResponse;
-        }
-
         public async Task<RequestResponse> CreateAsync(UserRequest user)
         {
             try
@@ -239,20 +225,6 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<AuthenticationResponse> GetJWT()
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetJWT");
-
-            var requestResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
-
-            if (!requestResponse.IsSuccessful)
-            {
-                snackbar.Add(requestResponse.Message, Severity.Error);
-            }
-
-            return requestResponse;
-        }
-
         public async Task<AuthenticationResponse> LoginUserAsync(UserRequest request)
         {
 
@@ -358,13 +330,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> ImportUserFromExcel(IBrowserFile files)
         {
-            if (string.IsNullOrWhiteSpace(Constants.JWTToken))
-            {
-                snackbar.Add("Authorization token is missing.", Severity.Error);
-                return new RequestResponse { IsSuccessful = false, Message = "Missing Authorization Token" };
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
             try
             {
@@ -476,11 +441,11 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId)
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId,int campusId)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}/{campusId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 

@@ -49,16 +49,6 @@ namespace WebClient.Services
         }
         public async Task<RequestResponse> ImportFile(IBrowserFile file, bool isSubmit)
         {
-            if (string.IsNullOrWhiteSpace(Constants.JWTToken))
-            {
-                snackbar.Add("Authorization token is missing.", Severity.Error);
-                return new RequestResponse { IsSuccessful = false, Message = "Missing Authorization Token" };
-            }
-
-            // Set authorization header
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
-
             try
             {
                 // Create multipart form data content

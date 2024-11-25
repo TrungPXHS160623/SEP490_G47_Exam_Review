@@ -186,16 +186,8 @@
         }
     }
 
-    private async Task<AuthenticationResponse> GetKeys()
-    {
-        var response = await UserService.GetJWT();
-
-        return response;
-    }
-
     public async Task Logout()
     {
-        await UserService.ClearJWT();
         await CustomAuthStateProvider.Logout();
         NavManager.NavigateTo("/login", true);
     }
