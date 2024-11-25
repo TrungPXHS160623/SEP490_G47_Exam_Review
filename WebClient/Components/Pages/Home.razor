@@ -48,7 +48,12 @@
         {
             var user = auth.User;
             var userRole = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
-
+            if (userRole == 3)
+            {
+                NavManager.NavigateTo("/Lecture/ExamList");
+            }
+            else
+            {
                 var resp = await MenuService.GetMenuByUser(id);
 
                 if (resp.IsSuccessful)
@@ -57,6 +62,8 @@
                 }
 
                 TextInfo = menuList.Count > 0 ? string.Empty : "You dont have any permission on this site";
+            }
+          
         }
 
         if (Layout != null)
