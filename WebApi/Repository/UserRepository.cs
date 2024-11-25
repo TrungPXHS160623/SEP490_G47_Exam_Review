@@ -1196,6 +1196,7 @@ namespace WebApi.Repository
                 new Claim(ClaimTypes.Email, acc.Mail!),
                 new Claim(ClaimTypes.NameIdentifier, acc.UserId.ToString()),
                 new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
+                new Claim("CampusId",acc.CampusId.ToString()!),
             };
 
             var token = new JwtSecurityToken(
@@ -1228,8 +1229,6 @@ namespace WebApi.Repository
                         if (user != null)
                         {
                             var token = GenerateToken(user);
-                            Constants.JWTToken = token;
-                            Constants.CampusId = user.CampusId.Value;
                             await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
@@ -1253,6 +1252,7 @@ namespace WebApi.Repository
                         Message = "No Access token."
                     };
                 }
+
                 return new AuthenticationResponse
                 {
                     IsSuccessful = false,

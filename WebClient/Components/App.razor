@@ -25,5 +25,17 @@
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="js/script.js"></script>
 </body>
-
+<script>
+    window.localStorageHelper = {
+        set: function (key, value) {
+            localStorage.setItem(key, value);
+        },
+        get: function (key) {
+            return localStorage.getItem(key);
+        },
+        remove: function (key) {
+            localStorage.removeItem(key);
+        }
+    };
+</script>
 </html>

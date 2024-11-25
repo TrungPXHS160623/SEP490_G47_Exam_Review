@@ -78,6 +78,7 @@
         }
 
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("errorMsg", out var errorMsg))
         {
             // Show the error message in a snackbar
