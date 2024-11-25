@@ -1,10 +1,8 @@
-﻿using Library.Models;
-using Library.Request;
+﻿using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
-using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -58,7 +56,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("AddSubject")]
-        public async Task<IActionResult> GetSubjects(Subject req)
+        public async Task<IActionResult> GetSubjects(SubjectRequest req)
         {
             var data = await this._subjectRepository.AddSubject(req);
 
@@ -66,7 +64,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("UpdateSubject")]
-        public async Task<IActionResult>UpdateSubject(Subject req)
+        public async Task<IActionResult> UpdateSubject(SubjectRequest req)
         {
             var data = await this._subjectRepository.UpdateSubject(req);
 
@@ -102,7 +100,7 @@ namespace WebApi.Controllers
         [HttpPut("LecturerSubjectModify/{userId}")]
         public async Task<IActionResult> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req)
         {
-            var data = await this._subjectRepository.LecturerSubjectModify(userId,req);
+            var data = await this._subjectRepository.LecturerSubjectModify(userId, req);
 
             return Ok(data);
         }

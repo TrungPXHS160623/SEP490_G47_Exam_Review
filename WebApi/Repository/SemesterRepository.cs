@@ -4,7 +4,6 @@ using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Repository
 {
@@ -128,7 +127,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<SemesterResponse>> GetActiveSemestersAsync()
+        public async Task<ResultResponse<SemesterRequest>> GetActiveSemestersAsync()
         {
             try
             {
@@ -136,9 +135,9 @@ namespace WebApi.Repository
                 var listSemester = await dbContext.Semesters.Where(x => x.IsActive == true).ToListAsync();
 
                 // Chuyển đổi danh sách Semester thành SemesterResponse
-                var semesterResponses = listSemester.Select(semester => new SemesterResponse
+                var semesterResponses = listSemester.Select(semester => new SemesterRequest
                 {
-                    SemesterId = semester.SemesterId,
+                    SemesterID = semester.SemesterId,
                     SemesterName = semester.SemesterName,
                     StartDate = semester.StartDate,
                     EndDate = semester.EndDate,
@@ -147,7 +146,7 @@ namespace WebApi.Repository
                     UpdatedDate = semester.UpdatedDate
                 }).ToList();
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<SemesterRequest>
                 {
                     IsSuccessful = true,
                     Items = semesterResponses
@@ -157,7 +156,7 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<SemesterRequest>
                 {
                     IsSuccessful = false,
                     Message = ex.Message
@@ -165,7 +164,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<SemesterResponse>> GetSemesterByIdAsync(int semesterId)
+        public async Task<ResultResponse<SemesterRequest>> GetSemesterByIdAsync(int semesterId)
         {
             try
             {
@@ -175,7 +174,7 @@ namespace WebApi.Repository
                 // Kiểm tra nếu không tìm thấy học kỳ
                 if (semester == null)
                 {
-                    return new ResultResponse<SemesterResponse>
+                    return new ResultResponse<SemesterRequest>
                     {
                         IsSuccessful = false,
                         Message = "Semester not found."
@@ -183,9 +182,9 @@ namespace WebApi.Repository
                 }
 
                 // Chuyển đổi đối tượng Semester thành SemesterResponse
-                var semesterResponse = new SemesterResponse
+                var semesterResponse = new SemesterRequest
                 {
-                    SemesterId = semester.SemesterId,
+                    SemesterID = semester.SemesterId,
                     SemesterName = semester.SemesterName,
                     StartDate = semester.StartDate,
                     EndDate = semester.EndDate,
@@ -194,7 +193,7 @@ namespace WebApi.Repository
                     UpdatedDate = semester.UpdatedDate
                 };
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<SemesterRequest>
                 {
                     IsSuccessful = true,
                     Item = semesterResponse
@@ -203,7 +202,7 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<SemesterRequest>
                 {
                     IsSuccessful = false,
                     Message = ex.Message
@@ -211,7 +210,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<SemesterResponse>> GetSemestersAsync()
+        public async Task<ResultResponse<Semester>> GetSemestersAsync()
         {
             try
             {
@@ -219,7 +218,7 @@ namespace WebApi.Repository
                 var listSemester = await dbContext.Semesters.ToListAsync();
 
                 // Chuyển đổi danh sách Semester thành SemesterResponse
-                var semesterResponses = listSemester.Select(semester => new SemesterResponse
+                var semesterResponses = listSemester.Select(semester => new Semester
                 {
                     SemesterId = semester.SemesterId,
                     SemesterName = semester.SemesterName,
@@ -230,7 +229,7 @@ namespace WebApi.Repository
                     UpdatedDate = semester.UpdatedDate
                 }).ToList();
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<Semester>
                 {
                     IsSuccessful = true,
                     Items = semesterResponses
@@ -240,7 +239,7 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
 
-                return new ResultResponse<SemesterResponse>
+                return new ResultResponse<Semester>
                 {
                     IsSuccessful = false,
                     Message = ex.Message
@@ -276,12 +275,12 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<RequestResponse> UpdateSemesterAsync(int semesterId, SemesterRequest request)
+        public async Task<RequestResponse> UpdateSemesterAsync(SemesterRequest request)
         {
             try
             {
                 // Kiểm tra xem học kỳ có tồn tại không
-                var existingSemester = await dbContext.Semesters.FirstOrDefaultAsync(s => s.SemesterId == semesterId);
+                var existingSemester = await dbContext.Semesters.FirstOrDefaultAsync(s => s.SemesterId == request.SemesterID);
                 if (existingSemester == null)
                 {
                     return new RequestResponse
@@ -291,9 +290,8 @@ namespace WebApi.Repository
                     };
                 }
 
-                // Kiểm tra xem tên học kỳ có bị trùng với học kỳ khác không (ngoại trừ chính nó)
                 var duplicateSemester = await dbContext.Semesters
-                    .FirstOrDefaultAsync(s => s.SemesterName == request.SemesterName && s.SemesterId != semesterId);
+                    .FirstOrDefaultAsync(s => s.SemesterName == request.SemesterName && s.SemesterId != request.SemesterID);
                 if (duplicateSemester != null)
                 {
                     return new RequestResponse
@@ -313,13 +311,11 @@ namespace WebApi.Repository
                     };
                 }
 
-                // Lấy học kỳ gần nhất (theo thời gian kết thúc) nhưng khác với học kỳ hiện tại
                 var lastSemester = await dbContext.Semesters
-                    .Where(s => s.SemesterId != semesterId)
+                    .Where(s => s.SemesterId != request.SemesterID)
                     .OrderByDescending(s => s.EndDate)
                     .FirstOrDefaultAsync();
 
-                // Kiểm tra xem thời gian bắt đầu của học kỳ mới có nhỏ hơn thời gian kết thúc của học kỳ gần nhất không
                 if (lastSemester != null && request.StartDate < lastSemester.EndDate)
                 {
                     return new RequestResponse
@@ -329,14 +325,12 @@ namespace WebApi.Repository
                     };
                 }
 
-                // Cập nhật thông tin học kỳ
                 existingSemester.SemesterName = request.SemesterName;
                 existingSemester.StartDate = request.StartDate;
                 existingSemester.EndDate = request.EndDate;
                 existingSemester.IsActive = request.IsActive;
                 existingSemester.UpdatedDate = DateTime.Now;
 
-                // Lưu thay đổi vào cơ sở dữ liệu
                 dbContext.Semesters.Update(existingSemester);
                 await dbContext.SaveChangesAsync();
 
@@ -355,6 +349,10 @@ namespace WebApi.Repository
                 };
             }
         }
-        
+
+        Task<ResultResponse<SemesterResponse>> ISemesterRepository.GetActiveSemestersAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

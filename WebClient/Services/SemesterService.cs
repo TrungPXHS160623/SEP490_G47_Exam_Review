@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 using MudBlazor;
 using WebClient.IServices;
 
@@ -32,7 +33,7 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<RequestResponse> AddSemester(Semester req)
+        public async Task<RequestResponse> AddSemester(SemesterRequest req)
         {
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Semester/CreateSemester", req);
 
@@ -50,7 +51,7 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<RequestResponse> UpdateSemester(Semester req)
+        public async Task<RequestResponse> UpdateSemester(SemesterRequest req)
         {
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Semester/UpdateSemesterAsync", req);
 
@@ -71,7 +72,7 @@ namespace WebClient.Services
         public async Task<RequestResponse> DeleteSemester(int semesterId)
         {
 
-            HttpResponseMessage response = await _httpClient.DeleteAsync($"api/Campus/DeleteSemesterAsync/{semesterId}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"api/Semester/DeleteSemesterAsync/{semesterId}");
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 
@@ -87,11 +88,11 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<ResultResponse<Semester>> GetSemesterId(int semesterId)
+        public async Task<ResultResponse<SemesterRequest>> GetSemesterId(int semesterId)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Campus/GetSemesterById/{semesterId}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Semester/GetSemesterById/{semesterId}");
 
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Semester>>();
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<SemesterRequest>>();
 
             if (!requestResponse.IsSuccessful)
             {
@@ -100,5 +101,6 @@ namespace WebClient.Services
 
             return requestResponse;
         }
+
     }
 }

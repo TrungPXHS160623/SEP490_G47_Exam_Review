@@ -18,7 +18,7 @@
         <DialogContent>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Code:</label>
-                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 150px; max-width: 250px;" For="@(()=> exam.ExamCode)" />
+                <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 150px; max-width: 350px;" For="@(()=> exam.ExamCode)" />
             </div>
             @if (ExamId != 0)
             {
@@ -79,7 +79,7 @@
                            Disabled=@IsView
                            ValueChanged="CampusChanged"
                            Placeholder="Choose Campus"
-                           Style="min-width: 150px; max-width: 250px;"
+                           Style="min-width: 150px; max-width: 200px;"
                            For="@(()=> exam.CampusId)">
                     @if (camList.Count > 0)
                     {
@@ -92,17 +92,7 @@
             </div>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Duration:</label>
-                <MudSelect @bind-Value="exam.ExamDuration"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@IsView
-                           Placeholder="Choose Exam Duration"
-                           Style="min-width: 150px; max-width: 250px;"
-                           For="@(()=> exam.ExamDuration)">
-                    <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
-                </MudSelect>
+                <MudTextField @bind-Value=exam.ExamDuration Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 100px; max-width: 150px;" For="@(()=> exam.ExamDuration)" />
             </div>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Type:</label>
@@ -125,14 +115,14 @@
                 <label class="col-4 text-end">Start Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
-                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
+                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
             </div>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">End Date:</label>
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
-                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 250px;" Variant="Variant.Outlined"
+                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.EndDate)" />
             </div>
         </DialogContent>
@@ -202,7 +192,7 @@
 
     private List<Campus> camList = new();
 
-    private List<Subject> subList = new();
+    private List<SubjectResponse> subList = new();
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 

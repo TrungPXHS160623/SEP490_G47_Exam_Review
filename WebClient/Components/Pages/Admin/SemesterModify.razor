@@ -15,7 +15,6 @@
     <MudDialog>
         <DialogContent>
             <MudTextField @bind-Value=semester.SemesterName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => semester.SemesterName)"></MudTextField>
-
             <MudDatePicker @bind-Value=semester.StartDate Label="Start Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
             <MudDatePicker @bind-Value=semester.EndDate Label="End Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
             @if (SemesterId != 0)
@@ -47,7 +46,7 @@
     [Parameter]
     public int? SemesterId { get; set; }
 
-    Semester semester = new Semester();
+    SemesterRequest semester = new SemesterRequest();
 
     private bool _processing = false;
 
@@ -58,7 +57,7 @@
         if (SemesterId != 0)
         {
             var resp = await this.SemesterService.GetSemesterId(SemesterId.Value);
-
+            await Task.Delay(100);
             if (resp.IsSuccessful)
             {
                 semester = resp.Item;

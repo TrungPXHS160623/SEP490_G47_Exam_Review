@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 
 namespace WebClient.IServices
 {
@@ -7,12 +8,13 @@ namespace WebClient.IServices
     {
         Task<ResultResponse<Semester>> GetSemester();
 
-        Task<RequestResponse> AddSemester(Semester req);
+        Task<RequestResponse> AddSemester(SemesterRequest req);
 
-        Task<RequestResponse> UpdateSemester(Semester req);
+        Task<RequestResponse> UpdateSemester(SemesterRequest req);
 
         Task<RequestResponse> DeleteSemester(int campusId);
 
-        Task<ResultResponse<Semester>> GetSemesterId(int campusId);
+        Task<ResultResponse<SemesterRequest>> GetSemesterId(int campusId);
+
     }
 }

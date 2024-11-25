@@ -65,7 +65,7 @@
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
-    private List<Subject> subjectList = new List<Subject>();
+    private List<SubjectResponse> subjectList = new List<SubjectResponse>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,7 +77,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 9);
+            var response = await MenuService.CheckAccess(userId, 8);
 
             if (!response.IsSuccessful)
             {

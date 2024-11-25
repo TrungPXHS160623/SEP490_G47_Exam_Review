@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Models
+﻿namespace Library.Models
 {
     public class Semester
     {
@@ -16,11 +10,6 @@ namespace Library.Models
         public bool? IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-
         public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
-
-        public virtual ICollection<CampusUserSubject> CampusUserSubjects { get; set; } = new List<CampusUserSubject>();
-
-
     }
 }
