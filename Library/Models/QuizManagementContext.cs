@@ -1048,22 +1048,20 @@ public partial class QuizManagementContext : DbContext
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
            new Menu { MenuId = 1, MenuLink = "/Admin/UserManagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 2, MenuLink = "/Admin/UserActivityLog", MenuName = "User Activity Log", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 3, MenuLink = "/Examiner/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Assign Teacher To Review", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 7, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 8, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 9, MenuLink = "/Examiner/HeadDeparmentManagement", MenuName = "Head Department Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 10, MenuLink = "/Examiner/CreateExam", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 11, MenuLink = "/HeadDepartment/LecturerManagement", MenuName = "Lecturer Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 12, MenuLink = "/Examiner/OverallReport", MenuName = "Overall Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 13, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 14, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-new Menu { MenuId = 15, MenuLink = "/HeadDepartment/SubjectList", MenuName = "Subject List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-
-
+           new Menu { MenuId = 2, MenuLink = "/Admin/UserActivityLog", MenuName = "User Activity Log", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 3, MenuLink = "/Examiner/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Assign Teacher To Review", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 7, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 8, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 9, MenuLink = "/Examiner/HeadDeparmentManagement", MenuName = "Head Department Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 10, MenuLink = "/Examiner/CreateExam", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 11, MenuLink = "/HeadDepartment/LecturerManagement", MenuName = "Lecturer Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 12, MenuLink = "/Examiner/OverallReport", MenuName = "Overall Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 13, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 14, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 15, MenuLink = "/HeadDepartment/SubjectList", MenuName = "Subject List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 11. Seed data for MenuRole table

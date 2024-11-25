@@ -82,13 +82,6 @@
         <div class="report-content mb-4 p-4">
             <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly></MudTextField>
         </div>
-        @if (exam.AssignStatusId != 7 && exam.AssignStatusId != 8)
-        {
-            <div>
-                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(() => ConfirmationDialog(exam.ExamId,true))">Approved</MudButton>
-                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="@(() => ConfirmationDialog(exam.ExamId,false))">Rejected</MudButton>
-            </div>
-        }
     </div>
 
 </div>
@@ -156,41 +149,6 @@
         await GetReport();
 
         this.StateHasChanged();
-    }
-
-    private async Task ConfirmationDialog(int examId, bool isOk)
-    {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                BackdropClick = false,
-            };
-
-        string msg = isOk ? "Are you sure this exam is ready to use? This cannot be changed after confirmation." : "Are you sure this exam cannot be fixed and will be removed? This cannot be changed after confirmation.";
-
-        var parameters = new DialogParameters<Dialog>
-        {
-            { x => x.Content, msg },
-            { x => x.BtnTextConfirm, "Confirm" },
-            { x => x.BtnTextCancel, "Cancel" },
-        };
-
-        var dialog = await DialogService.ShowAsync<Dialog>("Confirmation Exam", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-            var resp = await this.ExamService.ChangeStatusExamById(examId, isOk ? 7 : 8);
-
-            if (resp.IsSuccessful)
-            {
-                NavManager.NavigateTo("/HeadDepartment/Report");
-            }
-        }
-
     }
 
     private async Task OpenImageDialog(string image)

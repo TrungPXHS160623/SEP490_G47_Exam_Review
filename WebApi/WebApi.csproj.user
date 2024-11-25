@@ -4,7 +4,7 @@
     <Controller_SelectedScaffolderID>MvcControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/MVC/Controller</Controller_SelectedScaffolderCategoryPath>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>C:\Users\admin\Downloads\Capstone\SEP490\SEP\New folder\New folder\SEP490_G47_Exam_Review\WebApi\Properties\PublishProfiles\FTPProfile5.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\admin\Downloads\Capstone\SEP490\SEP\New folder\New folder\SEP490_G47_Exam_Review\WebApi\Properties\PublishProfiles\FTPProfile6.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

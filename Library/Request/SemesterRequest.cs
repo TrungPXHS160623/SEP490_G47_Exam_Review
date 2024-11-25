@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Request
+﻿namespace Library.Request
 {
     public class SemesterRequest
     {
+        public int SemesterID { get; set; }
         public string SemesterName { get; set; } = null!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

@@ -6,10 +6,8 @@ using Library.Response;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 using System.Security.Claims;
 using WebApi.IRepository;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Repository
 {
@@ -24,36 +22,38 @@ namespace WebApi.Repository
             this.logRepository = logRepository;
         }
 
-        public async Task<RequestResponse> AddSubject(Subject req)
+        public async Task<RequestResponse> AddSubject(SubjectRequest req)
         {
             try
             {
                 var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectCode.Equals(req.SubjectCode));
 
-                if (data == null)
-                {
-                    req.IsDeleted = false;
-
-                    await this.DBcontext.Subjects.AddAsync(req);
-
-                    await this.DBcontext.SaveChangesAsync();
-
-                    await logRepository.LogAsync($"Add subject [{req.SubjectCode}] {req.SubjectName}");
-
-                    return new RequestResponse
-                    {
-                        IsSuccessful = true,
-                        Message = "Add Subject Successfully",
-                    };
-                }
-                else
+                if (data != null)
                 {
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Subject Code already exist",
+                        Message = "Subject already exist!"
                     };
                 }
+                else
+                {
+                    var newSubject = new Subject
+                    {
+                        SubjectCode = req.SubjectCode,
+                        SubjectName= req.SubjectName
+                    };
+                    await DBcontext.Subjects.AddAsync(newSubject);
+                    await DBcontext.SaveChangesAsync();
+                }
+
+                await logRepository.LogAsync($"Create Subject [{data.SubjectCode}] {data.SubjectName}");
+
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = "Create account successfully!"
+                };
             }
             catch (Exception ex)
             {
@@ -123,25 +123,43 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<Subject>> GetSubjectById(int subjectId)
+        public async Task<ResultResponse<SubjectRequest>> GetSubjectById(int subjectId)
         {
             try
             {
                 var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == subjectId);
 
-                return new ResultResponse<Subject>
+                // Kiểm tra nếu không tìm thấy học kỳ
+                if (data == null)
                 {
-                    IsSuccessful = data != null ? true : false,
-                    Message = data != null ? string.Empty : "Cannot found subject",
-                    Item = data,
+                    return new ResultResponse<SubjectRequest>
+                    {
+                        IsSuccessful = false,
+                        Message = "Subject not found."
+                    };
+                }
+
+                // Chuyển đổi đối tượng Semester thành SemesterResponse
+                var subjectResponse = new SubjectRequest
+                {
+                    SubjectId = data.SubjectId,
+                    SubjectCode = data.SubjectCode,
+                    SubjectName = data.SubjectName
+                };
+
+                return new ResultResponse<SubjectRequest>
+                {
+                    IsSuccessful = true,
+                    Item = subjectResponse
                 };
             }
             catch (Exception ex)
             {
-                return new ResultResponse<Subject>
+
+                return new ResultResponse<SubjectRequest>
                 {
                     IsSuccessful = false,
-                    Message = ex.Message,
+                    Message = ex.Message
                 };
             }
         }
@@ -169,7 +187,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<RequestResponse> UpdateSubject(Subject req)
+        public async Task<RequestResponse> UpdateSubject(SubjectRequest req)
         {
             try
             {
@@ -196,7 +214,6 @@ namespace WebApi.Repository
                     data.SubjectName = req.SubjectName;
                     data.IsDeleted = req.IsDeleted;
                     data.FacultyId = req.FacultyId;
-                    data.Faculty.FacultyName = req.Faculty.FacultyName;
                     await this.DBcontext.SaveChangesAsync();
 
                     await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
@@ -391,7 +408,7 @@ namespace WebApi.Repository
                                 {
                                     errorMessages.Add("SubjectName must not exceed 100 characters.");
                                 }
-                                
+
                                 // Tạo khóa duy nhất cho mỗi môn học
                                 string uniqueKey = subjectImportRequest.SubjectCode;
                                 // Kiểm tra xem môn học đã tồn tại trong HashSet chưa
@@ -427,7 +444,7 @@ namespace WebApi.Repository
                                     // Nếu không tìm thấy, thêm lỗi
                                     errorMessages.Add($"Faculty '{subjectImportRequest.FacultyName}' not found.");
                                 }
-                                
+
 
                                 // Tạo Subject nếu không có lỗi
                                 var subject = new Subject
@@ -665,14 +682,14 @@ namespace WebApi.Repository
             try
             {
                 var subject = await (from s in DBcontext.Subjects
-                                   join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
-                                   join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
-                                   where s.SubjectId == req.SubjectId && cuf.FacultyId == req.DepartmentId
-                                   select s).FirstOrDefaultAsync();
+                                     join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                     join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
+                                     where s.SubjectId == req.SubjectId && cuf.FacultyId == req.DepartmentId
+                                     select s).FirstOrDefaultAsync();
 
-                if(subject == null)
+                if (subject == null)
                 {
-                    var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x=> x.SubjectId == req.SubjectId);
+                    var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId);
 
                     data.FacultyId = req.DepartmentId;
                     data.UpdateDate = DateTime.Now;
@@ -683,13 +700,14 @@ namespace WebApi.Repository
                         IsSuccessful = true,
                         Message = $"Add Subject {data.SubjectCode} to your department successfully"
                     };
-                } else
+                }
+                else
                 {
                     var user = await (from u in DBcontext.Users
-                                join cuf in DBcontext.CampusUserFaculties on u.UserId equals cuf.UserId
-                                join f in DBcontext.Faculties on cuf.FacultyId equals f.FacultyId
-                                join s in DBcontext.Subjects on f.FacultyId equals s.FacultyId
-                                select u).FirstOrDefaultAsync();
+                                      join cuf in DBcontext.CampusUserFaculties on u.UserId equals cuf.UserId
+                                      join f in DBcontext.Faculties on cuf.FacultyId equals f.FacultyId
+                                      join s in DBcontext.Subjects on f.FacultyId equals s.FacultyId
+                                      select u).FirstOrDefaultAsync();
 
                     return new RequestResponse
                     {
@@ -707,5 +725,6 @@ namespace WebApi.Repository
                 };
             }
         }
+
     }
 }
