@@ -22,7 +22,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://examreviewfpt.somee.com;https://www.examreviewfpt.somee.com/",
+      "applicationUrl": "https://localhost:7158",
       "launchUrl": "Login",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

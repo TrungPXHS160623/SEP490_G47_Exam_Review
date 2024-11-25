@@ -12,7 +12,7 @@
 <div class="d-flex justify-content-center">
     <div class="w-75 custom-box ">
         <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
-            <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
+            <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Semester</MudButton>
         </div>
         @if (SemesterList.Count > 0)
         {  
@@ -70,7 +70,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 8);
+            var response = await MenuService.CheckAccess(userId, 13);
 
             if (!response.IsSuccessful)
             {

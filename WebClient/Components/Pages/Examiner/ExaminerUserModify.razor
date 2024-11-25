@@ -57,14 +57,13 @@ else
             <label class="col-4 text-end">Department:</label>
             <div class="col-8">
                 <MudSelect T="FacutyResponse"
-                           @bind-SelectedValues=@user.FacutyResponse
-                           Text="@("Number of Subject : " + user.FacutyResponse.Count())"
-                           MultiSelection="true"
+                           @bind-SelectedValue=@user.FacutyResponse
+                           Text="@("Number of Department : " + user.FacutyResponse.Count())"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
                            ReadOnly=@(!isAddOrEdit)
-                           HelperText="Only display avaliable subject">
+                           HelperText="Only display avaliable Department">
                     @if (facutyResponses.Count() > 0)
                     {
                         @foreach (var item in facutyResponses)

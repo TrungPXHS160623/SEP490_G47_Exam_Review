@@ -386,7 +386,7 @@ public partial class QuizManagementContext : DbContext
             // Examiner 
             new User { UserId = 18, Mail = "hoangthu@fpt.edu.vn", CampusId = 2, RoleId = 2, FullName = "Hoàng Thư", PhoneNumber = "0905223344", EmailFe = "hoangthu@fe.edu.vn", DateOfBirth = new DateTime(1992, 3, 12), Gender = false, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 19, Mail = "longnguyen@fpt.edu.vn", CampusId = 2, RoleId = 2, FullName = "Nguyễn Long", PhoneNumber = "0905111222", EmailFe = "longnguyen@fe.edu.vn", DateOfBirth = new DateTime(1988, 7, 20), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
- 
+
             // Lecturer 
             new User { UserId = 20, Mail = "huongmai@fpt.edu.vn", CampusId = 2, RoleId = 3, FullName = "Mai Hương", PhoneNumber = "0905667788", EmailFe = "huongmai@fe.edu.vn", DateOfBirth = new DateTime(1990, 11, 10), Gender = false, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new User { UserId = 21, Mail = "minhkhang@fpt.edu.vn", CampusId = 2, RoleId = 3, FullName = "Minh Khang", PhoneNumber = "0905553344", EmailFe = "minhkhang@fe.edu.vn", DateOfBirth = new DateTime(1989, 8, 15), Gender = true, Address = "Đà Nẵng", IsActive = true, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
@@ -862,74 +862,74 @@ public partial class QuizManagementContext : DbContext
 
         );
 
-            modelBuilder.Entity<CampusUserSubject>().HasData(
-            //Seed data for Lecturer of Ha Noi campus
-            new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 5 },
-            new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 5 },
-            new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 5 },
-            new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 6 },
-            new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 6 },
+        modelBuilder.Entity<CampusUserSubject>().HasData(
+        //Seed data for Lecturer of Ha Noi campus
+        new CampusUserSubject { Id = 1, SubjectId = 1, CampusId = 1, UserId = 5 },
+        new CampusUserSubject { Id = 2, SubjectId = 2, CampusId = 1, UserId = 5 },
+        new CampusUserSubject { Id = 3, SubjectId = 3, CampusId = 1, UserId = 5 },
+        new CampusUserSubject { Id = 4, SubjectId = 4, CampusId = 1, UserId = 6 },
+        new CampusUserSubject { Id = 5, SubjectId = 5, CampusId = 1, UserId = 6 },
 
-            //Seed data for Lecturer of Da Nang campus
-            new CampusUserSubject { Id = 6, SubjectId = 1, CampusId = 2, UserId = 20 },
-            new CampusUserSubject { Id = 7, SubjectId = 2, CampusId = 2, UserId = 20 },
-            new CampusUserSubject { Id = 8, SubjectId = 3, CampusId = 2, UserId = 21 },
-            new CampusUserSubject { Id = 9, SubjectId = 4, CampusId = 2, UserId = 21 },
-            new CampusUserSubject { Id = 10, SubjectId = 5, CampusId = 2, UserId = 21 },
+        //Seed data for Lecturer of Da Nang campus
+        new CampusUserSubject { Id = 6, SubjectId = 1, CampusId = 2, UserId = 20 },
+        new CampusUserSubject { Id = 7, SubjectId = 2, CampusId = 2, UserId = 20 },
+        new CampusUserSubject { Id = 8, SubjectId = 3, CampusId = 2, UserId = 21 },
+        new CampusUserSubject { Id = 9, SubjectId = 4, CampusId = 2, UserId = 21 },
+        new CampusUserSubject { Id = 10, SubjectId = 5, CampusId = 2, UserId = 21 },
 
-            //Seed data for Lecturer of Can Tho campus
-            new CampusUserSubject { Id = 11, SubjectId = 6, CampusId = 3, UserId = 29 },
-            new CampusUserSubject { Id = 12, SubjectId = 7, CampusId = 3, UserId = 29 },
-            new CampusUserSubject { Id = 13, SubjectId = 8, CampusId = 3, UserId = 29 },
-            new CampusUserSubject { Id = 14, SubjectId = 9, CampusId = 3, UserId = 30 },
-            new CampusUserSubject { Id = 15, SubjectId = 10, CampusId = 3, UserId = 30 },
+        //Seed data for Lecturer of Can Tho campus
+        new CampusUserSubject { Id = 11, SubjectId = 6, CampusId = 3, UserId = 29 },
+        new CampusUserSubject { Id = 12, SubjectId = 7, CampusId = 3, UserId = 29 },
+        new CampusUserSubject { Id = 13, SubjectId = 8, CampusId = 3, UserId = 29 },
+        new CampusUserSubject { Id = 14, SubjectId = 9, CampusId = 3, UserId = 30 },
+        new CampusUserSubject { Id = 15, SubjectId = 10, CampusId = 3, UserId = 30 },
 
-            //Seed data for Lecturer of Ho Chi Minh campus
-            new CampusUserSubject { Id = 16, SubjectId = 6, CampusId = 4, UserId = 38 },
-            new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 4, UserId = 38 },
-            new CampusUserSubject { Id = 18, SubjectId = 8, CampusId = 4, UserId = 38 },
-            new CampusUserSubject { Id = 19, SubjectId = 9, CampusId = 4, UserId = 39 },
-            new CampusUserSubject { Id = 20, SubjectId = 10, CampusId = 4, UserId = 39 },
+        //Seed data for Lecturer of Ho Chi Minh campus
+        new CampusUserSubject { Id = 16, SubjectId = 6, CampusId = 4, UserId = 38 },
+        new CampusUserSubject { Id = 17, SubjectId = 7, CampusId = 4, UserId = 38 },
+        new CampusUserSubject { Id = 18, SubjectId = 8, CampusId = 4, UserId = 38 },
+        new CampusUserSubject { Id = 19, SubjectId = 9, CampusId = 4, UserId = 39 },
+        new CampusUserSubject { Id = 20, SubjectId = 10, CampusId = 4, UserId = 39 },
 
-             //Seed data for Lecturer of Quy Nhon campus
-            new CampusUserSubject { Id = 21, SubjectId = 11, CampusId = 5, UserId = 47 },
-            new CampusUserSubject { Id = 22, SubjectId = 12, CampusId = 5, UserId = 47 },
-            new CampusUserSubject { Id = 23, SubjectId = 13, CampusId = 5, UserId = 48 },
-            new CampusUserSubject { Id = 24, SubjectId = 14, CampusId = 5, UserId = 48 },
-            new CampusUserSubject { Id = 25, SubjectId = 15, CampusId = 5, UserId = 48 }
-
-
-
-        );
-            modelBuilder.Entity<CampusUserFaculty>().HasData(
-            //Seed data for Heads of Department of Ha Noi campus
-            new CampusUserFaculty { Id = 1, CampusId = 1, UserId = 9, FacultyId = 1 },
-            new CampusUserFaculty { Id = 2, CampusId = 1, UserId = 9, FacultyId = 2 },
-            new CampusUserFaculty { Id = 3, CampusId = 1, UserId = 9, FacultyId = 3 },
-            new CampusUserFaculty { Id = 4, CampusId = 1, UserId = 10, FacultyId = 4 },
-            new CampusUserFaculty { Id = 5, CampusId = 1, UserId = 10, FacultyId = 5 },
-
-            //Seed data for Heads of Department of Da Nang campus
-            new CampusUserFaculty { Id = 6, CampusId = 2, UserId = 22, FacultyId = 1 },
-            new CampusUserFaculty { Id = 7, CampusId = 2, UserId = 23, FacultyId = 2 },
-
-            //Seed data for Heads of Department of Da Nang campus
-            new CampusUserFaculty { Id = 8, CampusId = 3, UserId = 31, FacultyId = 3 },
-            new CampusUserFaculty { Id = 9, CampusId = 3, UserId = 32, FacultyId = 4 },
-
-            //Seed data for Heads of Department of Da Nang campus
-            new CampusUserFaculty { Id = 10, CampusId = 4, UserId = 40, FacultyId = 1 },
-            new CampusUserFaculty { Id = 11, CampusId = 4, UserId = 41, FacultyId = 5 },
+        //Seed data for Lecturer of Quy Nhon campus
+        new CampusUserSubject { Id = 21, SubjectId = 11, CampusId = 5, UserId = 47 },
+        new CampusUserSubject { Id = 22, SubjectId = 12, CampusId = 5, UserId = 47 },
+        new CampusUserSubject { Id = 23, SubjectId = 13, CampusId = 5, UserId = 48 },
+        new CampusUserSubject { Id = 24, SubjectId = 14, CampusId = 5, UserId = 48 },
+        new CampusUserSubject { Id = 25, SubjectId = 15, CampusId = 5, UserId = 48 }
 
 
-            new CampusUserFaculty { Id = 12, CampusId = 5, UserId = 49, FacultyId = 2 },
-            new CampusUserFaculty { Id = 13, CampusId = 5, UserId = 50, FacultyId = 4 }
-        );
+
+    );
+        modelBuilder.Entity<CampusUserFaculty>().HasData(
+        //Seed data for Heads of Department of Ha Noi campus
+        new CampusUserFaculty { Id = 1, CampusId = 1, UserId = 9, FacultyId = 1 },
+        new CampusUserFaculty { Id = 2, CampusId = 1, UserId = 9, FacultyId = 2 },
+        new CampusUserFaculty { Id = 3, CampusId = 1, UserId = 9, FacultyId = 3 },
+        new CampusUserFaculty { Id = 4, CampusId = 1, UserId = 10, FacultyId = 4 },
+        new CampusUserFaculty { Id = 5, CampusId = 1, UserId = 10, FacultyId = 5 },
+
+        //Seed data for Heads of Department of Da Nang campus
+        new CampusUserFaculty { Id = 6, CampusId = 2, UserId = 22, FacultyId = 1 },
+        new CampusUserFaculty { Id = 7, CampusId = 2, UserId = 23, FacultyId = 2 },
+
+        //Seed data for Heads of Department of Da Nang campus
+        new CampusUserFaculty { Id = 8, CampusId = 3, UserId = 31, FacultyId = 3 },
+        new CampusUserFaculty { Id = 9, CampusId = 3, UserId = 32, FacultyId = 4 },
+
+        //Seed data for Heads of Department of Da Nang campus
+        new CampusUserFaculty { Id = 10, CampusId = 4, UserId = 40, FacultyId = 1 },
+        new CampusUserFaculty { Id = 11, CampusId = 4, UserId = 41, FacultyId = 5 },
+
+
+        new CampusUserFaculty { Id = 12, CampusId = 5, UserId = 49, FacultyId = 2 },
+        new CampusUserFaculty { Id = 13, CampusId = 5, UserId = 50, FacultyId = 4 }
+    );
 
         // 7. Seed data for Exam table
         modelBuilder.Entity<Exam>().HasData(
 
-           
+
 
             // Ha Noi's Examiners create exams
             new Exam { ExamId = 1, ExamCode = "ADY201m_Fa24_FE_123456", ExamDuration = "90'", TermDuration = "Block 10", ExamType = "Multiple Choice", SubjectId = 1, CreaterId = 2, CampusId = 1, SemesterId = 3, ExamStatusId = 1, ExamDate = new DateTime(2024, 11, 18), EstimatedTimeTest = new DateTime(2024, 11, 5), StartDate = new DateTime(2024, 11, 1), EndDate = new DateTime(2024, 11, 11), AssignedUserId = null, AssignmentDate = new DateTime(2024, 11, 2), GeneralFeedback = null, IsReady = false, CreateDate = new DateTime(2024, 11, 1), UpdateDate = null },
@@ -1047,43 +1047,40 @@ public partial class QuizManagementContext : DbContext
         );
         // 10. Seed data for Menu table
         modelBuilder.Entity<Menu>().HasData(
-            new Menu { MenuId = 1, MenuLink = "/Admin/UserManagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 2, MenuLink = "/Admin/UserActivityLog", MenuName = "User Activity Log", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+           new Menu { MenuId = 1, MenuLink = "/Admin/UserManagement", MenuName = "User Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+           new Menu { MenuId = 2, MenuLink = "/Admin/UserActivityLog", MenuName = "User Activity Log", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 3, MenuLink = "/Examiner/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 4, MenuLink = "/HeadDepartment/ExamList", MenuName = "Assign Teacher To Review", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 5, MenuLink = "/Lecture/ExamList", MenuName = "Exam List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new Menu { MenuId = 6, MenuLink = "/HeadDepartment/Report", MenuName = "View Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 7, MenuLink = "/HeadDepartment/ExamStatus", MenuName = "Exam Status(UnderContrucst)", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 10, MenuLink = "/Examiner/HeadDeparmentManagement", MenuName = "Head Department Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 8, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 11, MenuLink ="/Examiner/CreateExam", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 12, MenuLink = "/HeadDepartment/LecturerManagement", MenuName = "Lecturer Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 13, MenuLink = "/Examiner/OverallReport", MenuName = "Overall Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 14, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 9, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 15, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new Menu { MenuId = 16, MenuLink = "/HeadDepartment/SubjectList", MenuName = "Subject List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
-
+            new Menu { MenuId = 7, MenuLink = "/Admin/CampusManagement", MenuName = "Campus Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 8, MenuLink = "/Admin/SubjectManagement", MenuName = "Subject Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 9, MenuLink = "/Examiner/HeadDeparmentManagement", MenuName = "Head Department Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 10, MenuLink = "/Examiner/CreateExam", MenuName = "Create Exam", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 11, MenuLink = "/HeadDepartment/LecturerManagement", MenuName = "Lecturer Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 12, MenuLink = "/Examiner/OverallReport", MenuName = "Overall Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 13, MenuLink = "/Admin/SemesterManagement", MenuName = "Semester Management", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 14, MenuLink = "/Examiner/ReviewReport", MenuName = "Review Report", CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new Menu { MenuId = 15, MenuLink = "/HeadDepartment/SubjectList", MenuName = "Subject List", CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 11. Seed data for MenuRole table
         modelBuilder.Entity<MenuRole>().HasData(
             new MenuRole { RoleId = 1, MenuId = 1, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 2, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 7, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 1, MenuId = 8, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 1, MenuId = 14, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 1, MenuId = 13, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 2, MenuId = 3, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 15, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 10, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 14, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 9, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 4, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 4, MenuId = 6, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 4, MenuId = 7, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 11, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 2, MenuId = 13, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 4, MenuId = 12, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 10, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 2, MenuId = 12, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
+            new MenuRole { RoleId = 4, MenuId = 11, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
             new MenuRole { RoleId = 3, MenuId = 5, CreateDate = DateTime.Now, UpdateDate = DateTime.Now },
-            new MenuRole { RoleId = 4, MenuId = 16, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
+            new MenuRole { RoleId = 4, MenuId = 15, CreateDate = DateTime.Now, UpdateDate = DateTime.Now }
         );
 
         // 12. Seed data for Report table

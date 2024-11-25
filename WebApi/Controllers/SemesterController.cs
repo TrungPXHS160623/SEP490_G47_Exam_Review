@@ -1,6 +1,5 @@
 ﻿using Library.Request;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
@@ -44,18 +43,18 @@ namespace WebApi.Controllers
             var data = await semesterRepository.ToggleSemesterStatusAsync(semesterId);
             return Ok(data);
         }
-        [HttpPut("CreateSemester")]
+        [HttpPost("CreateSemester")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateSemester([FromBody] SemesterRequest semesterRequest)
         {
             var data = await semesterRepository.CreateSemesterAsync(semesterRequest);
             return Ok(data);
         }
-        [HttpPut("UpdateSemesterAsync/{semesterId}")]
+        [HttpPut("UpdateSemesterAsync")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateSemester(int semesterId,[FromBody] SemesterRequest semesterRequest)
+        public async Task<IActionResult> UpdateSemester(SemesterRequest semesterRequest)
         {
-            var data = await semesterRepository.UpdateSemesterAsync(semesterId, semesterRequest);
+            var data = await semesterRepository.UpdateSemesterAsync(semesterRequest);
             return Ok(data);
         }
         [HttpDelete("DeleteSemesterAsync/{semesterId}")]

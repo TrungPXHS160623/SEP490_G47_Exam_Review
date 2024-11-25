@@ -6,12 +6,13 @@
 
         public string? SubjectCode { get; set; }
 
-        public int FacultyId { get; set; }
+        public int? FacultyId { get; set; }
         public string? SubjectName { get; set; }
 
         public string? Faculty { get; set; }
 
         public DateTime? CreateDate { get; set; }
+        public bool? IsDeleted { get; set; }
 
         public override bool Equals(object obj)
         {

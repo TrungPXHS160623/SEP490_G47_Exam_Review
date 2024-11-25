@@ -147,7 +147,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuService.CheckAccess(userId, 15);
+            var response = await MenuService.CheckAccess(userId, 14);
 
             if (!response.IsSuccessful)
             {

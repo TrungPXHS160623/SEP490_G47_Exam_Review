@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
@@ -20,7 +19,7 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> AddSubject(Subject req)
+        public async Task<RequestResponse> AddSubject(SubjectRequest req)
         {
             try
             {
@@ -78,13 +77,13 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<Subject>> GetSubjectById(int subjectId)
+        public async Task<ResultResponse<SubjectRequest>> GetSubjectById(int subjectId)
         {
             try
             {
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/Subject/GetSubjectById/{subjectId}");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Subject>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<SubjectRequest>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -96,7 +95,7 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<Subject>
+                return new ResultResponse<SubjectRequest>
                 {
                     IsSuccessful = false,
                 };
@@ -128,13 +127,13 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<Subject>> GetSubjects()
+        public async Task<ResultResponse<SubjectResponse>> GetSubjects()
         {
             try
             {
                 HttpResponseMessage response = await _httpClient.GetAsync($"api/Subject/GetAll");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Subject>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<SubjectResponse>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -146,7 +145,7 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<Subject>
+                return new ResultResponse<SubjectResponse>
                 {
                     IsSuccessful = false,
                 };
@@ -157,7 +156,7 @@ namespace WebClient.Services
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Subject/GetList",req);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Subject/GetList", req);
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<SubjectResponse>>();
 
@@ -273,7 +272,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateSubject(Subject req)
+        public async Task<RequestResponse> UpdateSubject(SubjectRequest req)
         {
             try
             {
@@ -359,5 +358,7 @@ namespace WebClient.Services
                 };
             }
         }
+
+
     }
 }
