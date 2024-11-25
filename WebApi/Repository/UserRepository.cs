@@ -1196,6 +1196,7 @@ namespace WebApi.Repository
                 new Claim(ClaimTypes.Email, acc.Mail!),
                 new Claim(ClaimTypes.NameIdentifier, acc.UserId.ToString()),
                 new Claim(ClaimTypes.Role,acc.RoleId.ToString()!),
+                new Claim("CampusId",acc.CampusId.ToString()!),
             };
 
             var token = new JwtSecurityToken(

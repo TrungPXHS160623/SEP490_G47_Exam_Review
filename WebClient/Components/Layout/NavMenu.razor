@@ -43,7 +43,6 @@
 
     public async Task Logout()
     {
-        CustomAuthStateProvider.NotifyUserLogout();
         NavManager.NavigateTo("/login", true);
     }
 }

@@ -136,11 +136,12 @@ namespace WebApi.Controllers
             var response = await userRepository.GoogleLoginCallback(code);
             if (response.IsSuccessful)
             {
-                return Redirect($"https://www.examreviewfpt.somee.com/home");
+                var token = Uri.EscapeDataString(response.Token);
+                return Redirect($"{config["MainUri"]}home?token={token}");
             }
 
             var errorMsg = Uri.EscapeDataString(response.Message); // URL encode the error message
-            return Redirect($"https://www.examreviewfpt.somee.com/login?errorMsg={errorMsg}");
+            return Redirect($"{config["MainUri"]}login?errorMsg={errorMsg}");
         }
 
         [HttpGet("google-keys")]
