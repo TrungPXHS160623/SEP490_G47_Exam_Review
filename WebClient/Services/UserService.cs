@@ -476,11 +476,11 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId)
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId,int campusId)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetUserBySubject/{subjectId}/{campusId}");
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
 

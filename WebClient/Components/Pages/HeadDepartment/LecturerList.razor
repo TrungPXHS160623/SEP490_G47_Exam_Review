@@ -33,7 +33,7 @@
     </DialogActions>
 </MudDialog>
 
-    @code {
+@code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
 
@@ -54,7 +54,11 @@
 
     public async Task GetLecturer()
     {
-        var resp = await this.UserService.GetUserBySubject(SubjectId);
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var campusId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == "CampusId")?.Value, out var id) ? id : 0;
+
+        var resp = await this.UserService.GetUserBySubject(SubjectId, id);
 
         if (resp.IsSuccessful)
         {

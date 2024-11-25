@@ -179,10 +179,10 @@ namespace WebApi.Controllers
             });
         }
         [AllowAnonymous]
-        [HttpGet("GetUserBySubject/{subjectId}")]
-        public async Task<IActionResult> GetUserBySubject(int subjectid)
+        [HttpGet("GetUserBySubject/{subjectId}/{campusId}")]
+        public async Task<IActionResult> GetUserBySubject(int subjectid, int campusId)
         {
-            var data = await this.userRepository.GetUserBySubject(subjectid);
+            var data = await this.userRepository.GetUserBySubject(subjectid,campusId);
 
             return Ok(data);
         }
