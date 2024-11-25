@@ -20,10 +20,6 @@ namespace WebClient.IServices
 
         Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId, string filterQuery);
 
-        Task<AuthenticationResponse> GetJWT();
-
-        Task<RequestResponse> ClearJWT();
-
         Task<ResultResponse<UserRequest>> GetByIdAsync(int id);
 
         Task<ResultResponse<UserSubjectRequest>> GetUserSubjectByIdAsync(int id);

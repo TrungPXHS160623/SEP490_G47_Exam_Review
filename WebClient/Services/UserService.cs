@@ -358,13 +358,6 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> ImportUserFromExcel(IBrowserFile files)
         {
-            if (string.IsNullOrWhiteSpace(Constants.JWTToken))
-            {
-                snackbar.Add("Authorization token is missing.", Severity.Error);
-                return new RequestResponse { IsSuccessful = false, Message = "Missing Authorization Token" };
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Constants.JWTToken);
 
             try
             {

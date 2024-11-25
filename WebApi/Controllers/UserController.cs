@@ -156,28 +156,6 @@ namespace WebApi.Controllers
             });
         }
 
-        [HttpGet("GetJWT")]
-        [AllowAnonymous]
-        public IActionResult GetJWT()
-        {
-            return Ok(new AuthenticationResponse
-            {
-                IsSuccessful = true,
-                Token = Constants.JWTToken,
-            });
-        }
-
-        [HttpGet("ClearJWT")]
-        [AllowAnonymous]
-        public IActionResult ClearJWT()
-        {
-            Constants.JWTToken = string.Empty;
-
-            return Ok(new RequestResponse
-            {
-                IsSuccessful = true,
-            });
-        }
         [AllowAnonymous]
         [HttpGet("GetUserBySubject/{subjectId}/{campusId}")]
         public async Task<IActionResult> GetUserBySubject(int subjectid, int campusId)

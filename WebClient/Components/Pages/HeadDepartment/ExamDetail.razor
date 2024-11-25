@@ -48,7 +48,7 @@
             </div>
         </DialogContent>
         <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer)">
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer || exam.ExamStatusId == 4)">
                 @if (_processing)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
