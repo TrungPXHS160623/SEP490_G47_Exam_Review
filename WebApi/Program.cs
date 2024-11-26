@@ -8,7 +8,6 @@ using Quartz;
 using System.Text;
 using WebApi.IRepository;
 using WebApi.JobSchedule;
-using WebApi.Mapper;
 using WebApi.Repository;
 
 namespace WebApi;
@@ -73,7 +72,6 @@ public class Program
 
         // Add DI for repositories and AutoMapper
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         builder.Services.AddScoped<IExamRepository, ExamRepository>();
         builder.Services.AddScoped<IMenuRepository, MenuRepository>();
         builder.Services.AddScoped<ICampusRepository, CampusRepository>();
