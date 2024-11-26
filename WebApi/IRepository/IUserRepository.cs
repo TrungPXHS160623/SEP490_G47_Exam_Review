@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
 using System.Security.Claims;
@@ -10,13 +9,9 @@ namespace WebApi.IRepository
     {
         Task<RequestResponse> CreateAsync(UserRequest user);
 
-        Task<ResultResponse<UserResponse>> GetAllAsync();
-
         Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
 
         Task<ResultResponse<UserResponse>> GetUserForExaminer(int userId, string filterQuery);
-
-        Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true);
 
         Task<ResultResponse<UserRequest>> GetByIdAsync(int id);
 
@@ -40,9 +35,9 @@ namespace WebApi.IRepository
 
         Task<AuthenticationResponse> GoogleLoginCallback(string code);
 
-        Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid,int campusId);
+        Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid, int campusId);
 
-        Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail,int headId);
+        Task<ResultResponse<AddLecturerSubjectRequest>> GetUserByMail(string mail, int headId);
 
         Task<RequestResponse> AddUserToSubject(AddLecturerSubjectRequest req);
         Task<RequestResponse> EditLecturer(AddLecturerSubjectRequest req);

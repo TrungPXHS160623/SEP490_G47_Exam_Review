@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Models;
 using Library.Request;
 using Library.Response;
 using Microsoft.AspNetCore.Components.Forms;
@@ -366,30 +365,6 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetAssignedUserByExam(int examId)
-        {
-            try
-            {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/User/GetAssignedUser/{examId}");
-
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<UserResponse>>();
-
-                if (!requestResponse.IsSuccessful)
-                {
-                    snackbar.Add(requestResponse.Message, Severity.Error);
-                }
-
-                return requestResponse;
-            }
-            catch (Exception ex)
-            {
-                snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<UserResponse>
-                {
-                    IsSuccessful = false,
-                };
-            }
-        }
 
         public async Task<ResultResponse<UserResponse>> GetLectureListByHead(int userId)
         {
@@ -441,7 +416,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId,int campusId)
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectId, int campusId)
         {
             try
             {
@@ -545,7 +520,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> RemoveLecture(int userId,int subjectId)
+        public async Task<RequestResponse> RemoveLecture(int userId, int subjectId)
         {
             try
             {
