@@ -1,5 +1,4 @@
 ﻿using Library.Common;
-using Library.Request;
 using Library.Response;
 
 namespace WebApi.IRepository
@@ -14,7 +13,6 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> UploadFiles(int reportId, IList<IFormFile> files);
 
-        Task<RequestResponse> EditReportById(int reportId, ReportRequest reportRequest);
 
         Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId);
 

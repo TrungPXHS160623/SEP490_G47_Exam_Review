@@ -10,7 +10,6 @@ namespace WebApi.IRepository
         Task<ResultResponse<Faculty>> GetFaculties();
 
         Task<ResultResponse<Faculty>> GetHeadFaculties(int userId);
-        Task<RequestResponse> UpdateFaculties(Faculty req);
         Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByIdAsync(int FacutyID);

@@ -76,41 +76,6 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<UserResponse>> GetAllAsync()
-        {
-            try
-            {
-                var data = (from u in this.dbContext.Users
-                            join c in this.dbContext.Campuses on u.CampusId equals c.CampusId into campusJoin
-                            from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
-                            join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
-                            from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                            select new UserResponse
-                            {
-                                Email = u.Mail,
-                                CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
-                                IsActive = u.IsActive,
-                                RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
-                                UserId = u.UserId,
-                                UpdateDt = u.UpdateDate,
-                            }).ToList();
-
-                return new ResultResponse<UserResponse>
-                {
-                    IsSuccessful = true,
-                    Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResultResponse<UserResponse>
-                {
-                    IsSuccessful = false,
-                    Message = ex.Message,
-                };
-            }
-        }
-
         public async Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery)
         {
             var data = (from u in this.dbContext.Users
@@ -167,31 +132,6 @@ namespace WebApi.Repository
                 Items = data.OrderByDescending(x => x.UpdateDt).ToList(),
             };
         }
-
-        public async Task<List<User>> GetAllWithFilterAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
-        {
-            var users = dbContext.Users.Include(u => u.Campus).Include(u => u.Role).AsQueryable();
-
-            // Kiểm tra filter
-            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
-            {
-                if (filterOn.Equals("Mail", StringComparison.OrdinalIgnoreCase))
-                {
-                    users = users.Where(x => x.Mail.Contains(filterQuery));
-                }
-            }
-
-            // Kiểm tra sortBy
-            if (!string.IsNullOrWhiteSpace(sortBy))
-            {
-                if (sortBy.Equals("Mail", StringComparison.OrdinalIgnoreCase))
-                {
-                    users = isAscending ? users.OrderBy(x => x.Mail) : users.OrderByDescending(x => x.Mail);
-                }
-            }
-            return await users.ToListAsync();
-        }
-
         public async Task<RequestResponse> DeleteAsync(int id)
         {
             var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
@@ -1245,7 +1185,9 @@ namespace WebApi.Repository
                             };
                         }
                     }
-                } else {
+                }
+                else
+                {
                     return new AuthenticationResponse
                     {
                         IsSuccessful = false,
@@ -1320,7 +1262,7 @@ namespace WebApi.Repository
             return JsonConvert.DeserializeObject<GoogleUserInfo>(json);
         }
 
-        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid,int campusId)
+        public async Task<ResultResponse<UserResponse>> GetUserBySubject(int subjectid, int campusId)
         {
             try
             {
@@ -1472,7 +1414,7 @@ namespace WebApi.Repository
 
                 var user = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.UserId);
 
-                if(user == null)
+                if (user == null)
                 {
                     return new RequestResponse
                     {
@@ -1511,7 +1453,7 @@ namespace WebApi.Repository
 
                 var data = await this.dbContext.CampusUserSubjects.FirstOrDefaultAsync(x => x.UserId == userId && x.SubjectId == subjectId);
 
-                if(data == null)
+                if (data == null)
                 {
                     return new RequestResponse
                     {

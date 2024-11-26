@@ -233,15 +233,16 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<RequestResponse> UpdateFaculties(Faculty req)
+
+        public async Task<RequestResponse> UpdateFacutyAsync(int facutyID, FacutyRequest request)
         {
             try
             {
-                var data = await this.DBcontext.Faculties.FirstOrDefaultAsync(x => x.FacultyId == req.FacultyId);
+                var data = await this.DBcontext.Faculties.FirstOrDefaultAsync(x => x.FacultyId == request.FacultyId);
 
                 if (data != null)
                 {
-                    if (data.FacultyName == req.FacultyName)
+                    if (data.FacultyName == request.FacultyName)
                     {
                         return new RequestResponse
                         {
@@ -249,8 +250,8 @@ namespace WebApi.Repository
                             Message = "Facuty already exists.",
                         };
                     }
-                    data.FacultyName = req.FacultyName;
-                    data.Description = req.Description;
+                    data.FacultyName = request.FacultyName;
+                    data.Description = request.Description;
                     await this.DBcontext.SaveChangesAsync();
 
                     return new RequestResponse
@@ -276,11 +277,6 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
-        }
-
-        public Task<RequestResponse> UpdateFacutyAsync(int facutyID, FacutyRequest request)
-        {
-            throw new NotImplementedException();
         }
     }
 }
