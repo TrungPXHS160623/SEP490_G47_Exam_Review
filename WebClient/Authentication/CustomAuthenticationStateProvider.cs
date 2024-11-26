@@ -31,6 +31,12 @@ namespace WebClient.Authentication
                 return new AuthenticationState(anonymous);
             }
 
+            var isValid = await IsUserAuthenticated();
+            if (!isValid)
+            {
+                return new AuthenticationState(anonymous);
+            }
+
             var claimsPrincipal = SetClaimsPrincipal(getUserClaims);
             return new AuthenticationState(claimsPrincipal);
         }

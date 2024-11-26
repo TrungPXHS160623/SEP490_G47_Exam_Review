@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Library.Common;
-using Library.Request;
+﻿using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
@@ -10,13 +8,11 @@ namespace WebApi.Controllers
     public class UserController : ApiBaseController
     {
         private readonly IUserRepository userRepository;
-        private readonly IMapper mapper;
         private readonly IConfiguration config;
 
-        public UserController(IUserRepository userRepository, IMapper mapper, IConfiguration config)
+        public UserController(IUserRepository userRepository, IConfiguration config)
         {
             this.userRepository = userRepository;
-            this.mapper = mapper;
             this.config = config;
         }
 
