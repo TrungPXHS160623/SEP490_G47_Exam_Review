@@ -17,13 +17,13 @@ namespace WebClient.Validation
                 .NotEmpty().WithMessage("Select subject for exam!")
                 .NotNull().WithMessage("Select subject for exam!");
 
-            this.RuleFor(v => v.CampusId)
-                .NotEmpty().WithMessage("Select campus review exam!")
-                .NotNull().WithMessage("Select campus review exam!");
-
             this.RuleFor(v => v.ExamDuration)
                 .NotEmpty().WithMessage("Select exam duration!")
                 .NotNull().WithMessage("Select exam duration!");
+
+            this.RuleFor(v => v.TermDuration)
+                .NotEmpty().WithMessage("Select exam term!")
+                .NotNull().WithMessage("Select exam term!");
 
             this.RuleFor(v => v.ExamType)
                 .NotEmpty().WithMessage("Select exam type!")
