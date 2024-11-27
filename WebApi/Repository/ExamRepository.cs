@@ -373,15 +373,16 @@ public class ExamRepository : IExamRepository
                         join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                         join ca in _context.Campuses on ex.CampusId equals ca.CampusId
                         join sem in _context.Semesters on ex.SemesterId equals sem.SemesterId
-                        join cus in _context.CampusUserFaculties
-                            on new { su.FacultyId, ex.CampusId } equals new { cus.FacultyId, cus.CampusId } into cusGroup
-                        from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
-                        join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
+                        join cuf in _context.CampusUserFaculties
+                            on new { su.FacultyId, ex.CampusId } equals new { cuf.FacultyId, cuf.CampusId } into cusGroup
+                        from cuf in cusGroup.DefaultIfEmpty() // LEFT JOIN
+                        join u1 in _context.Users on cuf.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
-                        &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
+                              &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
+                              && ex.CampusId == req.CampusId
                         select new ExaminerExamResponse
                         {
                             SemseterName = sem.SemesterName,
@@ -1033,5 +1034,10 @@ public class ExamRepository : IExamRepository
                 Message = "An error occurred while fetching the exams. Please try again later."
             };
         }
+    }
+
+    public Task<List<ExamRemindResponse>> GetRemindExam()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -10,71 +10,74 @@
 <PageTitle>Quiz Review</PageTitle>
 <MudPopoverProvider />
 
-<MudLayout>
-    <AuthorizeView>
-        <Authorized>
-            <div class="page vh-100">
-                <main class="d-flex flex-column">
-                    <div class="top-row px-4">
-                        <div class="d-flex justify-content-between align-items-center text-white">
-                            <div class="d-flex align-items-center" @onclick="@GoToHome" style="cursor:pointer">
-                                <img src="/image/logo1.png" style="width:auto;height:40px" />
-                                <h4 class="mb-0 ms-4">Exam Review System</h4>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div @onclick=@OpenProfileModel style="border-right:1px solid white;cursor:pointer" class="pe-5">
-                                    <label>User: @Email?.Replace("@fpt.edu.vn", string.Empty) (@Role)</label><br />
-                                    <label>Campus: @Campus</label>
+@if (IsComplete)
+{
+    <MudLayout>
+        <AuthorizeView>
+            <Authorized>
+                <div class="page vh-100">
+                    <main class="d-flex flex-column">
+                        <div class="top-row px-4">
+                            <div class="d-flex justify-content-between align-items-center text-white flex-wrap">
+                                <div class="d-flex align-items-center mb-2 mb-md-0" @onclick="@GoToHome" style="cursor:pointer">
+                                    <img src="/image/logo1.png" style="width:auto;height:40px" />
+                                    <h4 class="mb-0 ms-4">Exam Review System</h4>
                                 </div>
-                                <div>
-                                    <a @onclick=@Logout class="text-white ms-5" style="cursor:pointer">Log out</a>
+
+                                <div class="d-flex align-items-center justify-content-end w-md-auto">
+                                    <div @onclick="@OpenProfileModel" class="pe-5 mb-2 mb-md-0" style="border-right: 1px solid white; cursor: pointer;">
+                                        <label>User: @Email?.Replace("@fpt.edu.vn", string.Empty) (@Role)</label><br />
+                                        <label>Campus: @Campus</label>
+                                    </div>
+                                    <div class="mb-2">
+                                        <a @onclick="@Logout" class="text-white ms-5" style="cursor:pointer">Log out</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="content p-3">
-                        @if (!string.IsNullOrEmpty(Header))
-                        {
-                            <div style="border-bottom:1px solid #d9d8d8;" class="d-flex align-items-center pb-5 fw-bold fs-6">
-                                <a href="@HeaderLink" class="text-info">@Header</a>
-                                @if (!string.IsNullOrEmpty(SubHeader))
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
-                                }
-                                <span>@SubHeader</span>
-                                @if (!string.IsNullOrEmpty(SubHeader1))
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
-                                }
-                                <span>@SubHeader1</span>
+                        <div class="content p-3">
+                            @if (!string.IsNullOrEmpty(Header))
+                            {
+                                <div style="border-bottom:1px solid #d9d8d8;" class="d-flex align-items-center pb-5 fw-bold fs-6">
+                                    <a href="@HeaderLink" class="text-info">@Header</a>
+                                    @if (!string.IsNullOrEmpty(SubHeader))
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
+                                    }
+                                    <span>@SubHeader</span>
+                                    @if (!string.IsNullOrEmpty(SubHeader1))
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ChevronRight" />
+                                    }
+                                    <span>@SubHeader1</span>
+                                </div>
+                            }
+                        </div>
+                        <article class="content px-5 flex-grow-1">
+                            <CascadingValue Value="this">
+                                @Body
+                            </CascadingValue>
+                        </article>
+
+                        <div class="content p-3">
+                            <div style="border-top:1px solid #d9d8d8;" class="fs-5">
+                                <label class=" pt-4">© 2024 - FPT Education | <a href="#">About us</a></label>
                             </div>
-                        }
-                    </div>
-                    <article class="content px-5 flex-grow-1">
-                        <CascadingValue Value="this">
-                            @Body
-                            <Spinner />
-                        </CascadingValue>
+                        </div>
+                    </main>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <main>
+                    <article class="content px-4">
+                        @Body
                     </article>
-
-                    <div class="content p-3">
-                        <div style="border-top:1px solid #d9d8d8;" class="fs-5">
-                            <label class=" pt-4">© 2024 - FPT Education | <a href="#">About us</a></label>
-                        </div>
-                    </div>
                 </main>
-            </div>
-        </Authorized>
-        <NotAuthorized>
-            <main>
-                <article class="content px-4">
-                    @Body
-                </article>
-            </main>
-        </NotAuthorized>
-    </AuthorizeView>
-</MudLayout>
-
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudLayout>
+}
+<Spinner />
 <div id="blazor-error-ui" data-nosnippet>
     @if (HostEnvironment.IsProduction())
     {
@@ -107,8 +110,12 @@
 
     public string SubHeader1 { get; set; }
 
+    public bool IsComplete { get; set; } = false;
+
     protected override async Task OnInitializedAsync()
     {
+        IsComplete = false;
+
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
         var token = query["token"];
@@ -130,6 +137,9 @@
         {
             NavManager.NavigateTo("/login");
         }
+
+        IsComplete = true;
+
     }
 
 

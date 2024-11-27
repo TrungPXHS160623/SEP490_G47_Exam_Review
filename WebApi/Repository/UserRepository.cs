@@ -308,54 +308,54 @@ namespace WebApi.Repository
                  .Select(cus => cus.FacultyId)
                 .ToList();
 
-                // Lọc các SubjectId mới, loại bỏ null
-                var validNewFacutyIds = user.FacutyResponse.Select(id => id.FacultyId).ToList();
+                //// Lọc các SubjectId mới, loại bỏ null
+                //var validNewFacutyIds = user.FacutyResponse.Select(id => id.FacultyId).ToList();
 
-                // Tìm các SubjectId cần thêm
-                List<int> facutiesToAdd = new List<int>();
-                foreach (var FacultyId in validNewFacutyIds)
-                {
-                    if (!currentFacuti.Contains(FacultyId))
-                    {
-                        facutiesToAdd.Add(FacultyId); // Thêm vào danh sách cần thêm nếu không có trong currentSubjectIds
-                    }
-                }
+                //// Tìm các SubjectId cần thêm
+                //List<int> facutiesToAdd = new List<int>();
+                //foreach (var FacultyId in validNewFacutyIds)
+                //{
+                //    if (!currentFacuti.Contains(FacultyId))
+                //    {
+                //        facutiesToAdd.Add(FacultyId); // Thêm vào danh sách cần thêm nếu không có trong currentSubjectIds
+                //    }
+                //}
 
-                // Tìm các SubjectId cần xóa
-                List<int> facutiesToRemove = new List<int>();
-                foreach (var FacultyId in currentFacuti)
-                {
-                    if (!validNewFacutyIds.Contains(FacultyId.Value))
-                    {
-                        facutiesToRemove.Add(FacultyId.Value); // Thêm vào danh sách cần xóa nếu không có trong newSubjectIds
-                    }
-                }
+                //// Tìm các SubjectId cần xóa
+                //List<int> facutiesToRemove = new List<int>();
+                //foreach (var FacultyId in currentFacuti)
+                //{
+                //    if (!validNewFacutyIds.Contains(FacultyId.Value))
+                //    {
+                //        facutiesToRemove.Add(FacultyId.Value); // Thêm vào danh sách cần xóa nếu không có trong newSubjectIds
+                //    }
+                //}
 
-                // Xóa các môn học đã bị loại bỏ khỏi CampusUserSubjects
-                var campusUserFacutiesToRemove = this.dbContext.CampusUserFaculties
-                    .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId && facutiesToRemove.Contains(cus.FacultyId.Value))
-                    .ToList();
+                //// Xóa các môn học đã bị loại bỏ khỏi CampusUserSubjects
+                //var campusUserFacutiesToRemove = this.dbContext.CampusUserFaculties
+                //    .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId && facutiesToRemove.Contains(cus.FacultyId.Value))
+                //    .ToList();
 
-                if (campusUserFacutiesToRemove.Any())
-                {
-                    this.dbContext.CampusUserFaculties.RemoveRange(campusUserFacutiesToRemove);
-                    this.dbContext.SaveChanges(); // Lưu thay đổi
-                }
+                //if (campusUserFacutiesToRemove.Any())
+                //{
+                //    this.dbContext.CampusUserFaculties.RemoveRange(campusUserFacutiesToRemove);
+                //    this.dbContext.SaveChanges(); // Lưu thay đổi
+                //}
 
-                // Thêm các môn học mới vào CampusUserSubjects
-                var newCampusUserFacutiess = facutiesToAdd.Select(facutyID => new CampusUserFaculty
-                {
-                    UserId = user.UserId,
-                    FacultyId = facutyID,
-                    CampusId = user.CampusId,
-                    //IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
-                }).ToList();
+                //// Thêm các môn học mới vào CampusUserSubjects
+                //var newCampusUserFacutiess = facutiesToAdd.Select(facutyID => new CampusUserFaculty
+                //{
+                //    UserId = user.UserId,
+                //    FacultyId = facutyID,
+                //    CampusId = user.CampusId,
+                //    //IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
+                //}).ToList();
 
-                if (newCampusUserFacutiess.Any())
-                {
-                    this.dbContext.CampusUserFaculties.AddRange(newCampusUserFacutiess);
-                    this.dbContext.SaveChanges(); // Lưu thay đổi
-                }
+                //if (newCampusUserFacutiess.Any())
+                //{
+                //    this.dbContext.CampusUserFaculties.AddRange(newCampusUserFacutiess);
+                //    this.dbContext.SaveChanges(); // Lưu thay đổi
+                //}
 
                 await dbContext.SaveChangesAsync();
                 response.IsSuccessful = true;
@@ -1130,7 +1130,7 @@ namespace WebApi.Repository
                 issuer: config["Jwt:Issuer"],
                 audience: config["Jwt:Audience"],
                 claims: userClaims,
-                expires: DateTime.Now.AddDays(2),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials
                 );
 

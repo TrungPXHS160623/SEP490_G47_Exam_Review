@@ -97,7 +97,7 @@ namespace WebClient.Authentication
                 Email = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty,
                 Id = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0,
                 RoleId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var role) ? role : 0,
-                CampusId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var campus) ? role : 0,
+                CampusId = int.TryParse(token.Claims.FirstOrDefault(c => c.Type == "CampusId")?.Value, out var campus) ? campus : 0,
             };
         }
 

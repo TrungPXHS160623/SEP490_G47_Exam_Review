@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div>
-                <MudTable T="ExaminerExamResponse" Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
+                <MudTable T="ExaminerExamResponse" Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true" HorizontalScrollbar="true" Virtualize="true">
                     <HeaderContent>
                         <MudTh>#</MudTh>
                         <MudTh>Exam Code</MudTh>
@@ -55,7 +55,7 @@
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
                         <MudTh>Semester</MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@((ExamList.IndexOf(@context) + 1))</MudTd>
@@ -131,6 +131,7 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            request.CampusId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == "CampusId")?.Value, out var campus) ? campus : 0;
             Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             var response = await MenuService.CheckAccess(userId, 3);
@@ -263,7 +264,7 @@
                         Body = $@"
                             <p><b>Dear {{0}},</b></p>
                             <p>We would like to inform you that the exam have been forwarded to you. The Heads of Departments will proceed with assigning lecturer to conduct the reviewing and evaluation of these exams.</p>
-                            <p>Please visit the website <a href='https://www.examreviewfpt.somee.com'>https://www.examreviewfpt.somee.com</a> for more details or to transfer to lecturer.</p>
+                            <p>Please visit the website <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a> for more details or to transfer to lecturer.</p>
                             <p>Thank you for your support!</p>
                             <p><b>From:</b> {Mail}</p><br>
                             <p><b>Exam Review System</b></p><br>",
