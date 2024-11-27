@@ -11,6 +11,7 @@
         public int? SubjectId { get; set; }
 
         public int? CreaterId { get; set; }
+        public int? SemesterId { get; set; }
 
         public int? CampusId { get; set; }
 

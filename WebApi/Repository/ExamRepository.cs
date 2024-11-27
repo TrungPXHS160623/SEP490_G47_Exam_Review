@@ -114,6 +114,8 @@ public class ExamRepository : IExamRepository
                     StartDate = exam.StartDate,
                     EstimatedTimeTest = exam.EstimatedTimeTest,
                     ExamDuration = exam.ExamDuration,
+                    TermDuration = exam.TermDuration,
+                    SemesterId = exam.SemesterId,
                     ExamStatusId = 1,
                     ExamType = exam.ExamType,
                     SubjectId = exam.SubjectId,

@@ -33,11 +33,8 @@
         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Duration:</label>
             <div class="col-8">
-                <MudSelect @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam TermDuration" For="@(() => exam.ExamDuration)">
-                    <MudSelectItem T="string" Value="@("60")">60 Mins</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("90")">90 Mins</MudSelectItem>
-                </MudSelect>
+                <MudTextField @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Placeholder="Enter TermDuration" For="@(() => exam.ExamDuration)" />
             </div>
         </div>
         <!-- Exam Term Duration -->
@@ -68,7 +65,19 @@
                 </MudSelect>
             </div>
         </div>
-
+        <!-- Semester -->
+        <div class="mb-4 row align-items-baseline">
+            <label class="col-4 text-end">Semester:</label>
+            <div class="col-8">
+                <MudSelect T="int?" @bind-Value="exam.SemesterId" Variant="Variant.Outlined" Margin="Margin.Dense"
+                           Placeholder="Choose Semester" For="@(() => exam.SemesterId)">
+                    @foreach (var item in SemesterList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.SemesterId">@($"[{item.SemesterName}]")</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+        </div>
         <!-- Start Date -->
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Start Review Date:</label>
@@ -106,7 +115,7 @@
                     <MudText>Save</MudText>
                 }
             </MudButton>
-
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </div>
     </EditForm>
     </div>
@@ -121,6 +130,7 @@
     private ExamCreateRequest exam = new ExamCreateRequest();
     private List<Campus> camList = new();
     private List<SubjectResponse> subList = new();
+    private List<Semester> SemesterList = new List<Semester>();
 
     [Parameter]
     public EventCallback<DateTime> DateChanged { get; set; }
@@ -172,6 +182,12 @@
             {
                 var resp = await SubjectService.GetSubjects();
                 if (resp.IsSuccessful) subList = resp.Items;
+                var sem = await SemesterService.GetSemester();
+
+                if (sem.IsSuccessful)
+                {
+                    SemesterList = sem.Items;
+                }
 
                 var result = await CampusService.GetCampus();
                 if (result.IsSuccessful) camList = result.Items;
@@ -196,7 +212,14 @@
         {
             var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
             exam.CreaterId = userId;
-
+            var cam = await UserService.GetByIdAsync(userId);
+            if (cam.IsSuccessful)
+            {
+                if (cam.Item != null)
+                {
+                    exam.CampusId = cam.Item.CampusId;
+                }
+            }
             var resp = await ExamService.CreateExam(exam);
             if (resp.IsSuccessful) Navigation.NavigateTo("/Examiner/ExamList");
         }
@@ -211,5 +234,9 @@
                 GetFunc = (e) => DateTime.TryParse(e, out DateTime data) ? data : null,
                 SetFunc = (e) => e?.ToString(format) ?? string.Empty
             };
+    }
+    private void Cancel()
+    {
+            NavManager.NavigateTo("/Examiner/CreateExam");
     }
 }
