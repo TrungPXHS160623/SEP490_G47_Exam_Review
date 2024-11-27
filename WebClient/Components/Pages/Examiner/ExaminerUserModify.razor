@@ -57,8 +57,7 @@ else
             <label class="col-4 text-end">Department:</label>
             <div class="col-8">
                 <MudSelect T="FacutyResponse"
-                           @bind-SelectedValue=@user.FacutyResponse
-                           Text="@("Number of Department : " + user.FacutyResponse.Count())"
+                           @bind-SelectedValue=@user.FacultyId
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
@@ -68,11 +67,10 @@ else
                     {
                         @foreach (var item in facutyResponses)
                         {
-                            <MudSelectItem T="FacutyResponse" Value="@item">@($"[{item.FacultyName}] ")</MudSelectItem>
+                            <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
                         }
                     }
                 </MudSelect>
-                <span class="mt-2 text-nowrap">@(string.Join(", ", user.FacutyResponse.Select(x => $"[{x.FacultyName}]")))</span>
             </div>
         </div>
 
