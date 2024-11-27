@@ -283,94 +283,79 @@ namespace WebApi.Repository
         {
             try
             {
-                RequestResponse response = new RequestResponse();
+                var response = new RequestResponse();
 
+                // Tìm kiếm người dùng trong cơ sở dữ liệu
                 var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
-
-
                 if (existingUser == null)
                 {
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "User not exist"
+                        Message = "User does not exist"
                     };
                 }
-                existingUser.Mail = user.Email + "@fpt.edu.vn";
+
+                // Cập nhật thông tin người dùng
+                existingUser.Mail = $"{user.Email}@fpt.edu.vn";
                 existingUser.RoleId = user.RoleId;
                 existingUser.CampusId = user.CampusId;
-                existingUser.IsActive = user.IsActive.Value;
+                existingUser.IsActive = user.IsActive ?? false;
                 existingUser.FullName = user.UserName;
                 existingUser.PhoneNumber = user.Phone;
 
-                var currentFacuti = this.dbContext.CampusUserFaculties
-                .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId)
-                 .Select(cus => cus.FacultyId)
-                .ToList();
-
-                // Lọc các SubjectId mới, loại bỏ null
-                var validNewFacutyIds = user.FacutyResponse.Select(id => id.FacultyId).ToList();
-
-                // Tìm các SubjectId cần thêm
-                List<int> facutiesToAdd = new List<int>();
-                foreach (var FacultyId in validNewFacutyIds)
+                // Xử lý FacultyId
+                if (user.FacultyId.HasValue)
                 {
-                    if (!currentFacuti.Contains(FacultyId))
+                    // Kiểm tra FacultyId hiện tại trong CampusUserFaculties
+                    var currentFaculty = await dbContext.CampusUserFaculties
+                        .FirstOrDefaultAsync(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId);
+
+                    if (currentFaculty != null)
                     {
-                        facutiesToAdd.Add(FacultyId); // Thêm vào danh sách cần thêm nếu không có trong currentSubjectIds
+                        // Nếu đã tồn tại, cập nhật FacultyId
+                        currentFaculty.FacultyId = user.FacultyId.Value;
+                    }
+                    else
+                    {
+                        // Nếu chưa tồn tại, thêm mới
+                        var newCampusUserFaculty = new CampusUserFaculty
+                        {
+                            UserId = user.UserId,
+                            FacultyId = user.FacultyId.Value,
+                            CampusId = user.CampusId
+                        };
+                        await dbContext.CampusUserFaculties.AddAsync(newCampusUserFaculty);
                     }
                 }
-
-                // Tìm các SubjectId cần xóa
-                List<int> facutiesToRemove = new List<int>();
-                foreach (var FacultyId in currentFacuti)
+                else
                 {
-                    if (!validNewFacutyIds.Contains(FacultyId.Value))
+                    // Nếu không có FacultyId, xóa FacultyId hiện tại (nếu có)
+                    var currentFaculty = await dbContext.CampusUserFaculties
+                        .FirstOrDefaultAsync(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId);
+                    if (currentFaculty != null)
                     {
-                        facutiesToRemove.Add(FacultyId.Value); // Thêm vào danh sách cần xóa nếu không có trong newSubjectIds
+                        dbContext.CampusUserFaculties.Remove(currentFaculty);
                     }
                 }
-
-                // Xóa các môn học đã bị loại bỏ khỏi CampusUserSubjects
-                var campusUserFacutiesToRemove = this.dbContext.CampusUserFaculties
-                    .Where(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId && facutiesToRemove.Contains(cus.FacultyId.Value))
-                    .ToList();
-
-                if (campusUserFacutiesToRemove.Any())
-                {
-                    this.dbContext.CampusUserFaculties.RemoveRange(campusUserFacutiesToRemove);
-                    this.dbContext.SaveChanges(); // Lưu thay đổi
-                }
-
-                // Thêm các môn học mới vào CampusUserSubjects
-                var newCampusUserFacutiess = facutiesToAdd.Select(facutyID => new CampusUserFaculty
-                {
-                    UserId = user.UserId,
-                    FacultyId = facutyID,
-                    CampusId = user.CampusId,
-                    //IsLecturer = user.RoleId == 3 ? false : true // Đặt giá trị true nếu là giảng viên, false nếu là chủ nhiệm
-                }).ToList();
-
-                if (newCampusUserFacutiess.Any())
-                {
-                    this.dbContext.CampusUserFaculties.AddRange(newCampusUserFacutiess);
-                    this.dbContext.SaveChanges(); // Lưu thay đổi
-                }
-
+                // Lưu các thay đổi vào cơ sở dữ liệu
                 await dbContext.SaveChangesAsync();
-                response.IsSuccessful = true;
 
-                response.Message = "Update account successfuly";
+                response.IsSuccessful = true;
+                response.Message = "Account updated successfully";
                 return response;
             }
             catch (Exception ex)
             {
+                // Xử lý ngoại lệ
                 return new RequestResponse
                 {
+                    IsSuccessful = false,
                     Message = ex.Message
                 };
             }
         }
+
 
         public async Task<ResultResponse<UserResponse>> GetHeadOfDepartment(int subjectId, int campusId)
         {
