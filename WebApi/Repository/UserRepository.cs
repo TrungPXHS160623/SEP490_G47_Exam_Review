@@ -1240,15 +1240,26 @@ namespace WebApi.Repository
                 var data = (from u in dbContext.Users
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join s in dbContext.Subjects on cus.SubjectId equals s.SubjectId
+                            join e in dbContext.Exams on new { u.UserId } equals new { UserId = e.AssignedUserId ?? 0 } into examsGroup
+                            from e in examsGroup.DefaultIfEmpty()
                             where s.SubjectId == subjectid
-                            && u.CampusId == campusId
+                                  && u.CampusId == campusId
+                            group e by new
+                            {
+                                u.UserId,
+                                u.FullName,
+                                u.PhoneNumber,
+                                u.Mail,
+                                u.EmailFe
+                            } into g
                             select new UserResponse
                             {
-                                UserId = u.UserId,
-                                UserName = u.FullName,
-                                Tel = u.PhoneNumber,
-                                Email = u.Mail,
-                                FeEmail = u.EmailFe,
+                                UserId = g.Key.UserId,
+                                UserName = g.Key.FullName,
+                                Tel = g.Key.PhoneNumber,
+                                Email = g.Key.Mail,
+                                FeEmail = g.Key.EmailFe,
+                                AssignedExamCount = g.Count(e => e != null)
                             }).ToList();
 
                 return new ResultResponse<UserResponse>

@@ -11,6 +11,7 @@
         public bool IsActive { get; set; }
         public string? CampusName { get; set; }
         public DateTime? UpdateDt { get; set; }
+        public int? AssignedExamCount { get; set; }
 
         /* public override bool Equals(object obj)
          {
