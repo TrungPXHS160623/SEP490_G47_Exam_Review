@@ -14,7 +14,7 @@
         public int? SemesterId { get; set; }
 
         public int? CampusId { get; set; }
-
+        public DateTime? ExamDate { get; set; }
         public DateTime? EstimatedTimeTest { get; set; }
 
         public DateTime? StartDate { get; set; }

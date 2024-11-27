@@ -82,6 +82,15 @@
                 </MudSelect>
             </div>
         </div>
+         <!-- Exam Date -->
+         <div class="mb-4 row align-items-baseline">
+            <label class="col-4 text-end">Exam Date:</label>
+            <div class="col-auto">
+                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+                               @bind-Date="exam.ExamDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" For="@(()=> exam.ExamDate)" />
+            </div>
+        </div>
         <!-- Start Date -->
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Start Review Date:</label>
