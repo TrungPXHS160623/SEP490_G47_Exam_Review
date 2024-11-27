@@ -51,7 +51,7 @@
                                 <td>@user.RoleName</td>
                                 <td>@user.CampusName</td>
                                 <td>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ViewUserDetail(user.UserId)"></MudIconButton>
+                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                                 </td>
                             </tr>
                             index++;
@@ -144,6 +144,47 @@
         if (response.IsSuccessful)
         {
             users = response.Items;
+        }
+    }
+    private async Task DeleteUser(int UserId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to delete this account?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Account", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var currentUserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+            if (currentUserId == UserId)
+            {
+                this.Snackbar.Add("You cannot delete your current account", Severity.Warning);
+            }
+            else
+            {
+                var response = await UserService.DeleteAsync(UserId);
+                if (response.IsSuccessful)
+                {
+                    await FetchUsers();
+                }
+            }
         }
     }
 

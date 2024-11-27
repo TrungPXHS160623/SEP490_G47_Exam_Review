@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models;
+﻿namespace Library.Models;
 
 public partial class Subject
 {
