@@ -304,7 +304,6 @@ namespace WebApi.Repository
                 existingUser.FullName = user.UserName;
                 existingUser.PhoneNumber = user.Phone;
 
-                // Xử lý FacultyId
                 if (user.FacultyId.HasValue)
                 {
                     // Kiểm tra FacultyId hiện tại trong CampusUserFaculties
@@ -1115,7 +1114,7 @@ namespace WebApi.Repository
                 issuer: config["Jwt:Issuer"],
                 audience: config["Jwt:Audience"],
                 claims: userClaims,
-                expires: DateTime.Now.AddDays(2),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials
                 );
 
