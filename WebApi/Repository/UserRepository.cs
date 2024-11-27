@@ -187,6 +187,7 @@ namespace WebApi.Repository
                         from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        join cuf in this.dbContext.CampusUserFaculties on u.UserId equals cuf.UserId
                         where u.UserId == id
                         select new UserSubjectRequest
                         {
@@ -199,15 +200,7 @@ namespace WebApi.Repository
                             UserId = u.UserId,
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
-                            FacutyResponse = (from s in this.dbContext.Faculties
-                                              join cus in this.dbContext.CampusUserFaculties on s.FacultyId equals cus.FacultyId
-                                              where cus.UserId == u.UserId && cus.CampusId == u.CampusId
-                                              select new FacutyResponse
-                                              {
-                                                  FacultyId = s.FacultyId,
-                                                  FacultyName = s.FacultyName,
-                                                  Description = s.Description,
-                                              }).ToList()
+                            FacultyId = cuf.FacultyId,
                         }).FirstOrDefault();
 
             return new ResultResponse<UserSubjectRequest>
@@ -223,6 +216,7 @@ namespace WebApi.Repository
                         from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
+                        join cuf in this.dbContext.CampusUserFaculties on u.UserId equals cuf.UserId
                         where u.UserId == id
                         select new UserSubjectRequest
                         {
@@ -235,15 +229,8 @@ namespace WebApi.Repository
                             UserId = u.UserId,
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
-                            FacutyResponse = (from s in this.dbContext.Faculties
-                                              join cus in this.dbContext.CampusUserFaculties on s.FacultyId equals cus.FacultyId
-                                              where cus.UserId == u.UserId && cus.CampusId == u.CampusId
-                                              select new FacutyResponse
-                                              {
-                                                  FacultyId = s.FacultyId,
-                                                  FacultyName = s.FacultyName,
-                                                  Description = s.Description,
-                                              }).ToList()
+                            FacultyId = cuf.FacultyId,
+
                         }).FirstOrDefault();
 
             return new ResultResponse<UserSubjectRequest>
