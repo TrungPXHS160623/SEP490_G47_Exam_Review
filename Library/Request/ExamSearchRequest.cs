@@ -8,5 +8,6 @@
         public int? SemesterId { get; set; }
         public int? UserId { get; set; }
 
+        public int? CampusId { get;set; }
     }
 }

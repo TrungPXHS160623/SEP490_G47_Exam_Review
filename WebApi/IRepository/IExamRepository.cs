@@ -38,5 +38,6 @@ namespace WebApi.IRepository
 
         Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId);
 
+        Task<List<ExamRemindResponse>> GetRemindExam();
     }
 }

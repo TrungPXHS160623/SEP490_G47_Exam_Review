@@ -19,7 +19,7 @@
             <label class="col-4 text-end">Subject Name:</label>
             <div class="col-8">
                 <MudSelect T="int?" @bind-Value="exam.SubjectId" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Subject" For="@(() => exam.SubjectId)">
+                           Placeholder="Choose Subject" For="@(() => exam.SubjectId)" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
                     @foreach (var item in subList)
                     {
                         <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
@@ -32,17 +32,21 @@
         <!-- Exam Duration -->
         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Duration:</label>
-            <div class="col-8">
-                <MudTextField @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                              Placeholder="Enter TermDuration" For="@(() => exam.ExamDuration)" />
+
+            <div class="col-auto">
+                <MudSelect @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
+                           Placeholder="Choose Exam TermDuration" For="@(() => exam.ExamDuration)" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem T="string" Value="@("60")">60 Mins</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("90")">90 Mins</MudSelectItem>
+                </MudSelect>
             </div>
         </div>
         <!-- Exam Term Duration -->
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam TermDuration:</label>
-            <div class="col-8">
+            <div class="col-auto">
                 <MudSelect @bind-Value="exam.TermDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                            Placeholder="Choose Exam TermDuration" For="@(() => exam.TermDuration)">
+                           Placeholder="Choose Exam TermDuration" For="@(() => exam.TermDuration)" AnchorOrigin="Origin.BottomCenter">
 
                     <MudSelectItem T="string" Value="@("Block 10 (10 weeks)")">Block 10 (10 weeks)</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Block 5 (5 weeks)")">Block 5 (5 weeks)</MudSelectItem>
@@ -53,7 +57,7 @@
         <!-- Exam Type -->
         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Type:</label>
-            <div class="col-8">
+            <div class="col-auto">
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
                             Placeholder="Choose Exam Type" For="@(() => exam.ExamType)">
                     <MudSelectItem T="string" Value="@("Other")">Other</MudSelectItem>
@@ -82,7 +86,7 @@
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Start Review Date:</label>
 
-            <div class="col-8">
+            <div class="col-auto">
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
@@ -94,7 +98,7 @@
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">End Review Date:</label>
 
-            <div class="col-8">
+            <div class="col-auto">
                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"

@@ -32,8 +32,6 @@ namespace WebClient.Common
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-
-            // Artificial delay for testing
             await Task.Delay(100);
 
             var response = await base.SendAsync(request, cancellationToken);
