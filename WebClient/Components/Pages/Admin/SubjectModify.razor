@@ -9,19 +9,20 @@
         color: black;
     }
 </style>
-<EditForm Model="subject" OnValidSubmit="Excute">
-    <FluentValidationValidator />
-    <MudDialog>
-        <DialogContent>
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="subject" OnValidSubmit="Excute">
+            <FluentValidationValidator />
             <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code" Class="mb-4" For="@(() => subject.SubjectCode)"></MudTextField>
             <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name" Class="mb-4" For="@(() => subject.SubjectName)"></MudTextField>
             @if (SubjectId != 0)
             {
                 <MudCheckBox @bind-Value=subject.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
             }
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
+        </EditForm>
+        <div class="d-flex justify-content-end mb-3">
+            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@_processing">
                 @if (_processing)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -33,9 +34,9 @@
                 }
             </MudButton>
             <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-        </DialogActions>
-    </MudDialog>
-</EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
 
 
 

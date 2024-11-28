@@ -72,7 +72,6 @@ namespace WebClient
             builder.Services.AddTransient<IFacultyService, FacultyService>();
             builder.Services.AddTransient<IStatiticsService, StatiticsService>();
 
-            builder.Services.AddScoped<UserSession>();
             builder.Services.AddScoped<LocalStorageService>();
             var app = builder.Build();
 
