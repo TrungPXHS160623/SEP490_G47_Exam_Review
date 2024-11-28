@@ -16,7 +16,7 @@ namespace WebApi.IRepository
         //update thông tin học kì
         Task<RequestResponse> UpdateSemesterAsync(SemesterRequest request);
         //xoá 1 học kì
-        Task<bool> DeleteSemesterAsync(int semesterId);
+        Task<RequestResponse> DeleteSemesterAsync(int semesterId);
         //deactive hoặc active 1 học kì
         Task<bool> ToggleSemesterStatusAsync(int semesterId);
         //list tất cả các học kì đang hoạt động

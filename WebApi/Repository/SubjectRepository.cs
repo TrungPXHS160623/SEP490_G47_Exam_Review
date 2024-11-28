@@ -33,7 +33,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Subject already exist!"
+                        Message = "Subject already exists!"
                     };
                 }
                 else
@@ -41,18 +41,19 @@ namespace WebApi.Repository
                     var newSubject = new Subject
                     {
                         SubjectCode = req.SubjectCode,
-                        SubjectName= req.SubjectName
+                        SubjectName = req.SubjectName
                     };
                     await DBcontext.Subjects.AddAsync(newSubject);
                     await DBcontext.SaveChangesAsync();
-                }
 
-                await logRepository.LogAsync($"Create Subject [{data.SubjectCode}] {data.SubjectName}");
+                    // Sử dụng newSubject để ghi log
+                    await logRepository.LogAsync($"Created Subject [{newSubject.SubjectCode}] {newSubject.SubjectName}");
+                }
 
                 return new RequestResponse
                 {
                     IsSuccessful = true,
-                    Message = "Create account successfully!"
+                    Message = "Subject created successfully!"
                 };
             }
             catch (Exception ex)
