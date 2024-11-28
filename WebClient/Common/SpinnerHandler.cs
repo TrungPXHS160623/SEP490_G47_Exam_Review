@@ -32,11 +32,8 @@ namespace WebClient.Common
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-            await Task.Delay(100);
 
             var response = await base.SendAsync(request, cancellationToken);
-
-            await Task.Delay(100);
 
             this.spinnerService.Hide();
 
