@@ -230,6 +230,7 @@ namespace WebApi.Repository
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
                             FacultyId = cuf.FacultyId,
+                            FacultyName= cuf.Faculty.FacultyName,
 
                         }).FirstOrDefault();
 

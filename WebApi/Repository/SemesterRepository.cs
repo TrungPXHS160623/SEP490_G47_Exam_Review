@@ -2,6 +2,7 @@
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -10,10 +11,11 @@ namespace WebApi.Repository
     public class SemesterRepository : ISemesterRepository
     {
         private readonly QuizManagementContext dbContext;
-
-        public SemesterRepository(QuizManagementContext dbContext)
+        private readonly ILogHistoryRepository logRepository;
+        public SemesterRepository(QuizManagementContext dbContext, ILogHistoryRepository logRepository)
         {
             this.dbContext = dbContext;
+            this.logRepository = logRepository;
         }
         public async Task<RequestResponse> CreateSemesterAsync(SemesterRequest request)
         {
@@ -94,36 +96,66 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<bool> DeleteSemesterAsync(int semesterId)
+        public async Task<RequestResponse> DeleteSemesterAsync(int semesterId)
         {
             try
             {
-                // Kiểm tra sự tồn tại của học kỳ
-                var semester = await dbContext.Semesters.FirstOrDefaultAsync(s => s.SemesterId == semesterId);
-                if (semester == null)
+                var data = await this.dbContext.Semesters.FirstOrDefaultAsync(x => x.SemesterId == semesterId);
+
+                if (data != null)
                 {
-                    return false; // Trả về false nếu học kỳ không tồn tại
-                }
+                    var relatedExams = await dbContext.Exams.AnyAsync(e => e.SemesterId == semesterId);
+                    if (relatedExams)
+                    {
+                        throw new InvalidOperationException("Cannot delete semester because it is related to existing exams.");
+                    }
+                    this.dbContext.Semesters.Remove(data);
 
-                // Kiểm tra xem học kỳ có liên quan đến các bản ghi khác (ví dụ như kỳ thi, lớp học, v.v.)
-                var relatedExams = await dbContext.Exams.AnyAsync(e => e.SemesterId == semesterId);
-                if (relatedExams)
+                    await this.dbContext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Delete subject [{data.SemesterName}] ");
+
+                    return new RequestResponse
+                    {
+                        IsSuccessful = true,
+                        Message = "Delete Subject Successfully",
+                    };
+                }
+                else
                 {
-                    // Nếu có exam nào liên quan đến học kỳ này, không thể xóa
-                    throw new InvalidOperationException("Cannot delete semester because it is related to existing exams.");
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Subject not exist",
+                    };
                 }
-
-                // Xóa học kỳ khỏi cơ sở dữ liệu
-                dbContext.Semesters.Remove(semester);
-                await dbContext.SaveChangesAsync();
-
-                return true; // Trả về true nếu xóa thành công
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi nếu có (nếu cần)
-                // Log.Error(ex.Message);
-                return false; // Trả về false nếu có lỗi xảy ra
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
             }
         }
 
@@ -310,21 +342,6 @@ namespace WebApi.Repository
                         Message = "End date must be greater than start date!"
                     };
                 }
-
-                var lastSemester = await dbContext.Semesters
-                    .Where(s => s.SemesterId != request.SemesterID)
-                    .OrderByDescending(s => s.EndDate)
-                    .FirstOrDefaultAsync();
-
-                if (lastSemester != null && request.StartDate < lastSemester.EndDate)
-                {
-                    return new RequestResponse
-                    {
-                        IsSuccessful = false,
-                        Message = "Start date of the updated semester cannot be earlier than the end date of the last semester!"
-                    };
-                }
-
                 existingSemester.SemesterName = request.SemesterName;
                 existingSemester.StartDate = request.StartDate;
                 existingSemester.EndDate = request.EndDate;

@@ -81,7 +81,7 @@
         _processing = true;
       
             await UploadFilesAsync();
-       
+        _processing = false;
     }
 
     private void OnInputFileChanged(InputFileChangeEventArgs e)

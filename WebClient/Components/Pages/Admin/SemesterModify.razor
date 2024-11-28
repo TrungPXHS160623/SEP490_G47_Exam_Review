@@ -16,8 +16,10 @@
         <EditForm Model="semester" OnValidSubmit="Execute">
             <FluentValidationValidator />
             <MudTextField @bind-Value=semester.SemesterName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => semester.SemesterName)"></MudTextField>
-            <MudDatePicker @bind-Value=semester.StartDate Label="Start Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
-            <MudDatePicker @bind-Value=semester.EndDate Label="End Date" Variant="Variant.Outlined" Class="mb-4"></MudDatePicker>
+            <MudDatePicker @bind-date="semester.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                           Margin="Margin.Dense" For="@(()=> semester.StartDate)" />
+            <MudDatePicker @bind-date="semester.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                           Margin="Margin.Dense" For="@(()=> semester.EndDate)" />
             @if (SemesterId != 0)
             {
                 <MudCheckBox @bind-Value=semester.IsActive Label="Is Active" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
@@ -47,7 +49,6 @@
     @inject ISemesterService SemesterService
     [Parameter]
     public int? SemesterId { get; set; }
-
     SemesterRequest semester = new SemesterRequest();
 
     private bool _processing = false;
@@ -70,7 +71,6 @@
     public async Task Execute()
     {
         _processing = true;
-
         if (SemesterId != 0)
         {
             var resp = await this.SemesterService.UpdateSemester(semester);

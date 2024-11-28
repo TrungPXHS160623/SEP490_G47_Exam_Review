@@ -34,8 +34,8 @@
                             <tr>
                                 <td>@semester.SemesterId</td>
                                 <td class="text-start">@semester.SemesterName</td>
-                                <td>@semester.StartDate.ToString("dd/MM/yyyy")</td>
-                                <td>@semester.EndDate.ToString("dd/MM/yyyy")</td>
+                                <td>@semester.StartDate.Value.ToString("yyyy-MM-dd")</td>
+                                <td>@semester.EndDate.Value.ToString("yyyy-MM-dd")</td>
 
                                 <td>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(semester.SemesterId)"></MudIconButton>
@@ -70,7 +70,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 13);
+            var response = await MenuService.CheckAccess(userId, 14);
 
             if (!response.IsSuccessful)
             {

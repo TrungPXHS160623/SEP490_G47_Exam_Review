@@ -2,7 +2,7 @@
 @page "/Examiner/AddUser"
 @if (!isAddOrEdit)
 {
-      <h1 style="text-align: center;">Update HeadDepartment</h1>
+    <h1 style="text-align: center;">Update HeadDepartment</h1>
 }
 else
 {
@@ -56,7 +56,13 @@ else
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Department:</label>
             <div class="col-8">
-                <MudSelect T="FacutyResponse"
+                 @if (!isAddOrEdit)
+                {
+                <MudText>@(user.FacultyName)</MudText>
+                }
+                else
+                {
+                <MudSelect T="int?"
                            @bind-SelectedValue=@user.FacultyId
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
@@ -71,6 +77,7 @@ else
                         }
                     }
                 </MudSelect>
+                }
             </div>
         </div>
 
@@ -89,13 +96,11 @@ else
 </div>
 
 
- @code {
+@code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
-
     [Parameter]
     public int? UserId { get; set; }
-
     private UserSubjectRequest user = new();
     private List<UserRole> roleList = new();
     private List<FacutyResponse> facutyResponses = new();
@@ -112,7 +117,7 @@ else
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 10);
+            var response = await MenuService.CheckAccess(userId, 9);
 
             if (!response.IsSuccessful)
             {
@@ -120,27 +125,25 @@ else
             }
             else
             {
-                if (UserId != null)
-                {
-                    await FetchUserDetails();
-                    await GetFacutyList();
+            if (UserId != null)
+            {
+                await FetchUserDetails();
+                await GetFacutyList();
 
-                }
-                else
-                {
-                    isAddOrEdit = true;
-                }
-
-                await GetRoles();
-
-                if (Layout != null)
-                {
-                    Layout.Header = "Home";
-                    Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "User Management";
-                    Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
-                    Layout.RefreshLayout();
-                }
+            }
+            else
+            {
+                isAddOrEdit = true;
+            }
+            await GetRoles();
+            if (Layout != null)
+            {
+                Layout.Header = "Home";
+                Layout.HeaderLink = "/Home";
+                Layout.SubHeader = "User Management";
+                Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
+                Layout.RefreshLayout();
+            }
             }
         }
     }

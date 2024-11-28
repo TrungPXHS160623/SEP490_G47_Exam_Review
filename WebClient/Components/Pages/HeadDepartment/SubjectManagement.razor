@@ -1,5 +1,5 @@
 ﻿@page "/HeadDepartment/SubjectList"
-<h1 style="text-align: center;">Subject List</h1>
+<h1 style="text-align: center;">Subject and Lecturer Management</h1>
 
 <div class="d-flex justify-content-center">
     <div class="mt-4">
@@ -10,6 +10,12 @@
                 </div>
                 <div>
                     <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Variant="Variant.Filled" OnClick="AddSubject">Add Subject</MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               OnClick="OpenImportDialogAsync">
+                        Import User
+                    </MudButton>
                 </div>
             </div>
             <div>
@@ -73,10 +79,32 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Subject List";
+                    Layout.SubHeader = "Subject and Lecturer Management";
                     Layout.RefreshLayout();
                 }
             }
+        }
+    }
+    private async Task OpenImportDialogAsync()
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+
+            };
+
+        var parameters = new DialogParameters<ImportUser>();
+
+        var dialog = await DialogService.ShowAsync<ImportUser>("Import User", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetSubject();
         }
     }
 
