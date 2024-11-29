@@ -56,7 +56,7 @@
                 <MudText>Import</MudText>
             }
         </MudButton>
-        <MudButton Color="Color.Default" Href="/Template/SampleImportUser.xlsx" Class="col-auto btn btn-block" Variant="Variant.Filled">Download template</MudButton>
+        <MudButton Color="Color.Default" Href="" Class="col-auto btn btn-block" Variant="Variant.Filled">Download template</MudButton>
         <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
@@ -68,13 +68,44 @@
     [Parameter]
     public int? ExamId { get; set; }
 
-     private IList<IBrowserFile> files = new List<IBrowserFile>();
+    private IList<IBrowserFile> files = new List<IBrowserFile>();
 
     private bool _processing = false;
     private readonly List<string> _fileNames = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
+    private string TemplateUrl { get; set; } = string.Empty;
+
     private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var role = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value, out var id) ? id : 0;
+
+        switch (role)
+        {
+            //Admin
+            case 1:
+                {
+                    TemplateUrl = "/Template/SampleImportUser.xlsx";
+                    break;
+                }
+            //Examiner
+            case 2:
+                {
+                    TemplateUrl = "/Template/SampleImportUser.xlsx";
+                    break;
+                }
+            //Head Of Department
+            case 4:
+                {
+                    TemplateUrl = "/Template/SampleImportUser.xlsx";
+                    break;
+                }
+        }
+    }
 
     public async Task Excute()
     {
