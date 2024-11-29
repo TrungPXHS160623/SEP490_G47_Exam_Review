@@ -20,7 +20,6 @@
             {
                 <MudCheckBox @bind-Value=subject.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
             }
-        </EditForm>
         <div class="d-flex justify-content-end mb-3">
             <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@_processing">
                 @if (_processing)
@@ -35,6 +34,7 @@
             </MudButton>
             <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
         </div>
+        </EditForm>
     </DialogContent>
 </MudDialog>
 
