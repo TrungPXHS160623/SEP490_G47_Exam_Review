@@ -17,9 +17,9 @@
             <FluentValidationValidator />
             <MudTextField @bind-Value=semester.SemesterName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => semester.SemesterName)"></MudTextField>
             <MudDatePicker @bind-date="semester.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                           Margin="Margin.Dense" For="@(()=> semester.StartDate)" />
+                           Margin="Margin.Dense" For="@(()=> semester.StartDate)" AnchorOrigin="Origin.TopCenter"/>
             <MudDatePicker @bind-date="semester.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                           Margin="Margin.Dense" For="@(()=> semester.EndDate)" />
+                           Margin="Margin.Dense" For="@(()=> semester.EndDate)" AnchorOrigin="Origin.BottomCenter" />
             @if (SemesterId != 0)
             {
                 <MudCheckBox @bind-Value=semester.IsActive Label="Is Active" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
