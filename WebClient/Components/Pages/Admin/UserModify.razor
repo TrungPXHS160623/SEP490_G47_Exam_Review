@@ -2,11 +2,11 @@
 @page "/Admin/AddUser"
 @if (!isAddOrEdit)
 {
-    <h1 style="text-align: center;">Edit User</h1>
+    <h1 style="text-align: center;">Edit Users</h1>
 }
 else
 {
-    <h1 style="text-align: center;">Add User</h1>
+    <h1 style="text-align: center;">Add Users</h1>
 }
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4 custom-box" style="width: 450px;">
@@ -98,7 +98,14 @@ else
         </div>
 
         <div class="d-flex justify-content-evenly">
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+             @if (!isAddOrEdit)
+                {
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+            }
+            else
+            { 
+                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+            }
             <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </div>
     </EditForm>
