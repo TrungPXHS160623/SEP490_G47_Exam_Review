@@ -12,7 +12,7 @@
 <div class="d-flex justify-content-center">
     <div class="w-75 custom-box ">
         <div class="d-flex align-items-center justify-content-between mt-4 mb-4">
-            <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Campus</MudButton>
+            <MudButton Color="Color.Success" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(0)">Add New Department</MudButton>
         </div>
         @if (departmentList.Count > 0)
         {
@@ -34,7 +34,6 @@
                                 <td>@facuty.FacultyName</td>
                                 <td>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(facuty.FacultyId)"></MudIconButton>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(facuty.FacultyId)"></MudIconButton>
                                 </td>
                             </tr>
                         }
@@ -64,7 +63,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 8);
+            var response = await MenuService.CheckAccess(userId, 17);
 
             if (!response.IsSuccessful)
             {
@@ -78,7 +77,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Campus Management";
+                    Layout.SubHeader = "Department Management";
                     Layout.SubHeader1 = string.Empty;
                     Layout.RefreshLayout();
                 }
@@ -96,39 +95,6 @@
         }
     }
 
-    private async Task DeleteUser(int campusId)
-    {
-        var options = new DialogOptions
-            {
-                CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Small,
-                FullWidth = true,
-                BackdropClick = false,
-            };
-
-        var parameters = new DialogParameters<Dialog>
-        {
-            { x => x.Content, "Are you sure want to delete this Department?" },
-            { x => x.BtnTextConfirm, "Delete" },
-            { x => x.BtnTextCancel, "Cancel" },
-        };
-
-        var dialog = await DialogService.ShowAsync<Dialog>("Delete Semester", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Canceled)
-        {
-
-            var response = await SemesterService.DeleteSemester(campusId);
-            if (response.IsSuccessful)
-            {
-                await GetData();
-            }
-
-        }
-    }
-
     private async Task OpenAddEditDialogAsync(int campusId)
     {
         var options = new DialogOptions
@@ -139,12 +105,12 @@
                 BackdropClick = false,
             };
 
-        var parameters = new DialogParameters<SemesterModify>
+        var parameters = new DialogParameters<DepartmentModify>
         {
-            {x => x.SemesterId,campusId}
+            {x => x.FacutyID,campusId}
         };
 
-        var dialog = await DialogService.ShowAsync<SemesterModify>(campusId == 0 ? "Campus Create" : "Campus Update", parameters, options);
+        var dialog = await DialogService.ShowAsync<DepartmentModify>(campusId == 0 ? "Create Department" : "Update Department", parameters, options);
 
         var result = await dialog.Result;
 

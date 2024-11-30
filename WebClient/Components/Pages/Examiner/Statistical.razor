@@ -154,7 +154,7 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-            var response = await MenuService.CheckAccess(userId, 12);
+            var response = await MenuService.CheckAccess(userId, 13);
             if (!response.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
