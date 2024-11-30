@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using Library.Models;
+using Library.Request;
 
 namespace WebClient.Validation
 {
-    public class SubjectRequestValidation : AbstractValidator<Subject>
+    public class SubjectRequestValidation : AbstractValidator<SubjectRequest>
     {
         public SubjectRequestValidation()
         {

@@ -68,13 +68,14 @@
     [Parameter]
     public int? ExamId { get; set; }
 
-     private IList<IBrowserFile> files = new List<IBrowserFile>();
+    private IList<IBrowserFile> files = new List<IBrowserFile>();
 
     private bool _processing = false;
     private readonly List<string> _fileNames = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
     private void Cancel() => MudDialog.Cancel();
+
 
     public async Task Excute()
     {

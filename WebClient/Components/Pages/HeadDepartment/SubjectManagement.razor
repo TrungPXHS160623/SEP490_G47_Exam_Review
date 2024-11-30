@@ -1,11 +1,11 @@
 ﻿@page "/HeadDepartment/SubjectList"
-<h1 style="text-align: center;">Subject and Lecturer Management</h1>
+<h1 style="text-align: center;" class="mb-4">Subject and Lecturer Management</h1>
 
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="custom-box">
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div>
+                <div class="me-4">
                     <h4>Department : @Response.DepartmentName</h4>
                 </div>
                 <div>
@@ -113,7 +113,7 @@
         var options = new DialogOptions
             {
                 CloseOnEscapeKey = true,
-                MaxWidth = MaxWidth.Medium,
+                MaxWidth = MaxWidth.Large,
                 FullWidth = true,
                 BackdropClick = false,
             };
