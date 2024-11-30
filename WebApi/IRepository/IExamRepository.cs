@@ -2,6 +2,7 @@
 using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
+using System.Security.Claims;
 
 namespace WebApi.IRepository
 {
@@ -28,7 +29,7 @@ namespace WebApi.IRepository
         Task<RequestResponse> ChangeStatusExamById(int examId, int statusId);
 
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
-        Task<RequestResponse> ImportExamsFromExcel(IFormFile file);
+        Task<RequestResponse> ImportExamsFromExcel(IFormFile file, ClaimsPrincipal currentUser);
 
         Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID);
         Task<ResultResponse<CampusReportResponse>> GetCampusReport();

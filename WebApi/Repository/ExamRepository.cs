@@ -5,6 +5,7 @@ using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebApi.IRepository;
 using static Library.Response.CampusReportResponse;
 using static Library.Response.CampusSubjectExamResponse;
@@ -558,7 +559,43 @@ public class ExamRepository : IExamRepository
             };
         }
     }
-    public async Task<RequestResponse> ImportExamsFromExcel(IFormFile file)
+    public async Task<ResultResponse<AccountClaims>> GetCurrentUserInfoAsync(ClaimsPrincipal currentUser)
+    {
+        // Lấy thông tin người dùng hiện tại từ Claims
+        var userId = int.TryParse(currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+
+        // Có được id của người dùng từ hệ thống thì liên kết tới database
+        var myUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (myUser == null)
+        {
+            return new ResultResponse<AccountClaims>
+            {
+                IsSuccessful = false,
+                Message = "User not found."
+            };
+        }
+
+        // Lấy RoleId và CampusId từ đối tượng người dùng
+        var currentUserRoleId = myUser.RoleId;
+        var currentUserCampusId = myUser.CampusId;
+
+        // Tạo đối tượng AccountClaims
+        var accountClaims = new AccountClaims
+        {
+            Id = userId,
+            RoleId = currentUserRoleId,
+            Email = myUser.Mail,
+            FirstName = myUser.FullName,
+            CampusId = currentUserCampusId
+        };
+
+        return new ResultResponse<AccountClaims>
+        {
+            IsSuccessful = true,
+            Item = accountClaims
+        };
+    }
+    public async Task<RequestResponse> ImportExamsFromExcel(IFormFile file, ClaimsPrincipal currentUser)
     {
         var response = new RequestResponse();
         var errors = new List<string>();
@@ -580,6 +617,19 @@ public class ExamRepository : IExamRepository
                     Message = "No file uploaded!",
                 };
             }
+
+            //lấy id của khảo thí tạo đề
+            var userInfoResponse = await GetCurrentUserInfoAsync(currentUser);
+            if (!userInfoResponse.IsSuccessful)
+            {
+                return new ResultResponse<AccountClaims>
+                {
+                    IsSuccessful = false,
+                    Message = "Failed to retrieve user information. Please try again later."
+                };
+            }
+            var currentUserId = userInfoResponse.Item.Id;
+            
 
             // Thiết lập thư mục lưu file upload
             var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\Uploads\\Exams";
@@ -621,12 +671,10 @@ public class ExamRepository : IExamRepository
                                 ExamType = reader.GetValue(3)?.ToString(),
                                 CampusName = reader.GetValue(4)?.ToString(),
                                 SubjectCode = reader.GetValue(5)?.ToString(),
-                                CreaterName = reader.GetValue(6)?.ToString(),
-                                ExamDuration = reader.GetValue(7)?.ToString(),
-                                StartDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
-                                EndDate = DateTime.TryParse(reader.GetValue(9)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null,
-                                SemesterName = reader.GetValue(10)?.ToString(),
-                                ExamDate = DateTime.TryParse(reader.GetValue(11)?.ToString(), out DateTime examDate) ? examDate : (DateTime?)null,
+                                ExamDuration = reader.GetValue(6)?.ToString(),
+                                StartDate = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
+                                EndDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null,
+                                SemesterName = reader.GetValue(9)?.ToString(),
                             };
 
                             // Kiểm tra tính hợp lệ của dữ liệu từ DTO
@@ -652,15 +700,13 @@ public class ExamRepository : IExamRepository
                             var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterName == examImportRequest.SemesterName);
                             var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
                             var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
-                            var creator = await _context.Users.FirstOrDefaultAsync(u => u.Mail == examImportRequest.CreaterName);
+                            
 
 
                             if (campus == null)
                                 errorMessages.Add($"Campus với tên là  {examImportRequest.CampusName} không tồn tại.");
                             if (subject == null)
                                 errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
-                            if (creator == null)
-                                errorMessages.Add($"Creator với mail là  {examImportRequest.CreaterName} không tồn tại.");
                             if (semester == null)
                             {
                                 errorMessages.Add($"Semester với tên là  {examImportRequest.SemesterName} không tồn tại.");
@@ -669,11 +715,6 @@ public class ExamRepository : IExamRepository
                             if (examImportRequest.StartDate > examImportRequest.EndDate)
                                 errorMessages.Add("EndDate phải lớn hơn hoặc bằng StartDate.");
 
-                            if (examImportRequest.ExamDate.HasValue && examImportRequest.EndDate.HasValue &&
-                            examImportRequest.EndDate >= examImportRequest.ExamDate)
-                            {
-                                errorMessages.Add("EndDate của việc test đề phải trước ngày thi (ExamDate).");
-                            }
                             //tạo khoá duy nhất cho mỗi exam
                             string uniquekey = examImportRequest.ExamCode;
                             if (existingExamSet.Contains(uniquekey))
@@ -700,7 +741,7 @@ public class ExamRepository : IExamRepository
                                 ExamType = examImportRequest.ExamType,
                                 CampusId = campus.CampusId,
                                 SubjectId = subject.SubjectId,
-                                CreaterId = creator.UserId,
+                                CreaterId = currentUserId,
                                 ExamStatusId = 1,
                                 IsReady = false,
                                 GeneralFeedback = null,
@@ -708,7 +749,6 @@ public class ExamRepository : IExamRepository
                                 StartDate = examImportRequest.StartDate,
                                 EndDate = examImportRequest.EndDate,
                                 SemesterId = semester.SemesterId,
-                                ExamDate = examImportRequest.ExamDate,
                             };
 
                             examsToAdd.Add(exam);
