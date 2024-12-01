@@ -29,7 +29,7 @@
                 </div>
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Test Plan:</label>
-                    <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
+                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("mm:HH dd-MM-yyyy") : "N/A")</MudText>
                 </div>
                 <div class="split-row mb-4">
                     <label class="col-4 text-end me-3">Lecture Test:</label>
