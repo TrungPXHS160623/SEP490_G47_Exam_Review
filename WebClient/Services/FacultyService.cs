@@ -1,5 +1,6 @@
 ﻿using Library.Common;
 using Library.Models;
+using Library.Request;
 using Library.Response;
 using MudBlazor;
 using WebClient.IServices;
@@ -18,9 +19,9 @@ namespace WebClient.Services
             snackbar = SnackBar;
         }
 
-        public async Task<RequestResponse> AddFacuty(Faculty req)
+        public async Task<RequestResponse> AddFacuty(FacutyRequest req)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Facuty/CreateFacuty", req);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Faculty/CreateFacuty", req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 
@@ -73,13 +74,13 @@ namespace WebClient.Services
                 };
             }
         }
-        public async Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId)
+        public async Task<ResultResponse<FacutyRequest>> GetFacutiesByUserID(int? userId)
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"api/Facuti/GetFacutiByUserId/{userId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/Faculty/GetFacutiByUserId/{userId}");
 
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Faculty>>();
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<FacutyRequest>>();
 
                 if (!requestResponse.IsSuccessful)
                 {
@@ -91,18 +92,18 @@ namespace WebClient.Services
             catch (Exception ex)
             {
                 snackbar.Add(ex.Message, Severity.Error);
-                return new ResultResponse<Faculty>
+                return new ResultResponse<FacutyRequest>
                 {
                     IsSuccessful = false,
                 };
             }
         }
 
-        public async Task<ResultResponse<Faculty>> GetFacutyByID(int facutyID)
+        public async Task<ResultResponse<FacutyRequest>> GetFacutyByID(int facutyID)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Facuty/GetFacutyByID/{facutyID}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Faculty/GetFacutyById/{facutyID}");
 
-            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<Faculty>>();
+            var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<FacutyRequest>>();
 
             if (!requestResponse.IsSuccessful)
             {
@@ -137,7 +138,7 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<RequestResponse> UpdateFacuty(Faculty req)
+        public async Task<RequestResponse> UpdateFacuty(FacutyRequest req)
         {
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Facuty/UpdateFacuty", req);
 

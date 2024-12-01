@@ -14,8 +14,8 @@
     <FluentValidationValidator />
     <MudDialog>
         <DialogContent>
-            <MudTextField @bind-Value=facuty.FacultyName Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => facuty.FacultyName)"></MudTextField>
-            <MudTextField @bind-Value=facuty.Description Variant="Variant.Outlined" Label="Semester Name" Class="mb-4" For="@(() => facuty.Description)"></MudTextField>
+            <MudTextField @bind-Value=facuty.FacultyName Variant="Variant.Outlined" Label="Department Name" Class="mb-4" For="@(() => facuty.FacultyName)"></MudTextField>
+            <MudTextField @bind-Value=facuty.Description Variant="Variant.Outlined" Label="Department Descipstion" Class="mb-4" For="@(() => facuty.Description)"></MudTextField>
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
@@ -41,7 +41,7 @@
     [Parameter]
     public int? FacutyID { get; set; }
 
-    Faculty facuty = new Faculty();
+    FacutyRequest facuty = new FacutyRequest();
 
     private bool _processing = false;
 

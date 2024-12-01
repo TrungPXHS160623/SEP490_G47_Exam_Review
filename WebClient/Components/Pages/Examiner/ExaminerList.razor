@@ -51,7 +51,7 @@
                         <MudTh>Status</MudTh>
                         <MudTh>Head of Department</MudTh>
                         <MudTh>Exam Type</MudTh>
-                        <MudTh>Exam Date</MudTh>
+                        <MudTh>Exam planned Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
                         <MudTh>Semester</MudTh>
@@ -65,7 +65,7 @@
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
                         <MudTd>@context.ExamType</MudTd>
-                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemseterName</MudTd>
