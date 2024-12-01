@@ -1189,17 +1189,19 @@ namespace WebApi.Repository
             {
                 var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email) && x.IsActive);
 
-                if(user != null)
+                if (user == null)
                 {
-                    var campus = await dbContext.Campuses.FirstOrDefaultAsync(x => x.CampusId == user.CampusId && x.IsDeleted == false);
-
-                    if (campus != null)
-                    {
-                        return user;
-                    }
+                    return null;
                 }
 
-                return null;
+                if (user.RoleId == 1)
+                {
+                    return user;
+                }
+
+                var campus = await dbContext.Campuses.FirstOrDefaultAsync(x => x.CampusId == user.CampusId && x.IsDeleted == false);
+
+                return campus != null ? user : null;
             }
             catch (Exception ex)
             {
