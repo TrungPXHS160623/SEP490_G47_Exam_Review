@@ -13,11 +13,9 @@ namespace Library.Request
         public string ExamType { get; set; } //hình thức thi
         public string CampusName { get; set; } // tên cơ sở
         public string SubjectCode { get; set; } //tên môn
-        public string CreaterName { get; set; } //người tạo
         public string ExamDuration { get; set; }  //thời lượng thi
         public DateTime? StartDate { get; set; } //thời gian bát đầu thực hiện test đề 
         public DateTime? EndDate { get; set; } //thời gian kết thúc thực hiện test đề 
         public string SemesterName { get; set; } //tên kì
-        public DateTime? ExamDate { get; set; } // ngày đề được public để thi 
     }
 }

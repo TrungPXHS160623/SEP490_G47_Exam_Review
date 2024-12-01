@@ -97,7 +97,9 @@ namespace WebApi.Controllers
         [HttpPost("ImportExamsFromExcel")]
         public async Task<IActionResult> ImportExamsFromExcel([FromForm] IFormFile file)
         {
-            var something = await _examRepository.ImportExamsFromExcel(file);
+            // Lấy thông tin người dùng hiện tại từ HttpContext
+            var currentUser = HttpContext.User;
+            var something = await _examRepository.ImportExamsFromExcel(file, currentUser);
             return Ok(something);
         }
         [AllowAnonymous]

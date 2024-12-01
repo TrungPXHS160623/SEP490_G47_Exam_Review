@@ -13,7 +13,7 @@ public partial class Exam
     public string? TermDuration { get; set; }
     public string? ExamType { get; set; }
     public int? SubjectId { get; set; }
-    public int CreaterId { get; set; }
+    public int? CreaterId { get; set; }
     public int? CampusId { get; set; }
     public int? SemesterId { get; set; }
     public int? ExamStatusId { get; set; }
