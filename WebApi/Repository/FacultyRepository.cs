@@ -127,7 +127,7 @@ namespace WebApi.Repository
                 };
             }
         }
-        public async Task<ResultResponse<Faculty>> GetFacutiesByUserID(int? userId)
+        public async Task<ResultResponse<FacutyRequest>> GetFacutiesByUserID(int? userId)
         {
             try
             {
@@ -135,13 +135,13 @@ namespace WebApi.Repository
                             join cus in this.DBcontext.CampusUserFaculties on s.FacultyId equals cus.FacultyId into subjectJoin
                             from cus in subjectJoin.DefaultIfEmpty()
                             where (cus.UserId ==  userId)
-                            select new Faculty
+                            select new FacutyRequest
                             {
                                 FacultyId = s.FacultyId,
                                 FacultyName = s.FacultyName,
                             }).Distinct().ToList();
 
-                return new ResultResponse<Faculty>
+                return new ResultResponse<FacutyRequest>
                 {
                     IsSuccessful = true,
                     Items = data,
@@ -149,7 +149,7 @@ namespace WebApi.Repository
             }
             catch (Exception ex)
             {
-                return new ResultResponse<Faculty>
+                return new ResultResponse<FacutyRequest>
                 {
                     IsSuccessful = false,
                     Message = ex.Message,
@@ -157,7 +157,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<FacutyResponse>> GetFacutyByIdAsync(int FacutyID)
+        public async Task<ResultResponse<FacutyRequest>> GetFacutyByIdAsync(int FacutyID)
         {
             try
             {
@@ -165,21 +165,21 @@ namespace WebApi.Repository
 
                 if (facuty == null)
                 {
-                    return new ResultResponse<FacutyResponse>
+                    return new ResultResponse<FacutyRequest>
                     {
                         IsSuccessful = false,
                         Message = "Semester not found."
                     };
                 }
 
-                var facutyResponse = new FacutyResponse
+                var facutyResponse = new FacutyRequest
                 {
                     FacultyId = facuty.FacultyId,
                     FacultyName= facuty.FacultyName,
                     Description = facuty.Description,
                 };
 
-                return new ResultResponse<FacutyResponse>
+                return new ResultResponse<FacutyRequest>
                 {
                     IsSuccessful = true,
                     Item = facutyResponse
@@ -188,7 +188,7 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
 
-                return new ResultResponse<FacutyResponse>
+                return new ResultResponse<FacutyRequest>
                 {
                     IsSuccessful = false,
                     Message = ex.Message
@@ -234,7 +234,7 @@ namespace WebApi.Repository
         }
 
 
-        public async Task<RequestResponse> UpdateFacutyAsync(int facutyID, FacutyRequest request)
+        public async Task<RequestResponse> UpdateFacutyAsync(FacutyRequest request)
         {
             try
             {
