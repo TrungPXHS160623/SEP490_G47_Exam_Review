@@ -58,11 +58,11 @@ namespace WebApi.Controllers
             var data = await _facultyRepository.CreateFacutyAsync(semesterRequest);
             return Ok(data);
         }
-        [HttpPut("UpdateFacuty/{facutyID}")]
+        [HttpPut("UpdateFacuty")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateFacuty(int facutyID, [FromBody] FacutyRequest semesterRequest)
+        public async Task<IActionResult> UpdateFacuty([FromBody] FacutyRequest semesterRequest)
         {
-            var data = await _facultyRepository.UpdateFacutyAsync(facutyID, semesterRequest);
+            var data = await _facultyRepository.UpdateFacutyAsync(semesterRequest);
             return Ok(data);
         }
     }

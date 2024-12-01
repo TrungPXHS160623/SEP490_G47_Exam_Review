@@ -54,7 +54,7 @@
                         <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Status</MudTh>
-                        <MudTh>Exam Date</MudTh>
+                        <MudTh>Exam planed Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
                         <MudTh>Semester</MudTh>
@@ -66,7 +66,7 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
-                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemesterName</MudTd>
@@ -148,7 +148,7 @@
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Assign Teacher To Review";
+                    Layout.SubHeader = "Assign Lecturer To Review";
                     Layout.RefreshLayout();
                 }
             }
@@ -195,7 +195,6 @@
                            .Where(e => e.ExamDate.HasValue && (e.ExamStatusId == 2 || e.ExamStatusId == 3 || e.ExamStatusId == 4))
                            .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue)
                            .ToList();
-
         }
     }
 }
