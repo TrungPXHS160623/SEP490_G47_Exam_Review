@@ -2,25 +2,28 @@
     .form-group {
         display: flex;
         align-items: center;
-        justify-content: flex-start; 
+        justify-content: flex-start;
     }
+
         .form-group label {
             margin-right: 20px;
         }
+
     .mud-input.mud-disabled {
         background-color: rgba(0, 0, 0, 0.1);
         color: black;
     }
 </style>
-<EditForm @ref=_refForm Model="exam" OnValidSubmit="Excute" >
-    <FluentValidationValidator/>
-    <MudDialog>
-        <DialogContent>
+
+<MudDialog>
+    <DialogContent>
+        <EditForm @ref=_refForm Model="exam" OnValidSubmit="Excute">
+            <FluentValidationValidator />
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Code:</label>
                 <MudTextField @bind-Value=exam.ExamCode Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 150px; max-width: 350px;" For="@(()=> exam.ExamCode)" />
-            </div>
-            @if (ExamId != 0)
+             </div>
+             @if (ExamId != 0)
             {
                 <div class="form-group mb-4">
                     <label class="col-4 text-end" style="display: inline-block; margin-right: 8px;">Subject Name:</label>
@@ -67,7 +70,7 @@
                 <div class="form-group mb-4 text-start ">
                     <label class="col-4 text-end">Status:</label>
                     <MudText class="text-start">@exam.ExamStatusContent</MudText>
-                </div>
+                    </div>
             }
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Campus:</label>
@@ -93,55 +96,55 @@
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Duration:</label>
                 <MudTextField @bind-Value=exam.ExamDuration Margin="Margin.Dense" Variant="Variant.Outlined" Clearable Disabled=@IsView Placeholder="Enter Exam Code" Style="min-width: 100px; max-width: 150px;" For="@(()=> exam.ExamDuration)" />
+             </div>
+             <div class="form-group mb-4">
+                 <label class="col-4 text-end">Exam Type:</label>
+                 <MudSelect @bind-Value="exam.ExamType"
+                            Variant="Variant.Outlined"
+                            Margin="Margin.Dense"
+                            AnchorOrigin="Origin.BottomCenter"
+                            Disabled=@IsView
+                            Placeholder="Choose Exam Type"
+                            Style="min-width: 150px; max-width: 250px;"
+                            For="@(()=> exam.ExamType)">
+                     <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
+                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
+                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
+                     <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
+                     <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
+                 </MudSelect>
+             </div>
+             <div class="form-group mb-4">
+                 <label class="col-4 text-end">Start Date:</label>
+                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+
+                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
+                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
+             </div>
+             <div class="form-group mb-4">
+                 <label class="col-4 text-end">End Date:</label>
+                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
+
+                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
+                                Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.EndDate)" />
+             </div>
+             <div class="d-flex justify-content-end mb-3">
+                 <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@_processing">
+                     @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@(IsView ? "Edit" : "Save")</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
             </div>
-            <div class="form-group mb-4">
-                <label class="col-4 text-end">Exam Type:</label>
-                <MudSelect @bind-Value="exam.ExamType"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@IsView
-                           Placeholder="Choose Exam Type"
-                           Style="min-width: 150px; max-width: 250px;"
-                           For="@(()=> exam.ExamType)">
-                    <MudSelectItem T="string" Value="@("Multiple Choice")">Multiple Choices</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Practice Exam")">Practice Exam</MudSelectItem>
-                </MudSelect>
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-4 text-end">Start Date:</label>
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
-                               @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.StartDate)" />
-            </div>
-            <div class="form-group mb-4">
-                <label class="col-4 text-end">End Date:</label>
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
-                               @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Style="min-width: 150px; max-width: 350px;" Variant="Variant.Outlined"
-                               Margin="Margin.Dense" Clearable Disabled=@IsView For="@(()=> exam.EndDate)" />
-            </div>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-4" Variant="Variant.Filled" Disabled="@_processing">
-                @if (_processing)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Saving</MudText>
-                }
-                else
-                {
-                    <MudText>@(IsView ? "Edit" : "Save")</MudText>
-                }
-            </MudButton>
-            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-4 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-        </DialogActions>
-    </MudDialog>
-</EditForm>
+         </EditForm>
+     </DialogContent>
+</MudDialog>
 
 
 

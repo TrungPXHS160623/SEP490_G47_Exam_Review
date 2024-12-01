@@ -10,29 +10,31 @@
     }
 </style>
 
-<EditForm Model="facuty" OnValidSubmit="Execute">
-    <FluentValidationValidator />
-    <MudDialog>
-        <DialogContent>
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="facuty" OnValidSubmit="Execute">
+            <FluentValidationValidator />
             <MudTextField @bind-Value=facuty.FacultyName Variant="Variant.Outlined" Label="Department Name" Class="mb-4" For="@(() => facuty.FacultyName)"></MudTextField>
-            <MudTextField @bind-Value=facuty.Description Variant="Variant.Outlined" Label="Department Descipstion" Class="mb-4" For="@(() => facuty.Description)"></MudTextField>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
-                @if (_processing)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Saving</MudText>
-                }
-                else
-                {
-                    <MudText>@(FacutyID == 0 ? "Add" : "Save")</MudText>
-                }
-            </MudButton>
-            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-        </DialogActions>
-    </MudDialog>
-</EditForm>
+            <MudTextField @bind-Value=facuty.Description Variant="Variant.Outlined" Label="Department D" Class="mb-4" For="@(() => facuty.Description)"></MudTextField>
+            <div class="d-flex justify-content-end mb-3">
+                <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@_processing">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@(FacutyID == 0 ? "Add" : "Save")</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+            </div>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
 
 @code {
     [CascadingParameter]

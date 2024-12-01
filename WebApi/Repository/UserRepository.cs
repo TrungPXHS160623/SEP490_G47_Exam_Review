@@ -1188,7 +1188,20 @@ namespace WebApi.Repository
             try
             {
                 var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(email) && x.IsActive);
-                return user;
+
+                if (user == null)
+                {
+                    return null;
+                }
+
+                if (user.RoleId == 1)
+                {
+                    return user;
+                }
+
+                var campus = await dbContext.Campuses.FirstOrDefaultAsync(x => x.CampusId == user.CampusId && x.IsDeleted == false);
+
+                return campus != null ? user : null;
             }
             catch (Exception ex)
             {
