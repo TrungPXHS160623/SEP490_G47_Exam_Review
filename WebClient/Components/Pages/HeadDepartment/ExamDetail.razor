@@ -9,10 +9,11 @@
         color: black;
     }
 </style>
-<EditForm Model="exam" OnValidSubmit="DialogConfirm">
-    <FluentValidationValidator />
+
     <MudDialog>
         <DialogContent>
+            <EditForm Model="exam" OnValidSubmit="DialogConfirm">
+    <FluentValidationValidator />
             <div class="form-group mb-4">
                 <label class="col-4 text-end me-4">Exam Code:</label>
                 <MudText>@exam.ExamCode</MudText>
@@ -46,23 +47,23 @@
                     </MudSelect>
                 </div>
             </div>
+            <div class="d-flex justify-content-end mb-3">
+                <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer || exam.ExamStatusId == 4)">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Assign Now</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+            </div>
+        </EditForm>
         </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer || exam.ExamStatusId == 4)">
-                @if (_processing)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Saving</MudText>
-                }
-                else
-                {
-                    <MudText>Assign Now</MudText>
-                }
-            </MudButton>
-            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
-        </DialogActions>
     </MudDialog>
-</EditForm>
 
 @code {
     [CascadingParameter]
