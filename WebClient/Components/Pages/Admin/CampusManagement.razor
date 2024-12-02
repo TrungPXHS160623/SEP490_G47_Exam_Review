@@ -19,7 +19,7 @@
             <table class="table table-striped table-bordered text-center">
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>#</th>
                         <th>Campus Name</th>
                         <th>Is Disabled</th>
                         <th>Actions</th>
@@ -28,10 +28,11 @@
                 <tbody>
                     @if (campusList != null)
                     {
+                        var index = 1;
                         @foreach (var campus in campusList)
                         {
                             <tr>
-                                <td>@campus.CampusId</td>
+                                <td>@index</td>
                                 <td>@campus.CampusName</td>
                                 <td class="d-flex justify-content-center"><MudCheckBox @bind-Value="@campus.IsDeleted" Color="Color.Error" UncheckedColor="Color.Default" ReadOnly></MudCheckBox></td>
                                 <td>
@@ -39,6 +40,7 @@
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(campus.CampusId)"></MudIconButton>
                                 </td>
                             </tr>
+                            index++;
                         }
                     }
                 </tbody>

@@ -28,7 +28,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Semester name cannot be empty!"
+                        Message = "Department name cannot be empty!"
                     };
                 }
 
@@ -40,7 +40,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Semester with this name already exists!"
+                        Message = "Department with this name already exists!"
                     };
                 }
                 // Tạo đối tượng học kỳ mới
@@ -58,7 +58,7 @@ namespace WebApi.Repository
                 return new RequestResponse
                 {
                     IsSuccessful = true,
-                    Message = "Semester created successfully!"
+                    Message = "Department created successfully!"
                 };
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace WebApi.Repository
                     return new ResultResponse<Faculty>
                     {
                         IsSuccessful = false,
-                        Message = "There is no faculty",
+                        Message = "There is no Department",
                     };
                 }
             }
@@ -168,7 +168,7 @@ namespace WebApi.Repository
                     return new ResultResponse<FacutyRequest>
                     {
                         IsSuccessful = false,
-                        Message = "Semester not found."
+                        Message = "Department not found."
                     };
                 }
 
@@ -247,7 +247,7 @@ namespace WebApi.Repository
                         return new RequestResponse
                         {
                             IsSuccessful = false,
-                            Message = "Facuty already exists.",
+                            Message = "Department already exists.",
                         };
                     }
                     data.FacultyName = request.FacultyName;
@@ -257,7 +257,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = true,
-                        Message = "Facuty updated successfully",
+                        Message = "Department updated successfully",
                     };
                 }
                 else
@@ -265,7 +265,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Subject Code already exist",
+                        Message = "Department already exist",
                     };
                 }
             }

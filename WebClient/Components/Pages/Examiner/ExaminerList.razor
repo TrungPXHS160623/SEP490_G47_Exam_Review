@@ -227,7 +227,6 @@
         if (eList.IsSuccessful)
         {
             ExamList = eList.Items
-                            .Where(e => e.ExamDate.HasValue) 
                             .OrderBy(e => e.ExamDate.Value >= DateTime.Now ? e.ExamDate.Value : DateTime.MaxValue) 
                             .ToList();
         }

@@ -19,7 +19,7 @@
             <table class="table table-striped table-bordered text-center">
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>#</th>
                         <th>Department Name</th>
                         <th>Actions</th>
                     </tr>
@@ -27,15 +27,17 @@
                 <tbody>
                     @if (departmentList != null)
                     {
+                        var Index = 1;
                         @foreach (var facuty in departmentList)
                         {
                             <tr>
-                                <td>@facuty.FacultyId</td>
-                                <td>@facuty.FacultyName</td>
+                                <td>@Index</td>
+                                <td class="text-start">@facuty.FacultyName</td>
                                 <td>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(facuty.FacultyId)"></MudIconButton>
                                 </td>
                             </tr>
+                            Index++;
                         }
                     }
                 </tbody>
@@ -116,8 +118,9 @@
 
         if (!result.Canceled)
         {
-            await GetData();
+            dialog.Close(DialogResult.Ok(true));
         }
+        await GetData();
     }
 
 }

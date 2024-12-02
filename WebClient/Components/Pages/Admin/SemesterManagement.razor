@@ -19,7 +19,7 @@
             <table class="table table-striped table-bordered text-center">
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>#</th>
                         <th>Semester Name</th>
                         <th>Star Date</th>
                         <th>End Date</th>
@@ -29,10 +29,12 @@
                 <tbody>
                     @if (SemesterList != null)
                     {
+                        var index = 1;
                         @foreach (var semester in SemesterList)
                         {
+                            
                             <tr>
-                                <td>@semester.SemesterId</td>
+                                <td>@index</td>
                                 <td class="text-start">@semester.SemesterName</td>
                                 <td>@semester.StartDate.Value.ToString("yyyy-MM-dd")</td>
                                 <td>@semester.EndDate.Value.ToString("yyyy-MM-dd")</td>
@@ -42,6 +44,7 @@
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(semester.SemesterId)"></MudIconButton>
                                 </td>
                             </tr>
+                            index++;
                         }
                     }
                 </tbody>
