@@ -839,7 +839,18 @@ namespace WebApi.Repository
                                 if (!string.IsNullOrEmpty(userImportRequest.DateOfBirth))
                                 {
                                     // Thử phân tích cú pháp với định dạng cụ thể
-                                    var formats = new[] { "dd-MM-yyyy", "d/M/yyyy", "d/MM/yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "dd/MM/yyyy hh:mm:ss tt" }; // Thêm các định dạng khác nếu cần
+                                    var formats = new[]
+                                    {
+                                        "dd-MM-yyyy",
+                                        "d/M/yyyy",
+                                        "d/MM/yyyy",
+                                        "dd/MM/yyyy",
+                                        "MM-dd-yyyy",
+                                        "dd/MM/yyyy hh:mm:ss tt",
+                                        "d/MM/yyyy hh:mm:ss tt",
+                                        "dd/M/yyyy hh:mm:ss tt",
+                                        "d/M/yyyy hh:mm:ss tt"
+                                    };
                                     if (DateTime.TryParseExact(userImportRequest.DateOfBirth, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDob))
                                     {
                                         dobValue = parsedDob;
