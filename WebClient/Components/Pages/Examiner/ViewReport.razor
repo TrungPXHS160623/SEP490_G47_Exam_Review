@@ -1,127 +1,99 @@
 ﻿@page "/Examiner/ReviewReport"
+<h1 style="text-align: center;">Exam List</h1>
 
-<style>
-    .mud-table-cell {
-        border: none !important;
-        text-align: center;
-    }
-
-    .mud-table-head .mud-table-row .mud-table-cell {
-        border-bottom: 1px solid grey !important;
-        font-size: 1.2rem;
-    }
-
-    .mud-table {
-        box-shadow: none !important;
-    }
-
-    .mud-table-root {
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-    }
-
-    .mud-table-head .mud-table-row {
-        box-shadow: 0 5px 10px #e1e5ee;
-        position: sticky;
-        top: 0;
-        background-color: white;
-        z-index: 99;
-    }
-</style>
-<h1 style="text-align: center;">Review Report</h1>
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="d-flex align-items-center flex-wrap custom-box mb-4">
-            <div class="col me-4">
-                <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable></MudTextField>
-            </div>
-            <div class="me-4 col-2">
-                <MudSelect @bind-Value="request.StatusId"
-                           Variant="Variant.Outlined"
-                           Label="Status"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Clearable>
-                    @if (statusList.Count > 0)
+            <MudTextField @bind-Value="request.ExamCode" Label="Exam Code" Variant="Variant.Outlined" Margin="Margin.Dense" Class="me-4" Clearable></MudTextField>
+            <MudSelect @bind-Value="request.StatusId"
+                       Variant="Variant.Outlined"
+                       Label="Status"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in statusList)
                     {
-                        @foreach (var item in statusList)
-                        {
-                            <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
-                        }
+                        <MudSelectItem T="int?" Value="item.ExamStatusId">@item.StatusContent</MudSelectItem>
                     }
-
-                </MudSelect>
-            </div>
-            <div class="col-2 me-4">
-                <MudSelect @bind-Value="request.SemesterId"
-                           Variant="Variant.Outlined"
-                           Label="Semester"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Clearable>
-                    @if (semesters.Count > 0)
+                }
+            </MudSelect>
+            <MudSelect @bind-Value="request.SemesterId"
+                       Variant="Variant.Outlined"
+                       Label="Semester"
+                       Margin="Margin.Dense"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Clearable
+                       Class="me-4 col-auto">
+                @if (statusList.Count > 0)
+                {
+                    @foreach (var item in semesters)
                     {
-                        @foreach (var item in semesters)
-                        {
-                            <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
-                        }
+                        <MudSelectItem T="int?" Value="item.SemesterId">@item.SemesterName</MudSelectItem>
                     }
-                </MudSelect>
-            </div>
+                }
+            </MudSelect>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" OnClick="GetData">Search</MudButton>
         </div>
         <div class="custom-box">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <h4>Report List</h4>
+                    <h4>Exam List</h4>
                 </div>
             </div>
             <div>
-                <MudTable T=ExaminerExamResponse Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true">
+                <MudTable T="ExaminerExamResponse" Items="ExamList" FixedHeader="true" Height="@(ExamList.Count == 0 ? null : "380px")" Hover="true" HorizontalScrollbar="true" Virtualize="true">
                     <HeaderContent>
                         <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Campus</MudTh>
                         <MudTh>Status</MudTh>
-                        <MudTh>Assignment Date</MudTh>
+                        <MudTh>Exam planned Date</MudTh>
                         <MudTh>Semester</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@(ExamList.IndexOf(context) + 1)</MudTd>
+                        <MudTd>@((ExamList.IndexOf(@context) + 1))</MudTd>
                         <MudTd>@context.ExamCode</MudTd>
-                        <MudTd>@context.CampusName</MudTd>
-                        <MudTd>
-                            <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
-                        </MudTd>
-                        <MudTd>@(context.ExamDate.HasValue ? context.ExamDate.Value.ToString("dd-MM-yyyy") : "N/A")</MudTd>
+                        <MudTd>@context.CampusName </MudTd>
+                        <MudTd> <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label></MudTd>
+                        <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemseterName</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))" Disabled="@(context.ExamStatusId == 4)">Report</MudButton>
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => GoToDetail(context.ExamId))">Report</MudButton>
                             </div>
                         </MudTd>
+
                     </RowTemplate>
                 </MudTable>
                 @if (ExamList.Count == 0)
                 {
-                    <p class="text-center  fs-6 mt-4">No Data</p>
+                    <p class="text-center fs-6 mt-4">No Data</p>
                 }
             </div>
+         
         </div>
     </div>
 </div>
+
+
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
 
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
+    @inject ISemesterService SemesterService
     public List<ExaminerExamResponse> ExamList = new List<ExaminerExamResponse>();
+    public List<ExaminerExamResponse> assignList = new List<ExaminerExamResponse>();
 
     public List<ExamStatus> statusList = new List<ExamStatus>();
-
+    public List<Semester> semesters = new List<Semester>();
     public ExamSearchRequest request = new();
 
-    public List<Semester> semesters = new List<Semester>();
+    private string Mail { get; set; } = string.Empty;
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
@@ -144,10 +116,10 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+            request.CampusId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == "CampusId")?.Value, out var campus) ? campus : 0;
+            Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            request.UserId = userId;
-
-            var response = await MenuService.CheckAccess(userId, 14);
+            var response = await MenuService.CheckAccess(userId, 15);
 
             if (!response.IsSuccessful)
             {
@@ -156,25 +128,22 @@
             else
             {
                 await GetData();
-
-                var sList = await this.StatusService.GetStatus();
-                if (sList.IsSuccessful)
-                {
-                    statusList = sList.Items.Where(x => x.ExamStatusId != 1 && x.ExamStatusId != 2 && x.ExamStatusId != 3).ToList();
-                }
-
                 var semesterrList = await this.SemesterService.GetSemester();
                 if (semesterrList.IsSuccessful)
                 {
                     semesters = semesterrList.Items;
+                }
+                var sList = await this.StatusService.GetStatus();
+                if (sList.IsSuccessful)
+                {
+                    statusList = sList.Items;
                 }
 
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
                     Layout.HeaderLink = "/Home";
-                    Layout.SubHeader = "Review Report";
-                    Layout.SubHeader1 = string.Empty;
+                    Layout.SubHeader = "Exam List";
                     Layout.RefreshLayout();
                 }
             }
@@ -190,8 +159,9 @@
         }
     }
 
-    public void GoToDetail(int examId)
+       public void GoToDetail(int examId)
     {
         NavManager.NavigateTo($"/Examiner/ReviewReport/{examId}");
     }
+
 }

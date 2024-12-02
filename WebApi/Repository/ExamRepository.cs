@@ -273,8 +273,8 @@ public class ExamRepository : IExamRepository
             var data = await (from ex in _context.Exams
                               join su in _context.Subjects on ex.SubjectId equals su.SubjectId
                               join ca in _context.Campuses on ex.CampusId equals ca.CampusId
-                              join cus in _context.CampusUserSubjects
-                                  on new { ex.SubjectId, ex.CampusId } equals new { cus.SubjectId, cus.CampusId } into cusGroup
+                              join cus in _context.CampusUserFaculties
+                                  on new { su.FacultyId, ex.CampusId } equals new { cus.FacultyId, cus.CampusId } into cusGroup
                               from cus in cusGroup.DefaultIfEmpty() // LEFT JOIN
                               join u1 in _context.Users on cus.UserId equals u1.UserId into u1Group
                               from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN

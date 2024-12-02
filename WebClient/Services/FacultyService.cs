@@ -21,7 +21,7 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> AddFacuty(FacutyRequest req)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Faculty/CreateFacuty", req);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Faculty/CreateFacuty", req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 
@@ -140,7 +140,7 @@ namespace WebClient.Services
 
         public async Task<RequestResponse> UpdateFacuty(FacutyRequest req)
         {
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Facuty/UpdateFacuty", req);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/Faculty/UpdateFacuty", req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 
