@@ -5,6 +5,7 @@ using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Security.Claims;
 using WebApi.IRepository;
 using static Library.Response.CampusReportResponse;
@@ -714,7 +715,21 @@ public class ExamRepository : IExamRepository
                                 continue;
                             }
 
-                            // Sử dụng DTO để lưu dữ liệu từ Excel
+                            var errorMessages = new List<string>();
+                            var formats = new[]
+                            {
+                                "dd-MM-yyyy",
+                                "d/M/yyyy",
+                                "d/MM/yyyy",
+                                "dd/MM/yyyy",
+                                "MM-dd-yyyy",
+                                "dd/MM/yyyy hh:mm:ss tt",
+                                "d/MM/yyyy hh:mm:ss tt",
+                                "dd/M/yyyy hh:mm:ss tt",
+                                "d/M/yyyy hh:mm:ss tt"
+                            };
+
+                            // Đọc và validate dữ liệu cơ bản từ Excel
                             var examImportRequest = new ExamImportRequest
                             {
                                 ExamCode = reader.GetValue(1)?.ToString(),
@@ -723,68 +738,95 @@ public class ExamRepository : IExamRepository
                                 CampusName = reader.GetValue(4)?.ToString(),
                                 SubjectCode = reader.GetValue(5)?.ToString(),
                                 ExamDuration = reader.GetValue(6)?.ToString(),
-                                StartDate = DateTime.TryParse(reader.GetValue(7)?.ToString(), out DateTime startDate) ? startDate : (DateTime?)null,
-                                EndDate = DateTime.TryParse(reader.GetValue(8)?.ToString(), out DateTime endDate) ? endDate : (DateTime?)null,
-                                SemesterName = reader.GetValue(9)?.ToString(),
+                                SemesterName = reader.GetValue(9)?.ToString()
                             };
 
-                            // Kiểm tra tính hợp lệ của dữ liệu từ DTO
-                            var errorMessages = new List<string>();
+                            // Xử lý StartDate
+                            var startDateString = reader.GetValue(7)?.ToString();
+                            if (!string.IsNullOrEmpty(startDateString) &&
+                                DateTime.TryParseExact(startDateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartDate))
+                            {
+                                examImportRequest.StartDate = parsedStartDate;
+                            }
+                            else if (!string.IsNullOrEmpty(startDateString))
+                            {
+                                errorMessages.Add($"The StartDate '{startDateString}' is not valid.");
+                            }
 
+                            // Xử lý EndDate
+                            var endDateString = reader.GetValue(8)?.ToString();
+                            if (!string.IsNullOrEmpty(endDateString) &&
+                                DateTime.TryParseExact(endDateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                            {
+                                examImportRequest.EndDate = parsedEndDate;
+                            }
+                            else if (!string.IsNullOrEmpty(endDateString))
+                            {
+                                errorMessages.Add($"The EndDate '{endDateString}' is not valid.");
+                            }
+
+                            // Kiểm tra logic giữa StartDate và EndDate
+                            if (examImportRequest.StartDate != null && examImportRequest.EndDate != null &&
+                                examImportRequest.StartDate > examImportRequest.EndDate)
+                            {
+                                errorMessages.Add("StartDate must be earlier than EndDate.");
+                            }
+
+                            // Validate các trường không được để trống
                             if (string.IsNullOrEmpty(examImportRequest.ExamCode))
                                 errorMessages.Add("ExamCode không được để trống.");
-
                             if (string.IsNullOrEmpty(examImportRequest.ExamDuration))
                                 errorMessages.Add("ExamDuration không được để trống.");
-
                             if (string.IsNullOrEmpty(examImportRequest.ExamType))
                                 errorMessages.Add("ExamType không được để trống.");
-
                             if (string.IsNullOrEmpty(examImportRequest.TermDuration))
                                 errorMessages.Add("TermDuration không được để trống.");
-
                             if (string.IsNullOrEmpty(examImportRequest.SemesterName))
                                 errorMessages.Add("SemesterName không được để trống.");
 
-
-
-                            var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterName == examImportRequest.SemesterName);
-                            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
-                            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
-
-
-
-                            if (campus == null)
-                                errorMessages.Add($"Campus với tên là  {examImportRequest.CampusName} không tồn tại.");
-                            if (subject == null)
-                                errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
-                            if (semester == null)
-                            {
-                                errorMessages.Add($"Semester với tên là  {examImportRequest.SemesterName} không tồn tại.");
-                            }
-
-                            if (examImportRequest.StartDate > examImportRequest.EndDate)
-                                errorMessages.Add("EndDate phải lớn hơn hoặc bằng StartDate.");
-
-                            //tạo khoá duy nhất cho mỗi exam
-                            string uniquekey = examImportRequest.ExamCode;
-                            if (existingExamSet.Contains(uniquekey))
-                            {
-                                errorMessages.Add($"Duplicate entry for ExamCode '{examImportRequest.ExamCode}'.");
-                                continue;
-                            }
-                            existingExamSet.Add(uniquekey);
-                            var existingExam = await _context.Exams.FirstOrDefaultAsync(e => e.ExamCode == examImportRequest.ExamCode);
-                            if (existingExam != null)
-                                errorMessages.Add($"Exam với mã {examImportRequest.ExamCode} đã tồn tại.");
-
+                            // Nếu có lỗi cơ bản, bỏ qua các bước tiếp theo
                             if (errorMessages.Any())
                             {
                                 errors.Add($"Lỗi với ExamCode {examImportRequest.ExamCode} : {string.Join(", ", errorMessages)}");
                                 continue;
                             }
 
-                            // Nếu không có lỗi, ánh xạ từ DTO sang model Exam
+                            // Kiểm tra tính hợp lệ trong database
+                            var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterName == examImportRequest.SemesterName);
+                            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
+                            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
+                            if (campus == null)
+                                errorMessages.Add($"Campus với tên là {examImportRequest.CampusName} không tồn tại.");
+                            if (subject == null)
+                                errorMessages.Add($"Subject với mã môn là {examImportRequest.SubjectCode} không tồn tại.");
+                            if (semester == null)
+                                errorMessages.Add($"Semester với tên là {examImportRequest.SemesterName} không tồn tại.");
+
+                            // Kiểm tra trùng lặp mã ExamCode
+                            string uniquekey = examImportRequest.ExamCode;
+                            if (existingExamSet.Contains(uniquekey))
+                            {
+                                errorMessages.Add($"Duplicate entry for ExamCode '{examImportRequest.ExamCode}'.");
+                            }
+                            else
+                            {
+                                existingExamSet.Add(uniquekey);
+                            }
+
+                            var existingExam = await _context.Exams.FirstOrDefaultAsync(e => e.ExamCode == examImportRequest.ExamCode);
+                            if (existingExam != null)
+                            {
+                                errorMessages.Add($"Exam với mã {examImportRequest.ExamCode} đã tồn tại.");
+                            }
+
+                            // Nếu có lỗi, thêm vào danh sách lỗi
+                            if (errorMessages.Any())
+                            {
+                                errors.Add($"Lỗi với ExamCode {examImportRequest.ExamCode} : {string.Join(", ", errorMessages)}");
+                                continue;
+                            }
+
+                            // Nếu không có lỗi, thêm vào danh sách examsToAdd
                             var exam = new Exam
                             {
                                 ExamCode = examImportRequest.ExamCode,
@@ -807,6 +849,7 @@ public class ExamRepository : IExamRepository
                     } while (reader.NextResult());
                 }
             }
+
 
             // Lưu các exam hợp lệ
             if (examsToAdd.Any())
