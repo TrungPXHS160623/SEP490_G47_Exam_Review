@@ -216,7 +216,8 @@ namespace WebApi.Repository
                         from c in campusJoin.DefaultIfEmpty() // Left join for Campuses
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
-                        join cuf in this.dbContext.CampusUserFaculties on u.UserId equals cuf.UserId
+                        join cuf in this.dbContext.CampusUserFaculties on u.UserId equals cuf.UserId into cufJoin
+                        from cuf in cufJoin.DefaultIfEmpty() // Left join for CampusUserFaculties
                         where u.UserId == id
                         select new UserSubjectRequest
                         {
@@ -229,10 +230,18 @@ namespace WebApi.Repository
                             UserId = u.UserId,
                             Phone = u.PhoneNumber,
                             UserName = u.FullName,
-                            FacultyId = cuf.FacultyId,
-                            FacultyName= cuf.Faculty.FacultyName,
-
+                            FacultyId = cuf != null ? cuf.FacultyId : null,
+                            FacultyName = cuf != null && cuf.Faculty != null ? cuf.Faculty.FacultyName : null,
                         }).FirstOrDefault();
+
+            if (data == null)
+            {
+                return new ResultResponse<UserSubjectRequest>
+                {
+                    IsSuccessful = false,
+                    Message = "User not found for the given ID.",
+                };
+            }
 
             return new ResultResponse<UserSubjectRequest>
             {
@@ -240,6 +249,7 @@ namespace WebApi.Repository
                 Item = data,
             };
         }
+
 
 
         public async Task<RequestResponse> UpdateAsync(UserRequest user)
@@ -286,7 +296,6 @@ namespace WebApi.Repository
             {
                 var response = new RequestResponse();
 
-                // Tìm kiếm người dùng trong cơ sở dữ liệu
                 var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
                 if (existingUser == null)
                 {
@@ -1370,6 +1379,18 @@ namespace WebApi.Repository
                 }
                 else
                 {
+                    string emailFe = $"{req.MailFe}@fe.edu.vn";
+                    string emailFpt = $"{req.Mail}@fpt.edu.vn";
+
+                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                    if (emailExists)
+                    {
+                        return new RequestResponse
+                        {
+                            IsSuccessful = false,
+                            Message = "The email already exists in the system"
+                        };
+                    }
                     var newUser = new User
                     {
                         CampusId = u.CampusId,

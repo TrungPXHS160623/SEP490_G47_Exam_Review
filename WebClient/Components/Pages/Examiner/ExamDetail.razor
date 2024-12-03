@@ -61,10 +61,6 @@
                     <MudText class="text-start">@(exam.CreaterName ?? "N/A")</MudText>
                 </div>
             }
-            <div class="form-group mb-4">
-                <label class="col-4 text-end">Head of Department:</label>
-                <MudText class=" col-8 text-start">@(exam.HeadDepartmentName ?? "N/A")</MudText>
-            </div>
             @if (ExamId != 0)
             {
                 <div class="form-group mb-4 text-start ">
@@ -73,25 +69,8 @@
                     </div>
             }
             <div class="form-group mb-4">
-                <label class="col-4 text-end">Campus:</label>
-                <MudSelect T="int?"
-                           Value="exam.CampusId"
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@IsView
-                           ValueChanged="CampusChanged"
-                           Placeholder="Choose Campus"
-                           Style="min-width: 150px; max-width: 200px;"
-                           For="@(()=> exam.CampusId)">
-                    @if (camList.Count > 0)
-                    {
-                        @foreach (var item in camList)
-                        {
-                            <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                        }
-                    }
-                </MudSelect>
+                <label class="col-4 text-end" style="display: inline-block; margin-right: 8px;">Campus:</label>
+                <MudText Margin="Margin.Dense" style="display: inline-block;">@($"[{exam.CampusName}]")</MudText>
             </div>
             <div class="form-group mb-4">
                 <label class="col-4 text-end">Exam Duration:</label>

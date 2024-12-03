@@ -23,7 +23,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7158;http://localhost:5231",
-     // "applicationUrl": "https://www.examreview.somee.com/",
+      //"applicationUrl": "https://www.examreview.somee.com/",
       "launchUrl": "Login",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

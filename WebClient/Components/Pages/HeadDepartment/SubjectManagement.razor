@@ -104,8 +104,9 @@
 
         if (!result.Canceled)
         {
-            await GetSubject();
+            dialog.Close(DialogResult.Ok(true));
         }
+        
     }
 
     public async Task ShowLecturerList(int subjectId,string subjectCode)

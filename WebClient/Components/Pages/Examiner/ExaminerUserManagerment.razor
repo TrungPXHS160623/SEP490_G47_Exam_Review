@@ -131,11 +131,11 @@
         var dialog = await DialogService.ShowAsync<ImportUser>("Import User", parameters, options);
 
         var result = await dialog.Result;
-
         if (!result.Canceled)
         {
-            await FetchUsers();
+            dialog.Close(DialogResult.Ok(true));
         }
+        await FetchUsers();
     }
 
     private async Task FetchUsers()
