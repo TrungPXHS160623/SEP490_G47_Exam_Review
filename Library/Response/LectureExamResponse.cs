@@ -45,7 +45,7 @@
         public DateTime? AssignmentDate { get; set; }
 
         public DateTime? EstimatedTimeTest { get; set; }
-
+        public int? TestTimeInMinute { get; set; } // Số phút test đề
         public DateTime? StartDate { get; set; }
         public DateTime? ExamDate { get; set; }
 
