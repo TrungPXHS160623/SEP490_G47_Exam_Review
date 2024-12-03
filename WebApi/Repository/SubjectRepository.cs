@@ -41,7 +41,8 @@ namespace WebApi.Repository
                     var newSubject = new Subject
                     {
                         SubjectCode = req.SubjectCode,
-                        SubjectName = req.SubjectName
+                        SubjectName = req.SubjectName,
+                        FacultyId = req.FacultyId
                     };
                     await DBcontext.Subjects.AddAsync(newSubject);
                     await DBcontext.SaveChangesAsync();

@@ -16,6 +16,14 @@
             <FluentValidationValidator />
             <MudTextField @bind-Value=subject.SubjectCode Variant="Variant.Outlined" Label="Subject Code" Class="mb-4" For="@(() => subject.SubjectCode)"></MudTextField>
             <MudTextField @bind-Value=subject.SubjectName Variant="Variant.Outlined" Label="Subject Name" Class="mb-4" For="@(() => subject.SubjectName)"></MudTextField>
+            <label class="col-4 text-end me-4">Department:</label>
+            <MudSelect @bind-Value="subject.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense">
+                        @foreach (var item in facutyResponses)
+                        {
+                            <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
+                        }
+                    </MudSelect>
+
             @if (SubjectId != 0)
             {
                 <MudCheckBox @bind-Value=subject.IsDeleted Label="Is Disabled" Color="Color.Error" UncheckedColor="Color.Default"></MudCheckBox>
@@ -43,7 +51,7 @@
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
-
+    private List<Faculty> facutyResponses = new();
     [Parameter]
     public int? SubjectId { get; set; }
 
@@ -59,14 +67,21 @@
         {
             var resp = await this.SubjectService.GetSubjectById(SubjectId.Value);
             await Task.Delay(100);
-
+            await GetFacutyList();
             if (resp.IsSuccessful)
             {
                 subject = resp.Item;
             }
         }
     }
-
+    private async Task GetFacutyList()
+    {
+        var result = await FacultyService.GetFaculties();
+        if (result != null)
+        {
+            facutyResponses = result.Items;
+        }
+    }
     public async Task Excute()
     {
         if (SubjectId != 0)
