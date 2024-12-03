@@ -5,6 +5,7 @@ public partial class Exam
     public Exam()
     {
         Reports = new HashSet<Report>();
+        TestTimeInMinute = 0; // Mặc định giá trị là 0
     }
 
     public int ExamId { get; set; }
@@ -27,7 +28,7 @@ public partial class Exam
     public bool? IsReady { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
-
+    public int? TestTimeInMinute { get; set; } // Số phút test đề
     public virtual Campus? Campus { get; set; }
     public virtual User Creater { get; set; } = null!;
     public virtual ExamStatus? ExamStatus { get; set; }
