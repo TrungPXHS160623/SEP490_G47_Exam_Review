@@ -8,6 +8,7 @@ namespace WebApi.IRepository
     public interface IUserRepository
     {
         Task<RequestResponse> CreateAsync(UserRequest user);
+        Task<RequestResponse> CreateHeadAsync(UserSubjectRequest user);
 
         Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery);
 

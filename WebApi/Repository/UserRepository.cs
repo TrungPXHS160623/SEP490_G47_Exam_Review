@@ -75,7 +75,73 @@ namespace WebApi.Repository
                 };
             }
         }
+        public async Task<RequestResponse> CreateHeadAsync(UserSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+                string emailFe = $"{req.MailFe}@fe.edu.vn";
+                string emailFpt = $"{req.Email}@fpt.edu.vn";
 
+                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                if (emailExists)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "The email already exists in the system"
+                    };
+                }
+                var newUser = new User
+                {
+                    CampusId = req.CampusId,
+                    PhoneNumber = req.Phone,
+                    EmailFe = req.MailFe+"@fe.edu.vn",
+                    RoleId = 4,
+                    FullName = req.UserName,
+                    Mail = req.Email+"@fpt.edu.vn",
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    IsActive = true,
+                };
+                var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
+                    .FirstOrDefaultAsync(c => c.FacultyId == req.FacultyId && c.CampusId == req.CampusId && c.UserId != null);
+                if (existingCampusUserFacultyRecord != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "User already Exist"
+                    };
+                }
+                await this.dbContext.Users.AddAsync(newUser);
+                await this.dbContext.SaveChangesAsync();
+
+                var newData = new CampusUserFaculty
+                {
+                    UserId = newUser.UserId,
+                    FacultyId = req.FacultyId,
+                    CampusId = newUser.CampusId,
+                };
+
+                await this.dbContext.CampusUserFaculties.AddAsync(newData);
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Add Head Department successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
         public async Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery)
         {
             var data = (from u in this.dbContext.Users
@@ -320,6 +386,16 @@ namespace WebApi.Repository
                     var currentFaculty = await dbContext.CampusUserFaculties
                         .FirstOrDefaultAsync(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId);
 
+                    var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
+                        .FirstOrDefaultAsync(c => c.FacultyId == user.FacultyId && c.CampusId == user.CampusId && c.UserId != null);
+                    if (existingCampusUserFacultyRecord != null)
+                    {
+                        return new RequestResponse
+                        {
+                            IsSuccessful = false,
+                            Message = "User already Exist"
+                        };
+                    }
                     if (currentFaculty != null)
                     {
                         // Nếu đã tồn tại, cập nhật FacultyId
@@ -336,6 +412,7 @@ namespace WebApi.Repository
                         };
                         await dbContext.CampusUserFaculties.AddAsync(newCampusUserFaculty);
                     }
+
                 }
                 else
                 {
