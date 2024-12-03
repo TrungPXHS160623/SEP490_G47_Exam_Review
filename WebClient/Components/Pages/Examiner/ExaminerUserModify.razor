@@ -62,21 +62,13 @@ else
                 }
                 else
                 {
-                <MudSelect T="int?"
-                           @bind-SelectedValue=@user.FacultyId
-                           Variant="Variant.Outlined"
-                           Margin="Margin.Dense"
-                           AnchorOrigin="Origin.BottomCenter"
-                           ReadOnly=@(!isAddOrEdit)
-                           HelperText="Only display avaliable Department">
-                    @if (facutyResponses.Count() > 0)
-                    {
+                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense">
                         @foreach (var item in facutyResponses)
                         {
                             <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
                         }
-                    }
-                </MudSelect>
+                    </MudSelect>
+               
                 }
             </div>
         </div>
@@ -110,7 +102,7 @@ else
     public int? UserId { get; set; }
     private UserSubjectRequest user = new();
     private List<UserRole> roleList = new();
-    private List<FacutyResponse> facutyResponses = new();
+    private List<Faculty> facutyResponses = new();
 
     private bool isAddOrEdit { get; set; } = false;
 
@@ -132,17 +124,17 @@ else
             }
             else
             {
-            if (UserId != null)
-            {
-                await FetchUserDetails();
-                await GetFacutyList();
+                if (UserId != null)
+                {
+                    await FetchUserDetails();
+                    await GetFacutyList();
 
+                }
+                else
+                {
+                    isAddOrEdit = true;
             }
-            else
-            {
-                isAddOrEdit = true;
-            }
-            await GetRoles();
+                await GetFacutyList();
             if (Layout != null)
             {
                 Layout.Header = "Home";
@@ -166,7 +158,7 @@ else
 
     private async Task GetFacutyList()
     {
-        var result = await FacultyService.GetFacutyByRole(user.RoleId.Value, user.UserId, user.CampusId.Value);
+        var result = await FacultyService.GetFaculties();
         if (result != null)
         {
             facutyResponses = result.Items;
@@ -185,7 +177,7 @@ else
         {
             resp = await UserService.ExaminerUpdateUserAsync(user);
         }
-        else
+        else if (UserId == null && isAddOrEdit == true)
         {
             resp = await UserService.CreateAsync(user);
         }
@@ -195,14 +187,6 @@ else
         }
     }
 
-    private async Task GetRoles()
-    {
-        var result = await RoleService.GetRolesForExaminer();
-        if (result != null)
-        {
-            roleList = result.Items;
-        }
-    }
 
     private void Cancel()
     {

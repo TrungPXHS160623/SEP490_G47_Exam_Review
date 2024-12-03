@@ -1,4 +1,4 @@
-﻿@page "/Lecture/ExamReport/{ExamId:int}"
+﻿wwwwwwwwwwwwwwwwwww@page "/Lecture/ExamReport/{ExamId:int}"
 
 <style>
 
@@ -42,7 +42,7 @@
                 {
                     <div class="split-row mb-4">
                         <label class="col-4 text-end me-3">Planning Time:</label>
-                        <MudText>@(exam.AssignmentDate.HasValue ? exam.AssignmentDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
+                        <MudText>@(exam.EstimatedTimeTest.HasValue ? exam.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudText>
                     </div>
                 }
                 else
@@ -53,11 +53,11 @@
                             <div class="col-7">
                                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
-                                               @bind-Date="exam.AssignmentDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
+                                               @bind-Date="exam.EstimatedTimeTest" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                                Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft" />
                              </div>
                              <div class="col-5">
-                                 <MudTimePicker AmPm="true" Time=exam.AssignmentDate?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
+                                <MudTimePicker AmPm="true" Time=exam.EstimatedTimeTest?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
                              </div>
                          </div>
                      </div>

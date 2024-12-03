@@ -322,6 +322,31 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<ResultResponse<LeaderExamResponse>> GetAdminExamList(ExamSearchRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetAdminExamList", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LeaderExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
     }
 
 }
