@@ -1,5 +1,5 @@
-﻿@page "/HeadDepartment/ExamList"
-<h1 style="text-align: center;">Assign Lecturer To Review</h1>
+﻿@page "/Admin/ExamList"
+<h1 style="text-align: center;">Assign Lecturer</h1>
 
 <div class="d-flex justify-content-center">
     <div class="mt-4">
@@ -54,6 +54,7 @@
                         <MudTh>No</MudTh>
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Status</MudTh>
+                        <MudTh>Campus</MudTh>
                         <MudTh>Exam planed Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
@@ -66,6 +67,7 @@
                         <MudTd>
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
+                        <MudTd>@context.CampusName</MudTd>
                         <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
@@ -128,7 +130,7 @@
 
             request.UserId = userId;
 
-            var response = await MenuService.CheckAccess(userId, 4);
+            var response = await MenuService.CheckAccess(userId, 18);
 
             if (!response.IsSuccessful)
             {
@@ -183,7 +185,7 @@
 
     private async Task GetData()
     {
-        var eList = await this.ExamService.GetLeaderExamList(request);
+        var eList = await this.ExamService.GetAdminExamList(request);
         if (eList.IsSuccessful)
         {
             var semesterrList = await this.SemesterService.GetSemester();
@@ -192,7 +194,6 @@
                 semesters = semesterrList.Items;
             }
             ExamList = eList.Items;
-
         }
     }
 }

@@ -1,0 +1,193 @@
+﻿<style>
+    .form-group {
+        display: flex;
+        align-items: baseline;
+    }
+
+    .mud-input.mud-disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+</style>
+
+    <MudDialog>
+        <DialogContent>
+            <EditForm Model="exam" OnValidSubmit="DialogConfirm">
+    <FluentValidationValidator />
+            <div class="form-group mb-4">
+                <label class="col-4 text-end me-4">Exam Code:</label>
+                <MudText>@exam.ExamCode</MudText>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="col-4 text-end  me-4">Subject Name:</label>
+                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+                </div>
+                <div class="form-group mb-4">
+                    <label class="col-4 text-end  me-4">Exam Creater:</label>
+                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+                </div>
+                <div class="form-group mb-4">
+                <label class="col-4 text-end  me-4">Lecturer :</label>
+                    <div>
+                        <MudSelect @bind-Value=exam.AssignedLectureId
+                                   Variant="Variant.Outlined"
+                                   Margin="Margin.Dense"
+                                   AnchorOrigin="Origin.BottomCenter"
+                                   Placeholder="Choose Lecture to Review"
+                                   HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")"
+                                   For="@(() => exam.AssignedLectureId)">
+                            @if (LectureList.Count() > 0)
+                        {
+                            @foreach (var item in LectureList)
+                            {
+                                <MudSelectItem T=int? Value="@item.UserId">@item.Email</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@(@_processing || exam.AssignedLectureId == CurrentReviewer || exam.ExamStatusId == 4)">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Assign Now</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+            </div>
+        </EditForm>
+        </DialogContent>
+    </MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public int? ExamId { get; set; }
+
+    private bool _processing = false;
+
+    private LeaderExamResponse exam = new LeaderExamResponse();
+
+    private List<UserResponse> LectureList = new List<UserResponse>();
+
+    public int? CurrentReviewer { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+
+        var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
+
+        if (resp.IsSuccessful)
+        {
+            exam = resp.Item;
+            if (exam.AssignedLectureId != null)
+            {
+                CurrentReviewer = exam.AssignedLectureId;
+            }
+        }
+
+        var result = await UserService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
+        if (result != null)
+        {
+            LectureList = result.Items;
+        }
+    }
+
+    public async Task Excute()
+    {
+        _processing = true;
+        var resp = await AssignmentService.AssignExamToLecture(exam);
+
+        if (resp.IsSuccessful)
+        {
+            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            var sender = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            List<MailUtil> list = new();
+            var mail = new MailUtil
+                {
+                    MailTo = LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email
+                };
+            list.Add(mail);
+
+            var mailModel = new MailModel
+                {
+                    MailList = list,
+                    Subject = "Exam Review Assignment",
+                    Body = $@"
+                            <p><b>Dear {{0}},</b></p>
+                            <p>You have been assigned to review an exam. Please visit the website <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a> to confirm your review date and submit the report there.</p>
+                            <p>Thank you for your cooperation.</p>
+                            <p><b>From:</b> {sender}</p><br>
+                            <p><b>Exam Review System</b></p><br>",
+                };
+
+            var result = await this.MailService.SendMail(mailModel);
+
+            if (result.IsSuccessful)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        _processing = false;
+    }
+
+    private async Task DialogConfirm()
+    {
+        if (exam.AssignedLectureId == CurrentReviewer)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            var options = new DialogOptions
+                {
+                    CloseOnEscapeKey = true,
+                    MaxWidth = MaxWidth.ExtraSmall,
+                    FullWidth = true,
+                    BackdropClick = false,
+                };
+            string contentMessage = string.Empty;
+
+            if (CurrentReviewer == null && exam.AssignedLectureId != null)
+            {
+                contentMessage = $"Assign this exam to lecturer {LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email} to review?";
+            }
+            else if (CurrentReviewer != null && exam.AssignedLectureId != null)
+            {
+                contentMessage = $"Are you sure want to change the reviewer from {exam.AssignedLectureName} to {LectureList.FirstOrDefault(x => x.UserId == exam.AssignedLectureId).Email}";
+            }
+
+            var parameters = new DialogParameters<Dialog>
+            {
+                { x => x.Content, contentMessage},
+                { x => x.BtnTextConfirm, "Confirm" },
+                { x => x.BtnTextCancel, "Cancel" },
+            };
+
+            var dialog = await DialogService.ShowAsync<Dialog>("Assign Exam to Review", parameters, options);
+
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+            {
+                await Excute();
+            }
+        }
+
+    }
+}

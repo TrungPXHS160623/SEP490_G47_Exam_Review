@@ -119,7 +119,7 @@
             request.CampusId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == "CampusId")?.Value, out var campus) ? campus : 0;
             Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            var response = await MenuService.CheckAccess(userId, 15);
+            var response = await MenuService.CheckAccess(userId, 14);
 
             if (!response.IsSuccessful)
             {

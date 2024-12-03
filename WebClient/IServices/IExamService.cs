@@ -10,7 +10,7 @@ namespace WebClient.IServices
         Task<ResultResponse<ExaminerExamResponse>> GetExamList(ExamSearchRequest req);
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req);
         Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
-
+        Task<ResultResponse<LeaderExamResponse>> GetAdminExamList(ExamSearchRequest req);
         Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
