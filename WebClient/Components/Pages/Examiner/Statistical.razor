@@ -37,10 +37,17 @@
                     <h4>Report</h4>
                 </div>
             </div>
+            <MudSelect Variant="Variant.Outlined" Label="Select Campus" Dense="true" Margin="Margin.Dense" T="int" @bind-Value="SelectedReport">
+                <MudSelect @bind-Value="user.CampusId" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    @foreach (var item in camList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudSelect>
             <MudSelect Variant="Variant.Outlined" Label="Select Report" Dense="true" Margin="Margin.Dense" T="int" @bind-Value="SelectedReport">
                 <MudSelectItem T="int" Value="1">All Campus</MudSelectItem>
-                <MudSelectItem T="int" Value="2">Campus</MudSelectItem>
-                <MudSelectItem T="int" Value="3">By Subject</MudSelectItem>
+                <MudSelectItem T="int" Value="3">By Department</MudSelectItem>
             </MudSelect>
                @switch (SelectedReport)
     {
@@ -141,8 +148,10 @@
     public MainLayout Layout { get; set; }
     public int SelectedReport { get; set; } = 1; // Default to the first report
     public CampusReportResponse CampusReport { get; set; } = new CampusReportResponse();
+    private UserRequest user = new();
     public CampusSubjectExamResponse CampusDepartmentReport { get; set; } = new CampusSubjectExamResponse();
     public DepartmentReportResponse DepartmentReport { get; set; } = new DepartmentReportResponse();
+    private List<Campus> camList = new();
     private bool IsLoading = true;
     [Inject] IStatiticsService StatiticsService { get; set; } = default!;
     protected override async Task OnInitializedAsync()
@@ -183,12 +192,12 @@
             {
                 CampusReport = eList.Items.FirstOrDefault();
             }
-            var aList = await StatiticsService.GetExamByCampusAndSubject(userId);
+            var aList = await StatiticsService.GetExamByCampusAndSubject(user);
             if (aList.IsSuccessful)
             {
                 CampusDepartmentReport = aList.Items.FirstOrDefault();
             }
-            var xList = await StatiticsService.GetDepartmentReport(userId);
+            var xList = await StatiticsService.GetDepartmentReport(user);
             if (xList.IsSuccessful)
             {
                 DepartmentReport = xList.Items.FirstOrDefault();

@@ -540,6 +540,7 @@ namespace WebApi.Repository
                               join cus in this.dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                               where u.CampusId == campusId
                               && cus.SubjectId == subjectId
+                              && cus.IsProgramer == false
                               select new UserResponse
                               {
                                   Email = u.Mail,
@@ -1413,7 +1414,8 @@ namespace WebApi.Repository
                                 u.FullName,
                                 u.PhoneNumber,
                                 u.Mail,
-                                u.EmailFe
+                                u.EmailFe,
+                                cus.IsSelect
                             } into g
                             select new UserResponse
                             {
@@ -1422,7 +1424,8 @@ namespace WebApi.Repository
                                 Tel = g.Key.PhoneNumber,
                                 Email = g.Key.Mail,
                                 FeEmail = g.Key.EmailFe,
-                                AssignedExamCount = g.Count(e => e != null)
+                                AssignedExamCount = g.Count(e => e != null),
+                                IsSelect =g.Key.IsSelect
                             }).ToList();
 
                 return new ResultResponse<UserResponse>
@@ -1583,6 +1586,7 @@ namespace WebApi.Repository
                 user.EmailFe = req.MailFe;
                 user.PhoneNumber = req.PhoneNumber;
                 user.FullName = req.FullName;
+                user.IsActive =req.IsActive.Value;
 
                 await this.dbContext.SaveChangesAsync();
 

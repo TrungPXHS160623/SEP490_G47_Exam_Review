@@ -290,7 +290,7 @@ namespace WebClient.Services
             try
             {
 
-                HttpResponseMessage response = await _httpClient.GetAsync("api/GenerateExcel/export-all");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/export-all");
                 if (response.IsSuccessStatusCode)
                 {
                     var fileBytes = await response.Content.ReadAsByteArrayAsync();
@@ -347,6 +347,80 @@ namespace WebClient.Services
                 };
             }
         }
+
+        public async Task<ResultResponse<byte[]>> GenerateExcelTime()
+        {
+            try
+            {
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/exportTime");
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = true,
+                        Item = fileBytes,
+                        Message = "Export Suscess"
+                    };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = false,
+                        Message = errorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return (new ResultResponse<byte[]>
+                {
+                    IsSuccessful = false,
+                    Message = "An error occurred while exporting: " + ex.Message
+                });
+            }
+        }
+
+        public async Task<ResultResponse<byte[]>> GenerateExcelByStatus(int userID)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/status/{userID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = true,
+                        Item = fileBytes,
+                        Message = "Export Suscess"
+                    };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = false,
+                        Message = errorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return (new ResultResponse<byte[]>
+                {
+                    IsSuccessful = false,
+                    Message = "An error occurred while exporting: " + ex.Message
+                });
+            }
+        }
+
     }
 
 }

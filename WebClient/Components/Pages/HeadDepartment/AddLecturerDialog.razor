@@ -25,6 +25,16 @@
                     <MudTextField @bind-Value="user.PhoneNumber" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" For="@(() => user.PhoneNumber)" Disabled="user.IsExist" />
                 </div>
             </div>
+            @if (LecturerId != 0)
+            {
+                <div class="mb-4 d-flex align-items-center">
+                    <label class="col-4 text-end me-4">Active:</label>
+                    <div class="col-8">
+                        <MudCheckBox @bind-Value="user.IsActive" />
+                    </div>
+                </div>
+            }
+            
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
@@ -49,7 +59,6 @@
 
     [Parameter]
     public int SubjectId { get; set; }
-
     [Parameter]
     public int LecturerId { get; set; }
 

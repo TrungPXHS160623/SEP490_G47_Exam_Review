@@ -209,7 +209,7 @@ else
         var result = await UserService.GetByIdAsync(UserId.Value);
         if (result != null)
         {
-            if (result.Item.RoleId!=5)
+            if (result.Item.RoleId==5)
             {
                 var res = await SubjectService.GetLectureSubject(UserId.Value);
                 subjectList = res.Items;

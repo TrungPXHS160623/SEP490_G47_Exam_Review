@@ -627,7 +627,8 @@ namespace WebApi.Repository
                 var sList = await (from s in DBcontext.Subjects
                                    join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
                                    join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
-                                   where cuf.UserId == userId
+                                   join cus in DBcontext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
+                                   where cuf.UserId == userId || cus.UserId ==userId
                                    orderby s.UpdateDate descending
                                    select new SubjectResponse
                                    {
@@ -644,7 +645,10 @@ namespace WebApi.Repository
                                     join cuf in DBcontext.CampusUserFaculties
                                         on s.FacultyId equals cuf.FacultyId into cufGroup
                                     from cuf in cufGroup.DefaultIfEmpty() // Left join
-                                    where cuf == null || cuf.UserId != userId
+                                    join cus in DBcontext.CampusUserSubjects
+                                        on s.SubjectId equals cus.SubjectId into cusGroup
+                                    from cus in cufGroup.DefaultIfEmpty() // Left join
+                                    where cuf == null || cuf.UserId != userId || cus.UserId!=userId
                                     select new SubjectResponse
                                     {
                                         SubjectId = s.SubjectId,

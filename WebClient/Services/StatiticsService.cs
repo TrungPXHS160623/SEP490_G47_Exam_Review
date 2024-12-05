@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Library.Request;
 using Library.Response;
 using MudBlazor;
 using WebClient.IServices;
@@ -30,9 +31,9 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int campusId)
+        public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(UserRequest req)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetDepartmentReport/{campusId}");
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetDepartmentReport", req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<DepartmentReportResponse>>();
 
@@ -44,9 +45,9 @@ namespace WebClient.Services
             return requestResponse;
         }
 
-        public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int campusId)
+        public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(UserRequest req)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/Exam/GetExamByCampusAndSubject/{campusId}");
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetExamByCampusAndSubject", req);
 
             var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<CampusSubjectExamResponse>>();
 

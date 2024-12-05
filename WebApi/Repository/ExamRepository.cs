@@ -242,7 +242,7 @@ public class ExamRepository : IExamRepository
                         from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where ex.ExamId == examId
-                        //&& cus.IsLecturer == false
+                        && cus.IsProgramer == false
 
                         select new LeaderExamResponse
                         {
@@ -437,7 +437,6 @@ public class ExamRepository : IExamRepository
             };
         }
     }
-
     public async Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req)
     {
         try
@@ -451,7 +450,8 @@ public class ExamRepository : IExamRepository
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
                               join cuf in _context.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
-                              where cuf.UserId == req.UserId
+                              join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
+                              where cuf.UserId == req.UserId ||(cus.UserId ==req.UserId)
                               && e.ExamStatusId != 1
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
@@ -754,7 +754,7 @@ public class ExamRepository : IExamRepository
                                 ExamType = reader.GetValue(3)?.ToString(),
                                 CampusName = reader.GetValue(4)?.ToString(),
                                 SubjectCode = reader.GetValue(5)?.ToString(),
-                                ExamDuration = reader.GetValue(6)?.ToString(),
+                                ExamDuration = reader.GetInt64(6),
                                 SemesterName = reader.GetValue(9)?.ToString()
                             };
 
@@ -792,8 +792,6 @@ public class ExamRepository : IExamRepository
                             // Validate các trường không được để trống
                             if (string.IsNullOrEmpty(examImportRequest.ExamCode))
                                 errorMessages.Add("ExamCode không được để trống.");
-                            if (string.IsNullOrEmpty(examImportRequest.ExamDuration))
-                                errorMessages.Add("ExamDuration không được để trống.");
                             if (string.IsNullOrEmpty(examImportRequest.ExamType))
                                 errorMessages.Add("ExamType không được để trống.");
                             if (string.IsNullOrEmpty(examImportRequest.TermDuration))
@@ -932,16 +930,13 @@ public class ExamRepository : IExamRepository
         return (results, results.Count);
     }
 
-    public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID)
+    public async Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(UserRequest req)
     {
         try
         {
-            var user = await _context.Users
-            .Where(u => u.UserId == userID)
-            .FirstOrDefaultAsync();
             var exams = await _context.Exams
                 .AsNoTracking()
-                .Where(e => e.CampusId == user.CampusId)
+                .Where(e => e.CampusId == req.CampusId)
                 .Include(e => e.Campus)
                 .Include(e => e.Subject)
                 .ThenInclude(e => e.Faculty)
@@ -1104,13 +1099,10 @@ public class ExamRepository : IExamRepository
 
 
 
-    public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int userID)
+    public async Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(UserRequest req)
     {
         try
         {
-            var user = await _context.Users
-           .Where(u => u.UserId == userID)
-           .FirstOrDefaultAsync();
             var exams = await _context.Exams
                 .AsNoTracking()
                 .Include(e => e.Campus)
@@ -1118,7 +1110,7 @@ public class ExamRepository : IExamRepository
                 .ThenInclude(e => e.Faculty)
                 .Include(e => e.Reports)
                 .Include(e => e.ExamStatus) // Bao gồm cả trạng thái bài thi
-                .Where(e => e.CampusId ==user.CampusId)
+                .Where(e => e.CampusId ==req.CampusId)
                 .ToListAsync();
 
             if (!exams.Any())

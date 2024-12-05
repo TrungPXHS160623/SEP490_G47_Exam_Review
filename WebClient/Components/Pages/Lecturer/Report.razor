@@ -159,18 +159,6 @@
             {
                 <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
             }
-            <div class="report-content mb-4 p-4">
-                <MudTextField @bind-Value="exam.TestTimeInMinute"
-                              Label="Test Time(Minutes)"
-                              Variant="Variant.Outlined"
-                              Margin="Margin.Dense"
-                              Type="Numeric"
-                              Required="true"
-                              Style="width: 150px;"
-                              ReadOnly="@(exam.AssignStatusId != 4)"
-                              Placeholder="0" />
-                <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
-            </div>
             @if (exam.AssignStatusId == 4)
             {
                 <div class="d-flex">

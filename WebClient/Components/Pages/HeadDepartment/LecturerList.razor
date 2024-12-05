@@ -28,8 +28,8 @@
                     </MudTd>
                     <MudTd>
                             <MudButton Icon="@Icons.Material.Filled.Check"
-                                       Color="@((item.IsSelect) ? Color.Success : Color.Default)"
-                                       Size="Size.Large"
+                                   Color="@(item.IsSelect == true ? Color.Success : Color.Default)"
+                                   Size="Size.Large"
                                        Variant="Variant.Filled"
                                        OnClick="@(() => AssignLecturer(item.UserId))">
                             </MudButton>
@@ -109,10 +109,7 @@
                 await GetLecturer();
             }
         }
-        foreach (var item in UserList)
-        {
-            item.IsSelect = (item.UserId == userId);
-        }
+     
     }
     public async Task ModifyLecturer(int userId)
     {
