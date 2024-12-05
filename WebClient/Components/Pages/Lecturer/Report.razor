@@ -226,13 +226,22 @@
 
     public async Task Excute(bool isSubmit)
     {
+        exam.ReportList.RemoveAll(report =>
+            !report.QuestionNumber.HasValue ||
+            string.IsNullOrEmpty(report.ReportContent) ||
+            (report.ImageList == null || !report.ImageList.Any()) || 
+            string.IsNullOrEmpty(report.QuestionSolutionDetail)
+        );
+
         var resp = await this.ReportService.AddEditReport(exam, isSubmit);
 
         if (resp.IsSuccessful)
         {
             if (isSubmit)
-            {
-                var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+            { 
+                if(exam.ReportList.Count > 0)
+                {
+                    var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
                 var user = auth.User;
                 var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
 
@@ -243,7 +252,7 @@
 
                 var mailModel = new MailModel
                     {
-                        Subject = $"Exam Review Completed",
+                        Subject = $"Completed Review : {exam.ExamCode}",
                         MailList = mailList,
                         Body = $@"
                         <p><b>Dear {{0}},</b></p>
@@ -256,6 +265,7 @@
                     };
 
                 var sendMail = await this.MailService.SendMail(mailModel);
+                }
             }
 
             NavManager.NavigateTo("/Lecture/ExamList");
