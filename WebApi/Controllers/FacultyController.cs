@@ -21,7 +21,13 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+        [HttpDelete("DeleteFaculties/{facultyID}")]
+        public async Task<IActionResult> DeleteFaculties(int facultyID)
+        {
+            var data = await this._facultyRepository.DeleteFaculties(facultyID);
 
+            return Ok(data);
+        }
         [HttpGet("GetHeadFaculties/{userId}")]
         public async Task<IActionResult> GetHeadFaculty(int userId)
         {

@@ -70,6 +70,26 @@ else
                 }
             </div>
         </div>
+        @if (user.RoleId != null && roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName == "Curriculum Development")
+        {
+            <div class="mb-4 d-flex align-items-baseline">
+                <label class="col-4 text-end me-4">Subject:</label>
+                <div class="col-8">
+                    @if (!isAddOrEdit)
+                    {
+                    }
+                    else
+                    {
+                        <MudSelect T="List<int>" @bind-Value="user.SelectedSubjectIds" MultiSelection="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+                            @foreach (var item in subjectList)
+                            {
+                                <MudSelectItem T="int?" Value="@item.SubjectId">@item.SubjectName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                </div>
+            </div>
+        }
 
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Campus:</label>
@@ -120,6 +140,7 @@ else
     public int? UserId { get; set; }
 
     private UserRequest user = new();
+    private List<SubjectResponse> subjectList = new List<SubjectResponse>();
 
     private List<Campus> camList = new();
 
@@ -161,6 +182,7 @@ else
 
                 await GetCampus();
                 await GetRoles();
+                await GetData();
 
                 if (Layout != null)
                 {
@@ -173,14 +195,28 @@ else
             }
         }
     }
+    public async Task GetData()
+    {
+        var resp = await SubjectService.GetSubjects();
 
+        if (resp.IsSuccessful)
+        {
+            subjectList = resp.Items;
+        }
+    }
     private async Task FetchUserDetails()
     {
         var result = await UserService.GetByIdAsync(UserId.Value);
         if (result != null)
         {
+            if (result.Item.RoleId!=5)
+            {
+                var res = await SubjectService.GetLectureSubject(UserId.Value);
+                subjectList = res.Items;
+            }
             user = result.Item;
         }
+       
     }
 
     private async Task HandleValidSubmit()

@@ -48,6 +48,36 @@ namespace WebClient.Services
             }
         }
 
+        public async Task<RequestResponse> AssignSubjectToLecture(AddLecturerSubjectRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/InstructorAssignment/AssignSubjectToLecture", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
         public async Task<RequestResponse> SetAssignDate(LectureExamResponse req)
         {
             try

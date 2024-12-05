@@ -8,7 +8,7 @@ namespace WebApi.IRepository
     public interface IFacultyRepository
     {
         Task<ResultResponse<Faculty>> GetFaculties();
-
+        Task<RequestResponse> DeleteFaculties(int facultyId);
         Task<ResultResponse<Faculty>> GetHeadFaculties(int userId);
         Task<ResultResponse<FacutyRequest>> GetFacutiesByUserID(int? userId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId);

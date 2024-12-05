@@ -38,10 +38,26 @@ public class ExamRepository : IExamRepository
                     Message = "Error! Some exams do not exist.",
                 };
             }
+            //Lấy tất cả các thằng mà đã đc mặc định nhận đề
+            var selectedSubjects = await this._context.CampusUserSubjects
+                .Where(x => x.IsSelect == true)
+                .ToListAsync();
 
             foreach (var e in examsToUpdate)
             {
-                e.ExamStatusId = 2;
+                var selectedSubject = selectedSubjects.FirstOrDefault(x => x.SubjectId == e.SubjectId);
+                //Chuyển Sang trực tiếp cho thằnfg giangr viên mà đc mặc địjnh
+                if (selectedSubject != null)
+                {
+                    e.AssignedUserId = selectedSubject.UserId;
+                    e.ExamStatusId = 3;
+                }
+                //Chuyểnr đề sang cho cnbm
+                else
+                {
+                    e.ExamStatusId = 2;
+                }
+
                 e.UpdateDate = DateTime.Now;
             }
 
@@ -62,6 +78,7 @@ public class ExamRepository : IExamRepository
             };
         }
     }
+
 
     public async Task<RequestResponse> ChangeStatusExamById(int examId, int statusId)
     {

@@ -12,6 +12,6 @@
         public int? CampusId { get; set; }
         public string? CampusName { get; set; }
         public bool? IsActive { get; set; }
-
+        public List<int> SelectedSubjectIds { get; set; } = new List<int>();
     }
 }

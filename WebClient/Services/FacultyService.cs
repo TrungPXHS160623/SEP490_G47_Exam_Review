@@ -155,5 +155,23 @@ namespace WebClient.Services
 
             return requestResponse; throw new NotImplementedException();
         }
+
+        public async Task<RequestResponse> DeleteFaculties(int facultyID)
+        {
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"api/Faculty/DeleteFaculties/{facultyID}");
+
+            var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+            if (!requestResponse.IsSuccessful)
+            {
+                snackbar.Add(requestResponse.Message, Severity.Error);
+            }
+            else
+            {
+                snackbar.Add(requestResponse.Message, Severity.Success);
+            }
+
+            return requestResponse;
+        }
     }
 }

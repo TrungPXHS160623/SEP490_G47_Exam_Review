@@ -1,6 +1,5 @@
 ﻿using Library.Request;
 using Library.Response;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.IRepository;
 
@@ -19,6 +18,13 @@ namespace WebApi.Controllers
         public async Task<IActionResult> AssignExamToLecture([FromBody] LeaderExamResponse req)
         {
             var data = await this._instructorAssignmentRepository.AssignExamToLecture(req);
+
+            return Ok(data);
+        }
+        [HttpPost("AssignSubjectToLecture")]
+        public async Task<IActionResult> AssignSubjectToLecture([FromBody] AddLecturerSubjectRequest req)
+        {
+            var data = await this._instructorAssignmentRepository.AssignSubjectToLecture(req);
 
             return Ok(data);
         }
