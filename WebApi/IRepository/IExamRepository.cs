@@ -19,7 +19,6 @@ namespace WebApi.IRepository
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
-        Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req);
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 

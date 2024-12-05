@@ -437,56 +437,6 @@ public class ExamRepository : IExamRepository
             };
         }
     }
-    public async Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req)
-    {
-        try
-        {
-
-            var data = await (from e in _context.Exams
-                              join u1 in _context.Users on e.AssignedUserId equals u1.UserId into u1Join
-                              from u1 in u1Join.DefaultIfEmpty()
-                              join sj in _context.Subjects on e.SubjectId equals sj.SubjectId
-                              join c in _context.Campuses on e.CampusId equals c.CampusId
-                              join s in _context.Semesters on e.SemesterId equals s.SemesterId
-                              join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
-                              join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
-                              where cus.UserId == req.UserId
-                              && e.ExamStatusId != 1
-                              && (req.StatusId == null || e.ExamStatusId == req.StatusId)
-                              && (req.SemesterId == null || s.SemesterId == req.SemesterId)
-                              && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
-                              select new LeaderExamResponse
-                              {
-                                  SemesterName = s.SemesterName,
-                                  EndDate = e.EndDate,
-                                  ExamId = e.ExamId,
-                                  StartDate = e.StartDate,
-                                  ExamDate = e.ExamDate,
-                                  ExamCode = e.ExamCode,
-                                  CampusName = c.CampusName,
-                                  EstimatedTimeTest = e.EstimatedTimeTest,
-                                  ExamStatusContent = es.StatusContent,
-                                  ExamStatusId = es.ExamStatusId,
-                                  AssignedLectureId = u1.UserId,
-                                  AssignedLectureName = u1.Mail,
-                                  UpdateDate = e.UpdateDate
-                              }).ToListAsync();
-
-            return new ResultResponse<LeaderExamResponse>
-            {
-                IsSuccessful = true,
-                Items = data.OrderByDescending(x => x.UpdateDate).ToList(),
-            };
-        }
-        catch (Exception ex)
-        {
-            return new ResultResponse<LeaderExamResponse>
-            {
-                IsSuccessful = false,
-                Message = ex.Message,
-            };
-        }
-    }
     public async Task<ResultResponse<LeaderExamResponse>> GetLeaderExamList(ExamSearchRequest req)
     {
         try

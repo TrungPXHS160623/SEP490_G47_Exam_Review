@@ -127,7 +127,7 @@
     public ExamSearchRequest request = new();
 
     public List<Semester> semesters = new List<Semester>();
-    private bool isProgramer { get; set; } = true;
+    private bool isProgramer { get; set; } = false;
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
@@ -163,13 +163,9 @@
             {
                 if (cam.Item != null && cam.Item.RoleId==5)
                 {
-                    await fetchData();
+                    isProgramer = true;
                 }
-                else
-                {
-                    isProgramer = false;
                     await GetData();
-                }
                 var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
@@ -216,16 +212,9 @@
 
         if (!result.Canceled)
         {
-            if (isProgramer)
-            {
-                await fetchData();
-            }
-            else
-            {
-                await GetData();
-            }
-
+            await GetData();
         }
+        await GetData();
     }
     private async Task ExportAllExams()
     {
@@ -260,14 +249,7 @@
             ExamList = eList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3  && x.ExamStatusId != 1  && x.ExamStatusId != 4).ToList();
         }
     }
-    private async Task fetchData()
-    {
-        var eList = await this.ExamService.GetDeveloperExamList(request);
-        if (eList.IsSuccessful)
-        {
-            ExamList = eList.Items.Where(x => x.ExamStatusId != 2 && x.ExamStatusId != 3  && x.ExamStatusId != 1  && x.ExamStatusId != 4).ToList();
-        }
-    }
+    
     public void GoToDetail(int examId)
     {
         if (isProgramer)

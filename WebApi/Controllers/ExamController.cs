@@ -35,13 +35,6 @@ namespace WebApi.Controllers
             var examInfo = await _examRepository.GetLeaderExamList(req);
             return Ok(examInfo);
         }
-        [HttpPost("GetDeveloperExamList")]
-        public async Task<IActionResult> GetDeveloperExamList([FromBody] ExamSearchRequest req)
-        {
-            var examInfo = await _examRepository.GetDeveloperExamList(req);
-            return Ok(examInfo);
-        }
-
         [HttpPost("GetLectureExamList")]
         [AllowAnonymous]
         public async Task<IActionResult> GetLectureExamList([FromBody] ExamSearchRequest req)

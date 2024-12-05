@@ -421,31 +421,6 @@ namespace WebClient.Services
             }
         }
 
-        public async Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req)
-        {
-            try
-            {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetDeveloperExamList", req);
-
-                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
-
-                if (!requestResponse.IsSuccessful)
-                {
-                    snackbar.Add(requestResponse.Message, Severity.Error);
-                }
-
-                return requestResponse;
-            }
-            catch (Exception ex)
-            {
-                snackbar.Add(ex.Message, Severity.Error);
-
-                return new ResultResponse<LeaderExamResponse>
-                {
-                    IsSuccessful = false,
-                };
-            }
-        }
     }
 
 }
