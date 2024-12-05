@@ -1,4 +1,4 @@
-﻿wwwwwwwwwwwwwwwwwww@page "/Lecture/ExamReport/{ExamId:int}"
+﻿@page "/Lecture/ExamReport/{ExamId:int}"
 
 <style>
 
@@ -57,7 +57,14 @@
                                                Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft" />
                              </div>
                              <div class="col-5">
-                                <MudTimePicker AmPm="true" Time=exam.EstimatedTimeTest?.TimeOfDay TimeChanged="@OnTimeChanged" AnchorOrigin="Origin.BottomLeft" Variant="Variant.Outlined" Margin="Margin.Dense" AutoClose="false"></MudTimePicker>
+                                <MudTimePicker AmPm="true"
+                                               Time="@exam.EstimatedTimeTest?.TimeOfDay"
+                                               TimeChanged="OnTimeChanged"
+                                               AnchorOrigin="Origin.BottomLeft"
+                                               Variant="Variant.Outlined"
+                                               Margin="Margin.Dense"
+                                               AutoClose="false">
+                                </MudTimePicker>
                              </div>
                          </div>
                      </div>
@@ -153,6 +160,15 @@
                 <MudButton Class="mb-4" StartIcon="@Icons.Material.Filled.NoteAdd" Color="Color.Success" Variant="Variant.Filled" OnClick="AddReportRecord">Add Report Content</MudButton>
             }
             <div class="report-content mb-4 p-4">
+                <MudTextField @bind-Value="exam.TestTimeInMinute"
+                              Label="Test Time(Minutes)"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              Type="Numeric"
+                              Required="true"
+                              Style="width: 150px;"
+                              ReadOnly="@(exam.AssignStatusId != 4)"
+                              Placeholder="0" />
                 <MudTextField @bind-Value=exam.Summary Label="Summary" Variant="Variant.Outlined" Margin="Margin.Dense" Lines="4" MaxLines="4" ReadOnly="@(exam.AssignStatusId != 4)"></MudTextField>
             </div>
             @if (exam.AssignStatusId == 4)
@@ -308,9 +324,9 @@
 
     public void OnTimeChanged(TimeSpan? value)
     {
-        if (exam.AssignmentDate.HasValue)
+        if (exam.EstimatedTimeTest.HasValue)
         {
-            exam.AssignmentDate = new DateTime(exam.AssignmentDate.Value.Year, exam.AssignmentDate.Value.Month, exam.AssignmentDate.Value.Day,
+            exam.EstimatedTimeTest = new DateTime(exam.EstimatedTimeTest.Value.Year, exam.EstimatedTimeTest.Value.Month, exam.EstimatedTimeTest.Value.Day,
                                                value.Value.Hours, value.Value.Minutes, 0);
         }
     }

@@ -12,6 +12,7 @@ namespace WebClient.IServices
         Task<ResultResponse<FacutyRequest>> GetFacutiesByUserID(int? userId);
         Task<ResultResponse<FacutyResponse>> GetFacutyByRole(int roleId, int userId, int campusId);
         Task<ResultResponse<FacutyRequest>> GetFacutyByID(int campusId);
+        Task<RequestResponse> DeleteFaculties(int campusId);
         Task<RequestResponse> AddFacuty(FacutyRequest req);
         Task<RequestResponse> UpdateFacuty(FacutyRequest req);
     }

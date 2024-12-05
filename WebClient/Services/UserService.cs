@@ -546,5 +546,31 @@ namespace WebClient.Services
                 return new RequestResponse { IsSuccessful = false };
             }
         }
+
+        public async Task<RequestResponse> CreateHeadAsync(UserSubjectRequest user)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/User/CreateHead", user);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
+
+                if (requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Success);
+                }
+                else
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+                return new RequestResponse { IsSuccessful = false, Message = "An error occurred." };
+            }
+        }
     }
 }

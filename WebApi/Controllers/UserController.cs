@@ -74,6 +74,14 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+        [HttpPost("CreateHead")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateHead([FromBody] UserSubjectRequest user)
+        {
+            var data = await userRepository.CreateHeadAsync(user);
+
+            return Ok(data);
+        }
         [AllowAnonymous]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUser(UserRequest updateUserRequestDto)
@@ -156,7 +164,7 @@ namespace WebApi.Controllers
         [HttpGet("GetUserBySubject/{subjectId}/{campusId}")]
         public async Task<IActionResult> GetUserBySubject(int subjectid, int campusId)
         {
-            var data = await this.userRepository.GetUserBySubject(subjectid,campusId);
+            var data = await this.userRepository.GetUserBySubject(subjectid, campusId);
 
             return Ok(data);
         }

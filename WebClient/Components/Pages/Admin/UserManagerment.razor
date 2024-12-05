@@ -48,9 +48,7 @@
                         {
                             <tr>
                                 <td>@index</td>
-                                <td>
-                                    <div class="text-info" @onclick="() => ViewUserDetail(user.UserId)" style="cursor:pointer;">@user.Email</div>
-                                </td>
+                                <td>@user.Email</td>
                                 <td>@user.UserName</td>
                                 <td>@user.Tel</td>
                                 <td class="d-flex justify-content-center">
@@ -59,6 +57,7 @@
                                 <td>@user.RoleName</td>
                                 <td>@user.CampusName</td>
                                 <td>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ViewUserDetail(user.UserId)"></MudIconButton>
                                     <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteUser(user.UserId)">Delete</MudButton>
                                 </td>
                             </tr>

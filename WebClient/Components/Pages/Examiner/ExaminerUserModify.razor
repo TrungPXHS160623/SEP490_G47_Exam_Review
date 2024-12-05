@@ -115,8 +115,8 @@ else
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
-            var response = await MenuService.CheckAccess(userId, 10);
+            var cam = await UserService.GetByIdAsync(userId);
+            var response = await MenuService.CheckAccess(userId, 9);
 
             if (!response.IsSuccessful)
             {
@@ -168,7 +168,16 @@ else
     private async Task HandleValidSubmit()
     {
         RequestResponse resp = new();
-
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var userId = int.TryParse(auth.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+        var cam = await UserService.GetByIdAsync(userId);
+        if (cam.IsSuccessful)
+        {
+            if (cam.Item != null)
+            {
+                user.CampusId = cam.Item.CampusId;
+            }
+        }
         if (UserId != null && isAddOrEdit == false)
         {
             isAddOrEdit = true;
@@ -177,9 +186,9 @@ else
         {
             resp = await UserService.ExaminerUpdateUserAsync(user);
         }
-        else if (UserId == null && isAddOrEdit == true)
+        else
         {
-            resp = await UserService.CreateAsync(user);
+            resp = await UserService.CreateHeadAsync(user);
         }
         if (resp.IsSuccessful)
         {

@@ -1,6 +1,5 @@
 ﻿using Library.Common;
 using Library.Models;
-using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
 namespace WebApi.Repository

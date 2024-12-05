@@ -13,6 +13,7 @@
                     <MudTh>Phone Number</MudTh>
                     <MudTh>Number of Exams Planed</MudTh>
                     <MudTh>Action</MudTh>
+                    <MudTh>Assign Lecturer</MudTh>
                 </HeaderContent>
                 <RowTemplate Context="item">
                     <MudTd>@(UserList.IndexOf(item) + 1)</MudTd>
@@ -25,6 +26,15 @@
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ModifyLecturer(item.UserId)"></MudIconButton>
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => RemoveLecturer(item.UserId)"></MudIconButton>
                     </MudTd>
+                    <MudTd>
+                            <MudButton Icon="@Icons.Material.Filled.Check"
+                                       Color="@((item.IsSelect) ? Color.Success : Color.Default)"
+                                       Size="Size.Large"
+                                       Variant="Variant.Filled"
+                                       OnClick="@(() => AssignLecturer(item.UserId))">
+                            </MudButton>
+                    </MudTd>
+
                 </RowTemplate>
             </MudTable>
         </div>
@@ -37,7 +47,7 @@
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
-
+    private AddLecturerSubjectRequest user = new();
     [Parameter]
     public int SubjectId { get; set; }
 
@@ -66,7 +76,44 @@
             UserList = resp.Items;
         }
     }
+    public async Task AssignLecturer(int userId)
+    {
+      
+        user.UserId = userId;
+        user.SubjectId = SubjectId;
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
 
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to assign this lecturer to this subject?" },
+            { x => x.BtnTextConfirm, "Assign" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Assign lecturer", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var resp = await this.AssignmentService.AssignSubjectToLecture(user);
+           
+            if (resp.IsSuccessful)
+            {
+                await GetLecturer();
+            }
+        }
+        foreach (var item in UserList)
+        {
+            item.IsSelect = (item.UserId == userId);
+        }
+    }
     public async Task ModifyLecturer(int userId)
     {
         var options = new DialogOptions
@@ -84,7 +131,7 @@
             {x => x.LecturerId,userId},
         };
 
-        var dialog = await DialogService.ShowAsync<AddLecturerDialog>($"Add Lecturer", parameters, options);
+        var dialog = await DialogService.ShowAsync<AddLecturerDialog>($"Manage Lecturer", parameters, options);
 
         var result = await dialog.Result;
 

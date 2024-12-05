@@ -2,6 +2,7 @@
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApi.IRepository;
 
@@ -266,6 +267,65 @@ namespace WebApi.Repository
                     {
                         IsSuccessful = false,
                         Message = "Department already exist",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<RequestResponse> DeleteFaculties(int facultyID)
+        {
+            try
+            {
+                var data = await this.DBcontext.Faculties.FirstOrDefaultAsync(x => x.FacultyId == facultyID);
+
+                if (data == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Campus not found",
+                    };
+                }
+                else
+                {
+                    this.DBcontext.Faculties.Remove(data);
+
+                    await this.DBcontext.SaveChangesAsync();
+
+                    await logRepository.LogAsync($"Delete Deparment {data.FacultyName}");
+
+                    return new RequestResponse
+                    {
+                        IsSuccessful = true,
+                        Message = "Delete Successfully",
+                    };
+                }
+
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
                     };
                 }
             }

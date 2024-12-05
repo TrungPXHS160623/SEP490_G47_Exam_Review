@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Models;
+﻿namespace Library.Models;
 
 public partial class CampusUserSubject
 {
@@ -12,10 +9,8 @@ public partial class CampusUserSubject
     public int? SubjectId { get; set; }
 
     public int? UserId { get; set; }
-
-    //public int? SemesterId { get; set; }
-
-    //public bool? IsLecturer { get; set; }
+    public bool? IsProgramer { get; set; }
+    public bool? IsSelect { get; set; }
 
     public virtual Campus? Campus { get; set; }
 
@@ -23,5 +18,5 @@ public partial class CampusUserSubject
 
     public virtual User? User { get; set; }
 
-    
+
 }

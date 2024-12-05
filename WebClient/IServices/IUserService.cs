@@ -30,7 +30,7 @@ namespace WebClient.IServices
         Task<RequestResponse> ExaminerUpdateUserAsync(UserSubjectRequest user);
 
         Task<RequestResponse> DeleteAsync(int id);
-
+        Task<RequestResponse> CreateHeadAsync(UserSubjectRequest user);
         Task<RequestResponse> CreateAsync(UserRequest user);
         Task<RequestResponse> ImportUserFromExcel(IBrowserFile files);
 

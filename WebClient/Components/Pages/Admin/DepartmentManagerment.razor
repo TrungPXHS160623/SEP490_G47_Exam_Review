@@ -35,6 +35,7 @@
                                 <td class="text-start">@facuty.FacultyName</td>
                                 <td>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => OpenAddEditDialogAsync(facuty.FacultyId)"></MudIconButton>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteFaculty(facuty.FacultyId)"></MudIconButton>
                                 </td>
                             </tr>
                             Index++;
@@ -65,7 +66,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 16);
+            var response = await MenuService.CheckAccess(userId, 17);
 
             if (!response.IsSuccessful)
             {
@@ -122,5 +123,36 @@
         }
         await GetData();
     }
+    private async Task DeleteFaculty(int facultyId)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
 
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to delete this Department?" },
+            { x => x.BtnTextConfirm, "Delete" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete Department", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+
+            var response = await FacultyService.DeleteFaculties(facultyId);
+            if (response.IsSuccessful)
+            {
+                await GetData();
+            }
+
+        }
+    }
 }

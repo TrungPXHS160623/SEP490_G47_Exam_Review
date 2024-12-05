@@ -106,12 +106,10 @@
 
     private async Task OnTextChanged(string value)
     {
-        if (LecturerId != 0)
-        {
             var resp = await this.UserService.GetUserByMail(value + "@fpt.edu.vn", UserId);
-
             if (resp.Item != null)
             {
+                user.IsExist = true;
                 user = resp.Item;
             }
             else
@@ -119,11 +117,6 @@
                 user.IsExist = false;
                 user.Mail = value;
             }
-        }
-        else
-        {
-            user.Mail = value;
-        }
     }
 
     private async Task FetchUserDetails()

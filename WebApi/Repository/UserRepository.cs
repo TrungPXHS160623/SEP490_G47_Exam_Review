@@ -38,7 +38,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Mail already exist!"
+                        Message = "Mail already exists!"
                     };
                 }
                 else
@@ -54,12 +54,29 @@ namespace WebApi.Repository
                         UpdateDate = DateTime.Now,
                         IsActive = user.IsActive.Value,
                     };
+
+                    // Thêm người dùng mới vào cơ sở dữ liệu
                     await dbContext.Users.AddAsync(newUser);
                     await dbContext.SaveChangesAsync();
+
+                    // Nếu RoleId là 5, thêm các môn học vào bảng CampusUserSubjects
+                    if (user.RoleId == 5 && user.SelectedSubjectIds != null && user.SelectedSubjectIds.Any())
+                    {
+                        foreach (var subjectId in user.SelectedSubjectIds)
+                        {
+                            dbContext.CampusUserSubjects.Add(new CampusUserSubject
+                            {
+                                UserId = newUser.UserId,
+                                CampusId = newUser.CampusId,
+                                SubjectId = subjectId,
+                                IsProgramer = true,
+                                IsSelect = false
+                            });
+                        }
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
-
                 await logRepository.LogAsync($"Create user {user.Email}");
-
                 return new RequestResponse
                 {
                     IsSuccessful = true,
@@ -76,6 +93,73 @@ namespace WebApi.Repository
             }
         }
 
+        public async Task<RequestResponse> CreateHeadAsync(UserSubjectRequest req)
+        {
+            try
+            {
+                RequestResponse response = new RequestResponse();
+                string emailFe = $"{req.MailFe}@fe.edu.vn";
+                string emailFpt = $"{req.Email}@fpt.edu.vn";
+
+                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                if (emailExists)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "The email already exists in the system"
+                    };
+                }
+                var newUser = new User
+                {
+                    CampusId = req.CampusId,
+                    PhoneNumber = req.Phone,
+                    EmailFe = req.MailFe+"@fe.edu.vn",
+                    RoleId = 4,
+                    FullName = req.UserName,
+                    Mail = req.Email+"@fpt.edu.vn",
+                    CreateDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    IsActive = true,
+                };
+                var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
+                    .FirstOrDefaultAsync(c => c.FacultyId == req.FacultyId && c.CampusId == req.CampusId && c.UserId != null);
+                if (existingCampusUserFacultyRecord != null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "User already Exist"
+                    };
+                }
+                await this.dbContext.Users.AddAsync(newUser);
+                await this.dbContext.SaveChangesAsync();
+
+                var newData = new CampusUserFaculty
+                {
+                    UserId = newUser.UserId,
+                    FacultyId = req.FacultyId,
+                    CampusId = newUser.CampusId,
+                };
+
+                await this.dbContext.CampusUserFaculties.AddAsync(newData);
+
+                await this.dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Add Head Department successfully";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new RequestResponse
+                {
+                    IsSuccessful = false,
+                    Message = ex.Message
+                };
+            }
+        }
         public async Task<ResultResponse<UserResponse>> GetUserForAdmin(string filterQuery)
         {
             var data = (from u in this.dbContext.Users
@@ -84,7 +168,7 @@ namespace WebApi.Repository
                         join r in this.dbContext.UserRoles on u.RoleId equals r.RoleId into roleJoin
                         from r in roleJoin.DefaultIfEmpty() // Left join for UserRoles
                         where (string.IsNullOrEmpty(filterQuery) || u.Mail.ToLower().Contains(filterQuery.ToLower()))
-                        && (u.RoleId == 1 || u.RoleId == 2 || u.RoleId == null)
+                        && (u.RoleId == 1 || u.RoleId == 2 || u.RoleId == 5 || u.RoleId == null)
                         select new UserResponse
                         {
                             Email = u.Mail,
@@ -258,6 +342,7 @@ namespace WebApi.Repository
             {
                 RequestResponse response = new RequestResponse();
 
+                // Kiểm tra xem người dùng có tồn tại không
                 var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == user.UserId);
                 if (existingUser == null)
                 {
@@ -267,6 +352,8 @@ namespace WebApi.Repository
                         Message = "User not exist"
                     };
                 }
+
+                // Cập nhật thông tin người dùng
                 existingUser.Mail = user.Email + "@fpt.edu.vn";
                 existingUser.FullName = user.UserName;
                 existingUser.PhoneNumber = user.Phone;
@@ -274,11 +361,38 @@ namespace WebApi.Repository
                 existingUser.CampusId = user.CampusId;
                 existingUser.IsActive = user.IsActive.Value;
 
-                await dbContext.SaveChangesAsync();
-                response.IsSuccessful = true;
+                // Nếu RoleId là 5, cập nhật bảng CampusUserSubject
+                if (user.RoleId == 5)
+                {
+                    // Xóa các môn học cũ của người dùng
+                    var currentSubjects = await dbContext.CampusUserSubjects
+                        .Where(x => x.UserId == user.UserId && x.CampusId == user.CampusId)
+                        .ToListAsync();
+                    dbContext.CampusUserSubjects.RemoveRange(currentSubjects); // Xóa tất cả môn học cũ
 
-                response.Message = "Update account successfuly";
+                    // Thêm các môn học mới mà admin đã chọn
+                    foreach (var subjectId in user.SelectedSubjectIds)
+                    {
+                        dbContext.CampusUserSubjects.Add(new CampusUserSubject
+                        {
+                            UserId = user.UserId,
+                            CampusId = user.CampusId,
+                            SubjectId = subjectId,
+                            IsProgramer = true,  // Cập nhật nếu cần
+                            IsSelect = false     // Cập nhật nếu cần
+                        });
+                    }
+                }
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await dbContext.SaveChangesAsync();
+
+                response.IsSuccessful = true;
+                response.Message = "Update account successfully";
+
+                // Ghi log hành động cập nhật
                 await logRepository.LogAsync($"Update user {user.Email}");
+
                 return response;
             }
             catch (Exception ex)
@@ -289,6 +403,9 @@ namespace WebApi.Repository
                 };
             }
         }
+
+
+
 
         public async Task<RequestResponse> ExaminerUpdateUserAsync(UserSubjectRequest user)
         {
@@ -320,6 +437,16 @@ namespace WebApi.Repository
                     var currentFaculty = await dbContext.CampusUserFaculties
                         .FirstOrDefaultAsync(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId);
 
+                    var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
+                        .FirstOrDefaultAsync(c => c.FacultyId == user.FacultyId && c.CampusId == user.CampusId && c.UserId != null);
+                    if (existingCampusUserFacultyRecord != null)
+                    {
+                        return new RequestResponse
+                        {
+                            IsSuccessful = false,
+                            Message = "User already Exist"
+                        };
+                    }
                     if (currentFaculty != null)
                     {
                         // Nếu đã tồn tại, cập nhật FacultyId
@@ -336,6 +463,7 @@ namespace WebApi.Repository
                         };
                         await dbContext.CampusUserFaculties.AddAsync(newCampusUserFaculty);
                     }
+
                 }
                 else
                 {
@@ -1278,6 +1406,7 @@ namespace WebApi.Repository
                             from e in examsGroup.DefaultIfEmpty()
                             where s.SubjectId == subjectid
                                   && u.CampusId == campusId
+                                  && cus.IsProgramer == false
                             group e by new
                             {
                                 u.UserId,
@@ -1353,7 +1482,6 @@ namespace WebApi.Repository
             {
                 RequestResponse response = new RequestResponse();
                 var u = await this.dbContext.Users.FirstOrDefaultAsync(x => x.UserId == req.HeadId);
-
 
                 if (req.IsExist)
                 {
