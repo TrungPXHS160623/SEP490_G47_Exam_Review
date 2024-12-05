@@ -19,6 +19,7 @@ namespace WebApi.IRepository
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamList(ExamSearchRequest req);
+        Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req);
 
         Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 
@@ -31,9 +32,9 @@ namespace WebApi.IRepository
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
         Task<RequestResponse> ImportExamsFromExcel(IFormFile file, ClaimsPrincipal currentUser);
 
-        Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(int userID);
+        Task<ResultResponse<CampusSubjectExamResponse>> GetExamByCampusAndSubject(UserRequest req);
         Task<ResultResponse<CampusReportResponse>> GetCampusReport();
-        Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(int userID);
+        Task<ResultResponse<DepartmentReportResponse>> GetDepartmentReport(UserRequest req);
 
         Task<(IEnumerable<ExamByStatusResponse> Exams, int Count)> GetExamsByStatus(int? statusId = null, int? campusId = null);
 

@@ -9,7 +9,7 @@
         public string? MailFe { get; set; }
         public string? PhoneNumber { get; set; }
         public int? SubjectId { get; set; }
-
+        public bool? IsActive { get; set; }
         public bool IsExist { get; set; } = false;
     }
 }

@@ -290,7 +290,7 @@ namespace WebClient.Services
             try
             {
 
-                HttpResponseMessage response = await _httpClient.GetAsync("api/GenerateExcel/export-all");
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/export-all");
                 if (response.IsSuccessStatusCode)
                 {
                     var fileBytes = await response.Content.ReadAsByteArrayAsync();
@@ -327,6 +327,105 @@ namespace WebClient.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetAdminExamList", req);
+
+                var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
+
+                if (!requestResponse.IsSuccessful)
+                {
+                    snackbar.Add(requestResponse.Message, Severity.Error);
+                }
+
+                return requestResponse;
+            }
+            catch (Exception ex)
+            {
+                snackbar.Add(ex.Message, Severity.Error);
+
+                return new ResultResponse<LeaderExamResponse>
+                {
+                    IsSuccessful = false,
+                };
+            }
+        }
+
+        public async Task<ResultResponse<byte[]>> GenerateExcelTime()
+        {
+            try
+            {
+
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/exportTime");
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = true,
+                        Item = fileBytes,
+                        Message = "Export Suscess"
+                    };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = false,
+                        Message = errorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return (new ResultResponse<byte[]>
+                {
+                    IsSuccessful = false,
+                    Message = "An error occurred while exporting: " + ex.Message
+                });
+            }
+        }
+
+        public async Task<ResultResponse<byte[]>> GenerateExcelByStatus(int userID)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync($"api/GenerateExcel/status/{userID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileBytes = await response.Content.ReadAsByteArrayAsync();
+
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = true,
+                        Item = fileBytes,
+                        Message = "Export Suscess"
+                    };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new ResultResponse<byte[]>
+                    {
+                        IsSuccessful = false,
+                        Message = errorMessage
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return (new ResultResponse<byte[]>
+                {
+                    IsSuccessful = false,
+                    Message = "An error occurred while exporting: " + ex.Message
+                });
+            }
+        }
+
+        public async Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"api/Exam/GetDeveloperExamList", req);
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<ResultResponse<LeaderExamResponse>>();
 

@@ -1,9 +1,11 @@
 ﻿namespace WebApi.IRepository
 {
-	public interface IGenerateExcelRepository
-	{
-		byte[] GenerateExcel();
-		byte[] GenerateExcelByStatus(int statusId);
-	}
+    public interface IGenerateExcelRepository
+    {
+        byte[] GenerateExcel();
+        byte[] GenerateExcelTime();
+
+        byte[] GenerateExcelByStatus(int statusId);
+    }
 
 }

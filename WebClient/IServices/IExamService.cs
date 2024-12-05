@@ -14,7 +14,7 @@ namespace WebClient.IServices
         Task<ResultResponse<ExaminerExamResponse>> GetExamById(int examId);
 
         Task<ResultResponse<LeaderExamResponse>> GetLeaderExamById(int examId);
-
+        Task<ResultResponse<LeaderExamResponse>> GetDeveloperExamList(ExamSearchRequest req);
         Task<ResultResponse<LectureExamResponse>> GetLectureExamById(int examId);
 
         Task<RequestResponse> UpdateExam(ExaminerExamResponse exam);
@@ -26,7 +26,8 @@ namespace WebClient.IServices
         Task<RequestResponse> CreateExam(ExamCreateRequest exam);
         Task<RequestResponse> ImportExamsFromExcel(IBrowserFile files);
         Task<ResultResponse<byte[]>> ExportAllExams();
-
+        Task<ResultResponse<byte[]>> GenerateExcelTime();
+        Task<ResultResponse<byte[]>> GenerateExcelByStatus(int userID);
 
     }
 }

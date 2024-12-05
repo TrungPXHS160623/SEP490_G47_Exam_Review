@@ -35,6 +35,12 @@ namespace WebApi.Controllers
             var examInfo = await _examRepository.GetLeaderExamList(req);
             return Ok(examInfo);
         }
+        [HttpPost("GetDeveloperExamList")]
+        public async Task<IActionResult> GetDeveloperExamList([FromBody] ExamSearchRequest req)
+        {
+            var examInfo = await _examRepository.GetDeveloperExamList(req);
+            return Ok(examInfo);
+        }
 
         [HttpPost("GetLectureExamList")]
         [AllowAnonymous]
@@ -109,8 +115,8 @@ namespace WebApi.Controllers
             return Ok(something);
         }
         [AllowAnonymous]
-        [HttpGet("GetExamByCampusAndSubject/{userID}")]
-        public async Task<IActionResult> GetExamByCampusAndSubject(int userID)
+        [HttpPost("GetExamByCampusAndSubject")]
+        public async Task<IActionResult> GetExamByCampusAndSubject(UserRequest userID)
         {
             var exams = await _examRepository.GetExamByCampusAndSubject(userID);
             return Ok(exams);
@@ -124,8 +130,8 @@ namespace WebApi.Controllers
             return Ok(exams);
         }
         [AllowAnonymous]
-        [HttpGet("GetDepartmentReport/{userID}")]
-        public async Task<IActionResult> GetDepartmentReport(int userID)
+        [HttpPost("GetDepartmentReport")]
+        public async Task<IActionResult> GetDepartmentReport(UserRequest userID)
         {
             var exams = await _examRepository.GetDepartmentReport(userID);
             return Ok(exams);

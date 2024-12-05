@@ -95,7 +95,6 @@ namespace WebApi.Repository
 
                 var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                 exam.GeneralFeedback = reportRequest.Summary;
-                exam.TestTimeInMinute = reportRequest.TestTimeInMinute;
                 if (isSubmit)
                 {
                     exam.ExamStatusId = 5;  // Đặt trạng thái là đã nộp

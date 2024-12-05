@@ -6,7 +6,7 @@
 
         public string? ExamCode { get; set; }
 
-        public string? ExamDuration { get; set; }
+        public long? ExamDuration { get; set; }
 
         public string? ExamType { get; set; }
 
