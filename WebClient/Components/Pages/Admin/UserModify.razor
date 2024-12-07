@@ -70,27 +70,6 @@ else
                 }
             </div>
         </div>
-        @if (user.RoleId != null && roleList.FirstOrDefault(x => x.RoleId == user.RoleId)?.RoleName == "Curriculum Development")
-        {
-            <div class="mb-4 d-flex align-items-baseline">
-                <label class="col-4 text-end me-4">Subject:</label>
-                <div class="col-8">
-                    @if (!isAddOrEdit)
-                    {
-                    }
-                    else
-                    {
-                        <MudSelect T="List<int>" @bind-Value="user.SelectedSubjectIds" MultiSelection="true" Variant="Variant.Outlined" Margin="Margin.Dense">
-                            @foreach (var item in subjectList)
-                            {
-                                <MudSelectItem T="int?" Value="@item.SubjectId">@item.SubjectName</MudSelectItem>
-                            }
-                        </MudSelect>
-                    }
-                </div>
-            </div>
-        }
-
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Campus:</label>
             <div class="col-8">
@@ -182,7 +161,6 @@ else
 
                 await GetCampus();
                 await GetRoles();
-                await GetData();
 
                 if (Layout != null)
                 {
@@ -193,15 +171,6 @@ else
                     Layout.RefreshLayout();
                 }
             }
-        }
-    }
-    public async Task GetData()
-    {
-        var resp = await SubjectService.GetSubjects();
-
-        if (resp.IsSuccessful)
-        {
-            subjectList = resp.Items;
         }
     }
     private async Task FetchUserDetails()

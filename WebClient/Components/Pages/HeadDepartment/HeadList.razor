@@ -84,6 +84,12 @@
                     }
                     </PagerContent> *@
                 </MudTable>
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="!(ExamList.Any(x => x.ExamStatusId == 3))">
+                        Notify Examiner
+                    </MudButton>
+                </div>
+
                 @if (ExamList.Count == 0)
 
                 {
@@ -98,11 +104,10 @@
 @code {
     [CascadingParameter]
     public MainLayout Layout { get; set; }
-
     public List<LeaderExamResponse> ExamList = new List<LeaderExamResponse>();
     public List<Semester> semesters = new List<Semester>();
     public List<ExamStatus> statusList = new List<ExamStatus>();
-
+    private string Mail { get; set; } = string.Empty;
     public ExamSearchRequest request = new();
 
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
@@ -126,15 +131,15 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
             request.UserId = userId;
-
             var response = await MenuService.CheckAccess(userId, 4);
-
-            if (!response.IsSuccessful)
+            var response2 = await MenuService.CheckAccess(userId, 18);
+            Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (!response.IsSuccessful && !response2.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }
+
             else
             {
                 await GetData();
@@ -153,6 +158,74 @@
                     Layout.RefreshLayout();
                 }
             }
+        }
+    }
+    private async Task NotifyExaminer()
+    {
+        // Lọc danh sách các đề với trạng thái = 2
+        var examsToNotify = ExamList.Where(x => x.ExamStatusId == 3).ToList();
+        if (examsToNotify.Count > 0)
+        {
+            var mailList = examsToNotify.GroupBy(x => x.CreaterName).Select(x => x.Key).ToList();
+            List<MailUtil> list = new();
+            foreach (var item in mailList)
+            {
+                var mail = new MailUtil
+                    {
+                        MailTo = item
+                    };
+                list.Add(mail);
+            }
+            // Tạo nội dung email
+
+            var examCodes = string.Join("<br>", examsToNotify.Select(x => x.ExamCode));
+            var assignedLecturer = string.Join("<br>", examsToNotify.Select(x => x.AssignedLectureName ?? "N/A"));
+            var estimatedTimes = string.Join("<br>", examsToNotify.Select(x => x.EstimatedTimeTest.HasValue ? x.EstimatedTimeTest.Value.ToString("yyyy-MM-dd HH:mm") : "N/A"));
+
+            var mailModel = new MailModel
+                {
+                    MailList = list, // Thay bằng email examiner
+                    Subject = "Notification on Exam Status Update",
+                    Body = $@"
+                    <p><b>Dear Examiner,</b></p>
+                    <p>We would like to inform you that the following exams are now assigned:</p>
+                    <table border='1' style='border-collapse: collapse; width: 100%;'>
+                        <thead>
+                            <tr>
+                                <th>Exam Code</th>
+                                <th>Assigned Lecturer</th>
+                                <th>Estimated Time Test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{examCodes}</td>
+                                <td>{assignedLecturer}</td>
+                                <td>{estimatedTimes}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Please visit the <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a> for more details.</p>
+                    <p>Thank you for your support!</p>
+                    <p><b>From:</b> {Mail}</p><br>
+                    <p><b>Exam Review System</b></p><br>"
+                };
+
+            // Gửi mail
+            var result = await this.MailService.SendMail(mailModel);
+
+            if (result.IsSuccessful)
+            {
+                Snackbar.Add("Notification sent to Examiner successfully.", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Failed to send notification to Examiner.", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("No exams with status 'Assigned' to notify.", Severity.Warning);
         }
     }
 

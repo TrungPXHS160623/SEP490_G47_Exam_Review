@@ -11,7 +11,7 @@
                     <MudTh>Full Name</MudTh>
                     <MudTh>Mail Fe</MudTh>
                     <MudTh>Phone Number</MudTh>
-                    <MudTh>Number of Exams Planed</MudTh>
+                    <MudTh>Time Test</MudTh>
                     <MudTh>Action</MudTh>
                     <MudTh>Assign Lecturer</MudTh>
                 </HeaderContent>
@@ -21,9 +21,8 @@
                     <MudTd>@item.UserName</MudTd>
                     <MudTd>@item.FeEmail</MudTd>
                     <MudTd>@item.Tel</MudTd>
-                    <MudTd>@item.AssignedExamCount</MudTd>
+                    <MudTd>@item.TotalDuration</MudTd>
                     <MudTd>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" @onclick="() => ModifyLecturer(item.UserId)"></MudIconButton>
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => RemoveLecturer(item.UserId)"></MudIconButton>
                     </MudTd>
                     <MudTd>

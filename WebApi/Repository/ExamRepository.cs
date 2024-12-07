@@ -242,7 +242,6 @@ public class ExamRepository : IExamRepository
                         from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where ex.ExamId == examId
-                        && cus.IsProgramer == false
 
                         select new LeaderExamResponse
                         {
@@ -411,7 +410,7 @@ public class ExamRepository : IExamRepository
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
                             ExamDate = ex.ExamDate,
-                            StartDate = ex.StartDate,
+                            EstimatedTimeTest = ex.EstimatedTimeTest,
                             ExamCode = ex.ExamCode,
                             CampusName = ca.CampusName,
                             ExamType = ex.ExamType,
@@ -449,9 +448,8 @@ public class ExamRepository : IExamRepository
                               join c in _context.Campuses on e.CampusId equals c.CampusId
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
-                              join cuf in _context.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
                               join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
-                              where cuf.UserId == req.UserId ||(cus.UserId ==req.UserId)
+                              where (cus.UserId ==req.UserId)
                               && e.ExamStatusId != 1
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
@@ -550,7 +548,7 @@ public class ExamRepository : IExamRepository
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
                               join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
-                              where cus.UserId == req.UserId
+                              where e.AssignedUserId == req.UserId
                               && e.ExamStatusId != 1 && e.ExamStatusId != 2
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
@@ -568,7 +566,7 @@ public class ExamRepository : IExamRepository
                                   HeadDepartmentName = u.Mail,
                                   HeadDepartmentId = u.UserId,
                                   UpdateDate = e.UpdateDate
-                              }).ToListAsync();
+                              }).Distinct().ToListAsync();
 
             return new ResultResponse<LectureExamResponse>
             {

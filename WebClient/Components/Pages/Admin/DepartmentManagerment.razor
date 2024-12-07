@@ -66,7 +66,7 @@
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
 
-            var response = await MenuService.CheckAccess(userId, 17);
+            var response = await MenuService.CheckAccess(userId, 16);
 
             if (!response.IsSuccessful)
             {
