@@ -12,6 +12,7 @@
         public string? CampusName { get; set; }
         public DateTime? UpdateDt { get; set; }
         public int? AssignedExamCount { get; set; }
+        public long? TotalDuration { get; set; }
         public bool? IsSelect { get; set; }
         /* public override bool Equals(object obj)
          {

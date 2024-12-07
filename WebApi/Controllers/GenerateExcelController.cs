@@ -24,8 +24,9 @@ namespace WebApi.Controllers
             try
             {
                 var excelData = _generateExcelRepository.GenerateExcel();
+                string fileName = "DanhSachThongKe.xlsx";
 
-                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ExamData_All.xlsx");
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
             {
@@ -43,8 +44,9 @@ namespace WebApi.Controllers
             try
             {
                 var excelData = _generateExcelRepository.GenerateExcelTime();
+                string fileName = "DanhSachThoiGianTest.xlsx";
 
-                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ExportTime_All.xlsx");
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
             {
@@ -63,8 +65,9 @@ namespace WebApi.Controllers
             try
             {
                 var excelData = _generateExcelRepository.GenerateExcelByStatus(userid);
+                string fileName = "ChiTietDe.xlsx";
 
-                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ExportData.xlsx");
+                return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception ex)
             {

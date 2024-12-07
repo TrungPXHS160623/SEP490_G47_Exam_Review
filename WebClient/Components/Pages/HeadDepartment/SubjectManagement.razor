@@ -73,18 +73,18 @@
             UserId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
             var response = await MenuService.CheckAccess(UserId, 15);
             var cam = await UserService.GetByIdAsync(UserId);
-            if (cam.IsSuccessful&& cam.Item.RoleId ==5)
-            {
-                isProgramer = true;
-            }
-            await GetSubject();
-
-            if (!response.IsSuccessful)
+            var response2 = await MenuService.CheckAccess(UserId, 19);
+            if (!response.IsSuccessful && !response2.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }
             else
             {
+                await GetSubject();
+                if (cam.Item != null && cam.Item.RoleId==5)
+                {
+                    isProgramer = true;
+                }
                 if (Layout != null)
                 {
                     Layout.Header = "Home";

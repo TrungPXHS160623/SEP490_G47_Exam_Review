@@ -39,7 +39,7 @@
 
     [Parameter]
     public List<SubjectResponse> SubjectList { get; set; } = new List<SubjectResponse>();
-
+    private AddLecturerSubjectRequest user = new();
     [Parameter]
     public SubjectDepartmentRequest request { get; set; } = new();
 
@@ -48,10 +48,13 @@
     private void Cancel() => MudDialog.Cancel();
 
     private bool _processing = false;
-
+    private int UserId { get; set; }
     protected override async Task OnInitializedAsync()
     {
-
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+        request.UserID = userId;
     }
 
     private Task<IEnumerable<int>> Search(string value,CancellationToken token)

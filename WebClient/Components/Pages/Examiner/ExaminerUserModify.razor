@@ -58,11 +58,11 @@ else
             <div class="col-8">
                  @if (!isAddOrEdit)
                 {
-                <MudText>@(user.FacultyName)</MudText>
+                    <MudText>@(facutyResponses.FirstOrDefault(x => x.FacultyId == user.FacultyId)?.FacultyName ?? "N/A")</MudText>
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense"@onchange="OnFacultyChange">
                         @foreach (var item in facutyResponses)
                         {
                             <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
@@ -72,7 +72,29 @@ else
                 }
             </div>
         </div>
-
+                   <div class="mb-4 row">
+            <label class="col-4 text-end">Subject:</label>
+            <div class="col-8">
+                <MudSelect T="SubjectResponse"
+                           @bind-SelectedValues=@user.SubjectResponses
+                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+                           MultiSelection="true"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomCenter"
+                           Disabled=@(!isAddOrEdit)
+                           HelperText="Only display avaliable subject">
+                    @if (subjectList.Count() > 0)
+                    {
+                        @foreach (var item in subjectList)
+                        {
+                            <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+                <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+            </div>
+        </div>
         <div class="mb-4 d-flex align-items-center">
             <label class="col-4 text-end me-4">Active:</label>
             <div class="col-8">
@@ -101,6 +123,7 @@ else
     [Parameter]
     public int? UserId { get; set; }
     private UserSubjectRequest user = new();
+    private List<SubjectResponse> subjectList = new();
     private List<UserRole> roleList = new();
     private List<Faculty> facutyResponses = new();
 
@@ -128,23 +151,36 @@ else
                 {
                     await FetchUserDetails();
                     await GetFacutyList();
-
+                    await GetSubjectList();
                 }
                 else
                 {
                     isAddOrEdit = true;
-            }
+                }
                 await GetFacutyList();
-            if (Layout != null)
-            {
-                Layout.Header = "Home";
-                Layout.HeaderLink = "/Home";
-                Layout.SubHeader = "User Management";
-                Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
-                Layout.RefreshLayout();
-            }
+                if (Layout != null)
+                {
+                    Layout.Header = "Home";
+                    Layout.HeaderLink = "/Home";
+                    Layout.SubHeader = "User Management";
+                    Layout.SubHeader1 = UserId != null ? "Edit User" : "Add User";
+                    Layout.RefreshLayout();
+                }
             }
         }
+    }
+    private void OnFacultyChange()
+    {
+        if (user.FacultyId.HasValue)
+        {
+            // Lọc danh sách môn học dựa trên FacultyId
+            subjectList = subjectList.Where(x => x.FacultyId == user.FacultyId.Value).ToList();
+        }
+        else
+        {
+            subjectList = new List<SubjectResponse>(); // Nếu không chọn Faculty
+        }
+        StateHasChanged(); // Cập nhật giao diện
     }
 
     private async Task FetchUserDetails()
@@ -195,7 +231,14 @@ else
             NavManager.NavigateTo("/Examiner/HeadDeparmentManagement");
         }
     }
-
+    private async Task GetSubjectList()
+    {
+        var result = await SubjectService.GetSubjects();
+        if (result != null)
+        {
+            subjectList = result.Items;
+        }
+    }
 
     private void Cancel()
     {

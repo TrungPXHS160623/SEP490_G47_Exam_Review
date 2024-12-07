@@ -18,45 +18,50 @@ namespace WebApi.Repository
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (ExcelPackage package = new ExcelPackage())
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Exams");
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Users");
 
                 // Đặt tiêu đề
                 worksheet.Cells[1, 1].Value = "STT";
                 worksheet.Cells[1, 2].Value = "Giảng viên";
-                worksheet.Cells[1, 3].Value = "Kì";
-                worksheet.Cells[1, 4].Value = "Cơ Sở";
+                worksheet.Cells[1, 3].Value = "Email";
+                worksheet.Cells[1, 4].Value = "Số bài được giao";
                 worksheet.Cells[1, 5].Value = "Tổng thời gian";
+
+                // Lấy kỳ hiện tại
                 var currentSemester = _context.Semesters
-                .FirstOrDefault(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
+                    .FirstOrDefault(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
                 if (currentSemester == null)
                 {
                     throw new Exception("Không tìm thấy kỳ hiện tại.");
                 }
-                // Lấy dữ liệu từ bảng Exams và các bảng liên quan
-                var exams = _context.Exams
-                    .Include(e => e.Campus)
-                    .Include(e => e.Subject)
-                    .Include(e => e.Creater)
-                    .Include(e => e.ExamStatus)
-                    .Include(e => e.Reports)
-                     .Where(e => e.SemesterId == currentSemester.SemesterId)// Truy vấn trực tiếp các báo cáo
+
+                // Lấy dữ liệu từ bảng Users và Exams
+                var usersData = _context.Users
+                    .Where(u => _context.Exams.Any(e => e.AssignedUserId == u.UserId && e.SemesterId == currentSemester.SemesterId))
+                    .Select(u => new
+                    {
+                        u.UserId,
+                        u.FullName,
+                        u.Mail,
+                        AssignedExamCount = _context.Exams.Count(e => e.AssignedUserId == u.UserId && e.SemesterId == currentSemester.SemesterId),
+                        TotalDuration = _context.Exams
+                            .Where(e => e.AssignedUserId == u.UserId && e.SemesterId == currentSemester.SemesterId)
+                            .Sum(e => e.ExamDuration)
+                    })
                     .ToList();
+
                 int row = 2;
                 int index = 1;
-                var totalDuration = exams
-                .Where(e => e.AssignedUserId != null)  // Lọc các bài thi có assignedUser
-                .Sum(e => e.ExamDuration);  // Tính tổng thời gian thi
-                // Điền dữ liệu
-                foreach (var exam in exams)
+
+                foreach (var user in usersData)
                 {
                     worksheet.Cells[row, 1].Value = index++;
-                    var assignedUser = _context.Users
-                    .FirstOrDefault(u => u.UserId == exam.AssignedUserId);
-                    worksheet.Cells[row, 2].Value = assignedUser?.Mail ?? "N/A";
-                    worksheet.Cells[row, 3].Value = currentSemester.SemesterName;
-                    worksheet.Cells[row, 4].Value = assignedUser.Campus.CampusName;
-                    worksheet.Cells[row, 5].Value = totalDuration;
-                    // Căn lề cho tất cả các cột
+                    worksheet.Cells[row, 2].Value = user.FullName;
+                    worksheet.Cells[row, 3].Value = user.Mail;
+                    worksheet.Cells[row, 4].Value = user.AssignedExamCount;
+                    worksheet.Cells[row, 5].Value = user.TotalDuration;
+
+                    // Căn lề cho các cột
                     for (int col = 1; col <= 5; col++)
                     {
                         worksheet.Cells[row, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
@@ -67,7 +72,7 @@ namespace WebApi.Repository
                 }
 
                 // Căn lề cho hàng tiêu đề
-                for (int col = 1; col <=5; col++)
+                for (int col = 1; col <= 5; col++)
                 {
                     worksheet.Cells[1, col].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
                     worksheet.Cells[1, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
@@ -78,7 +83,9 @@ namespace WebApi.Repository
                 // Chuyển đổi gói thành mảng byte
                 return package.GetAsByteArray();
             }
+
         }
+
         public byte[] GenerateExcel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -203,29 +210,24 @@ namespace WebApi.Repository
                 worksheet.Cells[1, 8].Value = "Chi tiết câu hỏi lỗi";
                 worksheet.Cells[1, 9].Value = "Phương án khắc phục lỗi";
 
-                var campusAndFacultyAccess = _context.CampusUserFaculties
-                   .Where(cuf => cuf.UserId == userId)
-                   .Select(cuf => new { cuf.CampusId, cuf.FacultyId })
-                   .ToList();
-
-                var campusAndSubjectAccess = _context.CampusUserSubjects
-                    .Where(cus => cus.UserId == userId)
-                    .Select(cus => new { cus.CampusId, cus.SubjectId })
-                    .ToList();
-
                 var exams = _context.Exams
                     .Include(e => e.Campus)
                     .Include(e => e.Subject)
                     .Include(e => e.Creater)
                     .Include(e => e.ExamStatus)
                     .Where(e =>
-                        (campusAndFacultyAccess.Any(mcf =>
-                            mcf.CampusId == e.CampusId && mcf.FacultyId == e.Subject.FacultyId) ||
-                        campusAndSubjectAccess.Any(cus =>
-                            cus.CampusId == e.CampusId && cus.SubjectId == e.SubjectId)) &&
+                        _context.CampusUserFaculties.Any(mcf =>
+                            mcf.UserId == userId &&
+                            mcf.CampusId == e.CampusId &&
+                            mcf.FacultyId == e.Subject.FacultyId) ||
+                        _context.CampusUserSubjects.Any(cus =>
+                            cus.UserId == userId &&
+                            cus.CampusId == e.CampusId &&
+                            cus.SubjectId == e.SubjectId) &&
                         (e.ExamStatusId == 6 || e.ExamStatusId == 5)) // Điều kiện trạng thái
                     .OrderByDescending(e => e.Reports.Any()) // Sắp xếp theo việc có báo cáo hay không
                     .ToList();
+
                 int row = 2;
                 int index = 1;
 
@@ -234,9 +236,9 @@ namespace WebApi.Repository
                 {
                     worksheet.Cells[row, 1].Value = index++; // Số thứ tự
 
-                    // Lấy giảng viên tạo đề thi
-                    worksheet.Cells[row, 2].Value = exam.Creater?.Mail ?? "N/A";
-
+                    var assignedUser = _context.Users
+                      .FirstOrDefault(u => u.UserId == exam.AssignedUserId);
+                    worksheet.Cells[row, 2].Value = assignedUser?.Mail ?? "N/A";
                     // Điền các thông tin khác về kỳ thi
                     worksheet.Cells[row, 3].Value = exam.Subject.SubjectCode; // Môn thi
                     worksheet.Cells[row, 4].Value = exam.ExamDuration; // Đợt thi
