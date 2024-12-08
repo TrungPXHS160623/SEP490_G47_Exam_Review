@@ -383,7 +383,6 @@ namespace WebApi.Repository
                                     isHeaderSkipped = true;
                                     continue;
                                 }
-
                                 var subjectImportRequest = new SubjectImportRequest
                                 {
                                     SubjectCode = reader.GetValue(1)?.ToString(),

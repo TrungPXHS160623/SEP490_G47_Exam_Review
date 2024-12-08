@@ -266,8 +266,9 @@
             try
             {
                 using var stream = new MemoryStream(response.Item);
+                var fileName = "ExportedExams.xlsx"; // Desired filename
                 var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(stream.ToArray())}";
-                await js.InvokeVoidAsync("open", fileUrl);
+                await js.InvokeVoidAsync("open", fileUrl, fileName);
             }
             catch (Exception ex)
             {

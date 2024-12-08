@@ -918,7 +918,6 @@ namespace WebApi.Repository
                     using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
                         bool isHeaderSkipped = false;
-
                         do
                         {
                             while (reader.Read())
@@ -935,7 +934,7 @@ namespace WebApi.Repository
                                     reader.IsDBNull(2) || string.IsNullOrWhiteSpace(reader.GetValue(2)?.ToString()))
                                 {
                                     // Nếu dòng rỗng, in thông báo để dễ kiểm tra, bỏ qua
-                                    Console.WriteLine("Dòng rỗng hoặc thiếu dữ liệu, bỏ qua.");
+                                    errors.Add("Dòng rỗng hoặc thiếu dữ liệu, bỏ qua.");
                                     continue;
                                 }
 
@@ -954,11 +953,9 @@ namespace WebApi.Repository
                                     : null, // Nếu không phải Examiner hoặc Head of Department, gán null cho FacultyOrSubjectInCharge
                                 };
 
-
                                 var errorMessages = new List<string>();
 
-                                //kiểm tra định dang của mail
-
+                                // Kiểm tra định dạng của email
                                 if (userImportRequest.Mail.Length > 255)
                                 {
                                     errorMessages.Add("Email must not exceed 255 characters.");
@@ -969,20 +966,17 @@ namespace WebApi.Repository
                                     errorMessages.Add($"This email '{userImportRequest.Mail}' is not valid.");
                                 }
 
-                                // kiểm tra định dạng của fullName
+                                // Kiểm tra định dạng của FullName
                                 if (userImportRequest.FullName.Length > 100)
                                 {
                                     errorMessages.Add("Full Name must not exceed 100 characters.");
                                 }
 
-
-                                // kiểm tra định dạng của phoneNumber
+                                // Kiểm tra định dạng của PhoneNumber
                                 if (!IsValidPhoneNumber(userImportRequest.PhoneNumber))
                                 {
                                     errorMessages.Add($"This PhoneNumber '{userImportRequest.PhoneNumber}' is not valid. Please ensure it follows Vietnamese standards.");
                                 }
-
-
 
                                 // Kiểm tra vai trò của người dùng để quyết định vai trò nào được phép import
                                 string? targetRoleName = currentUserRoleName switch
@@ -1010,24 +1004,23 @@ namespace WebApi.Repository
                                     .FirstOrDefaultAsync();
 
                                 // Xử lý DateOfBirth
-
-
                                 DateTime? dobValue = null;
                                 if (!string.IsNullOrEmpty(userImportRequest.DateOfBirth))
                                 {
                                     // Thử phân tích cú pháp với định dạng cụ thể
                                     var formats = new[]
                                     {
-                                        "dd-MM-yyyy",
-                                        "d/M/yyyy",
-                                        "d/MM/yyyy",
-                                        "dd/MM/yyyy",
-                                        "MM-dd-yyyy",
-                                        "dd/MM/yyyy hh:mm:ss tt",
-                                        "d/MM/yyyy hh:mm:ss tt",
-                                        "dd/M/yyyy hh:mm:ss tt",
-                                        "d/M/yyyy hh:mm:ss tt"
-                                    };
+                    "dd-MM-yyyy",
+                    "d/M/yyyy",
+                    "d/MM/yyyy",
+                    "dd/MM/yyyy",
+                    "MM-dd-yyyy",
+                    "dd/MM/yyyy hh:mm:ss tt",
+                    "d/MM/yyyy hh:mm:ss tt",
+                    "dd/M/yyyy hh:mm:ss tt",
+                    "d/M/yyyy hh:mm:ss tt"
+                };
+
                                     if (DateTime.TryParseExact(userImportRequest.DateOfBirth, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDob))
                                     {
                                         dobValue = parsedDob;
@@ -1050,7 +1043,7 @@ namespace WebApi.Repository
                                     }
                                 }
 
-                                // Xử lý chuyển đổi Gender
+                                // Xử lý Gender
                                 bool? gender = null;
                                 if (!string.IsNullOrEmpty(userImportRequest.Gender))
                                 {
@@ -1071,7 +1064,6 @@ namespace WebApi.Repository
                                 // Kiểm tra vai trò của người dùng để validate EmailFe
                                 if ((targetRoleName == "Lecturer" || targetRoleName == "Head of Department" || targetRoleName == "Examiner"))
                                 {
-                                    // Vai trò "Lecturer" và "Head of Department" thì được nhập EmailFe
                                     if (!string.IsNullOrEmpty(userImportRequest.EmailFe) && !IsValidFeEmail(userImportRequest.EmailFe))
                                     {
                                         errorMessages.Add($"This EmailFe '{userImportRequest.EmailFe}' is not valid.");
@@ -1079,26 +1071,21 @@ namespace WebApi.Repository
                                 }
                                 else
                                 {
-                                    // Các vai trò khác không được nhập EmailFe
                                     if (!string.IsNullOrEmpty(userImportRequest.EmailFe))
                                     {
                                         errorMessages.Add($"Role '{targetRoleName}' is not allowed to have EmailFe.");
                                     }
                                 }
 
-
                                 // Tạo khóa duy nhất cho mỗi người dùng
                                 string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
-                                // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
                                 if (existingUserSet.Contains(uniqueKey))
                                 {
                                     errors.Add($"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.");
-                                    continue; // Bỏ qua bản ghi trùng lặp
+                                    continue;
                                 }
 
-                                // Thêm vào HashSet nếu không trùng lặp
                                 existingUserSet.Add(uniqueKey);
-                                // Kiểm tra xem người dùng đã tồn tại hay chưa
 
                                 var normalizedMail = userImportRequest.Mail?.Trim().ToLower();
                                 var normalizedFullName = userImportRequest.FullName?.Trim().ToLower();
@@ -1121,8 +1108,6 @@ namespace WebApi.Repository
                                     continue;
                                 }
 
-
-
                                 // Tạo User nếu không có lỗi
                                 var user = new User
                                 {
@@ -1143,21 +1128,16 @@ namespace WebApi.Repository
 
                                 try
                                 {
-                                    // Lưu người dùng vào dbContext
                                     await dbContext.Users.AddAsync(user);
                                     await dbContext.SaveChangesAsync();
 
-
-                                    // Kiểm tra quyền của người dùng hiện tại
                                     if (currentUserRoleName == "Admin")
                                     {
-                                        // Với quyền Admin, chỉ lưu user vào hệ thống mà không cần xử lý FacultyOrSubjectInCharge
+                                        // Không xử lý FacultyOrSubjectInCharge với Admin
                                         await dbContext.SaveChangesAsync();
-
                                     }
                                     else
                                     {
-                                        // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" (cột 7)
                                         var facultyOrSubjectList = userImportRequest.FacultyOrSubjectInCharge
                                             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Select(f => f.Trim().ToLower())
@@ -1167,23 +1147,19 @@ namespace WebApi.Repository
 
                                         if (currentUserRoleName == "Examiner")
                                         {
-                                            // Gọi phương thức ImportForExaminer để xử lý nhập dữ liệu cho Examiner
                                             importSuccess = await ImportForExaminer(facultyOrSubjectList, user, currentUserCampusId);
                                         }
                                         else if (currentUserRoleName == "Head of Department")
                                         {
-                                            // Gọi phương thức ImportForHeadOfDepartment để xử lý nhập dữ liệu cho Head of Department
                                             importSuccess = await ImportForHeadOfDepartment(facultyOrSubjectList, user, currentUserCampusId);
                                         }
 
                                         if (importSuccess)
                                         {
-                                            // Nếu nhập dữ liệu thành công, lưu thay đổi vào DB
                                             await dbContext.SaveChangesAsync();
                                         }
                                         else
                                         {
-                                            // Nếu không thành công, có thể báo lỗi và không lưu thay đổi
                                             errors.Add("Nhập dữ liệu không thành công. Quá trình bị hủy.");
                                         }
                                     }
@@ -1191,12 +1167,12 @@ namespace WebApi.Repository
                                 }
                                 catch (Exception ex)
                                 {
-                                    // Xử lý lỗi
                                     errors.Add($"Đã xảy ra lỗi: {ex.Message}");
                                 }
                             }
                         } while (reader.NextResult());
                     }
+
                 }
                 if (errors.Any())
                 {
