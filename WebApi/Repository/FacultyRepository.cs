@@ -34,8 +34,8 @@ namespace WebApi.Repository
                 }
 
                 // Kiểm tra xem học kỳ đã tồn tại hay chưa
-                var existingSemester = await DBcontext.Semesters
-                    .FirstOrDefaultAsync(s => s.SemesterName == request.FacultyName);
+                var existingSemester = await DBcontext.Faculties
+                    .FirstOrDefaultAsync(s => s.FacultyName == request.FacultyName);
                 if (existingSemester != null)
                 {
                     return new RequestResponse

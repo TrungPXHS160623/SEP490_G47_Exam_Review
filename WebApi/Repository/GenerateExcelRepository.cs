@@ -108,7 +108,6 @@ namespace WebApi.Repository
                 worksheet.Cells[1, 11].Value = "Phương án khắc phục lỗi";
                 worksheet.Cells[1, 12].Value = "Ngày sửa";
                 worksheet.Cells[1, 13].Value = "Trạng Thái";
-                worksheet.Cells[1, 14].Value = "Thời gian Review";
                 var currentSemester = _context.Semesters
                 .FirstOrDefault(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
                 if (currentSemester == null)
@@ -140,7 +139,6 @@ namespace WebApi.Repository
                     worksheet.Cells[row, 7].Value = exam.ExamCode; // Mã thi
                     worksheet.Cells[row, 8].Value = exam.Campus.CampusName; // Cơ sở
                     worksheet.Cells[row, 9].Value = exam.Subject.SubjectName; // Tên môn
-                    worksheet.Cells[row, 14].Value = exam.TestTimeInMinute; // Thời Gian Test
 
                     // Lấy thông tin chi tiết báo cáo và phương án khắc phục từ bảng Reports
                     var reports = exam.Reports.ToList();

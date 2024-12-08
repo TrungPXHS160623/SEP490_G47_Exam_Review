@@ -73,11 +73,24 @@
         </div>
         @if (exam.AssignStatusId == 3)
         {
-            <MudButton Class="me-4" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" Variant="Variant.Filled" OnClick="SaveAssignDate">Save</MudButton>
-            <MudButton Color="Color.Default" Variant="Variant.Filled" OnClick="GoBack">Back</MudButton>
+            <MudTooltip Text="Select a date before saving" >
+                <MudButton Class="me-4"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Disabled="@(!exam.EstimatedTimeTest.HasValue)"
+                           OnClick="SaveAssignDate">
+                    Save
+                </MudButton>
+            </MudTooltip>
+            <MudButton Color="Color.Default"
+                       Variant="Variant.Filled"
+                       OnClick="GoBack">
+                Back
+            </MudButton>
         }
     </div>
-    @if (exam.AssignmentDate != null && exam.AssignStatusId != 3)
+    @if (exam.EstimatedTimeTest != null && exam.AssignStatusId != 3)
     {
         <div class="custom-box">
             <h2 class="mb-4">Exam Report Detail</h2>

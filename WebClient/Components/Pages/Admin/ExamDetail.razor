@@ -10,38 +10,42 @@
     }
 </style>
 
-    <MudDialog>
-        <DialogContent>
-            <EditForm Model="exam" OnValidSubmit="DialogConfirm">
-    <FluentValidationValidator />
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="exam" OnValidSubmit="DialogConfirm">
+            <FluentValidationValidator />
             <div class="form-group mb-4">
                 <label class="col-4 text-end me-4">Exam Code:</label>
                 <MudText>@exam.ExamCode</MudText>
-                </div>
-                <div class="form-group mb-4">
-                    <label class="col-4 text-end  me-4">Subject Name:</label>
-                    <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
-                </div>
-                <div class="form-group mb-4">
-                    <label class="col-4 text-end  me-4">Exam Creater:</label>
-                    <MudText>@(exam.CreaterName ?? "N/A")</MudText>
-                </div>
-                <div class="form-group mb-4">
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-4 text-end  me-4">Subject Name:</label>
+                <MudText>@($"[{exam.SubjectCode}] {exam.SubjectName}")</MudText>
+            </div>
+            <div class="form-group mb-4">
+                <label class="col-4 text-end  me-4">Exam Creater:</label>
+                <MudText>@(exam.CreaterName ?? "N/A")</MudText>
+            </div>
+            <div class="form-group mb-4">
                 <label class="col-4 text-end  me-4">Lecturer :</label>
-                    <div>
-                        <MudSelect @bind-Value=exam.AssignedLectureId
-                                   Variant="Variant.Outlined"
-                                   Margin="Margin.Dense"
-                                   AnchorOrigin="Origin.BottomCenter"
-                                   Placeholder="Choose Lecture to Review"
-                                   HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")"
-                                   For="@(() => exam.AssignedLectureId)">
-                            @if (LectureList.Count() > 0)
+                <div>
+                    <MudSelect @bind-Value=exam.AssignedLectureId
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Placeholder="Choose Lecture to Review"
+                               HelperText="@($"List of lecturers teaching subject {exam.SubjectCode}")"
+                               For="@(() => exam.AssignedLectureId)">
+                        @if (LectureList.Count() > 0 && LectureList!=null)
                         {
                             @foreach (var item in LectureList)
                             {
                                 <MudSelectItem T=int? Value="@item.UserId">@item.Email</MudSelectItem>
                             }
+                        }
+                        else
+                        {
+                            <MudText Class="ms-2">No Data</MudText>
                         }
                     </MudSelect>
                 </div>
@@ -61,15 +65,15 @@
                 <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
             </div>
         </EditForm>
-        </DialogContent>
-    </MudDialog>
+    </DialogContent>
+</MudDialog>
 
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public int? ExamId { get; set; }
+    public int ExamId { get; set; }
 
     private bool _processing = false;
 
@@ -85,9 +89,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
 
-        var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
+        var resp = await this.ExamService.GetLeaderExamById(ExamId);
 
         if (resp.IsSuccessful)
         {
@@ -97,8 +100,7 @@
                 CurrentReviewer = exam.AssignedLectureId;
             }
         }
-
-        var result = await UserService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
+        var result = await UserService.GetLectureListBySubject(exam.SubjectId, exam.CampusId);
         if (result != null)
         {
             LectureList = result.Items;

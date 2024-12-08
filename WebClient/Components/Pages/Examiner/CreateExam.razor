@@ -82,7 +82,7 @@
 
             var response = await MenuService.CheckAccess(userId, 10);
             var response2 = await MenuService.CheckAccess(userId, 21);
-            if (!response.IsSuccessful || !response2.IsSuccessful)
+            if (!response.IsSuccessful && !response2.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }

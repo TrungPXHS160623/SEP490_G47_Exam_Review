@@ -10,7 +10,7 @@
 
         public string? ExamType { get; set; }
 
-        public int? SubjectId { get; set; }
+        public int SubjectId { get; set; }
 
         public string? SubjectCode { get; set; }
 
@@ -28,7 +28,7 @@
 
         public string? AssignedLectureName { get; set; }
 
-        public int? CampusId { get; set; }
+        public int CampusId { get; set; }
 
         public string? CampusName { get; set; }
         public string? SemesterName { get; set; }
@@ -36,9 +36,6 @@
         public int? ExamStatusId { get; set; }
 
         public string? ExamStatusContent { get; set; }
-
-        public int? AssignmentId { get; set; }
-
         public DateTime? EstimatedTimeTest { get; set; }
         public DateTime? ExamDate { get; set; }
         public DateTime? StartDate { get; set; }

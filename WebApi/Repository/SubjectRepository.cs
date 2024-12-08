@@ -639,12 +639,15 @@ namespace WebApi.Repository
                                    }).ToListAsync();
 
 
+                var facultyId = await DBcontext.CampusUserFaculties
+                  .Where(cuf => cuf.UserId == userId)
+                  .Select(cuf => cuf.FacultyId)
+                  .FirstOrDefaultAsync();
+
                 var sList2 = await (from s in DBcontext.Subjects
                                     join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
-                                    join cuf in DBcontext.CampusUserFaculties
-                                        on s.FacultyId equals cuf.FacultyId into cufGroup
-                                    from cuf in cufGroup.DefaultIfEmpty() // Left join
-                                    where cuf == null || cuf.UserId != userId
+                                    where s.FacultyId == facultyId && !DBcontext.CampusUserSubjects
+                                        .Any(cus => cus.UserId == userId && cus.SubjectId == s.SubjectId)
                                     select new SubjectResponse
                                     {
                                         SubjectId = s.SubjectId,

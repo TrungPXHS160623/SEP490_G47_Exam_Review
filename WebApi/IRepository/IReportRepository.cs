@@ -13,8 +13,5 @@ namespace WebApi.IRepository
 
         Task<RequestResponse> UploadFiles(int reportId, IList<IFormFile> files);
 
-
-        Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int assignmentId);
-
     }
 }
