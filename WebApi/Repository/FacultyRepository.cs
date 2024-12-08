@@ -300,7 +300,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete Deparment {data.FacultyName}");
+                    //await logRepository.LogAsync($"Delete Deparment {data.FacultyName}");
 
                     return new RequestResponse
                     {

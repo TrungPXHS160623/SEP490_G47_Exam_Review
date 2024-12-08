@@ -92,12 +92,17 @@ namespace WebApi.Repository
 
                 }
 
-
                 var exam = await this.dbContext.Exams.FirstOrDefaultAsync(x => x.ExamId == reportRequest.ExamId);
                 exam.GeneralFeedback = reportRequest.Summary;
                 if (isSubmit)
                 {
-                    exam.ExamStatusId = 5;  // Đặt trạng thái là đã nộp
+                    if(reportRequest.ReportList.Count > 0)
+                    {
+                        exam.ExamStatusId = 5; 
+                    } else
+                    {
+                        exam.ExamStatusId = 6;  
+                    }
                     exam.UpdateDate = DateTime.Now;  // Cập nhật thời gian submit
                 }
 

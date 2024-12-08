@@ -43,7 +43,7 @@ namespace WebApi.Repository
 
                     foreach (var item in mail.MailList)
                     {
-                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, mail.Subject, string.Format(mail.Body,item.MailTo)))
+                        using (var message = new MailMessage(emailSettings.Username, item.MailTo, mail.Subject, string.Format(mail.Body, item.MailTo)))
                         {
                             message.IsBodyHtml = true;
                             message.BodyEncoding = Encoding.UTF8;
@@ -91,6 +91,43 @@ namespace WebApi.Repository
                 };
                 return response;
             }
+        }
+
+        public async Task<RequestResponse> TestSendMail()
+        {
+            var emailSettings = new EmailSettings
+            {
+                Host = this.Configuration["BusinessEmail:Host"],
+                Port = int.Parse(this.Configuration["BusinessEmail:Port"]),
+                Subject = this.Configuration["BusinessEmail:Subject"],
+                Message = this.Configuration["BusinessEmail:Message"],
+                Username = this.Configuration["BusinessEmail:Username"],
+                Password = this.Configuration["BusinessEmail:Password"],
+            };
+
+            using (var client = new SmtpClient(emailSettings.Host, emailSettings.Port))
+            {
+                client.EnableSsl = true;
+                client.Credentials = new NetworkCredential(emailSettings.Username, emailSettings.Password);
+
+                using (var message = new MailMessage(emailSettings.Username, "hunglthe160235@fpt.edu.vn", "Test", "Test"))
+                {
+                    message.IsBodyHtml = true;
+                    message.BodyEncoding = Encoding.UTF8;
+                    message.SubjectEncoding = Encoding.UTF8;
+                    message.ReplyToList.Add(new MailAddress(emailSettings.Username));
+                    message.Sender = new MailAddress(emailSettings.Username);
+                    message.IsBodyHtml = true;
+
+                    await client.SendMailAsync(message).ConfigureAwait(false);
+                }
+            }
+
+            return new RequestResponse
+            {
+                IsSuccessful = true,
+                Message = "Send Mail Successfully"
+            };
         }
     }
 }

@@ -10,11 +10,13 @@ namespace WebApi.Controllers
     [ApiController]
     public class ReportController : ApiBaseController
     {
+        private readonly ILogHistoryRepository _logHistoryRepository;
         private readonly IReportRepository reportRepository;
 
-        public ReportController(IReportRepository reportRepository)
+        public ReportController(IReportRepository reportRepository, ILogHistoryRepository logHistoryRepository)
         {
             this.reportRepository = reportRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
 
         [HttpPost("SaveReport/{isSubmit:bool}")]
@@ -22,6 +24,11 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateReport([FromBody] LectureExamResponse reportRequest, bool isSubmit)
         {
             var data = await reportRepository.AddEditReport(reportRequest, isSubmit);
+
+            if(isSubmit)
+            {
+                await _logHistoryRepository.LogAsync($"Submit report with exam code : {reportRequest.ExamCode}", JwtToken);
+            }
             return Ok(data);
         }
 

@@ -113,7 +113,7 @@ namespace WebApi.Repository
 
                     await this.dbContext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete subject [{data.SemesterName}] ");
+                    //await logRepository.LogAsync($"Delete subject [{data.SemesterName}] ");
 
                     return new RequestResponse
                     {

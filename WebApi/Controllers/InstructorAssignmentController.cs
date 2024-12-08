@@ -7,17 +7,20 @@ namespace WebApi.Controllers
 {
     public class InstructorAssignmentController : ApiBaseController
     {
+        private readonly ILogHistoryRepository _logHistoryRepository;
         private readonly IInstructorAssignmentRepository _instructorAssignmentRepository;
 
-        public InstructorAssignmentController(IInstructorAssignmentRepository instructorAssignmentRepository)
+        public InstructorAssignmentController(IInstructorAssignmentRepository instructorAssignmentRepository, ILogHistoryRepository logHistoryRepository)
         {
             _instructorAssignmentRepository = instructorAssignmentRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
 
         [HttpPost("AssignExamToLecture")]
         public async Task<IActionResult> AssignExamToLecture([FromBody] LeaderExamResponse req)
         {
             var data = await this._instructorAssignmentRepository.AssignExamToLecture(req);
+            await _logHistoryRepository.LogAsync($"Assign exam to lecturer {req.AssignedLectureName}", JwtToken);
 
             return Ok(data);
         }
@@ -33,6 +36,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> SetAssignDate([FromBody] LectureExamResponse req)
         {
             var data = await this._instructorAssignmentRepository.SetAssignDate(req);
+            await _logHistoryRepository.LogAsync($"Plan date to review", JwtToken);
 
             return Ok(data);
         }

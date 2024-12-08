@@ -1,6 +1,8 @@
-﻿using Library.Request;
+﻿using Library.Models.Dtos;
+using Library.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using WebApi.IRepository;
 
 namespace WebApi.Controllers
@@ -9,11 +11,14 @@ namespace WebApi.Controllers
     {
         private readonly IUserRepository userRepository;
         private readonly IConfiguration config;
+        private readonly ILogHistoryRepository _logHistoryRepository;
 
-        public UserController(IUserRepository userRepository, IConfiguration config)
+
+        public UserController(IUserRepository userRepository, IConfiguration config, ILogHistoryRepository logHistoryRepository)
         {
             this.userRepository = userRepository;
             this.config = config;
+            _logHistoryRepository = logHistoryRepository;
         }
 
         [AllowAnonymous]
@@ -71,6 +76,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateUser([FromBody] UserRequest user)
         {
             var data = await userRepository.CreateAsync(user);
+            await _logHistoryRepository.LogAsync("Add New User", JwtToken);
 
             return Ok(data);
         }
@@ -79,6 +85,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateHead([FromBody] UserSubjectRequest user)
         {
             var data = await userRepository.CreateHeadAsync(user);
+            await _logHistoryRepository.LogAsync("Add new head of department", JwtToken);
 
             return Ok(data);
         }
@@ -87,6 +94,9 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateUser(UserRequest updateUserRequestDto)
         {
             var updatedUser = await userRepository.UpdateAsync(updateUserRequestDto);
+
+            await _logHistoryRepository.LogAsync($"Update user {updateUserRequestDto.Email}", JwtToken);
+
             return Ok(updatedUser);
         }
         [AllowAnonymous]
@@ -94,6 +104,9 @@ namespace WebApi.Controllers
         public async Task<IActionResult> ExaminerUpdateUserAsync(UserSubjectRequest updateUserRequestDto)
         {
             var updatedUser = await userRepository.ExaminerUpdateUserAsync(updateUserRequestDto);
+
+            await _logHistoryRepository.LogAsync($"Update user {updateUserRequestDto.Email}", JwtToken);
+
             return Ok(updatedUser);
         }
         [AllowAnonymous]
@@ -101,6 +114,9 @@ namespace WebApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var deleteUser = await userRepository.DeleteAsync(id);
+
+            await _logHistoryRepository.LogAsync($"Delete an user", JwtToken);
+
             return Ok(deleteUser);
         }
         [AllowAnonymous]
@@ -117,6 +133,9 @@ namespace WebApi.Controllers
             // Lấy thông tin người dùng hiện tại từ HttpContext
             var currentUser = HttpContext.User;
             var something = await userRepository.ImportUsersFromExcel(file, currentUser);
+
+            await _logHistoryRepository.LogAsync($"Import users from excel", JwtToken);
+
             return Ok(something);
         }
         [AllowAnonymous]
@@ -141,6 +160,7 @@ namespace WebApi.Controllers
             if (response.IsSuccessful)
             {
                 var token = Uri.EscapeDataString(response.Token);
+                await _logHistoryRepository.LogAsync("Login in into system", token);
                 return Redirect($"{config["MainUri"]}home?token={token}");
             }
 
@@ -181,6 +201,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> AddUserToSubject([FromBody] AddLecturerSubjectRequest req)
         {
             var data = await this.userRepository.AddUserToSubject(req);
+            await _logHistoryRepository.LogAsync($"Add user {req.Mail} to subject", JwtToken);
 
             return Ok(data);
         }
@@ -190,6 +211,8 @@ namespace WebApi.Controllers
         {
             var data = await this.userRepository.EditLecturer(req);
 
+            await _logHistoryRepository.LogAsync($"Update information of lecturer {req.Mail}", JwtToken);
+
             return Ok(data);
         }
         [AllowAnonymous]
@@ -197,6 +220,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> RemoveLecture(int userId, int subjectId)
         {
             var data = await this.userRepository.RemoveLecture(userId, subjectId);
+
+            await _logHistoryRepository.LogAsync($"remove lecturer from subject", JwtToken);
 
             return Ok(data);
         }

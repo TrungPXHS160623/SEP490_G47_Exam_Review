@@ -39,7 +39,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync("Add new campus");
+                    //await logRepository.LogAsync("Add new campus");
 
                     return new RequestResponse
                     {
@@ -79,7 +79,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete Campus {data.CampusName}");
+                    //await logRepository.LogAsync($"Delete Campus {data.CampusName}");
 
                     return new RequestResponse
                     {
@@ -207,7 +207,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Update campus {req.CampusName}");
+                    //await logRepository.LogAsync($"Update campus {req.CampusName}");
 
                     return new RequestResponse
                     {

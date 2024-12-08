@@ -10,5 +10,7 @@ namespace WebApi.IRepository
         /// <param name="mail">Content of the mail.</param>
         /// <returns>The request response.</returns>
         Task<RequestResponse> SendMail(MailModel mail);
+
+        Task<RequestResponse> TestSendMail();
     }
 }

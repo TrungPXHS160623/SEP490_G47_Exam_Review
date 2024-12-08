@@ -76,7 +76,7 @@ namespace WebApi.Repository
                     //    await dbContext.SaveChangesAsync();
                     //}
                 }
-                await logRepository.LogAsync($"Create user {user.Email}");
+                //await logRepository.LogAsync($"Create user {user.Email}");
                 return new RequestResponse
                 {
                     IsSuccessful = true,
@@ -403,7 +403,7 @@ namespace WebApi.Repository
                 response.Message = "Update account successfully";
 
                 // Ghi log hành động cập nhật
-                await logRepository.LogAsync($"Update user {user.Email}");
+                //await logRepository.LogAsync($"Update user {user.Email}");
 
                 return response;
             }
@@ -1365,7 +1365,6 @@ namespace WebApi.Repository
                         if (user != null)
                         {
                             var token = GenerateToken(user);
-                            await logRepository.LogAsync("Login in into system");
                             return new AuthenticationResponse
                             {
                                 IsSuccessful = true,
