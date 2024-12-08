@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.IRepository;
 
 namespace WebApi.Controllers
 {
@@ -8,5 +9,8 @@ namespace WebApi.Controllers
     [Authorize]
     public class ApiBaseController : ControllerBase
     {
+        protected string JwtToken => HttpContext.Request.Headers["Authorization"].ToString();
+
+
     }
 }

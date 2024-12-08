@@ -5,9 +5,7 @@ using WebApi.IRepository;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GenerateExcelController : ControllerBase
+    public class GenerateExcelController : ApiBaseController
     {
         private readonly IGenerateExcelRepository _generateExcelRepository;
 

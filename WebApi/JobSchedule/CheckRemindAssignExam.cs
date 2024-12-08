@@ -14,9 +14,23 @@ namespace WebApi.JobSchedule
             _examRepository = examRepository;
         }
 
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            throw new NotImplementedException();
+            await SendReminderForUncorrectedExams();
+
+            await SendReminderForExamsWithoutScheduledDate();
+
+            var result = await _sendMailRepository.TestSendMail();
+        }
+
+        private async Task SendReminderForUncorrectedExams()
+        {
+            
+        }
+
+        private async Task SendReminderForExamsWithoutScheduledDate()
+        {
+            
         }
     }
 }

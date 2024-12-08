@@ -8,10 +8,12 @@ namespace WebApi.Controllers
     public class FacultyController : ApiBaseController
     {
         private readonly IFacultyRepository _facultyRepository;
+        private readonly ILogHistoryRepository _logHistoryRepository;
 
-        public FacultyController(IFacultyRepository facultyRepository)
+        public FacultyController(IFacultyRepository facultyRepository, ILogHistoryRepository logHistoryRepository)
         {
             _facultyRepository = facultyRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
 
         [HttpGet("GetFaculties")]
@@ -25,6 +27,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> DeleteFaculties(int facultyID)
         {
             var data = await this._facultyRepository.DeleteFaculties(facultyID);
+            await _logHistoryRepository.LogAsync($"Delete a department", JwtToken);
 
             return Ok(data);
         }
@@ -62,6 +65,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateFacuty([FromBody] FacutyRequest semesterRequest)
         {
             var data = await _facultyRepository.CreateFacutyAsync(semesterRequest);
+            await _logHistoryRepository.LogAsync($"Create department {semesterRequest.FacultyName}", JwtToken);
+
             return Ok(data);
         }
         [HttpPut("UpdateFacuty")]
@@ -69,6 +74,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateFacuty([FromBody] FacutyRequest semesterRequest)
         {
             var data = await _facultyRepository.UpdateFacutyAsync(semesterRequest);
+            await _logHistoryRepository.LogAsync($"Update department {semesterRequest.FacultyName}", JwtToken);
+
             return Ok(data);
         }
     }

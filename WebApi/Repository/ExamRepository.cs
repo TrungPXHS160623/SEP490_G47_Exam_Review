@@ -1171,8 +1171,15 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public Task<List<ExamRemindResponse>> GetRemindExam()
+    public async Task<List<ExamRemindResponse>> GetRemindExam()
     {
-        throw new NotImplementedException();
+        try
+        {
+            
+        }
+        catch (Exception ex)
+        {
+            
+        }
     }
 }

@@ -9,10 +9,12 @@ namespace WebApi.Controllers
     public class SubjectController : ApiBaseController
     {
         private readonly ISubjectRepository _subjectRepository;
+        private readonly ILogHistoryRepository _logHistoryRepository;
 
-        public SubjectController(ISubjectRepository subjectRepository)
+        public SubjectController(ISubjectRepository subjectRepository, ILogHistoryRepository logHistoryRepository)
         {
             _subjectRepository = subjectRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
 
         [HttpGet("GetAll")]
@@ -60,6 +62,8 @@ namespace WebApi.Controllers
         {
             var data = await this._subjectRepository.AddSubject(req);
 
+            await _logHistoryRepository.LogAsync($"Add new subject [{req.SubjectCode}]", JwtToken);
+
             return Ok(data);
         }
 
@@ -67,6 +71,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateSubject(SubjectRequest req)
         {
             var data = await this._subjectRepository.UpdateSubject(req);
+            await _logHistoryRepository.LogAsync($"update subject [{req.SubjectCode}]", JwtToken);
 
             return Ok(data);
         }
@@ -75,6 +80,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> DeleteSubject(int subjectId)
         {
             var data = await this._subjectRepository.DeleteSubject(subjectId);
+            await _logHistoryRepository.LogAsync($"Delete subject", JwtToken);
 
             return Ok(data);
         }
@@ -94,6 +100,10 @@ namespace WebApi.Controllers
             // Lấy thông tin người dùng hiện tại từ HttpContext
             var currentUser = HttpContext.User;
             var something = await this._subjectRepository.ImportSubjectsFromExcel(file, currentUser);
+
+            await _logHistoryRepository.LogAsync($"Import subject from Excel", JwtToken);
+
+
             return Ok(something);
         }
 
@@ -102,6 +112,8 @@ namespace WebApi.Controllers
         {
             var data = await this._subjectRepository.LecturerSubjectModify(userId, req);
 
+            await _logHistoryRepository.LogAsync($"Update lecturer teaching subject", JwtToken);
+
             return Ok(data);
         }
 
@@ -109,6 +121,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> AddSubjectToDepartment(SubjectDepartmentRequest req)
         {
             var data = await this._subjectRepository.AddSubjectToDepartment(req);
+
+            await _logHistoryRepository.LogAsync($"Add subject to department", JwtToken);
 
             return Ok(data);
         }

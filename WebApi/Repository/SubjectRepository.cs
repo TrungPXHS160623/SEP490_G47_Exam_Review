@@ -48,7 +48,7 @@ namespace WebApi.Repository
                     await DBcontext.SaveChangesAsync();
 
                     // Sử dụng newSubject để ghi log
-                    await logRepository.LogAsync($"Created Subject [{newSubject.SubjectCode}] {newSubject.SubjectName}");
+                    //await logRepository.LogAsync($"Created Subject [{newSubject.SubjectCode}] {newSubject.SubjectName}");
                 }
 
                 return new RequestResponse
@@ -79,7 +79,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete subject [{data.SubjectCode}] {data.SubjectName}");
+                    ////await logRepository.LogAsync($"Delete subject [{data.SubjectCode}] {data.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -218,7 +218,7 @@ namespace WebApi.Repository
                     data.FacultyId = req.FacultyId;
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
+                    //await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -599,7 +599,7 @@ namespace WebApi.Repository
                 }
                 await this.DBcontext.SaveChangesAsync();
 
-                await logRepository.LogAsync($"Change teaching subject of lecture {user.Mail}");
+                //await logRepository.LogAsync($"Change teaching subject of lecture {user.Mail}");
 
                 return new RequestResponse
                 {
