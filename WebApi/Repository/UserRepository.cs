@@ -59,22 +59,6 @@ namespace WebApi.Repository
                     await dbContext.Users.AddAsync(newUser);
                     await dbContext.SaveChangesAsync();
 
-                    // Nếu RoleId là 5, thêm các môn học vào bảng CampusUserSubjects
-                    //if (user.RoleId == 5 && user.SelectedSubjectIds != null && user.SelectedSubjectIds.Any())
-                    //{
-                    //    foreach (var subjectId in user.SelectedSubjectIds)
-                    //    {
-                    //        dbContext.CampusUserSubjects.Add(new CampusUserSubject
-                    //        {
-                    //            UserId = newUser.UserId,
-                    //            CampusId = newUser.CampusId,
-                    //            SubjectId = subjectId,
-                    //            IsProgramer = true,
-                    //            IsSelect = false
-                    //        });
-                    //    }
-                    //    await dbContext.SaveChangesAsync();
-                    //}
                 }
                 await logRepository.LogAsync($"Create user {user.Email}");
                 return new RequestResponse

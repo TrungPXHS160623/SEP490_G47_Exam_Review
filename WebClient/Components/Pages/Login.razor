@@ -152,23 +152,6 @@
         }
     }
 
-    public async Task LoginAsync()
-    {
-        _processing = true;
-
-        var resp = await this.UserService.LoginUserAsync(accountRequest);
-
-        if (resp.IsSuccessful)
-        {
-            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
-            await customAuthStateProvider.UpdateAuthenticationState(resp.Token!);
-            NavManager.NavigateTo("/home");
-        }
-
-        _processing = false;
-
-    }
-
     private async Task SignInWithGoogle()
     {
 
