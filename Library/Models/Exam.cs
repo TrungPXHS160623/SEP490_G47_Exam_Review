@@ -10,7 +10,7 @@ public partial class Exam
 
     public int ExamId { get; set; }
     public string? ExamCode { get; set; }
-    public long? ExamDuration { get; set; }
+    public int? ExamDuration { get; set; }
     public string? TermDuration { get; set; }
     public string? ExamType { get; set; }
     public int? SubjectId { get; set; }

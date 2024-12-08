@@ -37,16 +37,10 @@
                     <h4>Report</h4>
                 </div>
             </div>
-            <MudSelect Variant="Variant.Outlined" Label="Select Campus" Dense="true" Margin="Margin.Dense" T="int" @bind-Value="SelectedReport">
-                <MudSelect @bind-Value="user.CampusId" Variant="Variant.Outlined" Margin="Margin.Dense">
-                    @foreach (var item in camList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudSelect>
+           
             <MudSelect Variant="Variant.Outlined" Label="Select Report" Dense="true" Margin="Margin.Dense" T="int" @bind-Value="SelectedReport">
                 <MudSelectItem T="int" Value="1">All Campus</MudSelectItem>
+                <MudSelectItem T="int" Value="2">By Campus</MudSelectItem>
                 <MudSelectItem T="int" Value="3">By Department</MudSelectItem>
             </MudSelect>
                @switch (SelectedReport)
@@ -80,6 +74,13 @@
             }
             break;
                 case 2:
+                    <MudSelect T="int?" Variant="Variant.Outlined" Label="Campus" Margin="Margin.Dense"
+                               Value="@user.CampusId" ValueChanged="OnCampusChanged">
+                    @foreach (var item in camList)
+                    {
+                        <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
+                    }
+                </MudSelect>
                     <MudTable T="CampusSubjectExamResponse.CampusSubjectExamCodeResponse" Items="CampusDepartmentReport.Departments" FixedHeader="true" Height="380px" Hover="true">
                         <HeaderContent>
                             <MudTh>Deparment</MudTh>
@@ -106,6 +107,13 @@
                     }
                     break;
                 case 3:
+                    <MudSelect T="int?" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Campus"
+                               Value="@user.CampusId" ValueChanged="OnCampusChanged" >
+                            @foreach (var item in camList)
+                            {
+                                <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>
+                            }
+                        </MudSelect>
                     <MudTable T="DepartmentReportResponse.DepartmentReport" Items="DepartmentReport.DepartmentDetail" FixedHeader="true" Height="380px" Hover="true">
                         <HeaderContent>
                             <MudTh>Department</MudTh>
@@ -170,7 +178,8 @@
             }
             else
             {
-                await GetData(userId);
+                await GetData();
+                await GetCampus();
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
@@ -181,8 +190,52 @@
             }
         }
     }
+    private async Task OnCampusChanged(int? campusId)
+    {
+        if (campusId.HasValue)
+        {
+            IsLoading = true;
 
-    private async Task GetData(int userId)
+            try
+            {
+                if (SelectedReport == 2)
+                {
+                    var result = await StatiticsService.GetExamByCampusAndSubject(new UserRequest { CampusId = campusId.Value });
+                    if (result.IsSuccessful)
+                    {
+                        CampusDepartmentReport = result.Items.FirstOrDefault();
+                    }
+                }
+
+                if (SelectedReport == 3)
+                {
+                    var result = await StatiticsService.GetDepartmentReport(new UserRequest { CampusId = campusId.Value });
+                    if (result.IsSuccessful)
+                    {
+                        DepartmentReport = result.Items.FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading data: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+    }
+
+    private async Task GetCampus()
+    {
+        var result = await CampusService.GetCampus();
+        if (result != null)
+        {
+            camList = result.Items;
+        }
+    }
+    private async Task GetData()
     {
         IsLoading = true;
         try
@@ -191,16 +244,6 @@
             if (eList.IsSuccessful)
             {
                 CampusReport = eList.Items.FirstOrDefault();
-            }
-            var aList = await StatiticsService.GetExamByCampusAndSubject(user);
-            if (aList.IsSuccessful)
-            {
-                CampusDepartmentReport = aList.Items.FirstOrDefault();
-            }
-            var xList = await StatiticsService.GetDepartmentReport(user);
-            if (xList.IsSuccessful)
-            {
-                DepartmentReport = xList.Items.FirstOrDefault();
             }
         }
         catch (Exception ex)

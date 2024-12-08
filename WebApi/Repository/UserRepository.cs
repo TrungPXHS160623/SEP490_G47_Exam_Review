@@ -449,16 +449,6 @@ namespace WebApi.Repository
                     var currentFaculty = await dbContext.CampusUserFaculties
                         .FirstOrDefaultAsync(cus => cus.UserId == user.UserId && cus.CampusId == user.CampusId);
 
-                    var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
-                        .FirstOrDefaultAsync(c => c.FacultyId == user.FacultyId && c.CampusId == user.CampusId && c.UserId != null);
-                    if (existingCampusUserFacultyRecord != null)
-                    {
-                        return new RequestResponse
-                        {
-                            IsSuccessful = false,
-                            Message = "User already Exist"
-                        };
-                    }
                     if (currentFaculty != null)
                     {
                         // Nếu đã tồn tại, cập nhật FacultyId

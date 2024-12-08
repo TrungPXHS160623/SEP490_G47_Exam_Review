@@ -70,7 +70,7 @@
     private MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public int? ExamId { get; set; }
+    public int ExamId { get; set; }
 
     private bool _processing = false;
 
@@ -86,9 +86,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
-
-        var resp = await this.ExamService.GetLeaderExamById(ExamId.Value);
+        var resp = await this.ExamService.GetLeaderExamById(ExamId);
 
         if (resp.IsSuccessful)
         {
@@ -98,8 +96,7 @@
                 CurrentReviewer = exam.AssignedLectureId;
             }
         }
-
-        var result = await UserService.GetLectureListBySubject(exam.SubjectId.Value, exam.CampusId.Value);
+        var result = await UserService.GetLectureListBySubject(exam.SubjectId, exam.CampusId);
         if (result != null)
         {
             LectureList = result.Items;

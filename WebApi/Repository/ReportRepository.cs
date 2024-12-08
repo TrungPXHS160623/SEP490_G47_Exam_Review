@@ -121,67 +121,6 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<ResultResponse<ReportDurationResponse>> GetReportDuration(int examId)
-        {
-            try
-            {
-                //tìm kiếm report dựa theo id của phần phân công
-                var reports = await dbContext.Reports.Where(r => r.ExamId == examId).ToListAsync();
-
-                //nếu không tìm thấy report nào 
-                if (reports == null || reports.Count == 0)
-                {
-                    return new ResultResponse<ReportDurationResponse>
-                    {
-                        IsSuccessful = false,
-                        Message = "No reports found for this assignment."
-                    };
-                }
-
-                // nếu tìm thấy report 
-                // Tính thời gian từng report
-                var reportDurations = reports.Select(r => new ReportDurationDetail
-                {
-                    ReportId = r.ReportId,
-                    QuestionNumber = r.QuestionNumber.HasValue ? r.QuestionNumber.Value : 0,
-                    // Tính toán tổng số giờ giữa thời điểm tạo và thời điểm cập nhật.
-                    // Nếu cả CreateDate và UpdateDate đều không null, tính thời gian chênh lệch giữa chúng.
-                    // Nếu chỉ có CreateDate không null, tính thời gian từ CreateDate đến thời điểm hiện tại.
-                    // Nếu cả hai đều null, gán giá trị 0.
-
-                    DurationHours = r.UpdateDate.HasValue && r.CreateDate.HasValue ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours : 0,
-
-                    //DurationHours = r.CreateDate != null && r.UpdateDate != null ? (r.UpdateDate.Value - r.CreateDate.Value).TotalHours : r.CreateDate != null? (DateTime.Now - r.CreateDate.Value).TotalHours: 0,
-                }).ToList();
-
-                // Tính tổng thời gian
-                var totalDuration = reportDurations.Sum(rd => rd.DurationHours);
-
-                // Tạo DTO trả về
-                var responseDto = new ReportDurationResponse
-                {
-                    //AssignmentId = assignmentId,
-                    TotalDurationHours = totalDuration,
-                    ReportDurations = reportDurations
-                };
-
-                return new ResultResponse<ReportDurationResponse>
-                {
-                    IsSuccessful = true,
-                    Items = new List<ReportDurationResponse> { responseDto }
-                };
-
-            }
-            catch (Exception ex)
-            {
-
-                return new ResultResponse<ReportDurationResponse>
-                {
-                    IsSuccessful = false,
-                    Message = ex.Message
-                };
-            }
-        }
 
         public async Task<ResultResponse<ReportResponse>> GetReportsByLecturerId(int lecturerId)
         {

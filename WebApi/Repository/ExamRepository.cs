@@ -242,7 +242,6 @@ public class ExamRepository : IExamRepository
                         from u3 in u3Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where ex.ExamId == examId
-
                         select new LeaderExamResponse
                         {
                             CreaterId = u2.UserId,
@@ -409,6 +408,7 @@ public class ExamRepository : IExamRepository
                             SemseterName = sem.SemesterName,
                             EndDate = ex.EndDate,
                             ExamId = ex.ExamId,
+                            StartDate = ex.StartDate,
                             ExamDate = ex.ExamDate,
                             EstimatedTimeTest = ex.EstimatedTimeTest,
                             ExamCode = ex.ExamCode,
@@ -460,7 +460,6 @@ public class ExamRepository : IExamRepository
                                   EndDate = e.EndDate,
                                   ExamId = e.ExamId,
                                   StartDate = e.StartDate,
-                                  ExamDate = e.ExamDate,
                                   ExamCode = e.ExamCode,
                                   CampusName = c.CampusName,
                                   EstimatedTimeTest = e.EstimatedTimeTest,
@@ -508,7 +507,6 @@ public class ExamRepository : IExamRepository
                                   EndDate = e.EndDate,
                                   ExamId = e.ExamId,
                                   StartDate = e.StartDate,
-                                  ExamDate = e.ExamDate,
                                   ExamCode = e.ExamCode,
                                   CampusName = c.CampusName,
                                   EstimatedTimeTest = e.EstimatedTimeTest,
@@ -752,7 +750,7 @@ public class ExamRepository : IExamRepository
                                 ExamType = reader.GetValue(3)?.ToString(),
                                 CampusName = reader.GetValue(4)?.ToString(),
                                 SubjectCode = reader.GetValue(5)?.ToString(),
-                                ExamDuration = reader.GetInt64(6),
+                                ExamDuration = reader.GetInt16(6),
                                 SemesterName = reader.GetValue(9)?.ToString()
                             };
 
