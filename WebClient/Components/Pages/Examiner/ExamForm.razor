@@ -30,17 +30,14 @@
 
   
         <!-- Exam Duration -->
-        <div class="mb-4 row align-items-baseline">
+     <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam Duration:</label>
-
-            <div class="col-auto">
-                <MudSelect @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Exam TermDuration" For="@(() => exam.ExamDuration)" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem T="string" Value="@("60")">60 Mins</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("90")">90 Mins</MudSelectItem>
-                </MudSelect>
+            <div class="col-8">
+                <MudTextField @bind-Value="exam.ExamDuration" Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Placeholder="Enter Duration" For="@(() => exam.ExamDuration)" />
             </div>
         </div>
+
         <!-- Exam Term Duration -->
          <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Exam TermDuration:</label>
@@ -61,7 +58,6 @@
                 <MudSelect @bind-Value="exam.ExamType" Variant="Variant.Outlined" Margin="Margin.Dense"
                             Placeholder="Choose Exam Type" For="@(() => exam.ExamType)">
                     <MudSelectItem T="string" Value="@("Other")">Other</MudSelectItem>
-
                     <MudSelectItem T="string" Value="@("Listening")">Listening</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Writing")">Writing</MudSelectItem>
                     <MudSelectItem T="string" Value="@("Speaking")">Speaking</MudSelectItem>

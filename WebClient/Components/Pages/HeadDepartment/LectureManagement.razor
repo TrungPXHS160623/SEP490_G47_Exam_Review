@@ -17,9 +17,6 @@
                  <button class="btn btn-success me-3" @onclick="FetchUsers">Search</button>
              </div>
              <div class="me-4">
-                 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddNewUser">Add New Lecturer</MudButton>
-             </div>
-             <div class="me-4">
                  <MudButton Variant="Variant.Filled"
                             Color="Color.Primary"
                             StartIcon="@Icons.Material.Filled.CloudUpload"
@@ -118,10 +115,6 @@
         }
     }
 
-    private void AddNewUser()
-    {
-        NavManager.NavigateTo($"/HeadDepartment/AddUser");
-    }
 
     private async Task OpenImportDialogAsync()
     {

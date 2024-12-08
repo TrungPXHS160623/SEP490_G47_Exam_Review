@@ -50,6 +50,7 @@ namespace WebApi.Repository
                     FacultyName = request.FacultyName,
                     Description = request.Description,
                     CreateDate = DateTime.Now,
+                    UpdateDate =DateTime.Now,
                 };
 
                 // Lưu học kỳ mới vào cơ sở dữ liệu
@@ -253,6 +254,7 @@ namespace WebApi.Repository
                     }
                     data.FacultyName = request.FacultyName;
                     data.Description = request.Description;
+                    data.UpdateDate = request.UpdateDate;
                     await this.DBcontext.SaveChangesAsync();
 
                     return new RequestResponse

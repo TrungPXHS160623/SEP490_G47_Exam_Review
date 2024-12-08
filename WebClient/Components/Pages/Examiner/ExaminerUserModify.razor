@@ -1,16 +1,9 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
-@if (!isAddOrEdit)
-{
-    <h1 style="text-align: center;">Update HeadDepartment</h1>
-}
-else
-{
-    <h1 style="text-align: center;">Add HeadDepartment</h1>
-}
+<h1 style="text-align: center;">Manage Head Department</h1>
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 450px;">
-        <FluentValidationValidator />
+       @* <FluentValidationValidator /> *@
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Email:</label>
             <div class="col-8">
@@ -147,17 +140,18 @@ else
             }
             else
             {
+                  await GetFacutyList();
+                    await GetSubjectList();
                 if (UserId != null)
                 {
                     await FetchUserDetails();
-                    await GetFacutyList();
-                    await GetSubjectList();
+                  
                 }
                 else
                 {
                     isAddOrEdit = true;
                 }
-                await GetFacutyList();
+                
                 if (Layout != null)
                 {
                     Layout.Header = "Home";

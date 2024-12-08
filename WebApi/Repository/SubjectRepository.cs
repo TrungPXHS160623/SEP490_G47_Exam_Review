@@ -383,7 +383,6 @@ namespace WebApi.Repository
                                     isHeaderSkipped = true;
                                     continue;
                                 }
-
                                 var subjectImportRequest = new SubjectImportRequest
                                 {
                                     SubjectCode = reader.GetValue(1)?.ToString(),
@@ -691,13 +690,18 @@ namespace WebApi.Repository
                                      where s.SubjectId == req.SubjectId && cuf.FacultyId == req.DepartmentId
                                      select s).FirstOrDefaultAsync();
 
-                if (subject == null)
+                if (subject != null)
                 {
+                    var user = await this.DBcontext.Users.FirstOrDefaultAsync(x => x.UserId ==req.UserID);
                     var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId);
-
-                    data.FacultyId = req.DepartmentId;
-                    data.UpdateDate = DateTime.Now;
-                    await this.DBcontext.SaveChangesAsync();
+                    var newSubject = new CampusUserSubject
+                    {
+                        CampusId = user.CampusId,
+                        UserId = req.UserID,
+                        SubjectId = req.SubjectId,
+                    };
+                    await DBcontext.CampusUserSubjects.AddAsync(newSubject);
+                    await DBcontext.SaveChangesAsync();
 
                     return new RequestResponse
                     {
