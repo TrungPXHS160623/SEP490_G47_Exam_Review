@@ -56,11 +56,11 @@ namespace WebApi.Repository
 
         }
 
-        public async Task LogAsync(string message)
+        public async Task LogAsync(string message,string token)
         {
             try
             {
-                var claimsPrincipal = GetClaimsFromToken(Constants.JWTToken);
+                var claimsPrincipal = GetClaimsFromToken(token);
 
                 if (claimsPrincipal == null)
                 {

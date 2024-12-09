@@ -10,11 +10,14 @@ namespace WebApi.Controllers
     public class SemesterController : ApiBaseController
     {
         private readonly ISemesterRepository semesterRepository;
+        private readonly ILogHistoryRepository _logHistoryRepository;
 
-        public SemesterController(ISemesterRepository semesterRepository)
+        public SemesterController(ISemesterRepository semesterRepository, ILogHistoryRepository logHistoryRepository)
         {
             this.semesterRepository = semesterRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
+
         [HttpGet("GetAllSemesters")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllSemesters()
@@ -48,6 +51,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateSemester([FromBody] SemesterRequest semesterRequest)
         {
             var data = await semesterRepository.CreateSemesterAsync(semesterRequest);
+            await _logHistoryRepository.LogAsync($"Create semester {semesterRequest.SemesterName}", JwtToken);
+
             return Ok(data);
         }
         [HttpPut("UpdateSemesterAsync")]
@@ -55,6 +60,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateSemester(SemesterRequest semesterRequest)
         {
             var data = await semesterRepository.UpdateSemesterAsync(semesterRequest);
+            await _logHistoryRepository.LogAsync($"Update semester {semesterRequest.SemesterName}", JwtToken);
             return Ok(data);
         }
         [HttpDelete("DeleteSemesterAsync/{semesterId}")]
@@ -62,6 +68,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> DeleteSemester(int semesterId)
         {
             var data = await semesterRepository.DeleteSemesterAsync(semesterId);
+            await _logHistoryRepository.LogAsync($"Delete semester ", JwtToken);
             return Ok(data);
         }
     }

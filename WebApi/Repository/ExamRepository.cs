@@ -5,6 +5,7 @@ using Library.Models.Dtos;
 using Library.Request;
 using Library.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Globalization;
 using System.Security.Claims;
 using WebApi.IRepository;
@@ -419,7 +420,7 @@ public class ExamRepository : IExamRepository
                             HeadDepartmentName = u1.Mail,
                             HeadDepartmentId = u1.UserId,
                             UpdateDate = ex.UpdateDate
-                        }).ToList();
+                        }).Distinct().ToList();
 
             return new ResultResponse<ExaminerExamResponse>
             {
@@ -716,46 +717,47 @@ public class ExamRepository : IExamRepository
             {
                 using (var reader = ExcelReaderFactory.CreateReader(stream))
                 {
-                    bool isHeaderSkipped = false;
+                    // Chuyển đổi toàn bộ dữ liệu Excel thành DataSet
+                    var dataSet = reader.AsDataSet();
 
-                    do
+                    foreach (DataTable table in dataSet.Tables)
                     {
-                        while (reader.Read())
+                        // Kiểm tra nếu sheet không có dữ liệu (chỉ có header hoặc hoàn toàn trống)
+                        if (table.Rows.Count <= 1)
+                            continue;
+
+                        var formats = new[]
                         {
-                            if (!isHeaderSkipped)
-                            {
-                                isHeaderSkipped = true;
-                                continue;
-                            }
+                            "dd-MM-yyyy",
+                            "d/M/yyyy",
+                            "d/MM/yyyy",
+                            "dd/MM/yyyy",
+                            "MM-dd-yyyy",
+                            "dd/MM/yyyy hh:mm:ss tt",
+                            "d/MM/yyyy hh:mm:ss tt",
+                            "dd/M/yyyy hh:mm:ss tt",
+                            "d/M/yyyy hh:mm:ss tt"
+                        };
 
+                        for (int i = 1; i < table.Rows.Count; i++) // Bỏ qua header (dòng đầu tiên)
+                        {
+                            var row = table.Rows[i];
                             var errorMessages = new List<string>();
-                            var formats = new[]
-                            {
-                                "dd-MM-yyyy",
-                                "d/M/yyyy",
-                                "d/MM/yyyy",
-                                "dd/MM/yyyy",
-                                "MM-dd-yyyy",
-                                "dd/MM/yyyy hh:mm:ss tt",
-                                "d/MM/yyyy hh:mm:ss tt",
-                                "dd/M/yyyy hh:mm:ss tt",
-                                "d/M/yyyy hh:mm:ss tt"
-                            };
 
-                            // Đọc và validate dữ liệu cơ bản từ Excel
+                            // Đọc và validate dữ liệu từ Excel
                             var examImportRequest = new ExamImportRequest
                             {
-                                ExamCode = reader.GetValue(1)?.ToString(),
-                                TermDuration = reader.GetValue(2)?.ToString(),
-                                ExamType = reader.GetValue(3)?.ToString(),
-                                CampusName = reader.GetValue(4)?.ToString(),
-                                SubjectCode = reader.GetValue(5)?.ToString(),
-                                ExamDuration = reader.GetInt16(6),
-                                SemesterName = reader.GetValue(9)?.ToString()
+                                ExamCode = row[1]?.ToString(),
+                                TermDuration = row[2]?.ToString(),
+                                ExamType = row[3]?.ToString(),
+                                CampusName = row[4]?.ToString(),
+                                SubjectCode = row[5]?.ToString(),
+                                ExamDuration = int.TryParse(row[6]?.ToString(), out var duration) ? (int?)duration : null,
+                                SemesterName = row[9]?.ToString()
                             };
 
                             // Xử lý StartDate
-                            var startDateString = reader.GetValue(7)?.ToString();
+                            var startDateString = row[7]?.ToString();
                             if (!string.IsNullOrEmpty(startDateString) &&
                                 DateTime.TryParseExact(startDateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartDate))
                             {
@@ -767,7 +769,7 @@ public class ExamRepository : IExamRepository
                             }
 
                             // Xử lý EndDate
-                            var endDateString = reader.GetValue(8)?.ToString();
+                            var endDateString = row[8]?.ToString();
                             if (!string.IsNullOrEmpty(endDateString) &&
                                 DateTime.TryParseExact(endDateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
                             {
@@ -795,14 +797,7 @@ public class ExamRepository : IExamRepository
                             if (string.IsNullOrEmpty(examImportRequest.SemesterName))
                                 errorMessages.Add("SemesterName không được để trống.");
 
-                            // Nếu có lỗi cơ bản, bỏ qua các bước tiếp theo
-                            if (errorMessages.Any())
-                            {
-                                errors.Add($"Lỗi với ExamCode {examImportRequest.ExamCode} : {string.Join(", ", errorMessages)}");
-                                continue;
-                            }
-
-                            // Kiểm tra tính hợp lệ trong database
+                            // Kiểm tra trong database
                             var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterName == examImportRequest.SemesterName);
                             var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.CampusName == examImportRequest.CampusName);
                             var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectCode == examImportRequest.SubjectCode);
@@ -837,7 +832,7 @@ public class ExamRepository : IExamRepository
                                 continue;
                             }
 
-                            // Nếu không có lỗi, thêm vào danh sách examsToAdd
+                            // Thêm vào danh sách examsToAdd nếu hợp lệ
                             var exam = new Exam
                             {
                                 ExamCode = examImportRequest.ExamCode,
@@ -857,8 +852,10 @@ public class ExamRepository : IExamRepository
 
                             examsToAdd.Add(exam);
                         }
-                    } while (reader.NextResult());
+                    }
                 }
+
+
             }
 
 
@@ -1174,8 +1171,70 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public Task<List<ExamRemindResponse>> GetRemindExam()
+    public async Task<List<ExamRemindResponse>> SendReminderForUncorrectedExams()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var data = await (from ex in this._context.Exams
+                              join u in this._context.Users on ex.HeadDepartmentId equals u.UserId
+                              where ex.ExamStatusId == 5
+                              && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
+                              select new ExamRemindResponse
+                              {
+                                  ExamCode = ex.ExamCode,
+                                  Mail = u.Mail,
+                              }).ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
     }
+
+    public async Task<List<ExamRemindResponse>> SendReminderForExamsWithoutScheduledDate()
+    {
+        try
+        {
+            var data = await(from ex in this._context.Exams
+                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                             where ex.ExamStatusId == 3
+                             && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
+                             select new ExamRemindResponse
+                             {
+                                 ExamCode = ex.ExamCode,
+                                 Mail = u.Mail,
+                             }).ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
+    }
+
+    public async Task<List<ExamRemindResponse>> SendReminderForReviewDate()
+    {
+        try
+        {
+            var data = await(from ex in this._context.Exams
+                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                             where ex.ExamStatusId == 3
+                             && ex.AssignmentDate.Value.Date == DateTime.Now.Date
+                             select new ExamRemindResponse
+                             {
+                                 ExamCode = ex.ExamCode,
+                                 Mail = u.Mail,
+                             }).ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
+    }
+
 }

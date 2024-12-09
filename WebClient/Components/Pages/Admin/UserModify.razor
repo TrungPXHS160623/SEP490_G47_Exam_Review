@@ -1,13 +1,8 @@
 ﻿@page "/Admin/EditUser/{UserId:int}"
 @page "/Admin/AddUser"
-@if (!isAddOrEdit)
-{
-    <h1 style="text-align: center;">Edit Users</h1>
-}
-else
-{
-    <h1 style="text-align: center;">Add Users</h1>
-}
+
+ <h1 style="text-align: center;">Manage User</h1>
+
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4 custom-box" style="width: 450px;">
         <div class="mb-4 d-flex align-items-baseline">

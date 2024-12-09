@@ -223,7 +223,9 @@
         var eList = await this.ExamService.GetExamList(request);
         if (eList.IsSuccessful)
         {
+
             ExamList = eList.Items;
+
 
         }
     }
@@ -308,7 +310,7 @@
     }
     private async Task ExportAllExams()
     {
-        var response = await this.ExamService.ExportAllExams();
+        var response = await this.ExamService.GenerateExcelTime();
 
         if (response != null && response.IsSuccessful)
         {

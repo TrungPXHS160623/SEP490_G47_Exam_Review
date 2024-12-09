@@ -9,10 +9,13 @@ namespace WebApi.Controllers
     public class ExamController : ApiBaseController
     {
         private readonly IExamRepository _examRepository;
+        private readonly ILogHistoryRepository _logHistoryRepository;
 
-        public ExamController(IExamRepository examRepository)
+
+        public ExamController(IExamRepository examRepository, ILogHistoryRepository logHistoryRepository)
         {
             _examRepository = examRepository;
+            _logHistoryRepository = logHistoryRepository;
         }
         [AllowAnonymous]
         [HttpGet("info")]
@@ -75,6 +78,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateExam([FromBody] ExaminerExamResponse req)
         {
             var examInfo = await _examRepository.UpdateExam(req);
+            await _logHistoryRepository.LogAsync($"Update exam {req.ExamCode}", JwtToken);
+
             return Ok(examInfo);
         }
 
@@ -96,6 +101,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreateExam(ExamCreateRequest req)
         {
             var examInfo = await _examRepository.CreateExam(req);
+            await _logHistoryRepository.LogAsync($"Create exam {req.ExamCode}", JwtToken);
+
             return Ok(examInfo);
         }
         [AllowAnonymous]
@@ -105,6 +112,8 @@ namespace WebApi.Controllers
             // Lấy thông tin người dùng hiện tại từ HttpContext
             var currentUser = HttpContext.User;
             var something = await _examRepository.ImportExamsFromExcel(file, currentUser);
+            await _logHistoryRepository.LogAsync($"Import exams from Excel", JwtToken);
+
             return Ok(something);
         }
         [AllowAnonymous]

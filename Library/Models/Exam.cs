@@ -22,6 +22,7 @@ public partial class Exam
     public DateTime? EstimatedTimeTest { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public int? HeadDepartmentId { get; set; }
     public int? AssignedUserId { get; set; }
     public DateTime? AssignmentDate { get; set; }
     public string? GeneralFeedback { get; set; }

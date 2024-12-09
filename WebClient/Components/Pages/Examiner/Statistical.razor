@@ -147,6 +147,9 @@
                     }
                     break;
     }
+            <div>
+                <MudButton Variant="Variant.Filled" OnClick="ExportAllExams" Color="Color.Surface">Export All</MudButton>
+            </div>
         </div>
     </div>
 </div>
@@ -253,6 +256,28 @@
         finally
         {
             IsLoading = false;
+        }
+    }
+    private async Task ExportAllExams()
+    {
+        var response = await this.ExamService.ExportAllExams();
+        if (response != null && response.IsSuccessful)
+        {
+            try
+            {
+                using var stream = new MemoryStream(response.Item);
+                var fileName = "ExportedExams.xlsx"; // Desired filename
+                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(stream.ToArray())}";
+                await js.InvokeVoidAsync("open", fileUrl, fileName);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error during file download: {ex.Message}", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("Error exporting exams.", Severity.Error);
         }
     }
 }

@@ -1,16 +1,22 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
-@if (!isAddOrEdit)
-{
-    <h1 style="text-align: center;">Update HeadDepartment</h1>
-}
-else
-{
-    <h1 style="text-align: center;">Add HeadDepartment</h1>
-}
+<style>
+    .text-wrap {
+        white-space: pre-wrap; /* Cho phép xuống dòng tự động */
+        word-wrap: break-word; /* Bẻ từ nếu từ quá dài */
+        overflow-wrap: break-word; /* Dùng cho các trình duyệt hiện đại */
+        max-width: 300px; /* Giới hạn chiều rộng */
+        border: 1px solid #ddd; /* Để dễ nhìn thấy khung */
+        padding: 5px;
+        font-size: 14px;
+        line-height: 1.5; /* Tăng khoảng cách giữa các dòng */
+    }
+
+</style>
+<h1 style="text-align: center;">Manage Head Department</h1>
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 450px;">
-        <FluentValidationValidator />
+        @* <FluentValidationValidator /> *@
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Email:</label>
             <div class="col-8">
@@ -24,7 +30,6 @@ else
                 }
             </div>
         </div>
-
 
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">User Name:</label>
@@ -56,33 +61,33 @@ else
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Department:</label>
             <div class="col-8">
-                 @if (!isAddOrEdit)
+                @if (!isAddOrEdit)
                 {
                     <MudText>@(facutyResponses.FirstOrDefault(x => x.FacultyId == user.FacultyId)?.FacultyName ?? "N/A")</MudText>
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense"@onchange="OnFacultyChange">
+                    <MudSelect T=int? Value="user.FacultyId" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="OnFacultyChange">
                         @foreach (var item in facutyResponses)
                         {
                             <MudSelectItem T="int?" Value="@item.FacultyId">@item.FacultyName</MudSelectItem>
                         }
                     </MudSelect>
-               
+
                 }
             </div>
         </div>
-                   <div class="mb-4 row">
-            <label class="col-4 text-end">Subject:</label>
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">Subject:</label>
             <div class="col-8">
                 <MudSelect T="SubjectResponse"
                            @bind-SelectedValues=@user.SubjectResponses
-                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
+                           Text="@("Number of Subject : " + CurrentSubjectList.Count())"
                            MultiSelection="true"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
-                           Disabled=@(!isAddOrEdit)
+                           Disabled
                            HelperText="Only display avaliable subject">
                     @if (subjectList.Count() > 0)
                     {
@@ -92,7 +97,8 @@ else
                         }
                     }
                 </MudSelect>
-                <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+                <span class="mt-2 text-wrap">@(string.Join(", ", CurrentSubjectList.Select(x => $"[{x.SubjectCode}]")))</span>
+
             </div>
         </div>
         <div class="mb-4 d-flex align-items-center">
@@ -124,6 +130,7 @@ else
     public int? UserId { get; set; }
     private UserSubjectRequest user = new();
     private List<SubjectResponse> subjectList = new();
+    private List<SubjectResponse> CurrentSubjectList = new();
     private List<UserRole> roleList = new();
     private List<Faculty> facutyResponses = new();
 
@@ -147,17 +154,18 @@ else
             }
             else
             {
+                await GetFacutyList();
+                await GetSubjectList();
                 if (UserId != null)
                 {
                     await FetchUserDetails();
-                    await GetFacutyList();
-                    await GetSubjectList();
+
                 }
                 else
                 {
                     isAddOrEdit = true;
                 }
-                await GetFacutyList();
+
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
@@ -169,16 +177,21 @@ else
             }
         }
     }
-    private void OnFacultyChange()
+    private void OnFacultyChange(int? value)
     {
+        if (value != null)
+        {
+            user.FacultyId = value;
+        }
+
         if (user.FacultyId.HasValue)
         {
             // Lọc danh sách môn học dựa trên FacultyId
-            subjectList = subjectList.Where(x => x.FacultyId == user.FacultyId.Value).ToList();
+            CurrentSubjectList = subjectList.Where(x => x.FacultyId == user.FacultyId.Value).ToList();
         }
         else
         {
-            subjectList = new List<SubjectResponse>(); // Nếu không chọn Faculty
+            CurrentSubjectList = new List<SubjectResponse>(); // Nếu không chọn Faculty
         }
         StateHasChanged(); // Cập nhật giao diện
     }
@@ -237,6 +250,11 @@ else
         if (result != null)
         {
             subjectList = result.Items;
+
+            if (user.FacultyId.HasValue)
+            {
+                CurrentSubjectList = subjectList.Where(x => x.FacultyId == user.FacultyId.Value).ToList();
+            }
         }
     }
 

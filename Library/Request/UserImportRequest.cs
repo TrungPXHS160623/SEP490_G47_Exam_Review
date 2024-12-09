@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Request
+﻿namespace Library.Request
 {
     public class UserImportRequest
     {
@@ -20,5 +14,6 @@ namespace Library.Request
         public string? FacultyInCharge { get; set; }
         // Cột mới để nhập thông tin môn học
         public string? SubjectInCharge { get; set; }
+
     }
 }

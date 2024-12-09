@@ -42,13 +42,15 @@ namespace WebApi.Repository
                     {
                         SubjectCode = req.SubjectCode,
                         SubjectName = req.SubjectName,
-                        FacultyId = req.FacultyId
+                        FacultyId = req.FacultyId,
+                        CreateDate = DateTime.Now
+
                     };
                     await DBcontext.Subjects.AddAsync(newSubject);
                     await DBcontext.SaveChangesAsync();
 
                     // Sử dụng newSubject để ghi log
-                    await logRepository.LogAsync($"Created Subject [{newSubject.SubjectCode}] {newSubject.SubjectName}");
+                    //await logRepository.LogAsync($"Created Subject [{newSubject.SubjectCode}] {newSubject.SubjectName}");
                 }
 
                 return new RequestResponse
@@ -79,7 +81,7 @@ namespace WebApi.Repository
 
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete subject [{data.SubjectCode}] {data.SubjectName}");
+                    ////await logRepository.LogAsync($"Delete subject [{data.SubjectCode}] {data.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -146,7 +148,8 @@ namespace WebApi.Repository
                 {
                     SubjectId = data.SubjectId,
                     SubjectCode = data.SubjectCode,
-                    SubjectName = data.SubjectName
+                    SubjectName = data.SubjectName,
+                    FacultyId = data.FacultyId
                 };
 
                 return new ResultResponse<SubjectRequest>
@@ -216,9 +219,10 @@ namespace WebApi.Repository
                     data.SubjectName = req.SubjectName;
                     data.IsDeleted = req.IsDeleted;
                     data.FacultyId = req.FacultyId;
+                    data.UpdateDate =DateTime.Now;
                     await this.DBcontext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
+                    //await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
 
                     return new RequestResponse
                     {
@@ -383,7 +387,6 @@ namespace WebApi.Repository
                                     isHeaderSkipped = true;
                                     continue;
                                 }
-
                                 var subjectImportRequest = new SubjectImportRequest
                                 {
                                     SubjectCode = reader.GetValue(1)?.ToString(),
@@ -598,7 +601,7 @@ namespace WebApi.Repository
                 }
                 await this.DBcontext.SaveChangesAsync();
 
-                await logRepository.LogAsync($"Change teaching subject of lecture {user.Mail}");
+                //await logRepository.LogAsync($"Change teaching subject of lecture {user.Mail}");
 
                 return new RequestResponse
                 {
@@ -638,9 +641,9 @@ namespace WebApi.Repository
 
 
                 var facultyId = await DBcontext.CampusUserFaculties
-                  .Where(cuf => cuf.UserId == userId)
-                  .Select(cuf => cuf.FacultyId)
-                  .FirstOrDefaultAsync();
+              .Where(cuf => cuf.UserId == userId)
+              .Select(cuf => cuf.FacultyId)
+              .FirstOrDefaultAsync();
 
                 var sList2 = await (from s in DBcontext.Subjects
                                     join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
@@ -655,8 +658,32 @@ namespace WebApi.Repository
                                         FacultyId = f.FacultyId
                                     }).ToListAsync();
 
-                data.AddSubjectsList = sList2;
+                var sList4 = await (from s in DBcontext.Subjects
+                                    join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
+                                    where !DBcontext.CampusUserSubjects
+                                        .Any(cus => cus.UserId == userId && cus.SubjectId == s.SubjectId)
+                                    select new SubjectResponse
+                                    {
+                                        SubjectId = s.SubjectId,
+                                        SubjectCode = s.SubjectCode,
+                                        SubjectName = s.SubjectName,
+                                        Faculty = f.FacultyName,
+                                        FacultyId = f.FacultyId
+                                    }).ToListAsync();
 
+                var roleId = await DBcontext.Users
+                      .Where(u => u.UserId == userId)
+                      .Select(u => u.RoleId)
+                      .FirstOrDefaultAsync();
+
+                if (roleId == 5)
+                {
+                    data.AddSubjectsList = sList4;
+                }
+                else
+                {
+                    data.AddSubjectsList = sList2;
+                }
                 if (sList.Count > 0)
                 {
                     data.SubjectsList = sList;
@@ -686,16 +713,23 @@ namespace WebApi.Repository
                 var subject = await (from s in DBcontext.Subjects
                                      join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
                                      join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
-                                     where s.SubjectId == req.SubjectId && cuf.FacultyId == req.DepartmentId
+                                     join cus in DBcontext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
+                                     where s.SubjectId == req.SubjectId && (cuf.FacultyId == req.DepartmentId|| cus.UserId !=req.UserID)
                                      select s).FirstOrDefaultAsync();
 
-                if (subject == null)
+                if (subject != null)
                 {
+                    var user = await this.DBcontext.Users.FirstOrDefaultAsync(x => x.UserId ==req.UserID);
                     var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId);
-
-                    data.FacultyId = req.DepartmentId;
-                    data.UpdateDate = DateTime.Now;
-                    await this.DBcontext.SaveChangesAsync();
+                    var newSubject = new CampusUserSubject
+                    {
+                        CampusId = user.CampusId,
+                        UserId = req.UserID,
+                        SubjectId = req.SubjectId,
+                        IsProgramer = true
+                    };
+                    await DBcontext.CampusUserSubjects.AddAsync(newSubject);
+                    await DBcontext.SaveChangesAsync();
 
                     return new RequestResponse
                     {
