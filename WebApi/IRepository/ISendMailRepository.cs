@@ -1,4 +1,5 @@
 ﻿using Library.Common;
+using Library.Response;
 
 namespace WebApi.IRepository
 {
@@ -12,5 +13,6 @@ namespace WebApi.IRepository
         Task<RequestResponse> SendMail(MailModel mail);
 
         Task<RequestResponse> TestSendMail();
+        Task<RequestResponse> SendMailRemind(List<ExamRemindResponse> exam,int option);
     }
 }

@@ -1171,8 +1171,70 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    //public Task<List<ExamRemindResponse>> GetRemindExam()
-    //{
+    public async Task<List<ExamRemindResponse>> SendReminderForUncorrectedExams()
+    {
+        try
+        {
+            var data = await (from ex in this._context.Exams
+                              join u in this._context.Users on ex.HeadDepartmentId equals u.UserId
+                              where ex.ExamStatusId == 5
+                              && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
+                              select new ExamRemindResponse
+                              {
+                                  ExamCode = ex.ExamCode,
+                                  Mail = u.Mail,
+                              }).ToListAsync();
 
-    //}
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
+    }
+
+    public async Task<List<ExamRemindResponse>> SendReminderForExamsWithoutScheduledDate()
+    {
+        try
+        {
+            var data = await(from ex in this._context.Exams
+                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                             where ex.ExamStatusId == 3
+                             && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
+                             select new ExamRemindResponse
+                             {
+                                 ExamCode = ex.ExamCode,
+                                 Mail = u.Mail,
+                             }).ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
+    }
+
+    public async Task<List<ExamRemindResponse>> SendReminderForReviewDate()
+    {
+        try
+        {
+            var data = await(from ex in this._context.Exams
+                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                             where ex.ExamStatusId == 3
+                             && ex.AssignmentDate.Value.Date == DateTime.Now.Date
+                             select new ExamRemindResponse
+                             {
+                                 ExamCode = ex.ExamCode,
+                                 Mail = u.Mail,
+                             }).ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            return new List<ExamRemindResponse>();
+        }
+    }
+
 }
