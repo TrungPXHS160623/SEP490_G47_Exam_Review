@@ -1166,35 +1166,44 @@ namespace WebApi.Repository
 
 
                                 // Tạo khóa duy nhất cho mỗi người dùng
-                                string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
+                                string uniqueKey = $"{userImportRequest.Mail?.Trim().ToLower()}_" +
+                                                   $"{userImportRequest.FullName?.Trim().ToLower()}_" +
+                                                   $"{userImportRequest.PhoneNumber?.Trim()}";
+
                                 // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
                                 if (existingUserSet.Contains(uniqueKey))
                                 {
-                                    errors.Add($"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.");
+                                    var errorMessage = $"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.";
+                                    Console.WriteLine(errorMessage);
+                                    errors.Add(errorMessage); // Thêm vào danh sách lỗi chính
                                     continue; // Bỏ qua bản ghi trùng lặp
                                 }
 
                                 // Thêm vào HashSet nếu không trùng lặp
                                 existingUserSet.Add(uniqueKey);
 
-                                // Kiểm tra xem người dùng đã tồn tại hay chưa
-
+                                // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu
                                 var normalizedMail = userImportRequest.Mail?.Trim().ToLower();
                                 Console.WriteLine($"Normalized Mail: {normalizedMail}");
 
                                 var existingUser = await dbContext.Users
-                                    .FirstOrDefaultAsync(u => u.Mail.ToLower() == normalizedMail);
+                                    .FirstOrDefaultAsync(u => u.Mail.Trim().ToLower() == normalizedMail);
 
                                 if (existingUser != null)
                                 {
                                     Console.WriteLine($"Existing User Found: {existingUser.Mail}");
-                                    errorMessages.Add($"User with Mail '{userImportRequest.Mail}' already exists. Please enter system to check!");
+                                    var errorMessage = $"User with Mail '{userImportRequest.Mail}' already exists. Please enter system to check!";
+                                    errorMessages.Add(errorMessage);
+                                    errors.Add(errorMessage); // Thêm lỗi vào danh sách chính
                                     continue;
                                 }
                                 else
                                 {
                                     Console.WriteLine("No existing user found with this email.");
                                 }
+
+
+
 
                                 if (errorMessages.Any())
                                 {
