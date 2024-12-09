@@ -742,7 +742,8 @@ namespace WebApi.Repository
                 {
                     CampusId = currentUserCampusId,
                     UserId = user.UserId,
-                    SubjectId = subject.SubjectId
+                    SubjectId = subject.SubjectId,
+                    IsProgramer = false,
                 });
             }
 
@@ -1236,6 +1237,7 @@ namespace WebApi.Repository
                             from e in examsGroup.DefaultIfEmpty()
                             where cus.CampusId == cuf.CampusId
                                   && cuf.UserId == userId
+                                  && cus.IsSelect ==false
                             group e by new
                             {
                                 u.UserId,
