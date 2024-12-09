@@ -113,12 +113,13 @@ namespace WebApi.Repository
 
                     await this.dbContext.SaveChangesAsync();
 
-                    //await logRepository.LogAsync($"Delete subject [{data.SemesterName}] ");
+                    await logRepository.LogAsync($"Delete semester [{data.SemesterName}] ");
+
 
                     return new RequestResponse
                     {
                         IsSuccessful = true,
-                        Message = "Delete Subject Successfully",
+                        Message = "Delete Semester Successfully",
                     };
                 }
                 else
@@ -126,7 +127,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Subject not exist",
+                        Message = "Semester not exist",
                     };
                 }
             }

@@ -391,7 +391,7 @@ namespace WebApi.Repository
                                 {
                                     SubjectCode = reader.GetValue(1)?.ToString(),
                                     SubjectName = reader.GetValue(2)?.ToString(),
-                                    FacultyName = reader.GetValue(3)?.ToString(),
+                                    FacultyName = reader.GetValue(3)?.ToString()?.Trim(), // Loại bỏ khoảng trắng
                                 };
 
                                 var errorMessages = new List<string>();
@@ -416,38 +416,36 @@ namespace WebApi.Repository
 
                                 // Tạo khóa duy nhất cho mỗi môn học
                                 string uniqueKey = subjectImportRequest.SubjectCode;
-                                // Kiểm tra xem môn học đã tồn tại trong HashSet chưa
                                 if (existingSubjectSet.Contains(uniqueKey))
                                 {
                                     errorMessages.Add($"Duplicate entry for SubjectCode '{subjectImportRequest.SubjectCode}'.");
-                                    continue; // Bỏ qua bản ghi trùng lặp
+                                }
+                                else
+                                {
+                                    existingSubjectSet.Add(uniqueKey);
+
+                                    var existingSubject = await DBcontext.Subjects
+                                        .FirstOrDefaultAsync(s => s.SubjectCode == subjectImportRequest.SubjectCode);
+
+                                    if (existingSubject != null)
+                                    {
+                                        errorMessages.Add($"Subject with SubjectCode '{subjectImportRequest.SubjectCode}' already exists.");
+                                    }
                                 }
 
-                                // Thêm vào HashSet nếu không trùng lặp
-                                existingSubjectSet.Add(uniqueKey);
-                                // Kiểm tra xem môn học đã tồn tại hay chưa
-                                var existingSubject = await DBcontext.Subjects
-                                    .FirstOrDefaultAsync(s => s.SubjectCode == subjectImportRequest.SubjectCode);
+                                // Tìm FacultyId từ FacultyName
+                                var faculty = await DBcontext.Faculties
+                                    .FirstOrDefaultAsync(f => f.FacultyName.Trim() == subjectImportRequest.FacultyName);
 
-                                if (existingSubject != null)
+                                if (faculty == null)
                                 {
-                                    errorMessages.Add($"Subject with SubjectCode '{subjectImportRequest.SubjectCode}' already exists.");
-                                    continue;
+                                    errorMessages.Add($"Faculty '{subjectImportRequest.FacultyName}' not found.");
                                 }
 
                                 if (errorMessages.Any())
                                 {
                                     errors.Add($"Error with SubjectCode '{subjectImportRequest.SubjectCode}': {string.Join(", ", errorMessages)}");
                                     continue;
-                                }
-                                // Tìm FacultyId từ FacultyName
-                                var faculty = await DBcontext.Faculties
-                                    .FirstOrDefaultAsync(f => f.FacultyName == subjectImportRequest.FacultyName);
-
-                                if (faculty == null)
-                                {
-                                    // Nếu không tìm thấy, thêm lỗi
-                                    errorMessages.Add($"Faculty '{subjectImportRequest.FacultyName}' not found.");
                                 }
 
 

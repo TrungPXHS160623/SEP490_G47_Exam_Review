@@ -18,6 +18,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GetAll")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSubjects()
         {
             var data = await this._subjectRepository.GetSubjects();
@@ -26,6 +27,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("GetList")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetList([FromBody] SubjectRequest req)
         {
             var data = await this._subjectRepository.GetSubjectList(req);
@@ -34,6 +36,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GetHeadSubject/{userId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetHeadSubject(int userId)
         {
             var data = await this._subjectRepository.GetHeadSubjectList(userId);
@@ -42,6 +45,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GetLectureSubject/{userId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetLectureSubject(int userId)
         {
             var data = await this._subjectRepository.GetLectureSubjectList(userId);
@@ -50,6 +54,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GetSubjectById/{subjectId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSubjectById(int subjectId)
         {
             var data = await this._subjectRepository.GetSubjectById(subjectId);
@@ -58,6 +63,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("AddSubject")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSubjects(SubjectRequest req)
         {
             var data = await this._subjectRepository.AddSubject(req);
@@ -68,6 +74,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("UpdateSubject")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateSubject(SubjectRequest req)
         {
             var data = await this._subjectRepository.UpdateSubject(req);
@@ -77,6 +84,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("DeleteSubject/{subjectId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteSubject(int subjectId)
         {
             var data = await this._subjectRepository.DeleteSubject(subjectId);
@@ -108,6 +116,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("LecturerSubjectModify/{userId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> LecturerSubjectModify(int userId, HashSet<SubjectResponse> req)
         {
             var data = await this._subjectRepository.LecturerSubjectModify(userId, req);
@@ -118,6 +127,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("AddSubjectToDepartment")]
+        [AllowAnonymous]
         public async Task<IActionResult> AddSubjectToDepartment(SubjectDepartmentRequest req)
         {
             var data = await this._subjectRepository.AddSubjectToDepartment(req);

@@ -9,8 +9,11 @@
         public string? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public string? Address { get; set; }
-        public string? Deparment { get; set; }
-        // Cột mới để nhập thông tin bộ môn hoặc môn học
-        public string? FacultyOrSubjectInCharge { get; set; }
+
+        // Cột mới để nhập thông tin bộ môn 
+        public string? FacultyInCharge { get; set; }
+        // Cột mới để nhập thông tin môn học
+        public string? SubjectInCharge { get; set; }
+
     }
 }

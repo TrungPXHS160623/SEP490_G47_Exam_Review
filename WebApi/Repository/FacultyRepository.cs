@@ -268,7 +268,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Department already exist",
+                        Message = "Department no found",
                     };
                 }
             }
@@ -293,7 +293,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Campus not found",
+                        Message = "Faculty not found",
                     };
                 }
                 else

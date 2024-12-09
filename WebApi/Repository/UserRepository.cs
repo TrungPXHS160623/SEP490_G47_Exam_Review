@@ -6,6 +6,7 @@ using Library.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Data;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -632,32 +633,30 @@ namespace WebApi.Repository
             }
         }
         // Phương thức nhập cho Examiner
-        private async Task<bool> ImportForExaminer(List<string> facultyOrSubjectList, User user, int? currentUserCampusId)
+        private async Task<bool> ImportForExaminer(List<string> facultyList, List<string> subjectList, User user, int? currentUserCampusId)
         {
             var facultiesToAdd = new List<CampusUserFaculty>(); // Danh sách các đối tượng cần thêm vào DB
+            var subjectsToAdd = new List<CampusUserSubject>(); // Danh sách các đối tượng cần thêm vào DB
             var errors = new List<string>(); // Danh sách lỗi (nếu có)
 
-            foreach (var facultyName in facultyOrSubjectList)
+            // Kiểm tra các bộ môn (Faculty) và chuẩn bị thêm vào DB
+            foreach (var data in facultyList)
             {
                 var faculty = await dbContext.Faculties
-                    .FirstOrDefaultAsync(f => f.FacultyName.ToLower() == facultyName);
+                    .FirstOrDefaultAsync(f => f.FacultyName.ToLower() == data.ToLower());
 
                 if (faculty == null)
                 {
-                    // Thêm lỗi nếu bộ môn không tồn tại
-                    errors.Add($"Bộ môn '{facultyName}' không tồn tại.");
+                    errors.Add($"Bộ môn '{data}' không tồn tại.");
                     continue;
                 }
 
-
-                // Kiểm tra nếu bộ môn đã có người quản lý tại campus cụ thể này
                 var existingCampusUserFacultyRecord = await dbContext.CampusUserFaculties
                     .FirstOrDefaultAsync(c => c.FacultyId == faculty.FacultyId && c.CampusId == currentUserCampusId && c.UserId != null);
 
                 if (existingCampusUserFacultyRecord != null)
                 {
-                    // Thêm lỗi nếu bộ môn này tại campus đã có người quản lý (UserId khác null)
-                    errors.Add($"Bộ môn '{facultyName}' tại campus này đã có người quản lý.");
+                    errors.Add($"Bộ môn '{data}' tại campus này đã có người quản lý.");
                     continue;
                 }
 
@@ -666,8 +665,16 @@ namespace WebApi.Repository
 
                 if (existingCampusUserFaculty != null)
                 {
-                    // Thêm lỗi nếu bản ghi đã tồn tại
-                    errors.Add($"Bản ghi của User '{user.FullName}' với Bộ môn '{facultyName}' đã tồn tại.");
+                    errors.Add($"Bản ghi của User '{user.FullName}' với Bộ môn '{data}' đã tồn tại.");
+                    continue;
+                }
+
+                var facultyCount = await dbContext.CampusUserFaculties
+                    .CountAsync(c => c.UserId == user.UserId && c.CampusId == currentUserCampusId);
+
+                if (facultyCount >= 1)
+                {
+                    errors.Add($"User '{user.FullName}' chỉ được quản lý 1 bộ môn tại campus này");
                     continue;
                 }
 
@@ -679,6 +686,7 @@ namespace WebApi.Repository
                 });
             }
 
+            // Nếu có bản ghi Faculty mới cần thêm vào DB, lưu vào cơ sở dữ liệu
             if (facultiesToAdd.Any())
             {
                 try
@@ -688,7 +696,66 @@ namespace WebApi.Repository
                 }
                 catch (Exception ex)
                 {
-                    // Xử lý lỗi khi lưu vào DB và trả về false nếu có lỗi
+                    Console.WriteLine($"Lỗi khi lưu vào cơ sở dữ liệu: {ex.Message}");
+                    return false;
+                }
+            }
+
+            // Kiểm tra các môn học (Subject)
+            foreach (var data in subjectList)
+            {
+                var subject = await dbContext.Subjects
+                    .FirstOrDefaultAsync(s => s.SubjectCode.ToLower() == data.ToLower());
+
+                if (subject == null)
+                {
+                    errors.Add($"Môn học '{data}' không tồn tại.");
+                    continue;
+                }
+
+                var existingCampusUserSubject = await dbContext.CampusUserSubjects
+                    .FirstOrDefaultAsync(c => c.UserId == user.UserId && c.SubjectId == subject.SubjectId && c.CampusId == currentUserCampusId);
+
+                if (existingCampusUserSubject != null)
+                {
+                    errors.Add($"Bản ghi của User '{user.FullName}' với Môn học '{data}' đã tồn tại.");
+                    continue;
+                }
+
+                // Kiểm tra xem môn học này có thuộc bộ môn mà CNBM đang quản lý không
+                var managedFaculties = await dbContext.CampusUserFaculties
+                    .Where(c => c.UserId == user.UserId && c.CampusId == currentUserCampusId)
+                    .Select(c => c.FacultyId)
+                    .ToListAsync();
+
+                var isSubjectManagedByFaculty = await dbContext.Subjects
+                    .AnyAsync(s => s.SubjectId == subject.SubjectId && managedFaculties.Contains(s.FacultyId));
+
+                if (!isSubjectManagedByFaculty)
+                {
+                    errors.Add($"Môn học '{data}' không thuộc bất kỳ Bộ môn nào mà CNBM '{user.FullName}' quản lý tại Campus hiện tại.");
+                    continue;
+                }
+
+                subjectsToAdd.Add(new CampusUserSubject
+                {
+                    CampusId = currentUserCampusId,
+                    UserId = user.UserId,
+                    SubjectId = subject.SubjectId,
+                    IsProgramer = true
+                });
+            }
+
+            // Nếu có bản ghi Subject mới cần thêm vào DB, lưu vào cơ sở dữ liệu
+            if (subjectsToAdd.Any())
+            {
+                try
+                {
+                    await dbContext.CampusUserSubjects.AddRangeAsync(subjectsToAdd);
+                    await dbContext.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
                     Console.WriteLine($"Lỗi khi lưu vào cơ sở dữ liệu: {ex.Message}");
                     return false;
                 }
@@ -918,40 +985,38 @@ namespace WebApi.Repository
                 {
                     using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
-                        bool isHeaderSkipped = false;
-                        do
-                        {
-                            while (reader.Read())
-                            {
-                                // Bỏ qua hàng tiêu đề (header) đầu tiên
-                                if (!isHeaderSkipped)
-                                {
-                                    isHeaderSkipped = true;
-                                    continue;  // Bỏ qua hàng tiêu đề và tiếp tục với các hàng sau
-                                }
 
-                                // Kiểm tra dòng có rỗng không (ví dụ: cột Email và FullName phải có dữ liệu)
-                                if (reader.IsDBNull(1) || string.IsNullOrWhiteSpace(reader.GetValue(1)?.ToString()) ||
-                                    reader.IsDBNull(2) || string.IsNullOrWhiteSpace(reader.GetValue(2)?.ToString()))
-                                {
-                                    // Nếu dòng rỗng, in thông báo để dễ kiểm tra, bỏ qua
-                                    errors.Add("Dòng rỗng hoặc thiếu dữ liệu, bỏ qua.");
-                                    continue;
-                                }
+                        // Chuyển đổi toàn bộ dữ liệu Excel thành DataSet
+                        var dataSet = reader.AsDataSet();
+
+                        foreach (DataTable table in dataSet.Tables)
+
+                        {
+                            // Kiểm tra nếu sheet không có dữ liệu (chỉ có header hoặc hoàn toàn trống)
+                            if (table.Rows.Count <= 1)
+                                continue;
+                            for (int i = 1; i < table.Rows.Count; i++) // Bỏ qua header (dòng đầu tiên)
+                            {
+                                var row = table.Rows[i];
+
 
                                 // Đọc dữ liệu từ các cột sau hàng tiêu đề
                                 var userImportRequest = new UserImportRequest
                                 {
-                                    Mail = reader.GetValue(1)?.ToString(),  // Cột Email
-                                    FullName = reader.GetValue(2)?.ToString(),  // Cột FullName
-                                    PhoneNumber = reader.GetValue(3)?.ToString(),  // Cột PhoneNumber
-                                    EmailFe = reader.GetValue(4)?.ToString(),  // Cột EmailFe (có thể để trống cho một số roles)
-                                    DateOfBirth = reader.GetValue(5)?.ToString(),  // Cột DateOfBirth
-                                    Gender = reader.GetValue(6)?.ToString()?.ToLower(),  // Cột Gender
-                                    Address = reader.GetValue(7)?.ToString(),  // Cột Address
-                                    FacultyOrSubjectInCharge = (currentUserRoleName == "Examiner" || currentUserRoleName == "Head of Department") // Kiểm tra quyền Examiner hoặc Head of Department
-                                    ? (string.IsNullOrEmpty(reader.GetValue(8)?.ToString()?.Trim()) ? null : reader.GetValue(8)?.ToString()?.Trim()) // Kiểm tra cột 8
-                                    : null, // Nếu không phải Examiner hoặc Head of Department, gán null cho FacultyOrSubjectInCharge
+                                    Mail = row[1]?.ToString(),  // Cột Email
+                                    FullName = row[2]?.ToString(),  // Cột FullName
+                                    PhoneNumber = row[3]?.ToString(),  // Cột PhoneNumber
+                                    EmailFe = row[4]?.ToString(),  // Cột EmailFe (có thể để trống cho một số roles)
+                                    DateOfBirth = row[5]?.ToString(),  // Cột DateOfBirth
+                                    Gender = row[6]?.ToString()?.ToLower(),  // Cột Gender
+                                    Address = row[7]?.ToString(),  // Cột Address
+                                    FacultyInCharge = (currentUserRoleName == "Examiner") // Nếu là Examiner, cho phép đọc cột 8
+                                    ? (string.IsNullOrEmpty(row[8]?.ToString()?.Trim()) ? null : row[8]?.ToString()?.Trim())
+                                    : null, // Nếu là Head of Department, luôn set FacultyInCharge = null
+
+                                    SubjectInCharge = (currentUserRoleName == "Examiner" || currentUserRoleName == "Head of Department") // Cho phép cả Examiner và Head of Department đọc cột 9
+                                    ? (string.IsNullOrEmpty(row[9]?.ToString()?.Trim()) ? null : row[9]?.ToString()?.Trim())
+                                    : null // Nếu không thuộc hai vai trò trên, set null cho SubjectInCharge
                                 };
 
                                 var errorMessages = new List<string>();
@@ -1079,29 +1144,44 @@ namespace WebApi.Repository
                                 }
 
                                 // Tạo khóa duy nhất cho mỗi người dùng
-                                string uniqueKey = $"{userImportRequest.Mail}_{userImportRequest.FullName}_{userImportRequest.PhoneNumber}";
+                                string uniqueKey = $"{userImportRequest.Mail?.Trim().ToLower()}_" +
+                                                   $"{userImportRequest.FullName?.Trim().ToLower()}_" +
+                                                   $"{userImportRequest.PhoneNumber?.Trim()}";
+
+                                // Kiểm tra xem người dùng đã tồn tại trong HashSet chưa
                                 if (existingUserSet.Contains(uniqueKey))
                                 {
-                                    errors.Add($"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.");
-                                    continue;
+                                    var errorMessage = $"Duplicate entry for Mail '{userImportRequest.Mail}', FullName '{userImportRequest.FullName}', and PhoneNumber '{userImportRequest.PhoneNumber}'.";
+                                    Console.WriteLine(errorMessage);
+                                    errors.Add(errorMessage); // Thêm vào danh sách lỗi chính
+                                    continue; // Bỏ qua bản ghi trùng lặp
+
                                 }
 
                                 existingUserSet.Add(uniqueKey);
 
+                                // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu
                                 var normalizedMail = userImportRequest.Mail?.Trim().ToLower();
-                                var normalizedFullName = userImportRequest.FullName?.Trim().ToLower();
-                                var normalizedPhoneNumber = userImportRequest.PhoneNumber?.Trim();
+                                Console.WriteLine($"Normalized Mail: {normalizedMail}");
 
                                 var existingUser = await dbContext.Users
-                                    .FirstOrDefaultAsync(u => u.Mail.ToLower() == normalizedMail
-                                                             && u.FullName.ToLower() == normalizedFullName
-                                                             && u.PhoneNumber == normalizedPhoneNumber);
+                                    .FirstOrDefaultAsync(u => u.Mail.Trim().ToLower() == normalizedMail);
 
                                 if (existingUser != null)
                                 {
-                                    errorMessages.Add($"User with Mail '{userImportRequest.Mail}' already exists.");
+                                    Console.WriteLine($"Existing User Found: {existingUser.Mail}");
+                                    var errorMessage = $"User with Mail '{userImportRequest.Mail}' already exists. Please enter system to check!";
+                                    errorMessages.Add(errorMessage);
+                                    errors.Add(errorMessage); // Thêm lỗi vào danh sách chính
                                     continue;
                                 }
+                                else
+                                {
+                                    Console.WriteLine("No existing user found with this email.");
+                                }
+
+
+
 
                                 if (errorMessages.Any())
                                 {
@@ -1139,7 +1219,16 @@ namespace WebApi.Repository
                                     }
                                     else
                                     {
-                                        var facultyOrSubjectList = userImportRequest.FacultyOrSubjectInCharge
+                                        // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
+                                        
+                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>()  : userImportRequest.FacultyInCharge
+                                        .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(f => f.Trim().ToLower())
+                                        .ToList();
+
+                                        // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
+                                        var subjectList = userImportRequest.SubjectInCharge
+
                                             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Select(f => f.Trim().ToLower())
                                             .ToList();
@@ -1148,11 +1237,14 @@ namespace WebApi.Repository
 
                                         if (currentUserRoleName == "Examiner")
                                         {
-                                            importSuccess = await ImportForExaminer(facultyOrSubjectList, user, currentUserCampusId);
+                                            // Gọi phương thức ImportForExaminer để xử lý nhập dữ liệu cho Head of Department
+                                            importSuccess = await ImportForExaminer(facultyList,subjectList, user, currentUserCampusId);
                                         }
                                         else if (currentUserRoleName == "Head of Department")
                                         {
-                                            importSuccess = await ImportForHeadOfDepartment(facultyOrSubjectList, user, currentUserCampusId);
+                                            // Gọi phương thức ImportForHeadOfDepartment để xử lý nhập dữ liệu cho Lecturer
+                                            importSuccess = await ImportForHeadOfDepartment(subjectList, user, currentUserCampusId);
+
                                         }
 
                                         if (importSuccess)
@@ -1171,7 +1263,7 @@ namespace WebApi.Repository
                                     errors.Add($"Đã xảy ra lỗi: {ex.Message}");
                                 }
                             }
-                        } while (reader.NextResult());
+                        }
                     }
 
                 }
@@ -1183,7 +1275,7 @@ namespace WebApi.Repository
                 else
                 {
                     response.IsSuccessful = true;
-                    response.Message = $"Successfully added {usersToAdd.Count} users";
+                    response.Message = $"Successfully added users";
                 }
 
             }
