@@ -1,7 +1,12 @@
 ﻿@page "/HeadDepartment/SubjectList"
 @page "/Developer/SubjectList"
-<h1 style="text-align: center;" class="mb-4">Subject and Lecturer Management</h1>
 
+@if (!isProgramer)
+{
+    <h1 style="text-align: center;" class="mb-4">Subject and Lecturer Management</h1>
+}else{
+    <h1 style="text-align: center;" class="mb-4">Subject Management</h1>
+}
 <div class="d-flex justify-content-center">
     <div class="mt-4">
         <div class="custom-box">
@@ -13,13 +18,18 @@
                     </div>
                 }
                 <div>
-                    <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Variant="Variant.Filled" OnClick="AddSubject">Add Subject</MudButton>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               OnClick="OpenImportDialogAsync">
-                        Import User
-                    </MudButton>
+                    @if (!isProgramer)
+                    {
+                         <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Variant="Variant.Filled" OnClick="AddSubject">Add Subject</MudButton>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   OnClick="OpenImportDialogAsync">
+                            Import User
+                        </MudButton>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Tertiary" Variant="Variant.Filled" OnClick="AddSubjectToProgramer">Add Subject</MudButton>
+                   
                 </div>
             </div>
             <div>
@@ -28,22 +38,33 @@
                         <MudTh>#</MudTh>
                         <MudTh>Subject Code</MudTh>
                         <MudTh>Subject Name</MudTh>
-                        <MudTh>Lecturer List</MudTh>
+                        @if (!isProgramer)
+                        {
+                            <MudTh>Lecturer List</MudTh>
+                        }else{
+                            <MudTh>Action</MudTh>
+                        }
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@((Response.SubjectsList.IndexOf(@context) + 1))</MudTd>
                         <MudTd>@context.SubjectCode</MudTd>
                         <MudTd>@context.SubjectName</MudTd>
                         <MudTd>
-                            <div class="d-flex align-items-center justify-content-around">
-                                <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => ShowLecturerList(context.SubjectId,context.SubjectCode))">Show</MudButton>
-                            </div>
+                            @if (!isProgramer)
+                            {
+                                <div class="d-flex align-items-center justify-content-around">
+                                    <MudButton StartIcon="@Icons.Material.Filled.AssignmentInd" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => ShowLecturerList(context.SubjectId,context.SubjectCode))">Show</MudButton>
+                                </div>
+                            
+                            }else{
+                            <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Filled" @onclick="() => RemoveSubject(context.SubjectId)"></MudButton>
+                            }
                         </MudTd>
                 
 
                     </RowTemplate>
                 </MudTable>
-                @if (Response.SubjectsList.Count == 0)
+                @if (Response.SubjectsList.Count == 0 || Response.SubjectsList == null)
                 {
                     <p class="text-center  fs-6 mt-4">No Data</p>
                 }
@@ -95,7 +116,7 @@
             }
         }
     }
- 
+
     private async Task OpenImportDialogAsync()
     {
         var options = new DialogOptions
@@ -117,7 +138,7 @@
         {
             dialog.Close(DialogResult.Ok(true));
         }
-        
+
     }
 
     public async Task ShowLecturerList(int subjectId,string subjectCode)
@@ -141,6 +162,74 @@
 
         if (!result.Canceled)
         {
+        }
+    }
+
+    public async Task RemoveSubject(int subjectId)
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        int UserID = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<Dialog>
+        {
+            { x => x.Content, "Are you sure want to remove subject?" },
+            { x => x.BtnTextConfirm, "Remove" },
+            { x => x.BtnTextCancel, "Cancel" },
+        };
+
+        var dialog = await DialogService.ShowAsync<Dialog>("Remove ", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var resp = await this.UserService.RemoveLecture(UserID, subjectId);
+
+            if (resp.IsSuccessful)
+            {
+                await GetSubject();
+            }
+        }
+    }
+    public async Task AddSubjectToProgramer()
+    {
+        var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        
+        var req = new SubjectDepartmentRequest
+            {
+                SubjectId = 0,
+                UserID = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0
+            };
+
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+                BackdropClick = false,
+            };
+
+        var parameters = new DialogParameters<AddSubjectDialog>
+        {
+            {x => x.SubjectList,Response.AddSubjectsList},
+            {x => x.request,req}
+        };
+
+        var dialog = await DialogService.ShowAsync<AddSubjectDialog>($"Add Subject to your Department", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await GetSubject();
         }
     }
 

@@ -39,10 +39,12 @@ namespace WebApi.IRepository
 
         Task<List<ExamBySemesterResponse>> ExamBySemesterNameAndUserId(int semesterId, int userId);
 
+
         Task<List<ExamRemindResponse>> SendReminderForUncorrectedExams();
 
         Task<List<ExamRemindResponse>> SendReminderForExamsWithoutScheduledDate();
         Task<List<ExamRemindResponse>> SendReminderForReviewDate();
+
 
     }
 }

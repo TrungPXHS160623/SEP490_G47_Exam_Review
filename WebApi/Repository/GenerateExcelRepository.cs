@@ -144,12 +144,11 @@ namespace WebApi.Repository
                     var reports = exam.Reports.ToList();
 
                     string combinedReportContents = reports.Any()
-                        ? string.Join("\n\n", reports.Select(r => $"Comment: {r.ReportContent}"))
+                        ? string.Join(Environment.NewLine, reports.Select(r => $"Comment: {r.ReportContent}"))
                         : "N/A";
                     worksheet.Cells[row, 10].Value = combinedReportContents;
-
                     string combinedSolutions = reports.Any()
-                        ? string.Join("\n\n", reports.Select(r => $"Solution: {r.QuestionSolutionDetail}"))
+                        ? string.Join(Environment.NewLine, reports.Select(r => $"Solution: {r.QuestionSolutionDetail}"))
                         : "N/A";
                     worksheet.Cells[row, 11].Value = combinedSolutions;
 
