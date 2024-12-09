@@ -1,5 +1,18 @@
 ﻿@page "/Examiner/EditUser/{UserId:int}"
 @page "/Examiner/AddUser"
+<style>
+    .text-wrap {
+        white-space: pre-wrap; /* Cho phép xuống dòng tự động */
+        word-wrap: break-word; /* Bẻ từ nếu từ quá dài */
+        overflow-wrap: break-word; /* Dùng cho các trình duyệt hiện đại */
+        max-width: 300px; /* Giới hạn chiều rộng */
+        border: 1px solid #ddd; /* Để dễ nhìn thấy khung */
+        padding: 5px;
+        font-size: 14px;
+        line-height: 1.5; /* Tăng khoảng cách giữa các dòng */
+    }
+
+</style>
 <h1 style="text-align: center;">Manage Head Department</h1>
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4" style="width: 450px;">
@@ -65,8 +78,8 @@
                 }
             </div>
         </div>
-                   <div class="mb-4 row">
-            <label class="col-4 text-end">Subject:</label>
+        <div class="mb-4 d-flex align-items-baseline">
+            <label class="col-4 text-end me-4">Subject:</label>
             <div class="col-8">
                 <MudSelect T="SubjectResponse"
                            @bind-SelectedValues=@user.SubjectResponses
@@ -85,7 +98,10 @@
                         }
                     }
                 </MudSelect>
-                <span class="mt-2 text-nowrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
+                <div class="mt-2 text-wrap">
+                    @(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))
+                </div>
+
             </div>
         </div>
         <div class="mb-4 d-flex align-items-center">

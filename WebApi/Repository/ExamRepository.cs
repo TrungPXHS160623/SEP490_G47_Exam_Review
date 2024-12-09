@@ -1171,15 +1171,8 @@ public class ExamRepository : IExamRepository
         }
     }
 
-    public async Task<List<ExamRemindResponse>> GetRemindExam()
-    {
-        try
-        {
-            
-        }
-        catch (Exception ex)
-        {
-            
-        }
-    }
+    //public Task<List<ExamRemindResponse>> GetRemindExam()
+    //{
+
+    //}
 }

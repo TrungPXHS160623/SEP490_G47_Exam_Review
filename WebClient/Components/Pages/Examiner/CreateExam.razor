@@ -57,7 +57,7 @@
     public MainLayout Layout { get; set; }
 
     IList<IBrowserFile> _files = new List<IBrowserFile>();
-
+    private bool isAdmin { get; set; } = false;
     private Dictionary<int, string> ColorList = new Dictionary<int, string>
     {
         { 1, "#D3D3D3" }, // Unassigned
@@ -82,12 +82,17 @@
 
             var response = await MenuService.CheckAccess(userId, 10);
             var response2 = await MenuService.CheckAccess(userId, 21);
+            var cam = await UserService.GetByIdAsync(userId);
             if (!response.IsSuccessful && !response2.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }
             else
             {
+                if (cam.Item != null && cam.Item.RoleId==1)
+                {
+                    isAdmin = true;
+                }
                 if (Layout != null)
                 {
                     Layout.Header = "Home";
@@ -101,7 +106,14 @@
 
     private void NavigateToCreatePage()
     {
-        NavManager.NavigateTo("/Examiner/CreateForm");
+        if (isAdmin)
+        {
+            NavManager.NavigateTo("/Admin/CreateForm");
+        }
+        else
+        {
+            NavManager.NavigateTo("/Examiner/CreateForm");
+        }
     }
 
     private async Task OpenImportDialogAsync()
