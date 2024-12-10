@@ -196,7 +196,7 @@
 
                     var mailModel = new MailModel
                         {
-                            MailList = new List<MailUtil> { mail }, // Email của người tạo
+                            MailList = new List<MailUtil> { mail }, 
                             Subject = "Notification on Exam Status Update",
                             Body = $@"
                     <p><b>Dear Examiner,</b></p>
@@ -219,7 +219,6 @@
                     <p><b>Exam Review System</b></p><br>"
                         };
 
-                    // Gửi email
                     var result = await this.MailService.SendMail(mailModel);
 
                     if (result.IsSuccessful)
