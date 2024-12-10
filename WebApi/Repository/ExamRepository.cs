@@ -143,6 +143,17 @@ public class ExamRepository : IExamRepository
                     UpdateDate = DateTime.Now,
                 };
 
+                var headId = await (from u in this._context.Users
+                                    join cuf in this._context.CampusUserFaculties on u.UserId equals cuf.UserId
+                                    join f in this._context.Faculties on cuf.FacultyId equals f.FacultyId
+                                    join s in this._context.Subjects on f.FacultyId equals s.FacultyId
+                                    select u).FirstOrDefaultAsync();
+
+                if (headId != null)
+                {
+                    newExam.HeadDepartmentId = headId.UserId;
+                }
+
                 await this._context.AddAsync(newExam);
 
                 await this._context.SaveChangesAsync();
@@ -451,6 +462,7 @@ public class ExamRepository : IExamRepository
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
                               join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
                               where (cus.UserId ==req.UserId)
+                              //where (e.HeadDepartmentId == req.UserId)
                               && e.ExamStatusId != 1
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
@@ -1176,7 +1188,10 @@ public class ExamRepository : IExamRepository
         try
         {
             var data = await (from ex in this._context.Exams
-                              join u in this._context.Users on ex.HeadDepartmentId equals u.UserId
+                              join s in this._context.Subjects on ex.SubjectId equals s.SubjectId
+                              join f in this._context.Subjects on s.FacultyId equals f.FacultyId
+                              join cuf in this._context.CampusUserFaculties on f.FacultyId equals cuf.FacultyId
+                              join u in this._context.Users on cuf.UserId equals u.UserId
                               where ex.ExamStatusId == 5
                               && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
                               select new ExamRemindResponse

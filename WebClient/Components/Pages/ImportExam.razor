@@ -56,7 +56,7 @@
                 <MudText>Import</MudText>
             }
         </MudButton>
-        <MudButton Color="Color.Default" Href="/Template/SampleImportExams.xlsx" Class="col-auto btn btn-block" Variant="Variant.Filled">Download template</MudButton>
+        <MudButton Color="Color.Default" Class="col-auto btn btn-block" Variant="Variant.Filled" OnClick="DownloadTemplate">Download template</MudButton>
         <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
@@ -131,5 +131,10 @@
     private void SetDragClass() => _dragClass = $"{DefaultDragClass} mud-border-primary";
 
     private void ClearDragClass() => _dragClass = DefaultDragClass;
+
+    private async Task DownloadTemplate()
+    {
+        await JS.InvokeVoidAsync("downloadFile", "/Template/SampleImportExams.xlsx", "SampleImportExams.xlsx");
+    }
 }
 
