@@ -84,8 +84,7 @@
             <label class="col-4 text-end">Start Review Date:</label>
 
             <div class="col-auto">
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
+                <MudDatePicker IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                Margin="Margin.Dense" For="@(()=> exam.StartDate)" />
             </div>
@@ -96,8 +95,7 @@
             <label class="col-4 text-end">End Review Date:</label>
 
             <div class="col-auto">
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
+                <MudDatePicker IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                Margin="Margin.Dense" For="@(()=> exam.EndDate)" />
             </div>
