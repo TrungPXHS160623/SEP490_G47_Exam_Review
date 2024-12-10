@@ -129,6 +129,7 @@
     private ExamCreateRequest exam = new ExamCreateRequest();
     private List<Campus> camList = new();
     private List<SubjectResponse> subList = new();
+    private bool isAdmin { get; set; } = false;
     private List<Semester> SemesterList = new List<Semester>();
 
     [Parameter]
@@ -170,7 +171,7 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
+            var cam = await UserService.GetByIdAsync(userId);
             var response = await MenuService.CheckAccess(userId, 3);
             var response2 = await MenuService.CheckAccess(userId, 21);
             if (!response.IsSuccessful&& !response2.IsSuccessful)
@@ -182,7 +183,10 @@
                 var resp = await SubjectService.GetSubjects();
                 if (resp.IsSuccessful) subList = resp.Items;
                 var sem = await SemesterService.GetSemester();
-
+                if (cam.Item != null && cam.Item.RoleId==1)
+                {
+                    isAdmin = true;
+                }
                 if (sem.IsSuccessful)
                 {
                     SemesterList = sem.Items;
@@ -220,7 +224,13 @@
                 }
             }
             var resp = await ExamService.CreateExam(exam);
-            if (resp.IsSuccessful) Navigation.NavigateTo("/Examiner/ExamList");
+
+            if (resp.IsSuccessful && !isAdmin)
+            { Navigation.NavigateTo("/Examiner/ExamList"); 
+            }
+            else{
+                Navigation.NavigateTo("/Admin/ExamList");
+            }
         }
 
         _processing = false;

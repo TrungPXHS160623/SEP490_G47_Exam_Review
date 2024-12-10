@@ -1,17 +1,10 @@
 ﻿@page "/HeadDepartment/EditLecturer/{UserId:int}"
 @page "/HeadDepartment/AddLecturer"
 
-@if (!isAddOrEdit)
-{
-    <h1 style="text-align: center;">Update Lecturer</h1>
-}
-else
-{
-    <h1 style="text-align: center;">Add Lecturer</h1>
-}
+<h1 style="text-align: center;">Manage Lecturer</h1>
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4 custom-box" style="width: 450px;">
-        <FluentValidationValidator />
+        
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end pe-4">Email:</label>
             <div class="col-8">

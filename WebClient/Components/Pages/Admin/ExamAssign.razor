@@ -148,7 +148,7 @@
                 var sList = await this.StatusService.GetStatus();
                 if (sList.IsSuccessful)
                 {
-                    statusList = sList.Items.Where(x => x.ExamStatusId == 2 || x.ExamStatusId == 3).ToList();
+                    statusList = sList.Items.Where(x => x.ExamStatusId != 7 || x.ExamStatusId != 8).ToList();
                 }
 
                 if (Layout != null)
