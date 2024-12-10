@@ -82,22 +82,22 @@
             <div class="col-8">
                 <MudSelect T="SubjectResponse"
                            @bind-SelectedValues=@user.SubjectResponses
-                           Text="@("Number of Subject : " + CurrentSubjectList.Count())"
+                           Text="@("Number of Subject : " + user.SubjectResponses.Count())"
                            MultiSelection="true"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomCenter"
-                           Disabled
+                           Disabled=@(!isAddOrEdit)
                            HelperText="Only display avaliable subject">
-                    @if (subjectList.Count() > 0)
+                    @if (CurrentSubjectList.Count() > 0)
                     {
-                        @foreach (var item in subjectList)
+                        @foreach (var item in CurrentSubjectList)
                         {
                             <MudSelectItem T="SubjectResponse" Value="@item">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
                         }
                     }
                 </MudSelect>
-                <span class="mt-2 text-wrap">@(string.Join(", ", CurrentSubjectList.Select(x => $"[{x.SubjectCode}]")))</span>
+                <span class="mt-2 text-wrap">@(string.Join(", ", user.SubjectResponses.Select(x => $"[{x.SubjectCode}]")))</span>
 
             </div>
         </div>

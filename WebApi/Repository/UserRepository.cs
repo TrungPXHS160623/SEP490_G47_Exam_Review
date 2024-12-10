@@ -1220,8 +1220,8 @@ namespace WebApi.Repository
                                     else
                                     {
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
-                                        
-                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>()  : userImportRequest.FacultyInCharge
+
+                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>() : userImportRequest.FacultyInCharge
                                         .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                         .Select(f => f.Trim().ToLower())
                                         .ToList();
@@ -1238,7 +1238,7 @@ namespace WebApi.Repository
                                         if (currentUserRoleName == "Examiner")
                                         {
                                             // Gọi phương thức ImportForExaminer để xử lý nhập dữ liệu cho Head of Department
-                                            importSuccess = await ImportForExaminer(facultyList,subjectList, user, currentUserCampusId);
+                                            importSuccess = await ImportForExaminer(facultyList, subjectList, user, currentUserCampusId);
                                         }
                                         else if (currentUserRoleName == "Head of Department")
                                         {
@@ -1329,7 +1329,7 @@ namespace WebApi.Repository
                             from e in examsGroup.DefaultIfEmpty()
                             where cus.CampusId == cuf.CampusId
                                   && cuf.UserId == userId
-                                  && cus.IsSelect ==false
+                                  && cus.IsProgramer ==false
                             group e by new
                             {
                                 u.UserId,

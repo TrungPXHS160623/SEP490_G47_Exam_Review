@@ -113,9 +113,6 @@ namespace WebApi.Repository
 
                     await this.dbContext.SaveChangesAsync();
 
-                    await logRepository.LogAsync($"Delete semester [{data.SemesterName}] ");
-
-
                     return new RequestResponse
                     {
                         IsSuccessful = true,
