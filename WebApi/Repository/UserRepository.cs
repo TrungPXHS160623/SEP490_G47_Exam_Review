@@ -33,7 +33,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(user.Email));
+                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.ToLower().Equals(user.Email.ToLower()));
 
                 if (data != null)
                 {
@@ -87,7 +87,7 @@ namespace WebApi.Repository
                 string emailFe = $"{req.MailFe}@fe.edu.vn";
                 string emailFpt = $"{req.Email}@fpt.edu.vn";
 
-                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
                 if (emailExists)
                 {
                     return new RequestResponse
@@ -115,7 +115,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "User already Exist"
+                        Message = "The department has been managed by another head deparment."
                     };
                 }
                 await this.dbContext.Users.AddAsync(newUser);
@@ -1665,7 +1665,7 @@ namespace WebApi.Repository
                     string emailFe = $"{req.MailFe}@fe.edu.vn";
                     string emailFpt = $"{req.Mail}@fpt.edu.vn";
 
-                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
                     if (emailExists)
                     {
                         return new RequestResponse
