@@ -19,13 +19,18 @@
         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Subject Name:</label>
             <div class="col-8">
-                <MudSelect T="int?" @bind-Value="exam.SubjectId" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Subject" For="@(() => exam.SubjectId)" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
-                    @foreach (var item in subList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
-                    }
-                </MudSelect>
+                <MudAutocomplete T="int?"
+                                 @bind-Value="exam.SubjectId"
+                                 SearchFunc="Search"
+                                 Variant="Variant.Outlined"
+                                 Label="Subject Code"
+                                 ToStringFunc="@((int? id) => SubjectToString(id))"
+                                 Margin="Margin.Dense"
+                                 AnchorOrigin="Origin.BottomCenter"
+                                 CoerceText="true"
+                                 MaxItems="int.MaxValue"
+                                 Dense
+                                 ErrorText="_errorText" />
             </div>
         </div>
 
@@ -158,6 +163,26 @@
                 DateChanged.InvokeAsync(exam.EndDate ?? DateTime.MinValue);
             }
         }
+    }
+
+    private Task<IEnumerable<int?>> Search(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return Task.FromResult(subList.Select(x => (int?)x.SubjectId).AsEnumerable());
+        }
+
+        return Task.FromResult(
+            subList.Where(x => ($"[{x.SubjectCode}] {x.SubjectName}")
+                .Contains(value, StringComparison.InvariantCultureIgnoreCase))
+             .Select(x => (int?)x.SubjectId) 
+        );
+    }
+
+    private string SubjectToString(int? id)
+    {
+        var subject = subList.FirstOrDefault(x => x.SubjectId == id);
+        return subject != null ? $"[{subject.SubjectCode}] {subject.SubjectName}" : string.Empty;
     }
 
     protected override async Task OnInitializedAsync()
