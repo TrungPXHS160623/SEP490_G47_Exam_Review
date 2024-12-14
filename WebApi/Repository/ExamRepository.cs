@@ -510,8 +510,7 @@ public class ExamRepository : IExamRepository
                               join c in _context.Campuses on e.CampusId equals c.CampusId
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
-                              where e.ExamStatusId != 1
-                              && (req.StatusId == null || e.ExamStatusId == req.StatusId)
+                              where (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               select new LeaderExamResponse
@@ -1212,15 +1211,15 @@ public class ExamRepository : IExamRepository
     {
         try
         {
-            var data = await(from ex in this._context.Exams
-                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
-                             where ex.ExamStatusId == 3
-                             && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
-                             select new ExamRemindResponse
-                             {
-                                 ExamCode = ex.ExamCode,
-                                 Mail = u.Mail,
-                             }).ToListAsync();
+            var data = await (from ex in this._context.Exams
+                              join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                              where ex.ExamStatusId == 3
+                              && Math.Round((DateTime.Now - ex.UpdateDate.Value).TotalDays) == 3
+                              select new ExamRemindResponse
+                              {
+                                  ExamCode = ex.ExamCode,
+                                  Mail = u.Mail,
+                              }).ToListAsync();
 
             return data;
         }
@@ -1234,15 +1233,15 @@ public class ExamRepository : IExamRepository
     {
         try
         {
-            var data = await(from ex in this._context.Exams
-                             join u in this._context.Users on ex.AssignedUserId equals u.UserId
-                             where ex.ExamStatusId == 3
-                             && ex.AssignmentDate.Value.Date == DateTime.Now.Date
-                             select new ExamRemindResponse
-                             {
-                                 ExamCode = ex.ExamCode,
-                                 Mail = u.Mail,
-                             }).ToListAsync();
+            var data = await (from ex in this._context.Exams
+                              join u in this._context.Users on ex.AssignedUserId equals u.UserId
+                              where ex.ExamStatusId == 3
+                              && ex.AssignmentDate.Value.Date == DateTime.Now.Date
+                              select new ExamRemindResponse
+                              {
+                                  ExamCode = ex.ExamCode,
+                                  Mail = u.Mail,
+                              }).ToListAsync();
 
             return data;
         }
