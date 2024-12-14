@@ -633,7 +633,7 @@ namespace WebApi.Repository
             }
         }
         // Phương thức nhập cho Examiner
-        private async Task<bool> ImportForExaminer(List<string> facultyList, List<string> subjectList, User user, int? currentUserCampusId)
+        private async Task<List<string>> ImportForExaminer(List<string> facultyList, List<string> subjectList, User user, int? currentUserCampusId)
         {
             var facultiesToAdd = new List<CampusUserFaculty>(); // Danh sách các đối tượng cần thêm vào DB
             var subjectsToAdd = new List<CampusUserSubject>(); // Danh sách các đối tượng cần thêm vào DB
@@ -647,7 +647,7 @@ namespace WebApi.Repository
 
                 if (faculty == null)
                 {
-                    errors.Add($"Bộ môn '{data}' không tồn tại.");
+                    errors.Add($"Faculty '{data}' does not exist.");
                     continue;
                 }
 
@@ -656,7 +656,7 @@ namespace WebApi.Repository
 
                 if (existingCampusUserFacultyRecord != null)
                 {
-                    errors.Add($"Bộ môn '{data}' tại campus này đã có người quản lý.");
+                    errors.Add($"Faculty '{data}' at this campus already has a head of department. Please modify the faculty in the system.");
                     continue;
                 }
 
@@ -665,16 +665,24 @@ namespace WebApi.Repository
 
                 if (existingCampusUserFaculty != null)
                 {
-                    errors.Add($"Bản ghi của User '{user.FullName}' với Bộ môn '{data}' đã tồn tại.");
+                    errors.Add($"The record for User '{user.FullName}' with Faculty '{data}' already exists.");
                     continue;
                 }
 
-                var facultyCount = await dbContext.CampusUserFaculties
+                // Kiểm tra số lượng bộ môn mà user đang quản lý tại campus này trong DB
+                var facultyCountInDb = await dbContext.CampusUserFaculties
                     .CountAsync(c => c.UserId == user.UserId && c.CampusId == currentUserCampusId);
 
-                if (facultyCount >= 1)
+                // Kiểm tra số lượng bộ môn sắp được thêm trong danh sách `facultiesToAdd`
+                var facultyCountInMemory = facultiesToAdd
+                    .Count(f => f.UserId == user.UserId && f.CampusId == currentUserCampusId);
+
+                // Tổng số bộ môn đang được quản lý (bao gồm cả trong DB và danh sách chờ thêm)
+                var totalFacultyCount = facultyCountInDb + facultyCountInMemory;
+
+                if (totalFacultyCount >= 1)
                 {
-                    errors.Add($"User '{user.FullName}' chỉ được quản lý 1 bộ môn tại campus này");
+                    errors.Add($"User '{user.FullName}' is only allowed to manage 1 faculty at this campus. If modifications are needed, please check again in the system.");
                     continue;
                 }
 
@@ -696,8 +704,7 @@ namespace WebApi.Repository
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Lỗi khi lưu vào cơ sở dữ liệu: {ex.Message}");
-                    return false;
+                    errors.Add($"Error while saving Faculty to the database: {ex.Message}");
                 }
             }
 
@@ -709,7 +716,7 @@ namespace WebApi.Repository
 
                 if (subject == null)
                 {
-                    errors.Add($"Môn học '{data}' không tồn tại.");
+                    errors.Add($"Subject '{data}' does not exist.");
                     continue;
                 }
 
@@ -718,7 +725,7 @@ namespace WebApi.Repository
 
                 if (existingCampusUserSubject != null)
                 {
-                    errors.Add($"Bản ghi của User '{user.FullName}' với Môn học '{data}' đã tồn tại.");
+                    errors.Add($"The record for User '{user.FullName}' with Subject '{data}' already exists.");
                     continue;
                 }
 
@@ -733,7 +740,7 @@ namespace WebApi.Repository
 
                 if (!isSubjectManagedByFaculty)
                 {
-                    errors.Add($"Môn học '{data}' không thuộc bất kỳ Bộ môn nào mà CNBM '{user.FullName}' quản lý tại Campus hiện tại.");
+                    errors.Add($"Subject '{data}' does not belong to any Faculty managed by HOD '{user.FullName}' at the current Campus.");
                     continue;
                 }
 
@@ -756,27 +763,17 @@ namespace WebApi.Repository
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Lỗi khi lưu vào cơ sở dữ liệu: {ex.Message}");
-                    return false;
+                    errors.Add($"Error while saving Subject to the database: {ex.Message}");
                 }
             }
 
-            // Nếu có lỗi, trả về false
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
-                    Console.WriteLine(error);
-                }
-                return false;
-            }
-
-            // Nếu không có lỗi, trả về true
-            return true;
+            // Trả về danh sách lỗi
+            return errors;
         }
 
+
         // Phương thức nhập cho Head of Department
-        private async Task<bool> ImportForHeadOfDepartment(List<string> facultyOrSubjectList, User user, int? currentUserCampusId)
+        private async Task<List<string>> ImportForHeadOfDepartment(List<string> facultyOrSubjectList, User user, int? currentUserCampusId)
         {
             var subjectsToAdd = new List<CampusUserSubject>(); // Danh sách các đối tượng cần thêm vào DB
             var errors = new List<string>(); // Danh sách lỗi (nếu có)
@@ -789,7 +786,7 @@ namespace WebApi.Repository
                 if (subject == null)
                 {
                     // Thêm lỗi nếu môn học không tồn tại
-                    errors.Add($"Môn học '{subjectCode}' không tồn tại.");
+                    errors.Add($"Subject '{subjectCode}' does not exist.");
                     continue;
                 }
 
@@ -800,7 +797,7 @@ namespace WebApi.Repository
                 if (existingCampusUserSubject != null)
                 {
                     // Thêm lỗi nếu bản ghi đã tồn tại
-                    errors.Add($"Bản ghi của User '{user.FullName}' với Môn học '{subjectCode}' đã tồn tại.");
+                    errors.Add($"The record for User '{user.FullName}' with Subject '{subjectCode}' already exists.");
                     continue;
                 }
 
@@ -824,25 +821,15 @@ namespace WebApi.Repository
                 }
                 catch (Exception ex)
                 {
-                    // Xử lý lỗi khi lưu vào DB
-                    Console.WriteLine($"Lỗi khi lưu vào cơ sở dữ liệu: {ex.Message}");
-                    return false;
+                    // Thêm lỗi khi lưu vào DB
+                    errors.Add($"Error while saving to the database: {ex.Message}");
                 }
             }
 
-            // Nếu có lỗi, trả về false
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
-                    Console.WriteLine(error);
-                }
-                return false;
-            }
-
-            // Nếu không có lỗi, trả về true
-            return true;
+            // Trả về danh sách lỗi (nếu không có lỗi, danh sách sẽ rỗng)
+            return errors;
         }
+
 
         public async Task<ResultResponse<AccountClaims>> GetCurrentUserInfoAsync(ClaimsPrincipal currentUser)
         {
@@ -1075,17 +1062,17 @@ namespace WebApi.Repository
                                 {
                                     // Thử phân tích cú pháp với định dạng cụ thể
                                     var formats = new[]
-                                    {
-                    "dd-MM-yyyy",
-                    "d/M/yyyy",
-                    "d/MM/yyyy",
-                    "dd/MM/yyyy",
-                    "MM-dd-yyyy",
-                    "dd/MM/yyyy hh:mm:ss tt",
-                    "d/MM/yyyy hh:mm:ss tt",
-                    "dd/M/yyyy hh:mm:ss tt",
-                    "d/M/yyyy hh:mm:ss tt"
-                };
+                                     {
+                                        "dd-MM-yyyy",
+                                        "d/M/yyyy",
+                                        "d/MM/yyyy",
+                                        "dd/MM/yyyy",
+                                        "MM-dd-yyyy",
+                                        "dd/MM/yyyy hh:mm:ss tt",
+                                        "d/MM/yyyy hh:mm:ss tt",
+                                        "dd/M/yyyy hh:mm:ss tt",
+                                        "d/M/yyyy hh:mm:ss tt"
+                                    };
 
                                     if (DateTime.TryParseExact(userImportRequest.DateOfBirth, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDob))
                                     {
@@ -1180,9 +1167,6 @@ namespace WebApi.Repository
                                     Console.WriteLine("No existing user found with this email.");
                                 }
 
-
-
-
                                 if (errorMessages.Any())
                                 {
                                     errors.Add($"Error with this Mail {userImportRequest.Mail} : {string.Join(", ", errorMessages)}");
@@ -1219,41 +1203,45 @@ namespace WebApi.Repository
                                     }
                                     else
                                     {
-                                        // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
-                                        
+                                        // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge"   
                                         var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>()  : userImportRequest.FacultyInCharge
                                         .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                         .Select(f => f.Trim().ToLower())
                                         .ToList();
 
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
-                                        var subjectList = userImportRequest.SubjectInCharge
-
+                                        var subjectList = string.IsNullOrEmpty(userImportRequest.SubjectInCharge) ? new List<string>(): userImportRequest.SubjectInCharge
                                             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Select(f => f.Trim().ToLower())
                                             .ToList();
 
-                                        bool importSuccess = false;
-
                                         if (currentUserRoleName == "Examiner")
                                         {
-                                            // Gọi phương thức ImportForExaminer để xử lý nhập dữ liệu cho Head of Department
-                                            importSuccess = await ImportForExaminer(facultyList,subjectList, user, currentUserCampusId);
+                                            // Gọi phương thức ImportForExaminer và thêm lỗi vào errors
+                                            var examinerErrors = await ImportForExaminer(facultyList, subjectList, user, currentUserCampusId);
+                                            errors.AddRange(examinerErrors); // Thêm lỗi từ ImportForExaminer vào errors
                                         }
                                         else if (currentUserRoleName == "Head of Department")
                                         {
-                                            // Gọi phương thức ImportForHeadOfDepartment để xử lý nhập dữ liệu cho Lecturer
-                                            importSuccess = await ImportForHeadOfDepartment(subjectList, user, currentUserCampusId);
-
+                                            // Gọi phương thức ImportForHeadOfDepartment và thêm lỗi vào errors
+                                            var hodErrors = await ImportForHeadOfDepartment(subjectList, user, currentUserCampusId);
+                                            errors.AddRange(hodErrors); // Thêm lỗi từ ImportForHeadOfDepartment vào errors
                                         }
 
-                                        if (importSuccess)
+                                        if (!errors.Any())
                                         {
+                                            // Không có lỗi, tiến hành lưu thay đổi
                                             await dbContext.SaveChangesAsync();
+                                            Console.WriteLine("Nhập dữ liệu thành công.");
                                         }
                                         else
                                         {
-                                            errors.Add("Nhập dữ liệu không thành công. Quá trình bị hủy.");
+                                            // Có lỗi, hiển thị thông báo và thêm lỗi vào danh sách
+                                            Console.WriteLine("Nhập dữ liệu không thành công. Các lỗi sau đã xảy ra:");
+                                            foreach (var error in errors)
+                                            {
+                                                Console.WriteLine(error);
+                                            }
                                         }
                                     }
 
