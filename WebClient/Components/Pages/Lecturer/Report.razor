@@ -1,8 +1,5 @@
 ﻿@page "/Lecture/ExamReport/{ExamId:int}"
 
-<style>
-
-</style>
 <div class="container">
     <div class="custom-box mb-5">
         <h2>Exam Detail</h2>
@@ -54,17 +51,21 @@
                                 <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
                                                IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > exam.EndDate?.Date) ||(dt < exam.StartDate?.Date))"
                                                @bind-Date="exam.EstimatedTimeTest" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
-                                               Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft" />
+                                               Margin="Margin.Dense" Required AnchorOrigin="Origin.BottomLeft"
+                                                Error="_hasErrorDate"
+                                                ErrorText="_errorDate" />
                              </div>
                              <div class="col-5">
-                                <MudTimePicker AmPm="true"
-                                               Time="@exam.EstimatedTimeTest?.TimeOfDay"
-                                               TimeChanged="OnTimeChanged"
-                                               AnchorOrigin="Origin.TopLeft"
-                                               Variant="Variant.Outlined"
-                                               Margin="Margin.Dense"
-                                               AutoClose="false">
-                                </MudTimePicker>
+                                 <MudTimePicker AmPm="true"
+                                                Time="@exam.EstimatedTimeTest?.TimeOfDay"
+                                                TimeChanged="OnTimeChanged"
+                                                AnchorOrigin="Origin.TopLeft"
+                                                Variant="Variant.Outlined"
+                                                Margin="Margin.Dense"
+                                                AutoClose="false"
+                                                Error="_hasErrorTime"
+                                                ErrorText="_errorTime">
+                                 </MudTimePicker>
                              </div>
                          </div>
                      </div>
@@ -73,7 +74,7 @@
         </div>
         @if (exam.AssignStatusId == 3)
         {
-            <MudTooltip Text="Select a date before saving" >
+            <MudTooltip Text="Select a date before saving">
                 <MudButton Class="me-4"
                            StartIcon="@Icons.Material.Filled.Save"
                            Color="Color.Primary"
@@ -195,6 +196,14 @@
 
     string text = string.Empty;
 
+    private string _errorTime = string.Empty;
+
+    private bool _hasErrorTime = false;
+
+    private string _errorDate = string.Empty;
+
+    private bool _hasErrorDate = false;
+
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full d-flex justify-content-center align-items-center text-center";
     private string _dragClass = DefaultDragClass;
 
@@ -242,7 +251,7 @@
         exam.ReportList.RemoveAll(report =>
             !report.QuestionNumber.HasValue ||
             string.IsNullOrEmpty(report.ReportContent) ||
-            (report.ImageList == null || !report.ImageList.Any()) || 
+            (report.ImageList == null || !report.ImageList.Any()) ||
             string.IsNullOrEmpty(report.QuestionSolutionDetail)
         );
 
@@ -251,10 +260,71 @@
         if (resp.IsSuccessful)
         {
             if (isSubmit)
-            { 
-                if(exam.ReportList.Count > 0)
+            {
+                if (exam.ReportList.Count > 0)
                 {
                     var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+                    var user = auth.User;
+                    var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+
+                    var mailList = new List<MailUtil>
+                {
+                    new MailUtil{MailTo = exam.HeadDepartmentName}
+                };
+
+                    var mailModel = new MailModel
+                        {
+                            Subject = $"Completed Review : {exam.ExamCode}",
+                            MailList = mailList,
+                            Body = $@"
+                        <p><b>Dear {{0}},</b></p>
+                        <p>We would like to inform you that the review for exam code <b>{exam.ExamCode}</b> has been completed by the lecturer.</p>
+                        <p>For more details, please visit the website at <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a>.</p>
+                        <p>Thank you for your support!</p>
+                        <p><b>From:</b> {email}</p><br>
+                        <p><b>Exam Review System</b></p><br>",
+
+                        };
+
+                    var sendMail = await this.MailService.SendMail(mailModel);
+                }
+            }
+
+            NavManager.NavigateTo("/Lecture/ExamList");
+        }
+    }
+
+    public async Task SaveAssignDate()
+    {
+        if (exam.EstimatedTimeTest == null)
+        {
+            _hasErrorDate = true;
+            _errorDate = "Please select a date.";
+        }
+        else
+        {
+            _hasErrorDate = false;
+            _errorDate = string.Empty;
+        }
+
+        if (exam.EstimatedTimeTest?.TimeOfDay == TimeSpan.Zero)
+        {
+            _hasErrorTime = true;
+            _errorTime = "Please select a time.";
+        }
+        else
+        {
+            _hasErrorTime = false;
+            _errorTime = string.Empty;
+        }
+
+        if (!_hasErrorDate && !_hasErrorTime)
+        {
+            var resp = await this.AssignmentService.SetAssignDate(exam);
+
+            if (resp.IsSuccessful)
+            {
+                var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
                 var user = auth.User;
                 var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
 
@@ -265,57 +335,21 @@
 
                 var mailModel = new MailModel
                     {
-                        Subject = $"Completed Review : {exam.ExamCode}",
+                        Subject = $"Exam Review Schedule - Code {exam.ExamCode}",
                         MailList = mailList,
                         Body = $@"
-                        <p><b>Dear {{0}},</b></p>
-                        <p>We would like to inform you that the review for exam code <b>{exam.ExamCode}</b> has been completed by the lecturer.</p>
-                        <p>For more details, please visit the website at <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a>.</p>
-                        <p>Thank you for your support!</p>
-                        <p><b>From:</b> {email}</p><br>
-                        <p><b>Exam Review System</b></p><br>",
-
-                    };
-
-                var sendMail = await this.MailService.SendMail(mailModel);
-                }
-            }
-
-            NavManager.NavigateTo("/Lecture/ExamList");
-        }
-    }
-
-    public async Task SaveAssignDate()
-    {
-        var resp = await this.AssignmentService.SetAssignDate(exam);
-
-        if (resp.IsSuccessful)
-        {
-            var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
-            var user = auth.User;
-            var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
-
-            var mailList = new List<MailUtil>
-                {
-                    new MailUtil{MailTo = exam.HeadDepartmentName}
-                };
-
-            var mailModel = new MailModel
-                {
-                    Subject = $"Exam Review Schedule - Code {exam.ExamCode}",
-                    MailList = mailList,
-                    Body = $@"
                     <p><b>Dear {{0}},</b></p>
                     <p>We would like to inform you that Lecturer {email} has selected a time to conduct the review for exam code <b>{exam.ExamCode}</b>. The review is scheduled to take place at <b>mm:HH</b> on <b>dd/MM/yyyy</b>.</p>
                     <p>For more details, please visit the website at <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a>.</p>
                     <p>Thank you for your support!</p>
                     <p><b>From:</b> {email}</p><br>
                     <p><b>Exam Review System</b></p><br>",
-                };
+                    };
 
-            var sendMail = await this.MailService.SendMail(mailModel);
+                var sendMail = await this.MailService.SendMail(mailModel);
 
-            NavManager.NavigateTo("/Lecture/ExamList");
+                NavManager.NavigateTo("/Lecture/ExamList");
+            }
         }
     }
 
@@ -335,10 +369,12 @@
 
     public void OnTimeChanged(TimeSpan? value)
     {
+
         if (exam.EstimatedTimeTest.HasValue)
         {
             exam.EstimatedTimeTest = new DateTime(exam.EstimatedTimeTest.Value.Year, exam.EstimatedTimeTest.Value.Month, exam.EstimatedTimeTest.Value.Day,
                                                value.Value.Hours, value.Value.Minutes, 0);
+
         }
     }
 
