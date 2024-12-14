@@ -3,6 +3,7 @@ using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(user.Email));
+                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.ToLower().Equals(user.Email.ToLower()));
 
                 if (data != null)
                 {
@@ -86,7 +87,8 @@ namespace WebApi.Repository
                 string emailFe = $"{req.MailFe}@fe.edu.vn";
                 string emailFpt = $"{req.Email}@fpt.edu.vn";
 
-                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt);
+                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
+
                 if (emailExists)
                 {
                     return new RequestResponse
@@ -114,7 +116,8 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "Already have Head Department on this department "
+                        Message = "The department has been managed by another head deparment."
+
                     };
                 }
                 await this.dbContext.Users.AddAsync(newUser);
@@ -205,22 +208,52 @@ namespace WebApi.Repository
         }
         public async Task<RequestResponse> DeleteAsync(int id)
         {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if (existingUser == null)
+            try
+            {
+                var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+                if (existingUser == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Account no exist"
+                    };
+                }
+                dbContext.Users.RemoveRange(existingUser);
+                await dbContext.SaveChangesAsync();
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = " Delete success "
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this user"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
+            catch (Exception ex)
             {
                 return new RequestResponse
                 {
                     IsSuccessful = false,
-                    Message = "Account no exist"
+                    Message = ex.Message,
                 };
             }
-            dbContext.Users.RemoveRange(existingUser);
-            await dbContext.SaveChangesAsync();
-            return new RequestResponse
-            {
-                IsSuccessful = true,
-                Message = " Delete success "
-            };
         }
 
         public async Task<ResultResponse<UserRequest>> GetByIdAsync(int id)
@@ -1634,7 +1667,7 @@ namespace WebApi.Repository
                     string emailFe = $"{req.MailFe}@fe.edu.vn";
                     string emailFpt = $"{req.Mail}@fpt.edu.vn";
 
-                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
                     if (emailExists)
                     {
                         return new RequestResponse

@@ -333,13 +333,15 @@
                     new MailUtil{MailTo = exam.HeadDepartmentName}
                 };
 
+                string date = exam.AssignmentDate.Value.ToString("HH:mm yyyy-MM-dd");
+
                 var mailModel = new MailModel
                     {
                         Subject = $"Exam Review Schedule - Code {exam.ExamCode}",
                         MailList = mailList,
                         Body = $@"
                     <p><b>Dear {{0}},</b></p>
-                    <p>We would like to inform you that Lecturer {email} has selected a time to conduct the review for exam code <b>{exam.ExamCode}</b>. The review is scheduled to take place at <b>mm:HH</b> on <b>dd/MM/yyyy</b>.</p>
+                    <p>We would like to inform you that Lecturer {email} has selected a time to conduct the review for exam code <b>{exam.ExamCode}</b>. The review is scheduled to take place at <b>{date}</b>.</p>
                     <p>For more details, please visit the website at <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a>.</p>
                     <p>Thank you for your support!</p>
                     <p><b>From:</b> {email}</p><br>

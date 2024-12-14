@@ -84,7 +84,7 @@
                     </PagerContent> *@
                 </MudTable>
                 <div>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="!(ExamList.Any(x => x.ExamStatusId == 3))">
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="(ExamList.Any(x => x.ExamStatusId == 3))">
                         Notify Examiner
                     </MudButton>
                 </div>
