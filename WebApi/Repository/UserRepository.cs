@@ -3,6 +3,7 @@ using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -205,22 +206,52 @@ namespace WebApi.Repository
         }
         public async Task<RequestResponse> DeleteAsync(int id)
         {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if (existingUser == null)
+            try
+            {
+                var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+                if (existingUser == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Account no exist"
+                    };
+                }
+                dbContext.Users.RemoveRange(existingUser);
+                await dbContext.SaveChangesAsync();
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = " Delete success "
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this user"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
+            catch (Exception ex)
             {
                 return new RequestResponse
                 {
                     IsSuccessful = false,
-                    Message = "Account no exist"
+                    Message = ex.Message,
                 };
             }
-            dbContext.Users.RemoveRange(existingUser);
-            await dbContext.SaveChangesAsync();
-            return new RequestResponse
-            {
-                IsSuccessful = true,
-                Message = " Delete success "
-            };
         }
 
         public async Task<ResultResponse<UserRequest>> GetByIdAsync(int id)
