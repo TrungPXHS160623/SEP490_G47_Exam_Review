@@ -126,12 +126,17 @@
             NavManager.NavigateTo("/home", true);
         }
 
+        var errorMsg = query["errorMsg"];
+        if (!string.IsNullOrEmpty(errorMsg))
+        {
+            Snackbar.Add(errorMsg, Severity.Error);
+        }
+
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
 
         if (isAuthenticated)
         {
             await UpdateName();
-            // NavManager.NavigateTo("/Home");
         }
         else
         {
