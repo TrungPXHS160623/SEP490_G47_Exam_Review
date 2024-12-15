@@ -88,6 +88,7 @@ namespace WebApi.Repository
                 string emailFpt = $"{req.Email}@fpt.edu.vn";
 
                 var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
+
                 if (emailExists)
                 {
                     return new RequestResponse
@@ -100,10 +101,10 @@ namespace WebApi.Repository
                 {
                     CampusId = req.CampusId,
                     PhoneNumber = req.Phone,
-                    EmailFe = req.MailFe+"@fe.edu.vn",
+                    EmailFe = req.MailFe + "@fe.edu.vn",
                     RoleId = 4,
                     FullName = req.UserName,
-                    Mail = req.Email+"@fpt.edu.vn",
+                    Mail = req.Email + "@fpt.edu.vn",
                     CreateDate = DateTime.Now,
                     UpdateDate = DateTime.Now,
                     IsActive = true,
@@ -116,6 +117,7 @@ namespace WebApi.Repository
                     {
                         IsSuccessful = false,
                         Message = "The department has been managed by another head deparment."
+
                     };
                 }
                 await this.dbContext.Users.AddAsync(newUser);
@@ -191,7 +193,7 @@ namespace WebApi.Repository
                             Email = u.Mail,
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
-                            UserName =u.FullName,
+                            UserName = u.FullName,
                             Tel = u.PhoneNumber,
                             RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                             UserId = u.UserId,
@@ -1360,7 +1362,7 @@ namespace WebApi.Repository
                             from e in examsGroup.DefaultIfEmpty()
                             where cus.CampusId == cuf.CampusId
                                   && cuf.UserId == userId
-                                  && cus.IsProgramer ==false
+                                  && cus.IsProgramer == false
                             group e by new
                             {
                                 u.UserId,
@@ -1575,7 +1577,7 @@ namespace WebApi.Repository
                                 FeEmail = g.Key.EmailFe,
                                 AssignedExamCount = g.Count(e => e != null),
                                 TotalDuration = g.Sum(e => e != null ? e.ExamDuration : 0),
-                                IsSelect =g.Key.IsSelect
+                                IsSelect = g.Key.IsSelect
                             }).ToList();
 
                 return new ResultResponse<UserResponse>
@@ -1678,10 +1680,10 @@ namespace WebApi.Repository
                     {
                         CampusId = u.CampusId,
                         PhoneNumber = req.PhoneNumber,
-                        EmailFe = req.MailFe+"@fe.edu.vn",
+                        EmailFe = req.MailFe + "@fe.edu.vn",
                         RoleId = 3,
                         FullName = req.FullName,
-                        Mail = req.Mail+"@fpt.edu.vn",
+                        Mail = req.Mail + "@fpt.edu.vn",
                         CreateDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
                         IsActive = true,
@@ -1740,7 +1742,7 @@ namespace WebApi.Repository
                 user.EmailFe = req.MailFe;
                 user.PhoneNumber = req.PhoneNumber;
                 user.FullName = req.FullName;
-                user.IsActive =req.IsActive.Value;
+                user.IsActive = req.IsActive.Value;
 
                 await this.dbContext.SaveChangesAsync();
 
