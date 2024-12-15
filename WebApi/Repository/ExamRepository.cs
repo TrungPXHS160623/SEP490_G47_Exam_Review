@@ -456,6 +456,7 @@ public class ExamRepository : IExamRepository
             var data = await (from e in _context.Exams
                               join u1 in _context.Users on e.AssignedUserId equals u1.UserId into u1Join
                               from u1 in u1Join.DefaultIfEmpty()
+                              join u2 in _context.Users on e.CreaterId equals u2.UserId
                               join sj in _context.Subjects on e.SubjectId equals sj.SubjectId
                               join c in _context.Campuses on e.CampusId equals c.CampusId
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
@@ -480,7 +481,9 @@ public class ExamRepository : IExamRepository
                                   ExamStatusId = es.ExamStatusId,
                                   AssignedLectureId = u1.UserId,
                                   AssignedLectureName = u1.Mail,
-                                  UpdateDate = e.UpdateDate
+                                  UpdateDate = e.UpdateDate,
+                                  CreaterId = u2.UserId,
+                                  CreaterName = u2.Mail,
                               }).ToListAsync();
 
             return new ResultResponse<LeaderExamResponse>

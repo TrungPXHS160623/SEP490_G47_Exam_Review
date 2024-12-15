@@ -333,7 +333,7 @@
                     new MailUtil{MailTo = exam.HeadDepartmentName}
                 };
 
-                string date = exam.AssignmentDate.Value.ToString("HH:mm yyyy-MM-dd");
+                string date = exam.EstimatedTimeTest.Value.ToString("HH:mm yyyy-MM-dd");
 
                 var mailModel = new MailModel
                     {
