@@ -219,7 +219,7 @@ namespace WebApi.Repository
                     data.SubjectName = req.SubjectName;
                     data.IsDeleted = req.IsDeleted;
                     data.FacultyId = req.FacultyId;
-                    data.UpdateDate =DateTime.Now;
+                    data.UpdateDate = DateTime.Now;
                     await this.DBcontext.SaveChangesAsync();
 
                     //await logRepository.LogAsync($"Update subject [{data.SubjectCode}] {data.SubjectName}");
@@ -397,19 +397,19 @@ namespace WebApi.Repository
                                 var errorMessages = new List<string>();
 
                                 // Validate SubjectCode
-                                if (string.IsNullOrEmpty(subjectImportRequest.SubjectCode) || subjectImportRequest.SubjectCode.Length > 10)
+                                if (string.IsNullOrEmpty(subjectImportRequest.SubjectCode) || subjectImportRequest.SubjectCode.Length > 1000)
                                 {
                                     errorMessages.Add("SubjectCode must not exceed 10 characters.");
                                 }
 
                                 // Validate SubjectName
-                                if (string.IsNullOrEmpty(subjectImportRequest.SubjectName) || subjectImportRequest.SubjectName.Length > 100)
+                                if (string.IsNullOrEmpty(subjectImportRequest.SubjectName) || subjectImportRequest.SubjectName.Length > 1000)
                                 {
                                     errorMessages.Add("SubjectName must not exceed 100 characters.");
                                 }
 
                                 // Validate FacultyName
-                                if (string.IsNullOrEmpty(subjectImportRequest.FacultyName) || subjectImportRequest.FacultyName.Length > 100)
+                                if (string.IsNullOrEmpty(subjectImportRequest.FacultyName) || subjectImportRequest.FacultyName.Length > 1000)
                                 {
                                     errorMessages.Add("SubjectName must not exceed 100 characters.");
                                 }
@@ -628,7 +628,7 @@ namespace WebApi.Repository
                 var sList = await (from s in DBcontext.Subjects
                                    join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
                                    join cus in DBcontext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
-                                   where cus.UserId ==userId
+                                   where cus.UserId == userId
                                    orderby s.UpdateDate descending
                                    select new SubjectResponse
                                    {
@@ -714,12 +714,12 @@ namespace WebApi.Repository
                                      join f in DBcontext.Faculties on s.FacultyId equals f.FacultyId
                                      join cuf in DBcontext.CampusUserFaculties on s.FacultyId equals cuf.FacultyId
                                      join cus in DBcontext.CampusUserSubjects on s.SubjectId equals cus.SubjectId
-                                     where s.SubjectId == req.SubjectId && (cuf.FacultyId == req.DepartmentId|| cus.UserId !=req.UserID)
+                                     where s.SubjectId == req.SubjectId && (cuf.FacultyId == req.DepartmentId || cus.UserId == req.UserID) && cus.IsProgramer == true
                                      select s).FirstOrDefaultAsync();
 
-                if (subject != null)
+                if (subject == null)
                 {
-                    var user = await this.DBcontext.Users.FirstOrDefaultAsync(x => x.UserId ==req.UserID);
+                    var user = await this.DBcontext.Users.FirstOrDefaultAsync(x => x.UserId == req.UserID);
                     var data = await this.DBcontext.Subjects.FirstOrDefaultAsync(x => x.SubjectId == req.SubjectId);
                     var newSubject = new CampusUserSubject
                     {
@@ -734,7 +734,7 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = true,
-                        Message = $"Add Subject {data.SubjectCode} to your department successfully"
+                        Message = $"Add Subject {data.SubjectCode} to manage successfully"
                     };
                 }
                 else

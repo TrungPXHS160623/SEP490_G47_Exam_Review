@@ -5,6 +5,7 @@
 
 <div class="d-flex justify-content-center">
     <EditForm Model="user" OnValidSubmit="HandleValidSubmit" class="border p-4 custom-box" style="width: 450px;">
+        <FluentValidationValidator/>
         <div class="mb-4 d-flex align-items-baseline">
             <label class="col-4 text-end me-4">Email:</label>
             <div class="col-8">
@@ -56,7 +57,7 @@
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.RoleId" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="IsCurrentId">
+                    <MudSelect @bind-Value="user.RoleId" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="IsCurrentId" For="@(() => user.RoleId)">
                         @foreach (var item in roleList)
                         {
                             <MudSelectItem T="int?" Value="@item.RoleId">@item.RoleName</MudSelectItem>
@@ -74,7 +75,7 @@
                 }
                 else
                 {
-                    <MudSelect @bind-Value="user.CampusId" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelect @bind-Value="user.CampusId" Variant="Variant.Outlined" Margin="Margin.Dense" For="@(() => user.CampusId)">
                         @foreach (var item in camList)
                         {
                             <MudSelectItem T="int?" Value="@item.CampusId">@item.CampusName</MudSelectItem>

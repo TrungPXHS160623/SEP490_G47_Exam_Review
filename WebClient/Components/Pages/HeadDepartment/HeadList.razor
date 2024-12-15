@@ -84,7 +84,7 @@
                     </PagerContent> *@
                 </MudTable>
                 <div>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="!(ExamList.Any(x => x.ExamStatusId == 3))">
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="(ExamList.Any(x => x.ExamStatusId == 3))">
                         Notify Examiner
                     </MudButton>
                 </div>
@@ -133,7 +133,7 @@
             request.UserId = userId;
             var response = await MenuService.CheckAccess(userId, 4);
             Mail = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (!response.IsSuccessful )
+            if (!response.IsSuccessful)
             {
                 NavManager.NavigateTo("/404");
             }
@@ -158,72 +158,83 @@
             }
         }
     }
+
     private async Task NotifyExaminer()
     {
-        // Lọc danh sách các đề với trạng thái = 2
-        var examsToNotify = ExamList.Where(x => x.ExamStatusId == 3).ToList();
-        if (examsToNotify.Count > 0)
+        var check = ExamList.Where(x => x.ExamStatusId == 3).ToList();
+        if (check.Count > 0)
         {
-            var mailList = examsToNotify.GroupBy(x => x.CreaterName).Select(x => x.Key).ToList();
-            List<MailUtil> list = new();
-            foreach (var item in mailList)
+            Snackbar.Add("There is some lecture not choose date yet!", Severity.Warning);
+        }
+        else
+        {
+            var examsToNotify = ExamList.Where(x => x.ExamStatusId == 4).ToList();
+
+            if (examsToNotify.Count > 0)
             {
-                var mail = new MailUtil
-                    {
-                        MailTo = item
-                    };
-                list.Add(mail);
-            }
-            // Tạo nội dung email
+                var groupedExams = examsToNotify.GroupBy(x => x.CreaterName);
 
-            var examCodes = string.Join("<br>", examsToNotify.Select(x => x.ExamCode));
-            var assignedLecturer = string.Join("<br>", examsToNotify.Select(x => x.AssignedLectureName ?? "N/A"));
-            var estimatedTimes = string.Join("<br>", examsToNotify.Select(x => x.EstimatedTimeTest.HasValue ? x.EstimatedTimeTest.Value.ToString("yyyy-MM-dd HH:mm") : "N/A"));
+                List<MailUtil> mailList = new();
 
-            var mailModel = new MailModel
+                foreach (var group in groupedExams)
                 {
-                    MailList = list, // Thay bằng email examiner
-                    Subject = "Notification on Exam Status Update",
-                    Body = $@"
+                    var mail = new MailUtil
+                        {
+                            MailTo = group.Key
+                        };
+                    mailList.Add(mail);
+
+                    var examTableRows = string.Join("",
+                    group.Select(exam => $@"
+                    <tr>
+                        <td style='border: 1px solid #ccc; padding: 8px;'>{exam.ExamCode}</td>
+                        <td style='border: 1px solid #ccc; padding: 8px;'>{exam.AssignedLectureName}</td>
+                        <td style='border: 1px solid #ccc; padding: 8px;'>{exam.EstimatedTimeTest.Value}</td>
+                    </tr>"
+                        )
+                    );
+
+                    var mailModel = new MailModel
+                        {
+                            MailList = new List<MailUtil> { mail }, 
+                            Subject = "Notification on Exam Status Update",
+                            Body = $@"
                     <p><b>Dear Examiner,</b></p>
                     <p>We would like to inform you that the following exams are now assigned:</p>
-                    <table border='1' style='border-collapse: collapse; width: 100%;'>
+                    <table style='border-collapse: collapse; width: 100%;'>
                         <thead>
                             <tr>
-                                <th>Exam Code</th>
-                                <th>Assigned Lecturer</th>
-                                <th>Estimated Time Test</th>
+                                <th style='border: 1px solid #ccc; padding: 8px;'>Exam Code</th>
+                                <th style='border: 1px solid #ccc; padding: 8px;'>Assigned Lecturer</th>
+                                <th style='border: 1px solid #ccc; padding: 8px;'>Estimated Time Test</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{examCodes}</td>
-                                <td>{assignedLecturer}</td>
-                                <td>{estimatedTimes}</td>
-                            </tr>
+                            {examTableRows}
                         </tbody>
                     </table>
                     <p>Please visit the <a href='https://www.examreviewfpt.somee.com'>Exam Review System</a> for more details.</p>
                     <p>Thank you for your support!</p>
                     <p><b>From:</b> {Mail}</p><br>
                     <p><b>Exam Review System</b></p><br>"
-                };
+                        };
 
-            // Gửi mail
-            var result = await this.MailService.SendMail(mailModel);
+                    var result = await this.MailService.SendMail(mailModel);
 
-            if (result.IsSuccessful)
-            {
-                Snackbar.Add("Notification sent to Examiner successfully.", Severity.Success);
+                    if (result.IsSuccessful)
+                    {
+                        Snackbar.Add($"Notification sent to {group.Key} successfully.", Severity.Success);
+                    }
+                    else
+                    {
+                        Snackbar.Add($"Failed to send notification to {group.Key}.", Severity.Error);
+                    }
+                }
             }
             else
             {
-                Snackbar.Add("Failed to send notification to Examiner.", Severity.Error);
+                Snackbar.Add("No exams with status 'Assigned' to notify.", Severity.Warning);
             }
-        }
-        else
-        {
-            Snackbar.Add("No exams with status 'Assigned' to notify.", Severity.Warning);
         }
     }
 
@@ -239,11 +250,12 @@
             };
 
         var parameters = new DialogParameters<ExamDetail>
-        {
-            {x => x.ExamId,examId}
-        };
+    {
+    {x => x.ExamId,examId}
+    };
 
-        var dialog = await DialogService.ShowAsync<ExamDetail>(examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
+        var dialog = await DialogService.ShowAsync<ExamDetail>
+            (examId == 0 ? "Exam Create" : "Exam Detail", parameters, options);
 
         var result = await dialog.Result;
 

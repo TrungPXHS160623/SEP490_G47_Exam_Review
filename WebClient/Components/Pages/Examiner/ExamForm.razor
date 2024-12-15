@@ -19,13 +19,18 @@
         <div class="mb-4 row align-items-baseline">
             <label class="col-4 text-end">Subject Name:</label>
             <div class="col-8">
-                <MudSelect T="int?" @bind-Value="exam.SubjectId" Variant="Variant.Outlined" Margin="Margin.Dense"
-                           Placeholder="Choose Subject" For="@(() => exam.SubjectId)" AnchorOrigin="Origin.BottomCenter" Class="col-auto">
-                    @foreach (var item in subList)
-                    {
-                        <MudSelectItem T="int?" Value="@item.SubjectId">@($"[{item.SubjectCode}] {item.SubjectName}")</MudSelectItem>
-                    }
-                </MudSelect>
+                <MudAutocomplete T="int?"
+                                 @bind-Value="exam.SubjectId"
+                                 SearchFunc="Search"
+                                 Variant="Variant.Outlined"
+                                 Label="Subject Code"
+                                 ToStringFunc="@((int? id) => SubjectToString(id))"
+                                 Margin="Margin.Dense"
+                                 AnchorOrigin="Origin.BottomCenter"
+                                 CoerceText="true"
+                                 MaxItems="int.MaxValue"
+                                 Dense
+                                 ErrorText="_errorText" />
             </div>
         </div>
 
@@ -84,8 +89,7 @@
             <label class="col-4 text-end">Start Review Date:</label>
 
             <div class="col-auto">
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
+                <MudDatePicker IsDateDisabledFunc="@((DateTime dt)=>(dt.Date > EndDate?.Date) ||(dt < DateTime.Now))"
                                @bind-Date="exam.StartDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                Margin="Margin.Dense" For="@(()=> exam.StartDate)" />
             </div>
@@ -96,8 +100,7 @@
             <label class="col-4 text-end">End Review Date:</label>
 
             <div class="col-auto">
-                <MudDatePicker Converter="@ConvertDate("dd-MM-yyyy")"
-                               IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
+                <MudDatePicker IsDateDisabledFunc="@((DateTime dt)=>(dt.Date < StartDate?.Date ))"
                                @bind-Date="exam.EndDate" DateFormat="dd-MM-yyyy" Placeholder="dd-mm-yyyy" Variant="Variant.Outlined"
                                Margin="Margin.Dense" For="@(()=> exam.EndDate)" />
             </div>
@@ -129,6 +132,7 @@
     private ExamCreateRequest exam = new ExamCreateRequest();
     private List<Campus> camList = new();
     private List<SubjectResponse> subList = new();
+    private bool isAdmin { get; set; } = false;
     private List<Semester> SemesterList = new List<Semester>();
 
     [Parameter]
@@ -161,6 +165,26 @@
         }
     }
 
+    private Task<IEnumerable<int?>> Search(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return Task.FromResult(subList.Select(x => (int?)x.SubjectId).AsEnumerable());
+        }
+
+        return Task.FromResult(
+            subList.Where(x => ($"[{x.SubjectCode}] {x.SubjectName}")
+                .Contains(value, StringComparison.InvariantCultureIgnoreCase))
+             .Select(x => (int?)x.SubjectId) 
+        );
+    }
+
+    private string SubjectToString(int? id)
+    {
+        var subject = subList.FirstOrDefault(x => x.SubjectId == id);
+        return subject != null ? $"[{subject.SubjectCode}] {subject.SubjectName}" : string.Empty;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await CustomAuthStateProvider.IsUserAuthenticated();
@@ -170,7 +194,7 @@
             var auth = await CustomAuthStateProvider.GetAuthenticationStateAsync();
             var user = auth.User;
             var userId = int.TryParse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id) ? id : 0;
-
+            var cam = await UserService.GetByIdAsync(userId);
             var response = await MenuService.CheckAccess(userId, 3);
             var response2 = await MenuService.CheckAccess(userId, 21);
             if (!response.IsSuccessful&& !response2.IsSuccessful)
@@ -182,7 +206,10 @@
                 var resp = await SubjectService.GetSubjects();
                 if (resp.IsSuccessful) subList = resp.Items;
                 var sem = await SemesterService.GetSemester();
-
+                if (cam.Item != null && cam.Item.RoleId==1)
+                {
+                    isAdmin = true;
+                }
                 if (sem.IsSuccessful)
                 {
                     SemesterList = sem.Items;
@@ -220,7 +247,13 @@
                 }
             }
             var resp = await ExamService.CreateExam(exam);
-            if (resp.IsSuccessful) Navigation.NavigateTo("/Examiner/ExamList");
+
+            if (resp.IsSuccessful && !isAdmin)
+            { Navigation.NavigateTo("/Examiner/ExamList"); 
+            }
+            else{
+                Navigation.NavigateTo("/Admin/ExamList");
+            }
         }
 
         _processing = false;

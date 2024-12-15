@@ -1,6 +1,7 @@
-﻿<EditForm Model="user" OnValidSubmit="AddUser">
-    <MudDialog>
-        <DialogContent>
+﻿<MudDialog>
+    <DialogContent>
+        <EditForm Model="user" OnValidSubmit="AddUser">
+            <FluentValidationValidator/>
             <div class="mb-4 d-flex align-items-baseline">
                 <label class="col-4 text-end me-4">Email:</label>
                 <div class="me-4">
@@ -34,24 +35,24 @@
                     </div>
                 </div>
             }
-            
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3" Variant="Variant.Filled" Disabled="@_processing">
-                @if (_processing)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Processing</MudText>
-                }
-                else
-                {
-                    <MudText>Add</MudText>
-                }
-            </MudButton>
-            <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Close</MudButton>
-        </DialogActions>
-    </MudDialog>
-</EditForm>
+
+            <div class="d-flex justify-content-end mb-3">
+                <MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-block col-3 ms-4" Variant="Variant.Filled" Disabled="@_processing">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Add</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Error" OnClick="Cancel" Class="col-3 btn btn-block" Variant="Variant.Outlined">Cancel</MudButton>
+            </div>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
     [CascadingParameter]
@@ -115,17 +116,17 @@
 
     private async Task OnTextChanged(string value)
     {
-            var resp = await this.UserService.GetUserByMail(value + "@fpt.edu.vn", UserId);
-            if (resp.Item != null)
-            {
-                user.IsExist = true;
-                user = resp.Item;
-            }
-            else
-            {
-                user.IsExist = false;
-                user.Mail = value;
-            }
+        var resp = await this.UserService.GetUserByMail(value + "@fpt.edu.vn", UserId);
+        if (resp.Item != null)
+        {
+            user.IsExist = true;
+            user = resp.Item;
+        }
+        else
+        {
+            user.IsExist = false;
+            user.Mail = value;
+        }
     }
 
     private async Task FetchUserDetails()

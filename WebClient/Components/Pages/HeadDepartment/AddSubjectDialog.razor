@@ -12,8 +12,10 @@
                                  AnchorOrigin="Origin.BottomCenter"
                                  CoerceText="true"
                                  MaxItems="int.MaxValue"
-                                 HelperText="List of subject not in your department"
-                                 Dense />
+                                 HelperText="List of subjects in your department"
+                                              Dense
+                                  Error="_hasError"
+                                  ErrorText="_errorText" />
             </div>
         </DialogContent>
         <DialogActions>
@@ -43,6 +45,9 @@
     [Parameter]
     public SubjectDepartmentRequest request { get; set; } = new();
 
+    private MudAutocomplete<int> _ref;
+    private string _errorText = string.Empty;
+    private bool _hasError = false;
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
     private void Cancel() => MudDialog.Cancel();
@@ -77,15 +82,24 @@
 
     private async Task AddSubject()
     {
-        _processing = true;
-
-        var resp = await this.SubjectService.AddSubjectToDepartment(request);
-
-        if (resp.IsSuccessful)
+        if(request.SubjectId == 0)
         {
-            Submit();
-        }
+            _errorText = "Please select a subject";
+            _hasError = true;
+        } else
+        {
+            _hasError = false;
+            _errorText = string.Empty;
+            _processing = true;
 
-        _processing = false;
+            var resp = await this.SubjectService.AddSubjectToDepartment(request);
+
+            if (resp.IsSuccessful)
+            {
+                Submit();
+            }
+
+            _processing = false;
+        }
     }
 }

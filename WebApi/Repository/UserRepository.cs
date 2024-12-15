@@ -3,6 +3,7 @@ using Library.Common;
 using Library.Models;
 using Library.Request;
 using Library.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace WebApi.Repository
         {
             try
             {
-                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.Equals(user.Email));
+                var data = await this.dbContext.Users.FirstOrDefaultAsync(x => x.Mail.ToLower().Equals(user.Email.ToLower()));
 
                 if (data != null)
                 {
@@ -86,7 +87,8 @@ namespace WebApi.Repository
                 string emailFe = $"{req.MailFe}@fe.edu.vn";
                 string emailFpt = $"{req.Email}@fpt.edu.vn";
 
-                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
+
                 if (emailExists)
                 {
                     return new RequestResponse
@@ -99,10 +101,10 @@ namespace WebApi.Repository
                 {
                     CampusId = req.CampusId,
                     PhoneNumber = req.Phone,
-                    EmailFe = req.MailFe+"@fe.edu.vn",
+                    EmailFe = req.MailFe + "@fe.edu.vn",
                     RoleId = 4,
                     FullName = req.UserName,
-                    Mail = req.Email+"@fpt.edu.vn",
+                    Mail = req.Email + "@fpt.edu.vn",
                     CreateDate = DateTime.Now,
                     UpdateDate = DateTime.Now,
                     IsActive = true,
@@ -114,7 +116,8 @@ namespace WebApi.Repository
                     return new RequestResponse
                     {
                         IsSuccessful = false,
-                        Message = "User already Exist"
+                        Message = "The department has been managed by another head deparment."
+
                     };
                 }
                 await this.dbContext.Users.AddAsync(newUser);
@@ -190,7 +193,7 @@ namespace WebApi.Repository
                             Email = u.Mail,
                             CampusName = c != null ? c.CampusName : null, // Handle possible null from left join
                             IsActive = u.IsActive,
-                            UserName =u.FullName,
+                            UserName = u.FullName,
                             Tel = u.PhoneNumber,
                             RoleName = r != null ? r.RoleName : null,     // Handle possible null from left join
                             UserId = u.UserId,
@@ -205,22 +208,52 @@ namespace WebApi.Repository
         }
         public async Task<RequestResponse> DeleteAsync(int id)
         {
-            var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if (existingUser == null)
+            try
+            {
+                var existingUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+                if (existingUser == null)
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Account no exist"
+                    };
+                }
+                dbContext.Users.RemoveRange(existingUser);
+                await dbContext.SaveChangesAsync();
+                return new RequestResponse
+                {
+                    IsSuccessful = true,
+                    Message = " Delete success "
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Message.Contains("REFERENCE constraint"))
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = "Cannot delete because there is some data connect to this user"
+                    };
+                }
+                else
+                {
+                    return new RequestResponse
+                    {
+                        IsSuccessful = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
+            catch (Exception ex)
             {
                 return new RequestResponse
                 {
                     IsSuccessful = false,
-                    Message = "Account no exist"
+                    Message = ex.Message,
                 };
             }
-            dbContext.Users.RemoveRange(existingUser);
-            await dbContext.SaveChangesAsync();
-            return new RequestResponse
-            {
-                IsSuccessful = true,
-                Message = " Delete success "
-            };
         }
 
         public async Task<ResultResponse<UserRequest>> GetByIdAsync(int id)
@@ -1202,9 +1235,10 @@ namespace WebApi.Repository
                                         await dbContext.SaveChangesAsync();
                                     }
                                     else
-                                    {
+                           
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge"   
-                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>()  : userImportRequest.FacultyInCharge
+                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>() : userImportRequest.FacultyInCharge
+
                                         .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                         .Select(f => f.Trim().ToLower())
                                         .ToList();
@@ -1220,6 +1254,7 @@ namespace WebApi.Repository
                                             // Gọi phương thức ImportForExaminer và thêm lỗi vào errors
                                             var examinerErrors = await ImportForExaminer(facultyList, subjectList, user, currentUserCampusId);
                                             errors.AddRange(examinerErrors); // Thêm lỗi từ ImportForExaminer vào errors
+
                                         }
                                         else if (currentUserRoleName == "Head of Department")
                                         {
@@ -1317,7 +1352,7 @@ namespace WebApi.Repository
                             from e in examsGroup.DefaultIfEmpty()
                             where cus.CampusId == cuf.CampusId
                                   && cuf.UserId == userId
-                                  && cus.IsSelect ==false
+                                  && cus.IsProgramer == false
                             group e by new
                             {
                                 u.UserId,
@@ -1532,7 +1567,7 @@ namespace WebApi.Repository
                                 FeEmail = g.Key.EmailFe,
                                 AssignedExamCount = g.Count(e => e != null),
                                 TotalDuration = g.Sum(e => e != null ? e.ExamDuration : 0),
-                                IsSelect =g.Key.IsSelect
+                                IsSelect = g.Key.IsSelect
                             }).ToList();
 
                 return new ResultResponse<UserResponse>
@@ -1622,7 +1657,7 @@ namespace WebApi.Repository
                     string emailFe = $"{req.MailFe}@fe.edu.vn";
                     string emailFpt = $"{req.Mail}@fpt.edu.vn";
 
-                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail == emailFpt || x.EmailFe == emailFe);
+                    var emailExists = await this.dbContext.Users.AnyAsync(x => x.Mail.ToLower() == emailFpt.ToLower() || x.EmailFe.ToLower() == emailFe.ToLower());
                     if (emailExists)
                     {
                         return new RequestResponse
@@ -1635,10 +1670,10 @@ namespace WebApi.Repository
                     {
                         CampusId = u.CampusId,
                         PhoneNumber = req.PhoneNumber,
-                        EmailFe = req.MailFe+"@fe.edu.vn",
+                        EmailFe = req.MailFe + "@fe.edu.vn",
                         RoleId = 3,
                         FullName = req.FullName,
-                        Mail = req.Mail+"@fpt.edu.vn",
+                        Mail = req.Mail + "@fpt.edu.vn",
                         CreateDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
                         IsActive = true,
@@ -1697,7 +1732,7 @@ namespace WebApi.Repository
                 user.EmailFe = req.MailFe;
                 user.PhoneNumber = req.PhoneNumber;
                 user.FullName = req.FullName;
-                user.IsActive =req.IsActive.Value;
+                user.IsActive = req.IsActive.Value;
 
                 await this.dbContext.SaveChangesAsync();
 
