@@ -50,11 +50,11 @@
                         <MudTh>Exam Code</MudTh>
                         <MudTh>Status</MudTh>
                         <MudTh>Head of Department</MudTh>
-                        <MudTh>Exam Type</MudTh>
                         <MudTh>Exam planned Date</MudTh>
                         <MudTh>Review Start Date</MudTh>
                         <MudTh>Review End Date</MudTh>
                         <MudTh>Semester</MudTh>
+                        <MudTh>Assigned Lecturer</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -64,11 +64,11 @@
                             <label class="fw-bold" style="color:@(ColorList[context.ExamStatusId.Value])">@context.ExamStatusContent</label>
                         </MudTd>
                         <MudTd>@context.HeadDepartmentName</MudTd>
-                        <MudTd>@context.ExamType</MudTd>
                         <MudTd>@(context.EstimatedTimeTest.HasValue ? context.EstimatedTimeTest.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.StartDate.HasValue ? context.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@(context.EndDate.HasValue ? context.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</MudTd>
                         <MudTd>@context.SemseterName</MudTd>
+                        <MudTd>@(string.IsNullOrEmpty(context.LectureName) ? context.LectureName : "Not Yet")</MudTd>
                         <MudTd>
                             <div class="d-flex align-items-center justify-content-around">
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => OpenAddEditDialogAsync(context.ExamId))">Detail</MudButton>

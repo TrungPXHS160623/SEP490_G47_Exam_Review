@@ -410,6 +410,8 @@ public class ExamRepository : IExamRepository
                         from cuf in cusGroup.DefaultIfEmpty() // LEFT JOIN
                         join u1 in _context.Users on cuf.UserId equals u1.UserId into u1Group
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
+                        join u2 in _context.Users on ex.AssignedUserId equals u2.UserId into u2Group
+                        from u2 in u2Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
                               &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
@@ -430,7 +432,9 @@ public class ExamRepository : IExamRepository
                             ExamStatusId = st.ExamStatusId,
                             HeadDepartmentName = u1.Mail,
                             HeadDepartmentId = u1.UserId,
-                            UpdateDate = ex.UpdateDate
+                            UpdateDate = ex.UpdateDate,
+                            LectureId = u2.UserId,
+                            LectureName = u2.Mail ?? string.Empty
                         }).Distinct().ToList();
 
             return new ResultResponse<ExaminerExamResponse>

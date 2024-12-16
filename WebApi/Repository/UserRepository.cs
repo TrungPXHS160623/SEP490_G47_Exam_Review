@@ -1235,7 +1235,7 @@ namespace WebApi.Repository
                                         await dbContext.SaveChangesAsync();
                                     }
                                     else
-                           
+                                    {
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge"   
                                         var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>() : userImportRequest.FacultyInCharge
 
@@ -1244,7 +1244,7 @@ namespace WebApi.Repository
                                         .ToList();
 
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
-                                        var subjectList = string.IsNullOrEmpty(userImportRequest.SubjectInCharge) ? new List<string>(): userImportRequest.SubjectInCharge
+                                        var subjectList = string.IsNullOrEmpty(userImportRequest.SubjectInCharge) ? new List<string>() : userImportRequest.SubjectInCharge
                                             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Select(f => f.Trim().ToLower())
                                             .ToList();
