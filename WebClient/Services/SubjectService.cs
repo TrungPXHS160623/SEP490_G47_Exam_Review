@@ -247,15 +247,6 @@ namespace WebClient.Services
 
                 var requestResponse = await response.Content.ReadFromJsonAsync<RequestResponse>();
 
-                if (!requestResponse.IsSuccessful)
-                {
-                    snackbar.Add(requestResponse.Message, Severity.Error);
-                }
-                else
-                {
-                    snackbar.Add("Exams imported successfully!", Severity.Success);
-                }
-
                 return requestResponse;
             }
             catch (Exception ex)
