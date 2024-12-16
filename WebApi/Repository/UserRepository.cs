@@ -1237,17 +1237,19 @@ namespace WebApi.Repository
                                     else
                                     {
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge"   
-                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>() : userImportRequest.FacultyInCharge
 
+                                        var facultyList = string.IsNullOrEmpty(userImportRequest.FacultyInCharge) ? new List<string>() : userImportRequest.FacultyInCharge
                                         .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                         .Select(f => f.Trim().ToLower())
                                         .ToList();
+
 
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
                                         var subjectList = string.IsNullOrEmpty(userImportRequest.SubjectInCharge) ? new List<string>() : userImportRequest.SubjectInCharge
                                             .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
                                             .Select(f => f.Trim().ToLower())
                                             .ToList();
+
 
                                         if (currentUserRoleName == "Examiner")
                                         {
@@ -1279,8 +1281,8 @@ namespace WebApi.Repository
                                             }
                                         }
                                     }
-
                                 }
+
                                 catch (Exception ex)
                                 {
                                     errors.Add($"Đã xảy ra lỗi: {ex.Message}");
@@ -1344,39 +1346,49 @@ namespace WebApi.Repository
         {
             try
             {
+                // Lấy thông tin các bài kiểm tra đã được gán (không trùng lặp)
+                var examData = (from e in dbContext.Exams
+                                where e.AssignedUserId != null
+                                group e by e.AssignedUserId into g
+                                select new
+                                {
+                                    UserId = g.Key.Value, // AssignedUserId
+                                    AssignedExamCount = g.Count(),
+                                    TotalDuration = g.Sum(x => x.ExamDuration)
+                                }).ToList();
+
+                // Lấy danh sách giảng viên kèm thông tin liên quan
                 var data = (from u in dbContext.Users
                             join cus in dbContext.CampusUserSubjects on u.UserId equals cus.UserId
                             join sj in dbContext.Subjects on cus.SubjectId equals sj.SubjectId
                             join cuf in dbContext.CampusUserFaculties on sj.FacultyId equals cuf.FacultyId
-                            join e in dbContext.Exams on u.UserId equals e.AssignedUserId into examsGroup
-                            from e in examsGroup.DefaultIfEmpty()
                             where cus.CampusId == cuf.CampusId
                                   && cuf.UserId == userId
                                   && cus.IsProgramer == false
-                            group e by new
+                            select new
                             {
                                 u.UserId,
                                 u.FullName,
                                 u.Mail,
                                 u.PhoneNumber,
                                 u.IsActive
-                            } into g
-                            select new UserResponse
-                            {
-                                UserId = g.Key.UserId,
-                                UserName = g.Key.FullName,
-                                Email = g.Key.Mail,
-                                Tel = g.Key.PhoneNumber,
-                                IsActive = g.Key.IsActive,
-                                AssignedExamCount = g.Count(e => e != null),
-                                TotalDuration = g.Sum(e => e != null ? e.ExamDuration : 0)
-                            })
-                            .ToList();
+                            }).Distinct().ToList();
+
+                var result = data.Select(user => new UserResponse
+                {
+                    UserId = user.UserId,
+                    UserName = user.FullName,
+                    Email = user.Mail,
+                    Tel = user.PhoneNumber,
+                    IsActive = user.IsActive,
+                    AssignedExamCount = examData.FirstOrDefault(e => e.UserId == user.UserId)?.AssignedExamCount ?? 0,
+                    TotalDuration = examData.FirstOrDefault(e => e.UserId == user.UserId)?.TotalDuration ?? 0
+                }).ToList();
 
                 return new ResultResponse<UserResponse>
                 {
                     IsSuccessful = true,
-                    Items = data,
+                    Items = result,
                 };
             }
             catch (Exception ex)
@@ -1387,8 +1399,8 @@ namespace WebApi.Repository
                     Message = ex.Message,
                 };
             }
-
         }
+
 
         public string GenerateToken(User acc)
         {
