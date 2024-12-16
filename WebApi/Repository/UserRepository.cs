@@ -1246,9 +1246,10 @@ namespace WebApi.Repository
 
                                         // Lấy danh sách các bộ môn hoặc môn học từ cột "FacultyOrSubjectInCharge" 
                                         var subjectList = string.IsNullOrEmpty(userImportRequest.SubjectInCharge) ? new List<string>() : userImportRequest.SubjectInCharge
-                                                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                                .Select(f => f.Trim().ToLower())
-                                                .ToList();
+                                            .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(f => f.Trim().ToLower())
+                                            .ToList();
+
 
                                         if (currentUserRoleName == "Examiner")
                                         {

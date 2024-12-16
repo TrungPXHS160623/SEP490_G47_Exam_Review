@@ -83,16 +83,17 @@
                     }
                     </PagerContent> *@
                 </MudTable>
-                <div>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="(ExamList.Any(x => x.ExamStatusId == 3))">
-                        Notify Examiner
-                    </MudButton>
-                </div>
-
                 @if (ExamList.Count == 0)
 
                 {
                     <p class="text-center fs-6 mt-4">No Data</p>
+                } else
+                {
+                    <div>
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="NotifyExaminer" Disabled="(ExamList.Any(x => x.ExamStatusId == 3))">
+                            Notify Examiner
+                        </MudButton>
+                    </div>
                 }
             </div>
         </div>
@@ -221,11 +222,7 @@
 
                     var result = await this.MailService.SendMail(mailModel);
 
-                    if (result.IsSuccessful)
-                    {
-                        Snackbar.Add($"Notification sent to {group.Key} successfully.", Severity.Success);
-                    }
-                    else
+                    if (!result.IsSuccessful)
                     {
                         Snackbar.Add($"Failed to send notification to {group.Key}.", Severity.Error);
                     }
@@ -276,7 +273,6 @@
                 semesters = semesterrList.Items;
             }
             ExamList = eList.Items;
-
         }
     }
 }
