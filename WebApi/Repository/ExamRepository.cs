@@ -412,7 +412,7 @@ public class ExamRepository : IExamRepository
                         from u1 in u1Group.DefaultIfEmpty() // LEFT JOIN
                         join st in _context.ExamStatuses on ex.ExamStatusId equals st.ExamStatusId
                         where (req.StatusId == null || ex.ExamStatusId == req.StatusId)
-                              &&(req.SemesterId == null || sem.SemesterId == req.SemesterId)
+                              && (req.SemesterId == null || sem.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || ex.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
                               && ex.CampusId == req.CampusId
                         select new ExaminerExamResponse
@@ -461,7 +461,7 @@ public class ExamRepository : IExamRepository
                               join s in _context.Semesters on e.SemesterId equals s.SemesterId
                               join es in _context.ExamStatuses on e.ExamStatusId equals es.ExamStatusId
                               join cus in _context.CampusUserSubjects on sj.SubjectId equals cus.SubjectId
-                              where (cus.UserId ==req.UserId)
+                              where (cus.UserId == req.UserId)
                               //where (e.HeadDepartmentId == req.UserId)
                               && e.ExamStatusId != 1
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
@@ -1023,8 +1023,8 @@ public class ExamRepository : IExamRepository
 
             var examCodeCount = exams.Count();
 
-            var ExamOk = exams.Where(e => e.ExamStatusId == 6).Count();
-            var ExamError = exams.Where(e => e.ExamStatusId == 5).Count();
+            var ExamOk = exams.Where(e => e.ExamStatusId == 6 || e.ExamStatusId == 7).Count();
+            var ExamError = exams.Where(e => e.ExamStatusId == 5 || e.ExamStatusId == 8).Count();
 
             var campusReports = exams
                 .GroupBy(e => e.Campus.CampusName)
@@ -1032,8 +1032,8 @@ public class ExamRepository : IExamRepository
                 {
                     CampusName = g.Key,
                     totalExams = g.Count(),
-                    ErrorCode = g.Count(e => e.ExamStatusId == 5),
-                    OKCode = g.Count(e => e.ExamStatusId == 6)
+                    ErrorCode = g.Count(e => e.ExamStatusId == 5 || e.ExamStatusId == 8),
+                    OKCode = g.Count(e => e.ExamStatusId == 6 || e.ExamStatusId == 7)
                 }).ToList();
 
             return new ResultResponse<CampusReportResponse>
@@ -1114,7 +1114,7 @@ public class ExamRepository : IExamRepository
                 .ThenInclude(e => e.Faculty)
                 .Include(e => e.Reports)
                 .Include(e => e.ExamStatus) // Bao gồm cả trạng thái bài thi
-                .Where(e => e.CampusId ==req.CampusId)
+                .Where(e => e.CampusId == req.CampusId)
                 .ToListAsync();
 
             if (!exams.Any())
@@ -1127,8 +1127,8 @@ public class ExamRepository : IExamRepository
             }
 
             var examCodeCount = exams.Count();
-            var examOk = exams.Count(e => e.ExamStatusId == 6);
-            var examError = exams.Count(e => e.ExamStatusId == 5);
+            var examOk = exams.Count(e => e.ExamStatusId == 6 || e.ExamStatusId == 7);
+            var examError = exams.Count(e => e.ExamStatusId == 5 || e.ExamStatusId == 8);
 
             // Tạo danh sách báo cáo chi tiết theo ExamCode
             var departmentDetails = exams
@@ -1138,7 +1138,7 @@ public class ExamRepository : IExamRepository
                     ExamCode = g.Key,
                     Status = g.FirstOrDefault()?.ExamStatus?.StatusContent ?? " ",
                     issues = g
-                            .Where(e => e.ExamStatusId == 5)
+                            .Where(e => e.ExamStatusId == 5 || e.ExamStatusId == 8)
                            .SelectMany(e => e.Reports.Select(r => r.ReportContent ?? "No Issues Reported"))
                           .ToList()
                 })
