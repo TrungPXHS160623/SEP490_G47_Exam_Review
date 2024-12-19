@@ -570,6 +570,7 @@ public class ExamRepository : IExamRepository
                               && (req.StatusId == null || e.ExamStatusId == req.StatusId)
                               && (req.SemesterId == null || s.SemesterId == req.SemesterId)
                               && (string.IsNullOrEmpty(req.ExamCode) || e.ExamCode.ToLower().Contains(req.ExamCode.ToLower()))
+                              && (e.CampusId == req.CampusId)
                               select new LectureExamResponse
                               {
                                   EndDate = e.EndDate,
